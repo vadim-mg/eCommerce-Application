@@ -2,6 +2,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
+const EslintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
     entry: path.resolve(__dirname, "./src/index.ts"),
@@ -22,6 +23,7 @@ module.exports = {
               },
             ],
         }),
+        new EslintPlugin({ extensions: ['ts'] }),
     ],
     devServer: {
         open: true,
@@ -47,5 +49,6 @@ module.exports = {
         alias: {
             img: path.join(__dirname, "src", "img"),
         },
+        extensions: ['.ts', '.js']
     },
 };
