@@ -1,16 +1,12 @@
 {
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
-    /* Language and Environment */
     "target": "es2016",
-    /* Modules */
     "module": "ESNext",
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "Bundler",
-    /* Emit */
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    /* Type Checking */
     "strict": true,
     "noImplicitAny": true,
     "skipLibCheck": true
