@@ -1,11 +1,13 @@
 const path = require("path");
+const { merge } = require('webpack-merge');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const EslintPlugin = require("eslint-webpack-plugin");
 
-module.exports = {
+const baseConfig = {
   entry: path.resolve(__dirname, "./src/index.ts"),
+  mode: 'development',
   output: {
     path: path.resolve(__dirname, "dist"),
   },
@@ -51,4 +53,11 @@ module.exports = {
     },
     extensions: [".ts", ".js"],
   },
+};
+
+module.exports = ({ mode }) => {
+  const isProductionMode = mode === 'prod';
+  const envConfig = isProductionMode ? require('./webpack.prod.config') : require('./webpack.dev.config');
+
+  return merge(baseConfig, envConfig);
 };
