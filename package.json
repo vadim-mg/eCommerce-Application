@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:prod": "webpack --env mode=prod",
     "build:dev": "webpack --env mode=dev",
-    "start": "webpack serve --open --mode=development",
+    "start": "webpack serve --mode=development",
     "format": "npx prettier --write .",
     "ci:format": "npx prettier --check .",
     "lint": "npx eslint src/**/*.ts"

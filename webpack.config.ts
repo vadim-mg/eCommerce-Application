@@ -39,7 +39,7 @@ const baseConfig = {
     new EslintPlugin({ extensions: ['ts'] }),
   ],
   devServer: {
-    open: true,
+    open: false,
     host: 'localhost',
   },
   module: {
