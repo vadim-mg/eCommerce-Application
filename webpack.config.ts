@@ -1,7 +1,6 @@
 import { resolve as _resolve, join } from 'path';
 import { merge } from 'webpack-merge';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import CopyPlugin from 'copy-webpack-plugin';
 import EslintPlugin from 'eslint-webpack-plugin';
 
 import devConfig from './webpack.dev.config';
@@ -21,20 +20,14 @@ const baseConfig = {
   mode: 'development',
   output: {
     path: _resolve(__dirname, 'dist'),
+    filename: '[name].[contenthash:6].js',
     clean: true,
+    assetModuleFilename: 'assets/[name].[contenthash:8][ext]',
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: _resolve(__dirname, 'src/index.html'),
       filename: 'index.html',
-    }),
-    new CopyPlugin({
-      patterns: [
-        {
-          from: _resolve(__dirname, 'src/img'),
-          to: _resolve(__dirname, 'dist/img'),
-        },
-      ],
     }),
     new EslintPlugin({ extensions: ['ts'] }),
   ],
@@ -45,7 +38,7 @@ const baseConfig = {
   module: {
     rules: [
       {
-        test: /\.(jpg|png|svg|jpeg|gif)$/,
+        test: /\.(jpg|png|svg|jpeg|gif|webp)$/,
         type: 'asset/resource',
       },
       {
