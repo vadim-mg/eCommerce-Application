@@ -1,62 +1,64 @@
-const path = require("path");
+const path = require('path');
 const { merge } = require('webpack-merge');
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
-const EslintPlugin = require("eslint-webpack-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+const EslintPlugin = require('eslint-webpack-plugin');
 
 const baseConfig = {
-  entry: path.resolve(__dirname, "./src/index.ts"),
+  entry: path.resolve(__dirname, './src/index.ts'),
   mode: 'development',
   output: {
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, 'dist'),
     clean: true,
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "src/index.html"),
-      filename: "index.html",
+      template: path.resolve(__dirname, 'src/index.html'),
+      filename: 'index.html',
     }),
     new CopyPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, "src/img"),
-          to: path.resolve(__dirname, "dist/img"),
+          from: path.resolve(__dirname, 'src/img'),
+          to: path.resolve(__dirname, 'dist/img'),
         },
       ],
     }),
-    new EslintPlugin({ extensions: ["ts"] }),
+    new EslintPlugin({ extensions: ['ts'] }),
   ],
   devServer: {
     open: true,
-    host: "localhost",
+    host: 'localhost',
   },
   module: {
     rules: [
       {
         test: /\.(jpg|png|svg|jpeg|gif)$/,
-        type: "asset/resource",
+        type: 'asset/resource',
       },
       {
         test: /\.s[ac]ss$/i,
-        use: ["style-loader", "css-loader", "sass-loader"],
+        use: ['style-loader', 'css-loader', 'sass-loader'],
       },
       {
         test: /\.ts$/i,
-        use: "ts-loader",
+        use: 'ts-loader',
       },
     ],
   },
   resolve: {
     alias: {
-      img: path.join(__dirname, "src", "img"),
+      img: path.join(__dirname, 'src', 'img'),
     },
-    extensions: [".ts", ".js"],
+    extensions: ['.ts', '.js'],
   },
 };
 
 module.exports = ({ mode }) => {
   const isProductionMode = mode === 'prod';
-  const envConfig = isProductionMode ? require('./webpack.prod.config') : require('./webpack.dev.config');
+  const envConfig = isProductionMode
+    ? require('./webpack.prod.config')
+    : require('./webpack.dev.config');
 
   return merge(baseConfig, envConfig);
 };
