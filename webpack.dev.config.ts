@@ -2,7 +2,7 @@ import { resolve } from 'path';
 
 const config = {
   mode: 'development',
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   devServer: {
     static: resolve(__dirname, './dist'),
   },
