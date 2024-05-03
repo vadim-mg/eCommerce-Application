@@ -1,4 +1,4 @@
-import { resolve as _resolve, join } from 'path';
+import { resolve as _resolve } from 'path';
 import { merge } from 'webpack-merge';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import EslintPlugin from 'eslint-webpack-plugin';
@@ -15,7 +15,7 @@ type Env = {
   mode: Mode;
 };
 
-const baseConfig = {
+const baseConfig = (isProd: boolean) => ({
   entry: _resolve(__dirname, './src/index.ts'),
   mode: 'development',
   output: {
@@ -42,8 +42,25 @@ const baseConfig = {
         type: 'asset/resource',
       },
       {
-        test: /\.s[ac]ss$/i,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
+        test: /\.module\.s?css$/i,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              modules: {
+                localIdentName: isProd
+                  ? '[hash:base64:5]'
+                  : '[path][name]__[local]--[hash:base64:5]',
+              },
+              esModule: false,
+            },
+          },
+          {
+            loader: 'sass-loader',
+          },
+        ],
       },
       {
         test: /\.ts$/i,
@@ -59,11 +76,11 @@ const baseConfig = {
     },
     extensions: ['.ts', '.js'],
   },
-};
+});
 
 export default (env: Env) => {
   const isProductionMode = env?.mode === Mode.prod;
   const envConfig = isProductionMode ? prodConfig : devConfig;
 
-  return merge(baseConfig, envConfig);
+  return merge(baseConfig(isProductionMode), envConfig);
 };
