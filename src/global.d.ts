@@ -13,3 +13,10 @@ declare module '*.module.scss' {
   export = classNames;
 }
 
+declare namespace NodeJS {
+  interface ProcessEnv {
+    PORT: string;
+    TEST_SECRET: string;
+    TEST_SECRET2: string;
+  }
+}

@@ -3,6 +3,7 @@ import { merge } from 'webpack-merge';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import EslintPlugin from 'eslint-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import Dotenv from 'dotenv-webpack';
 
 import devConfig from './webpack.dev.config';
 import prodConfig from './webpack.prod.config';
@@ -36,6 +37,7 @@ const baseConfig = (isProd: boolean) => ({
       filename: '[name].[contenthash:6].css',
       chunkFilename: '[id].[contenthash:6].css',
     }),
+    new Dotenv(),
   ],
   module: {
     rules: [

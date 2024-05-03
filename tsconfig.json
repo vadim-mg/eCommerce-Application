@@ -11,12 +11,8 @@
     "noImplicitAny": true,
     "skipLibCheck": true,
     "paths": {
-      "@Src/*": [
-        "./src/*"
-      ],
-      "@Img/*": [
-        "./src/img/*"
-      ]
+      "@Src/*": ["./src/*"],
+      "@Img/*": ["./src/img/*"]
     }
   },
   "ts-node": {
