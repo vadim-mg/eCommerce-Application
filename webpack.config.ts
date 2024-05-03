@@ -31,10 +31,6 @@ const baseConfig = (isProd: boolean) => ({
     }),
     new EslintPlugin({ extensions: ['ts'] }),
   ],
-  devServer: {
-    open: false,
-    host: 'localhost',
-  },
   module: {
     rules: [
       {
