@@ -9,7 +9,15 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitAny": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@Src/*": [
+        "./src/*"
+      ],
+      "@Img/*": [
+        "./src/img/*"
+      ]
+    }
   },
   "ts-node": {
     "compilerOptions": {

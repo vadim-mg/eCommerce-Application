@@ -54,7 +54,8 @@ const baseConfig = {
   },
   resolve: {
     alias: {
-      img: join(__dirname, 'src', 'img'),
+      '@Src': _resolve(__dirname, 'src'),
+      '@Img': _resolve(__dirname, 'src/img'),
     },
     extensions: ['.ts', '.js'],
   },
