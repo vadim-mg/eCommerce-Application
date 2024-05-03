@@ -2,6 +2,7 @@ import { resolve as _resolve } from 'path';
 import { merge } from 'webpack-merge';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import EslintPlugin from 'eslint-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 import devConfig from './webpack.dev.config';
 import prodConfig from './webpack.prod.config';
@@ -16,7 +17,7 @@ type Env = {
 };
 
 const baseConfig = (isProd: boolean) => ({
-  entry: _resolve(__dirname, './src/index.ts'),
+  entry: _resolve(__dirname, 'src', 'index.ts'),
   mode: 'development',
   output: {
     path: _resolve(__dirname, 'dist'),
@@ -24,12 +25,17 @@ const baseConfig = (isProd: boolean) => ({
     clean: true,
     assetModuleFilename: 'assets/[name].[contenthash:8][ext]',
   },
+  devtool: isProd ? 'source-map' : 'inline-source-map',
   plugins: [
     new HtmlWebpackPlugin({
-      template: _resolve(__dirname, 'src/index.html'),
+      template: _resolve(__dirname, 'src', 'index.html'),
       filename: 'index.html',
     }),
     new EslintPlugin({ extensions: ['ts'] }),
+    new MiniCssExtractPlugin({
+      filename: '[name].[contenthash:6].css',
+      chunkFilename: '[id].[contenthash:6].css',
+    }),
   ],
   module: {
     rules: [
@@ -40,7 +46,7 @@ const baseConfig = (isProd: boolean) => ({
       {
         test: /\.module\.s?css$/i,
         use: [
-          'style-loader',
+          isProd ? MiniCssExtractPlugin.loader : 'style-loader',
           {
             loader: 'css-loader',
             options: {
@@ -51,6 +57,7 @@ const baseConfig = (isProd: boolean) => ({
                   : '[path][name]__[local]--[hash:base64:5]',
               },
               esModule: false,
+              sourceMap: true,
             },
           },
           {
@@ -68,7 +75,7 @@ const baseConfig = (isProd: boolean) => ({
   resolve: {
     alias: {
       '@Src': _resolve(__dirname, 'src'),
-      '@Img': _resolve(__dirname, 'src/img'),
+      '@Img': _resolve(__dirname, 'src', 'img'),
     },
     extensions: ['.ts', '.js'],
   },
