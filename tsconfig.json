@@ -1,21 +1,23 @@
 {
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
-
-    /* Language and Environment */
     "target": "es2016",
-
-    /* Modules */
-    "module": "commonjs",
-
-    /* Emit */
+    "module": "ESNext",
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "Bundler",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-
-    /* Type Checking */
     "strict": true,
     "noImplicitAny": true,
-    
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@Src/*": ["./src/*"],
+      "@Img/*": ["./src/img/*"]
+    }
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
   }
 }

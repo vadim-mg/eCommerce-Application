@@ -1,0 +1,12 @@
+{
+  "eslint.enable": true,
+  "eslint.format.enable": true,
+  "prettier.enable": true,
+  "typescript.format.enable": true,
+  "typescript.format.semicolons": "insert",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "files.eol": "\n"
+}
