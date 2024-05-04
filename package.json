@@ -32,6 +32,7 @@
     "eslint-webpack-plugin": "^4.1.0",
     "html-webpack-plugin": "^5.6.0",
     "mini-css-extract-plugin": "^2.9.0",
+    "normalize.css": "^8.0.1",
     "prettier": "3.2.5",
     "sass": "^1.76.0",
     "sass-loader": "^14.2.1",
