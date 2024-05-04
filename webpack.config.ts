@@ -77,7 +77,8 @@ const baseConfig = (isProd: boolean) => ({
   resolve: {
     alias: {
       '@Src': _resolve(__dirname, 'src'),
-      '@Img': _resolve(__dirname, 'src', 'img'),
+      '@Assets': _resolve(__dirname, 'src', 'assets'),
+      '@Img': _resolve(__dirname, 'src', 'assets', 'img'),
     },
     extensions: ['.ts', '.js'],
   },
