@@ -15,8 +15,11 @@ declare module '*.module.scss' {
 
 declare namespace NodeJS {
   interface ProcessEnv {
-    PORT: string;
-    TEST_SECRET: string;
-    TEST_SECRET2: string;
+    CTP_PROJECT_KEY: string;
+    CTP_CLIENT_SECRET: string;
+    CTP_CLIENT_ID: string;
+    CTP_AUTH_URL: string;
+    CTP_API_URL: string;
+    CTP_SCOPES: string;
   }
 }
