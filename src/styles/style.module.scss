@@ -1,0 +1,11 @@
+// main global style for project's index.ts
+//*****************************************
+
+// styles for components write in components style.module.scss
+
+@import "~normalize.css/normalize.css";
+@import "./variables.scss";
+
+body {
+  background-color: $color-green;
+}
