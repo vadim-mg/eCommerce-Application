@@ -10,7 +10,8 @@
     "start": "webpack serve --mode=development",
     "format": "npx prettier --write .",
     "ci:format": "npx prettier --check .",
-    "lint": "npx eslint src/**/*.ts"
+    "lint": "npx eslint src/**/*.ts",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
