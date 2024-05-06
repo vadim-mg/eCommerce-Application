@@ -17,3 +17,16 @@
   - import val2 from '@Src/.....'; // in other directory in src
   - import some from '@Assets/.....'; // from assets
   - import picture1 from '@Img/.....'; // from assets/img
+
+## environments:
+
+For exclude all problems wit environments, we can use the same versions of node and npm
+
+(At the moment I use
+node -v => v20.12.2
+npm -v => 10.5.0
+)
+
+Also I for easy change versions I use [volta](https://docs.volta.sh/guide/getting-started)
+
+If it installed, needed versions will be read from package.json and the same for everybody

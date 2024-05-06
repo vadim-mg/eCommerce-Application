@@ -25,5 +25,6 @@
     - ...
   - **constants** - contain files with constants
   - **router** - contains router
-  - **store** - contains app store
+  - **state** - contains app state
   - **styles** - common styles for all project
+  - **tests** - contains [tests fo jest](./tests.md)
