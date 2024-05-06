@@ -1,4 +1,4 @@
-import sum from '@Src/index';
+import sum from '../helpers';
 
 describe('sum module', () => {
   test('adds 1 + 2 to equal 3', () => {
