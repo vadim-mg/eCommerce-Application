@@ -8,6 +8,8 @@ import type { Config } from 'jest';
 const config: Config = {
   verbose: true,
 
+  moduleFileExtensions: ['ts', 'json', 'node', 'js'],
+
   // Automatically clear mock calls, instances, contexts and results before every test
   clearMocks: true,
 
@@ -30,9 +32,9 @@ const config: Config = {
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       '<rootDir>/src/__mocks__/file-mock.ts',
     '\\.(scss|css|less)$': '<rootDir>/src/__mocks__/style-mock.ts',
-    '@Src': '<rootDir>/src',
-    '@Assets': '<rootDir>/src/assets',
-    '@Img': '<rootDir>/src/assets/img',
+    '@Src/(.*)': '<rootDir>/src/$1',
+    '@Assets/(.*)': '<rootDir>/src/assets/$1',
+    '@Img/(.*)': '<rootDir>/src/assets/img/$1',
   },
 };
 
