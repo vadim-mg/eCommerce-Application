@@ -1,5 +1,7 @@
 # eCommerce Application 🛍️🌐
+
 ## Overview:
+
 Dice & Meeple is an innovative online platform designed to bring the joy of board gaming to enthusiasts of all ages and preferences. With a diverse collection of board games spanning various categories, from strategy and party games to cooperative and educational options, Dice & Meeple aims to be the ultimate destination for those seeking thrilling tabletop experiences.
 
 Explore our extensive catalog of board games, spanning a multitude of categories and themes. With detailed descriptions and captivating visuals, each product page invites you to delve deeper into the world of tabletop adventure.
@@ -21,15 +23,23 @@ Key pages in the application include:
 - About Us page: Learn more about our mission, values, and commitment to delivering the ultimate board gaming experience. 🙋‍♂️🙋‍♀️
 
 ## Purpose:
+
 The purpose of Dice & Meeple is to provide a convenient and immersive shopping experience for board game aficionados. Whether you're a seasoned gamer looking for your next challenge or a newcomer eager to explore the world of tabletop gaming, our platform caters to your needs. By offering a curated selection of high-quality games, along with informative resources and personalized recommendations, we strive to foster a vibrant community of players and promote the social, cognitive, and entertainment benefits of board gaming.
 
 ## Technology stack:
-* HTML5
-* SCSS
-* TypeScript
-* Webpack
-* ESLint
-* Prettier
-* Husky
-* Jest
-* npm
+
+- HTML5
+- SCSS
+- TypeScript
+- Webpack
+- ESLint
+- Prettier
+- Husky
+- Jest
+- npm
+
+## Installation:
+
+- Clone the repository: `git clone https://github.com/vadim-mg/eCommerce-Application`
+- Install dependencies: `npm install`
+- Start the development server: `npm start`
