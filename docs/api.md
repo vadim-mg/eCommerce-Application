@@ -7,6 +7,7 @@
   - [TypeScript SDK Middlewares](https://docs.commercetools.com/sdk/js-sdk-middleware)
 
 ---
+
 ## Using API
 
 - [HTTP API documentation](https://docs.commercetools.com/api)

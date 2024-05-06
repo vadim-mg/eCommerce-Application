@@ -13,10 +13,10 @@
   - class names: in PascalCase (class MyClass)
   - interfaces: interface User (without I)
 - import in TS:
-  - import val1 from './script.ts';     // in same directory
-  - import val2 from '@Src/.....';      // in other directory in src
-  - import some from '@Assets/.....';   // from assets
-  - import picture1 from '@Img/.....';  // from assets/img
+  - import val1 from './script.ts'; // in same directory
+  - import val2 from '@Src/.....'; // in other directory in src
+  - import some from '@Assets/.....'; // from assets
+  - import picture1 from '@Img/.....'; // from assets/img
 
 ## environments: 
 for exclude all problems wit environments, we can use the same versions of node and npm 
@@ -28,4 +28,5 @@ for exclude all problems wit environments, we can use the same versions of node 
 
 also I for easy change versions I use [volta](https://docs.volta.sh/guide/getting-started)
 
-if it installen, needed versions will be readed from package.json and the same for everybody
+if it installed, needed versions will be read from package.json and the same for everybody
+
