@@ -13,8 +13,7 @@
   - class names: in PascalCase (class MyClass)
   - interfaces: interface User (without I)
 - import in TS:
-  - import val1 from './script.ts';     // in same directory
-  - import val2 from '@Src/.....';      // in other directory in src
-  - import some from '@Assets/.....';   // from assets
-  - import picture1 from '@Img/.....';  // from assets/img
-
+  - import val1 from './script.ts'; // in same directory
+  - import val2 from '@Src/.....'; // in other directory in src
+  - import some from '@Assets/.....'; // from assets
+  - import picture1 from '@Img/.....'; // from assets/img
