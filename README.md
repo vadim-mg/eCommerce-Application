@@ -28,15 +28,15 @@ The purpose of Dice & Meeple is to provide a convenient and immersive shopping e
 
 ## Technology stack:
 
-- HTML5
-- SCSS
-- TypeScript
-- Webpack
-- ESLint
-- Prettier
-- Husky
-- Jest
-- npm
+- **HTML5**: Used for structuring the project's web pages.
+- **SCSS**: Utilized for styling the project's user interface, providing a more organized and maintainable approach to CSS.
+- **TypeScript**: A statically typed superset of JavaScript, enhancing code quality and developer productivity.
+- **Webpack**: A module bundler used to bundle JavaScript files for usage in a browser, along with other assets such as stylesheets and images.
+- **ESLint**: A tool for identifying and reporting on patterns found in JavaScript/TypeScript code, ensuring consistent code style and detecting potential errors.
+- **Prettier**: A code formatter that helps maintain consistent code style across the project, improving readability and reducing code review friction.
+- **Husky**: A tool used for adding Git hooks to the project, allowing for automated tasks to be executed before commits are made, such as code formatting and linting.
+- **Jest**: A JavaScript testing framework used for unit testing the project's codebase, ensuring functionality and reliability.
+- **npm**: The package manager for JavaScript, used for managing project dependencies and running scripts.
 
 ## Installation:
 
