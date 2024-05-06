@@ -43,3 +43,53 @@ The purpose of Dice & Meeple is to provide a convenient and immersive shopping e
 - Clone the repository: `git clone https://github.com/vadim-mg/eCommerce-Application`
 - Install dependencies: `npm install`
 - Start the development server: `npm start`
+
+## Available Scripts
+
+### `test`
+```bash
+npm run test
+```
+Runs the project's test suite.
+
+### `build:prod`
+```bash
+npm run build:prod
+```
+Builds the project for production environment using webpack.
+
+### `build:dev`
+```bash
+npm run build:dev
+```
+Builds the project for development environment using webpack.
+
+### `start`
+```bash
+npm run start
+```
+Starts the development server using webpack.
+
+### `format`
+```bash
+npm run format
+```
+Formats all files in the project using Prettier.
+
+### `ci:format`
+```bash
+npm run ci:format
+```
+Checks if all files are formatted correctly using Prettier.
+
+### `lint`
+```bash
+npm run lint
+```
+Lints all TypeScript files in the src directory using ESLint.
+
+### `prepare`
+```bash
+npm run prepare
+```
+Runs Husky's prepare script.
