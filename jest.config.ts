@@ -6,6 +6,8 @@
 import type { Config } from 'jest';
 
 const config: Config = {
+  verbose: true,
+
   // Automatically clear mock calls, instances, contexts and results before every test
   clearMocks: true,
 
@@ -23,6 +25,12 @@ const config: Config = {
 
   // The test environment that will be used for testing
   testEnvironment: 'jsdom',
+
+  moduleNameMapper: {
+    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
+      '<rootDir>/src/__mocks__/file-mock.ts',
+    '\\.(scss|css|less)$': '<rootDir>/src/__mocks__/style-mock.ts',
+  },
 };
 
 export default config;
