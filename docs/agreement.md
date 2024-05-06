@@ -18,15 +18,15 @@
   - import some from '@Assets/.....'; // from assets
   - import picture1 from '@Img/.....'; // from assets/img
 
-## environments: 
-for exclude all problems wit environments, we can use the same versions of node and npm 
+## environments:
+
+For exclude all problems wit environments, we can use the same versions of node and npm
 
 (At the moment I use
-  node -v => v20.12.2
-  npm -v => 10.5.0
+node -v => v20.12.2
+npm -v => 10.5.0
 )
 
-also I for easy change versions I use [volta](https://docs.volta.sh/guide/getting-started)
+Also I for easy change versions I use [volta](https://docs.volta.sh/guide/getting-started)
 
-if it installed, needed versions will be read from package.json and the same for everybody
-
+If it installed, needed versions will be read from package.json and the same for everybody
