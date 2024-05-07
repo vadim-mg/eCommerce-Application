@@ -1,3 +1,4 @@
+import path from 'path';
 import { resolve as _resolve } from 'path';
 import { merge } from 'webpack-merge';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
@@ -31,6 +32,7 @@ const baseConfig = (isProd: boolean) => ({
     new HtmlWebpackPlugin({
       template: _resolve(__dirname, 'src', 'index.html'),
       filename: 'index.html',
+      favicon: path.resolve(__dirname, './src/assets/icons/favicon.svg'),
     }),
     new EslintPlugin({ extensions: ['ts'] }),
     new MiniCssExtractPlugin({
