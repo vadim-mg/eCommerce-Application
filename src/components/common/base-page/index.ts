@@ -13,7 +13,7 @@ export default class BasePage {
     this.container = new Container({ tag: props.containerTag });
   }
 
-  // this method clear document.body and append container created by constructor
+  // this method render page (clear document.body and append container created by constructor)
   render() {
     document.body.innerHTML = '';
     document.body.classList.remove(...document.body.classList);
