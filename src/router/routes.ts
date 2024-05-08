@@ -28,4 +28,7 @@ const ROUTES = {
   },
 };
 
+export type PageRoute = typeof ROUTES;
+export type PageRouteKey = keyof PageRoute;
+
 export default ROUTES;

@@ -1,8 +1,6 @@
 import BasePage from '@Src/components/common/base-page';
-import ROUTES from './routes';
+import ROUTES, { PageRoute, PageRouteKey } from './routes';
 
-type PageRoute = typeof ROUTES;
-type PageRouteKey = keyof PageRoute;
 export default class Router {
   #currentRoutePath: PageRouteKey;
 
@@ -10,15 +8,28 @@ export default class Router {
 
   #list: PageRoute;
 
-  constructor() {
+  static #instance: Router | null;
+
+  private constructor() {
     this.#currentRoutePath = window.location.pathname.slice(1) as PageRouteKey;
     this.#list = ROUTES;
     this.addPopStateEventListener();
+    window.history.replaceState(this.#currentRoutePath, '', document.location.href);
   }
 
+  // Router can be used in any part of App as a singleton
+  static getInstance = () => {
+    if (!Router.#instance) {
+      Router.#instance = new Router();
+    }
+    return Router.#instance;
+  };
+
   addPopStateEventListener = () => {
-    window.addEventListener('popstate', () => {
-      this.route(window.location.pathname.slice(1) as PageRouteKey, false);
+    window.addEventListener('popstate', (event) => {
+      if (event.state) {
+        this.route(window.location.pathname.slice(1) as PageRouteKey, true);
+      }
     });
   };
 
@@ -33,10 +44,12 @@ export default class Router {
 
     if (needChangeHistory) {
       const pageName = `${this.#currentRoutePath} page`;
-      window.history.pushState(null, pageName, `${this.#currentRoutePath}`);
+      window.history.pushState(this.#currentRoutePath, '', `${this.#currentRoutePath}`);
       document.title = pageName;
     }
   };
+
+  static isRouteExist = (route: string) => !!ROUTES[route as PageRouteKey];
 
   // return list of routes
   list = () =>

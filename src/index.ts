@@ -1,5 +1,5 @@
 import Router from './router';
 import '@Src/styles/style.module.scss';
 
-const router = new Router();
+const router = Router.getInstance();
 router.route();
