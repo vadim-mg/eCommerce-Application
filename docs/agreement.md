@@ -10,7 +10,7 @@
   - file names: in lower case (build-client.ts)
   - directory names: in lower case
   - ts naming: in camelCase (const userName="Vadim")
-  - class names: in PascalCase (class MyClass)
+  - class names: in PascalCase (class MyClass) - for class methods use arrow functions
   - interfaces: interface User (without I)
 - import in TS:
   - import val1 from './script.ts'; // in same directory
