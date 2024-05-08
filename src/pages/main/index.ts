@@ -23,6 +23,7 @@ export default class MainPage extends BasePage {
       new Link({ text: 'login', href: 'login' }),
       new Link({ text: 'registration', href: 'registration' }),
       new Link({ text: 'rs.school', href: 'https://rs.school', target: '_blank' }),
+      new Link({ text: 'example', href: 'hiddenExample' }),
     );
   };
 
