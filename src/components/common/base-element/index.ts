@@ -13,6 +13,7 @@ export default class BaseElement<T extends HTMLElement> {
 
   /**
    * constructor creates Html Element with
+   * if element should have non standard properties or methods, it should extend BaseElement
    * @param props : ElementProps<T> - properties of html element
    * @param children : BaseElement<HTMLElement>[] - array child elements
    */
