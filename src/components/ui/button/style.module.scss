@@ -1,0 +1,71 @@
+@import '@Src/styles/variables.scss';
+
+.button {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-orange-main);
+  color: var(--color-white);
+  font-size: 1.75rem;
+  font-weight: 300;
+  line-height: 71%;
+  padding: 1rem 2.75rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+
+  &:disabled {
+    background-color: var(--color-grey-light);
+    color: var(--color-white);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--color-orange-light);
+    }
+  }
+  &:active {
+    background: var(--color-orange-light);
+  }
+
+  .icon {
+    height: 1.5rem;
+    margin-right: 0.625rem;
+  }
+
+  &:has(> .icon) {
+    padding: 0.872rem 2rem;
+  }
+}
+.small {
+  font-size: 1.25rem;
+  padding: 0.75rem 1.75rem;
+
+  .icon {
+    height: 1.25rem;
+    margin-right: 0.5rem;
+  }
+
+  &:has(> .icon) {
+    padding: 0.57rem 2rem;
+  }
+}
+.category {
+  background: var(--color-orange-extra-light);
+  font-size: 1.25rem;
+  line-height: 100%;
+  padding: 0.5rem 1rem;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--color-orange-light);
+    }
+  }
+  &:active {
+    background: var(--color-orange-light);
+  }
+
+  .current {
+    background-color: var(--color-grey-light);
+    color: var(--color-white);
+  }
+}

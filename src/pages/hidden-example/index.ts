@@ -2,9 +2,12 @@ import BaseElement from '@Src/components/common/base-element';
 import BasePage from '@Src/components/common/base-page';
 import tag from '@Src/components/common/tag';
 
+import Button from '@Src/components/ui/button';
+
 // imports pictures for example
 import imageBoard from '@Img/board-game-example-image.webp';
 import imageSvg from '@Assets/icons/favicon.svg';
+import basketSvg from '@Assets/icons/basket.svg';
 
 // import api for example
 import categoriesApi from '@Src/api/categories';
@@ -37,6 +40,10 @@ export default class HiddenExamplePage extends BasePage {
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'two' }),
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'three', title: 'dfdfd' }),
       ),
+      new Button({ text: 'Buy', class: ['small'] }, () => console.log('Click!'), basketSvg),
+      new Button({ text: 'Category', class: ['category'] }, () => console.log('Click!')),
+      new Button({ text: 'Button' }, () => console.log('Click!')),
+      new Button({ text: 'Button' }, () => console.log('Click!'), basketSvg),
 
       // more short variant, use function Tag. Result is equivalent!
       tag({ tag: 'h1', text: 'Hello' }),
