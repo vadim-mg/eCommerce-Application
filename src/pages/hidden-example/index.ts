@@ -1,6 +1,7 @@
 import BaseElement from '@Src/components/common/base-element';
 import BasePage from '@Src/components/common/base-page';
 import tag from '@Src/components/common/tag';
+import CheckBox from '@Src/components/ui/checkbox';
 
 // imports pictures for example
 import imageBoard from '@Img/board-game-example-image.webp';
@@ -53,6 +54,7 @@ export default class HiddenExamplePage extends BasePage {
       tag({ tag: 'div', text: 'example2 - google font', class: classes.example3 }),
       tag<HTMLImageElement>({ tag: 'img', src: imageBoard, class: classes.example2 }),
       tag<HTMLImageElement>({ tag: 'img', src: imageSvg, class: classes.imageExample }),
+      new CheckBox({}, 'example', 'example'),
     );
   };
 
