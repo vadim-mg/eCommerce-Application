@@ -40,10 +40,10 @@ export default class HiddenExamplePage extends BasePage {
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'two' }),
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'three', title: 'dfdfd' }),
       ),
-      new Button({ text: 'Buy', class: ['small'] }, () => console.log('Click!'), basketSvg),
+      new Button({ text: 'Buy' }, () => console.log('Click!'), basketSvg),
       new Button({ text: 'Category', class: ['category'] }, () => console.log('Click!')),
-      new Button({ text: 'Button' }, () => console.log('Click!')),
-      new Button({ text: 'Button' }, () => console.log('Click!'), basketSvg),
+      new Button({ text: 'Button', class: ['big'] }, () => console.log('Click!')),
+      new Button({ text: 'Button', class: ['big'] }, () => console.log('Click!'), basketSvg),
 
       // more short variant, use function Tag. Result is equivalent!
       tag({ tag: 'h1', text: 'Hello' }),
