@@ -1,7 +1,7 @@
 import HiddenExamplePage from '@Src/pages/hidden-example';
 import LoginPage from '@Src/pages/login';
 import MainPage from '@Src/pages/main';
-import RegisterPage from '@Src/pages/register';
+import RegistrationPage from '@Src/pages/registration';
 
 const ROUTES = {
   login: {
@@ -9,9 +9,9 @@ const ROUTES = {
     pageConstructor: LoginPage,
     protected: false,
   },
-  register: {
+  registration: {
     name: 'Register',
-    pageConstructor: RegisterPage,
+    pageConstructor: RegistrationPage,
     protected: false,
   },
   main: {
