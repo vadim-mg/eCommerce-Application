@@ -14,13 +14,17 @@ export default class CheckBox extends BaseElement<HTMLElement> {
   #createContent = (textContent: string, value: string) => {
     this.inputElem = new BaseElement<HTMLInputElement>({
       tag: 'input',
-      class: 'checkbox-input',
+      class: classes.checkboxInput,
       type: 'checkbox',
       name: value,
       id: value,
     });
 
-    this.labelElem = new BaseElement<HTMLLabelElement>({ tag: 'label', text: textContent });
+    this.labelElem = new BaseElement<HTMLLabelElement>({
+      tag: 'label',
+      class: classes.checkboxLabel,
+      text: textContent,
+    });
     this.labelElem.node.setAttribute('for', value);
 
     this.node.append(this.inputElem.node);
