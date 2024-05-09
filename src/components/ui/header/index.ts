@@ -20,13 +20,13 @@ export default class Header extends BaseElement<HTMLElement> {
   #createContent = () => {
     this.logoNavigationWrapper = new BaseElement<HTMLDivElement>({
       tag: 'div',
-      class: '',
+      class: classes.logoNavigationWrapper,
     });
     this.createLogoNavigationContent();
 
     this.userActionsWrapper = new BaseElement<HTMLDivElement>({
       tag: 'div',
-      class: '',
+      class: classes.userActionsWrapper,
     });
 
     this.node.append(this.logoNavigationWrapper.node);
@@ -36,12 +36,13 @@ export default class Header extends BaseElement<HTMLElement> {
   createLogoNavigationContent = () => {
     const logoIcon = new BaseElement<HTMLImageElement>({
       tag: 'img',
+      class: classes.logoIcon,
       src: logoSvg,
     });
 
     this.navigationList = new BaseElement<HTMLUListElement>({
       tag: 'ul',
-      class: '',
+      class: classes.navigationList,
     });
     this.createListItems();
 

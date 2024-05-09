@@ -2,4 +2,61 @@
 
 .header {
   background-color: var(--color-black);
+  padding: 8px 36px;
+}
+
+.logo-icon {
+  width: 342px;
+  height: 79px;
+}
+
+.logo-navigation-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.user-actions-wrapper {
+  font-size: 1rem;
+}
+
+.navigation-list {
+  display: flex;
+  gap: 2rem;
+  color: var(--color-white);
+  list-style-type: none;
+}
+
+.navigation-list li {
+    position: relative;
+    padding-left: 1rem;
+    cursor: pointer;
+
+    &::before {
+        content: '';
+        display: block;
+        width: 6px;
+        height: 6px;
+        border-radius: 1px;
+        position: absolute;
+        top: 5.5px;
+        left: 0;
+        background-color: var(--color-white);
+        transform: rotate(45deg);
+    }
+
+    &:hover {
+        color: var(--color-orange-light);
+    }
+
+    &:active {
+        color: var(--color-orange-main);
+    }
+}
+
+.navigation-list li:hover::before {
+    background-color: var(--color-orange-light);
+}
+
+.navigation-list li:active::before {
+    background-color: var(--color-orange-main);
 }
