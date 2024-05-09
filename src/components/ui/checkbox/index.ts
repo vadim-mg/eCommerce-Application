@@ -18,6 +18,7 @@ export default class CheckBox extends BaseElement<HTMLElement> {
       type: 'checkbox',
       name: value,
       id: value,
+      checked: false,
     });
 
     this.labelElement = new BaseElement<HTMLLabelElement>({
@@ -30,4 +31,12 @@ export default class CheckBox extends BaseElement<HTMLElement> {
     this.node.append(this.inputElement.node);
     this.node.append(this.labelElement.node);
   };
+
+  set checked(value) {
+    this.inputElement.node.checked = value;
+  }
+
+  get checked() {
+    return this.inputElement.node.checked;
+  }
 }
