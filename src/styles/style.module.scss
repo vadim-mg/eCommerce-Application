@@ -9,8 +9,9 @@
 
 body {
   background-color: $color-green;
+  font-family: var(--font-main);
 }
 
 .red {
-  color: red;
+  color: var(--color-red-main);
 }
