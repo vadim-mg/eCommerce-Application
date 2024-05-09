@@ -2,6 +2,7 @@ import BaseElement from '@Src/components/common/base-element';
 import BasePage from '@Src/components/common/base-page';
 import tag from '@Src/components/common/tag';
 import CheckBox from '@Src/components/ui/checkbox';
+import Header from '@Src/components/ui/header';
 
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 
@@ -31,6 +32,7 @@ export default class HiddenExamplePage extends BasePage {
         tag: 'main',
         class: classes.hiddenExample,
       },
+      new Header({}),
 
       // variant1 use class BaseElement<T>
       new BaseElement<HTMLDivElement>({ tag: 'h1', text: 'Hello' }),
