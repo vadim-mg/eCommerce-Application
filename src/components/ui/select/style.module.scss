@@ -1,0 +1,24 @@
+.select {
+  // font-size: 2rem;
+  margin: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 129%;
+  letter-spacing: 0.02em;
+  color: var(--grey-dark);
+}
+
+.input {
+  border: 0.5px solid var(--grey-ligth);
+  border-radius: 8px;
+  width: 360px;
+  height: 44px;
+  padding: 0.75rem;
+}
