@@ -67,8 +67,13 @@ export default class Select extends BaseElement<HTMLSelectElement> {
       this.#input,
     );
 
-    inputWrapper.node.addEventListener('click', () => {
-      this.#input.node.showPicker();
+    inputWrapper.node.addEventListener('click', (event) => {
+      console.log(event.target);
+      const target = event.target as HTMLElement;
+      if (target.classList.contains(classes.select)) {
+        this.#input.node.showPicker();
+        // target.classList.add(classes.selectOpened);
+      }
     });
 
     if (this.#labelName.length) {

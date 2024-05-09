@@ -6,12 +6,11 @@
 }
 
 .label {
-  font-family: var(--font-family);
   font-weight: 400;
   font-size: 14px;
   line-height: 129%;
   letter-spacing: 0.02em;
-  color: var(--grey-dark);
+  color: var(--color-grey-dark);
 }
 
 .select {
@@ -34,6 +33,12 @@
   }
 }
 
+.select_opened {
+  &::after {
+    transform: rotate(180deg);
+  }
+}
+
 .selectInput {
   appearance: none;
   display: block;
@@ -43,18 +48,18 @@
   width: 100%;
   cursor: inherit;
 
-  border: 0.5px solid var(--grey-light);
+  border: 0.5px solid var(--color-grey-light);
   border-radius: 8px;
   width: 360px;
+  max-width: calc(100vw - 4rem);
   height: 44px;
   padding: 0.75rem;
 
-  font-family: var(--font-family);
   font-weight: 400;
   font-size: 16px;
   line-height: 125%;
   letter-spacing: 0.01em;
-  color: #c4c4c4;
+  color: var(--color-black);
   option {
     height: 44px;
     max-width: 380px;
