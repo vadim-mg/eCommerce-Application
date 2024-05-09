@@ -104,12 +104,19 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     const error = callbackValidation();
     if (!error.status) {
       this.errorElement.node.innerHTML = error.errorText;
+      this.showError();
+    } else {
+      if (!this.isHiddenError()) {
+        this.hiddenError();
+      }
     }
   };
 
   clearInput = () => {
     this.inputElement.node.value = '';
   };
+
+  isHiddenError = () => this.errorElement.node.classList.contains(classes.hidden);
 
   showError = () => this.errorElement.node.classList.remove(classes.hidden);
 
