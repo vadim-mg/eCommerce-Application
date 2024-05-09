@@ -98,4 +98,6 @@ export default class InputText extends BaseElement<HTMLInputElement> {
   setDisabled = (state: boolean) => {
     this.inputElement.node.disabled = state;
   };
+
+  getValue = () => this.inputElement.node.value;
 }
