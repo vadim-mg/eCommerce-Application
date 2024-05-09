@@ -19,12 +19,6 @@
   cursor: pointer;
 }
 
-.basket-icon {
-    width: 37.5px;
-    height: 37.5px;
-    cursor: pointer;
-}
-
 .logo-navigation-wrapper {
   display: flex;
   align-items: center;
@@ -32,13 +26,27 @@
 
 .user-actions-wrapper {
   display: flex;
-  flex-direction: row;
   align-items: center;
+  gap: 3rem;
+}
+
+.button-container {
+  display: flex;
   gap: 2rem;
+}
+
+.basket {
+  cursor: pointer;
+}
+
+.basket-icon {
+  width: 37.5px;
+  height: 37.5px;
 }
 
 .navigation-list {
   display: flex;
+  flex-wrap: wrap;
   gap: 2rem;
   padding: 0;
   color: var(--color-white);

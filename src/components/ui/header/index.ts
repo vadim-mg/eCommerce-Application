@@ -13,9 +13,11 @@ export default class Header extends BaseElement<HTMLElement> {
 
   userActionsWrapper!: BaseElement<HTMLDivElement>;
 
+  buttonContainer!: BaseElement<HTMLDivElement>;
+
   navigationList!: BaseElement<HTMLUListElement>;
 
-  #isActiveUser: boolean = false;
+  #isLoginedUser: boolean = true;
 
   constructor(props: HeaderProps) {
     super({ tag: 'header', class: classes.header, ...props });
@@ -40,6 +42,11 @@ export default class Header extends BaseElement<HTMLElement> {
   };
 
   createUserActionsContent = () => {
+    this.createBasketElement();
+    this.createButtonContainer();
+  };
+
+  createBasketElement = () => {
     const basketIcon = new BaseElement<HTMLImageElement>({
       tag: 'img',
       class: classes.basketIcon,
@@ -48,19 +55,27 @@ export default class Header extends BaseElement<HTMLElement> {
     const basketElement = new BaseElement<HTMLDivElement>(
       {
         tag: 'div',
+        class: classes.basket,
       },
       basketIcon,
     );
     this.userActionsWrapper.node.append(basketElement.node);
-    if (this.#isActiveUser === false) {
+  };
+
+  createButtonContainer = () => {
+    this.buttonContainer = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.buttonContainer,
+    });
+    if (this.#isLoginedUser === false) {
       const loginButton = new Button({ text: 'Log in' }, ButtonClasses.NORMAL, () =>
         console.log('Click!'),
       );
       const signinButton = new Button({ text: 'Sign in' }, ButtonClasses.NORMAL, () =>
         console.log('Click!'),
       );
-      this.userActionsWrapper.node.append(loginButton.node);
-      this.userActionsWrapper.node.append(signinButton.node);
+      this.buttonContainer.node.append(loginButton.node);
+      this.buttonContainer.node.append(signinButton.node);
     } else {
       const userProfile = new BaseElement<HTMLImageElement>({
         tag: 'img',
@@ -70,9 +85,10 @@ export default class Header extends BaseElement<HTMLElement> {
       const logoutButton = new Button({ text: 'Log out' }, ButtonClasses.NORMAL, () =>
         console.log('Click!'),
       );
-      this.userActionsWrapper.node.append(userProfile.node);
-      this.userActionsWrapper.node.append(logoutButton.node);
+      this.buttonContainer.node.append(userProfile.node);
+      this.buttonContainer.node.append(logoutButton.node);
     }
+    this.userActionsWrapper.node.append(this.buttonContainer.node);
   };
 
   createLogoNavigationContent = () => {
