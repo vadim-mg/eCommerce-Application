@@ -100,4 +100,8 @@ export default class InputText extends BaseElement<HTMLInputElement> {
   };
 
   getValue = () => this.inputElement.node.value;
+
+  setValue = (value: string) => {
+    this.inputElement.node.value = value;
+  };
 }
