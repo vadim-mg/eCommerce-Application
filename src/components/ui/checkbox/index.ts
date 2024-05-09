@@ -2,9 +2,9 @@ import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 import classes from './style.module.scss';
 
 export default class CheckBox extends BaseElement<HTMLElement> {
-  inputElem!: BaseElement<HTMLInputElement>;
+  inputElement!: BaseElement<HTMLInputElement>;
 
-  labelElem!: BaseElement<HTMLLabelElement>;
+  labelElement!: BaseElement<HTMLLabelElement>;
 
   constructor(props: Omit<ElementProps<HTMLDivElement>, 'tag'>, labelText: string, value: string) {
     super({ tag: 'div', class: classes.checkboxWrapper, ...props });
@@ -12,7 +12,7 @@ export default class CheckBox extends BaseElement<HTMLElement> {
   }
 
   #createContent = (textContent: string, value: string) => {
-    this.inputElem = new BaseElement<HTMLInputElement>({
+    this.inputElement = new BaseElement<HTMLInputElement>({
       tag: 'input',
       class: classes.checkboxInput,
       type: 'checkbox',
@@ -20,14 +20,14 @@ export default class CheckBox extends BaseElement<HTMLElement> {
       id: value,
     });
 
-    this.labelElem = new BaseElement<HTMLLabelElement>({
+    this.labelElement = new BaseElement<HTMLLabelElement>({
       tag: 'label',
       class: classes.checkboxLabel,
       text: textContent,
     });
-    this.labelElem.node.setAttribute('for', value);
+    this.labelElement.node.setAttribute('for', value);
 
-    this.node.append(this.inputElem.node);
-    this.node.append(this.labelElem.node);
+    this.node.append(this.inputElement.node);
+    this.node.append(this.labelElement.node);
   };
 }
