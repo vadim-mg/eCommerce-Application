@@ -3,11 +3,26 @@
 .header {
   background-color: var(--color-black);
   padding: 0.5rem 2.25rem;
+  display: flex;
+  justify-content: space-between;
 }
 
 .logo-icon {
   width: 21.375rem;
   height: 4.937rem;
+  margin-right: 4rem;
+}
+
+.user-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  cursor: pointer;
+}
+
+.basket-icon {
+    width: 37.5px;
+    height: 37.5px;
+    cursor: pointer;
 }
 
 .logo-navigation-wrapper {
@@ -16,12 +31,16 @@
 }
 
 .user-actions-wrapper {
-  font-size: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
 }
 
 .navigation-list {
   display: flex;
   gap: 2rem;
+  padding: 0;
   color: var(--color-white);
   list-style-type: none;
 }
