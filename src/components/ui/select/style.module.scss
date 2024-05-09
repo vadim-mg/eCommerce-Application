@@ -1,5 +1,4 @@
-.select {
-  // font-size: 2rem;
+.component {
   margin: 2rem;
   display: flex;
   flex-direction: column;
@@ -15,10 +14,50 @@
   color: var(--grey-dark);
 }
 
-.input {
-  border: 0.5px solid var(--grey-ligth);
+.select {
+  // A reset of styles, including removing the default dropdown arrow
+  width: max-content;
+  position: relative;
+  &::after {
+    content: '';
+    border-radius: 8px;
+    background-image: url('./icon.svg');
+    background-size: 24px 24px;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    right: 0;
+    top: 0;
+    z-index: 1;
+  }
+}
+
+.selectInput {
+  appearance: none;
+  display: block;
+  z-index: 0;
+  outline: none;
+  margin: 0;
+  width: 100%;
+  cursor: inherit;
+
+  border: 0.5px solid var(--grey-light);
   border-radius: 8px;
   width: 360px;
   height: 44px;
   padding: 0.75rem;
+
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 125%;
+  letter-spacing: 0.01em;
+  color: #c4c4c4;
+  option {
+    height: 44px;
+    max-width: 380px;
+    padding: 2rem;
+  }
 }

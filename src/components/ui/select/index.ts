@@ -8,15 +8,33 @@ export default class Select extends BaseElement<HTMLSelectElement> {
 
   #input!: BaseElement<HTMLSelectElement>;
 
-  #options!: string[];
+  #options: string[];
 
   #onChangeCallback: ChangeCallback;
 
+  // if no need label set labelName=''
   constructor(labelName: string, list: string[], onChangeCallback: ChangeCallback) {
-    super({ tag: 'div', class: [classes.select] });
+    super({ tag: 'div', class: [classes.component] });
+    this.#options = list;
     this.#labelName = labelName;
     this.#onChangeCallback = onChangeCallback;
-    this.#newList(list);
+
+    this.#input = new BaseElement<HTMLSelectElement>(
+      {
+        tag: 'select',
+        class: classes.selectInput,
+      },
+      ...this.#options.map(
+        (optionName) =>
+          new BaseElement<HTMLOptionElement>({
+            tag: 'option',
+            value: optionName,
+            textContent: `${optionName}`,
+          }),
+      ),
+    );
+
+    this.#renderList();
     this.#addEventListener();
   }
 
@@ -38,30 +56,31 @@ export default class Select extends BaseElement<HTMLSelectElement> {
     this.#onChangeCallback(val);
   }
 
-  #newList(list: string[]): void {
+  #renderList(): void {
     this.node.innerHTML = '';
-    this.#options = list;
-    this.#input = new BaseElement<HTMLSelectElement>({
-      tag: 'select',
-      class: classes.input,
-    });
 
-    this.#options.forEach((val) => {
-      const option = new BaseElement<HTMLOptionElement>({
-        tag: 'option',
-        value: val,
-        textContent: `${val}`,
-      }).node;
-      this.#input.node.append(option);
-    });
-
-    this.node.append(
-      new BaseElement<HTMLLabelElement>({
-        tag: 'label',
-        text: this.#labelName,
-        class: classes.label,
-      }).node,
-      this.#input.node,
+    const inputWrapper = new BaseElement<HTMLLabelElement>(
+      {
+        tag: 'div',
+        class: classes.select,
+      },
+      this.#input,
     );
+
+    inputWrapper.node.addEventListener('click', () => {
+      this.#input.node.showPicker();
+    });
+
+    if (this.#labelName.length) {
+      this.node.append(
+        new BaseElement<HTMLLabelElement>({
+          tag: 'label',
+          text: this.#labelName,
+          class: classes.label,
+        }).node,
+      );
+    }
+
+    this.node.append(inputWrapper.node);
   }
 }

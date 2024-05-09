@@ -77,11 +77,21 @@ export default class HiddenExamplePage extends BasePage {
       .getCategories()
       .then((resp) => {
         const categoryList = resp.body.results.map((category) => category.name['en-GB']);
-        const selectCategory = new Select('Select category', categoryList, (selectedValue) => {
+
+        const selectCategory1 = new Select('Select category', categoryList, (selectedValue) => {
           console.log(`selected value: ${selectedValue}`);
         });
-        this.#content.node.append(selectCategory.node);
-        [selectCategory.selectedValue] = categoryList;
+        this.#content.node.append(selectCategory1.node);
+        const category1 = categoryList[0];
+        console.log(category1);
+        selectCategory1.selectedValue = category1;
+
+        const selectCategory2 = new Select('', categoryList, (selectedValue) => {
+          console.log(`selected value: ${selectedValue}`);
+        });
+        this.#content.node.append(selectCategory2.node);
+        const category2 = categoryList[2];
+        selectCategory2.selectedValue = category2;
 
         console.log('resp.body.results');
         console.log(resp.body.results);
