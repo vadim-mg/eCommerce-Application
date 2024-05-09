@@ -27,15 +27,18 @@ export default class InputText extends BaseElement<HTMLInputElement> {
   constructor(
     required: boolean,
     name: string,
-    callbackValidation?: CallbackValidation,
     placeholder?: string,
     pattern?: string,
     labelText?: string,
+    callbackValidation?: CallbackValidation,
   ) {
     super({ tag: 'div', class: classes.wrapper });
     this.#createContent(required, name, placeholder, pattern, labelText);
     if (callbackValidation) {
-      this.inputElement.node.addEventListener("change", this.#validate.bind(this, callbackValidation));
+      this.inputElement.node.addEventListener(
+        'change',
+        this.#validate.bind(this, callbackValidation),
+      );
     }
   }
 
@@ -102,7 +105,6 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     if (!error.status) {
       this.errorElement.node.innerHTML = error.errorText;
     }
-
   };
 
   clearInput = () => {
