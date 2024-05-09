@@ -14,22 +14,19 @@ export default class Button extends BaseElement<HTMLButtonElement> {
     this.#onClickCb = onClickCb;
     this.node.classList.add(classes.button);
     this.node.addEventListener('click', this.onClickHandler);
-    if (Array.isArray(props.class)) {
-      props.class.forEach((modifier) => {
-        if (classes[modifier]) {
-          this.node.classList.add(classes[modifier]);
-        }
-      });
-    }
     if (iconPath) {
-      const icon = new BaseElement<HTMLImageElement>({
-        tag: 'img',
-        src: iconPath,
-        class: classes.icon,
-      });
-      this.node.prepend(icon.node);
+      this.#addIcon(iconPath);
     }
   }
+
+  #addIcon = (iconPath: string) => {
+    const icon = new BaseElement<HTMLImageElement>({
+      tag: 'img',
+      src: iconPath,
+      class: classes.icon,
+    });
+    this.node.prepend(icon.node);
+  };
 
   onClickHandler = (event: Event) => {
     this.#onClickCb(event);

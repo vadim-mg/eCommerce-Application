@@ -13,6 +13,7 @@ import basketSvg from '@Assets/icons/basket.svg';
 import categoriesApi from '@Src/api/categories';
 
 import classes from './style.module.scss';
+import buttonClasses from '../../components/ui/button/style.module.scss';
 
 export default class HiddenExamplePage extends BasePage {
   #content!: BaseElement<HTMLDivElement>;
@@ -41,9 +42,15 @@ export default class HiddenExamplePage extends BasePage {
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'three', title: 'dfdfd' }),
       ),
       new Button({ text: 'Buy' }, () => console.log('Click!'), basketSvg),
-      new Button({ text: 'Category', class: ['category'] }, () => console.log('Click!')),
-      new Button({ text: 'Button', class: ['big'] }, () => console.log('Click!')),
-      new Button({ text: 'Button', class: ['big'] }, () => console.log('Click!'), basketSvg),
+      new Button({ text: 'Category', class: [buttonClasses.category] }, () =>
+        console.log('Click!'),
+      ),
+      new Button({ text: 'Button', class: [buttonClasses.big] }, () => console.log('Click!')),
+      new Button(
+        { text: 'Button', class: [buttonClasses.big] },
+        () => console.log('Click!'),
+        basketSvg,
+      ),
 
       // more short variant, use function Tag. Result is equivalent!
       tag({ tag: 'h1', text: 'Hello' }),
