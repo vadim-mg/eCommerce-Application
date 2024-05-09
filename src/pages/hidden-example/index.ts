@@ -4,6 +4,7 @@ import tag from '@Src/components/common/tag';
 import CheckBox from '@Src/components/ui/checkbox';
 
 import Button, { ButtonClasses } from '@Src/components/ui/button';
+import InputText, { InputsPatterns } from '@Src/components/ui/input-text';
 
 // imports pictures for example
 import imageBoard from '@Img/board-game-example-image.webp';
@@ -50,6 +51,8 @@ export default class HiddenExamplePage extends BasePage {
       ),
       new Button({ text: 'Button' }, ButtonClasses.BIG, () => console.log('Click!')),
       new Button({ text: 'Button' }, ButtonClasses.BIG, () => console.log('Click!'), basketSvg),
+      new InputText(false, 'test', 'placeholder', InputsPatterns.TEXT, 'Label'),
+      new InputText(false, 'test', 'placeholder', InputsPatterns.TEXT),
 
       // more short variant, use function Tag. Result is equivalent!
       tag({ tag: 'h1', text: 'Hello' }),

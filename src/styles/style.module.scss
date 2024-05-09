@@ -8,8 +8,9 @@
 @import './variables.scss';
 
 body {
-  background-color: $color-green;
+  background-color: var(--color-grey-light);
   font-family: var(--font-main);
+  color: var(--color-black);
 }
 
 .red {
