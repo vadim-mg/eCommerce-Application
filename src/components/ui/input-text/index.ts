@@ -105,10 +105,8 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     if (!error.status) {
       this.errorElement.node.innerHTML = error.errorText;
       this.showError();
-    } else {
-      if (!this.isHiddenError()) {
-        this.hiddenError();
-      }
+    } else if (!this.isHiddenError()) {
+      this.hiddenError();
     }
   };
 
