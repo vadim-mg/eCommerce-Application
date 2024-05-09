@@ -2,29 +2,47 @@ import BaseElement, { ElementProps, Callback } from '@Src/components/common/base
 
 import classes from './style.module.scss';
 
+export enum ButtonClasses {
+  NORMAL = 'normal',
+  BIG = 'big',
+  CATEGORY = 'category',
+  CURRENT_CATEGORY = 'current',
+}
+
+type ButtonProps = Omit<ElementProps<HTMLButtonElement>, 'tag'>;
+
 export default class Button extends BaseElement<HTMLButtonElement> {
   #onClickCb: Callback;
 
   constructor(
-    props: Omit<ElementProps<HTMLButtonElement>, 'tag'>,
+    props: ButtonProps,
+    buttonClass: ButtonClasses | ButtonClasses[],
     onClickCb: (event: Event) => void,
     iconPath?: string,
   ) {
     super({ tag: 'button', ...props });
     this.#onClickCb = onClickCb;
-    this.node.classList.add(classes.button);
     this.node.addEventListener('click', this.onClickHandler);
+    this.#addClasses(buttonClass);
     if (iconPath) {
       this.#addIcon(iconPath);
     }
   }
 
+  #addClasses = (buttonClass: ButtonClasses | ButtonClasses[]) => {
+    if (Array.isArray(buttonClass)) {
+      buttonClass.forEach((className) => this.node.classList.add(classes[className]));
+    } else {
+      this.node.classList.add(classes[buttonClass]);
+    }
+  };
+
   #addIcon = (iconPath: string) => {
     const icon = new BaseElement<HTMLImageElement>({
       tag: 'img',
       src: iconPath,
-      class: classes.icon,
     });
+    icon.node.classList.add(classes.icon);
     this.node.prepend(icon.node);
   };
 

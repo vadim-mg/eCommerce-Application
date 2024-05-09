@@ -2,7 +2,7 @@ import BaseElement from '@Src/components/common/base-element';
 import BasePage from '@Src/components/common/base-page';
 import tag from '@Src/components/common/tag';
 
-import Button from '@Src/components/ui/button';
+import Button, { ButtonClasses } from '@Src/components/ui/button';
 
 // imports pictures for example
 import imageBoard from '@Img/board-game-example-image.webp';
@@ -13,7 +13,6 @@ import basketSvg from '@Assets/icons/basket.svg';
 import categoriesApi from '@Src/api/categories';
 
 import classes from './style.module.scss';
-import buttonClasses from '../../components/ui/button/style.module.scss';
 
 export default class HiddenExamplePage extends BasePage {
   #content!: BaseElement<HTMLDivElement>;
@@ -41,16 +40,15 @@ export default class HiddenExamplePage extends BasePage {
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'two' }),
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'three', title: 'dfdfd' }),
       ),
-      new Button({ text: 'Buy' }, () => console.log('Click!'), basketSvg),
-      new Button({ text: 'Category', class: [buttonClasses.category] }, () =>
-        console.log('Click!'),
-      ),
-      new Button({ text: 'Button', class: [buttonClasses.big] }, () => console.log('Click!')),
+      new Button({ text: 'Buy' }, ButtonClasses.NORMAL, () => console.log('Click!'), basketSvg),
+      new Button({ text: 'Category' }, ButtonClasses.CATEGORY, () => console.log('Click!')),
       new Button(
-        { text: 'Button', class: [buttonClasses.big] },
+        { text: 'Category' },
+        [ButtonClasses.CURRENT_CATEGORY, ButtonClasses.CATEGORY],
         () => console.log('Click!'),
-        basketSvg,
       ),
+      new Button({ text: 'Button' }, ButtonClasses.BIG, () => console.log('Click!')),
+      new Button({ text: 'Button' }, ButtonClasses.BIG, () => console.log('Click!'), basketSvg),
 
       // more short variant, use function Tag. Result is equivalent!
       tag({ tag: 'h1', text: 'Hello' }),

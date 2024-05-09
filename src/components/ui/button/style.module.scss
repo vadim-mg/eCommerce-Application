@@ -1,31 +1,34 @@
 @import '@Src/styles/variables.scss';
 
-.button {
+@mixin button {
   display: flex;
   align-items: center;
-  background-color: var(--color-orange-main);
   color: var(--color-white);
-  font-weight: 300;
-  line-height: 71%;
   border-radius: 0.5rem;
-  font-size: 1.25rem;
-  padding: 0.75rem 1.75rem;
   border: none;
   transition: background-color var(--transition-time);
   cursor: pointer;
-
   &:disabled {
     background-color: var(--color-grey-light);
-    color: var(--color-white);
+    pointer-events: none;
   }
+}
 
+.normal {
+  @include button;
+  background-color: var(--color-orange-main);
+  font-weight: 300;
+  line-height: 71%;
+  font-size: 1.25rem;
+  padding: 0.75rem 1.75rem;
+
+  &:active {
+    background: var(--color-orange-light);
+  }
   @media (hover: hover) and (pointer: fine) {
     &:hover {
       background: var(--color-orange-light);
     }
-  }
-  &:active {
-    background: var(--color-orange-light);
   }
 
   .icon {
@@ -37,7 +40,10 @@
     padding: 0.57rem 2rem;
   }
 }
+
 .big {
+  @include button;
+  background-color: var(--color-orange-main);
   font-size: 1.75rem;
   padding: 1rem 2.75rem;
 
@@ -49,8 +55,18 @@
   &:has(> .icon) {
     padding: 0.872rem 2rem;
   }
+
+  &:active {
+    background: var(--color-orange-light);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--color-orange-light);
+    }
+  }
 }
 .category {
+  @include button;
   background: var(--color-orange-extra-light);
   font-size: 1.25rem;
   line-height: 100%;
@@ -65,8 +81,9 @@
     background: var(--color-orange-light);
   }
 
-  .current {
+  &.current {
     background-color: var(--color-grey-light);
     color: var(--color-white);
+    pointer-events: none;
   }
 }
