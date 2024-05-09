@@ -7,6 +7,12 @@ export enum InputsPatterns {
   PASSWORD = `/^(?=.*[a-zA-Z])(?=.*).{8,}$/`,
 }
 
+interface ValidationError {
+  status: boolean;
+  errorText: string;
+}
+type CallbackValidation = () => ValidationError;
+
 export default class InputText extends BaseElement<HTMLInputElement> {
   inputElement!: BaseElement<HTMLInputElement>;
 
@@ -21,12 +27,16 @@ export default class InputText extends BaseElement<HTMLInputElement> {
   constructor(
     required: boolean,
     name: string,
+    callbackValidation?: CallbackValidation,
     placeholder?: string,
     pattern?: string,
     labelText?: string,
   ) {
     super({ tag: 'div', class: classes.wrapper });
     this.#createContent(required, name, placeholder, pattern, labelText);
+    if (callbackValidation) {
+      this.inputElement.node.addEventListener("change", this.#validate.bind(this, callbackValidation));
+    }
   }
 
   #createContent = (
@@ -85,6 +95,14 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     this.clearButtonElement = new BaseElement({ tag: 'div', class: [classes.clear] });
     this.clearButtonElement.node.addEventListener('click', this.clearInput.bind(this));
     this.inputRow.node.append(this.clearButtonElement.node);
+  };
+
+  #validate = (callbackValidation: CallbackValidation) => {
+    const error = callbackValidation();
+    if (!error.status) {
+      this.errorElement.node.innerHTML = error.errorText;
+    }
+
   };
 
   clearInput = () => {
