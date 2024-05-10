@@ -1,6 +1,7 @@
 import Container from '@Src/components/ui/container';
 import BasePage from '../base-page';
 import classes from './style.module.scss';
+import BaseElement from '../base-element';
 
 type ContentPageProps = {
   title: string;
@@ -10,15 +11,21 @@ type ContentPageProps = {
 export default class ContentPage extends BasePage {
   protected container: Container;
 
+  header: BaseElement<HTMLDivElement>;
+
+  footer: BaseElement<HTMLDivElement>;
+
   constructor(props: ContentPageProps) {
     console.log(2);
     super({ title: props.title });
-    this.container = new Container({ tag: props.containerTag });
+    this.header = new BaseElement({ tag: 'header', text: 'header', class: classes.header });
+    this.container = new Container({ tag: props.containerTag, class: classes.content });
+    this.footer = new BaseElement({ tag: 'footer', text: 'footer', class: classes.footer });
   }
 
   render = () => {
     super.render();
     document.body.classList.add(classes.contentPage);
-    document.body.append(this.container.node);
+    document.body.append(this.header.node, this.container.node, this.footer.node);
   };
 }
