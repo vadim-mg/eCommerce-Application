@@ -21,7 +21,6 @@ export default class FormPage extends BasePage {
 
   render = () => {
     super.render();
-    document.body.classList.add(classes.formPage);
     document.body.append(this.container.node);
   };
 }
