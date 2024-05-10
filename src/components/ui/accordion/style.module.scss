@@ -1,0 +1,25 @@
+@import '@Src/styles/variables.scss';
+
+.accordion {
+  display: block;
+}
+.container {
+  display: block;
+  transition: height var(--transition-time);
+}
+.header {
+  display: block;
+  cursor: pointer;
+}
+.title {
+  display: block;
+}
+.arrow {
+  display: block;
+}
+.open .container {
+  height: max-content;
+}
+.close .container {
+  height: 0;
+}
