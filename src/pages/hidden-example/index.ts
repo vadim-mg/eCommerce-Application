@@ -43,39 +43,38 @@ export default class HiddenExamplePage extends ContentPage {
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'two' }),
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'three', title: 'dfdfd' }),
       ),
-      new Button({ text: 'Buy' }, ButtonClasses.NORMAL, () => console.log('Click!'), basketSvg),
-      new Button({ text: 'Category' }, ButtonClasses.CATEGORY, () => console.log('Click!')),
-      new Button(
-        { text: 'Category' },
-        [ButtonClasses.CURRENT_CATEGORY, ButtonClasses.CATEGORY],
-        () => console.log('Click!'),
-      ),
-      new Button({ text: 'Button' }, ButtonClasses.BIG, () => console.log('Click!')),
-      new Button({ text: 'Button' }, ButtonClasses.BIG, () => console.log('Click!'), basketSvg),
-      new InputText(
-        {
-          name: 'name',
-          placeholder: 'John',
-          maxLength: 20,
-          minLength: 2,
-        },
-        'Name',
-        function callback() {
-          return {
+      new BaseElement<HTMLElement>(
+        { tag: 'div', class: classes.elements },
+        new Button({ text: 'Buy' }, ButtonClasses.NORMAL, () => console.log('Click!'), basketSvg),
+        new Button({ text: 'Category' }, ButtonClasses.CATEGORY, () => console.log('Click!')),
+        new Button(
+          { text: 'Category' },
+          [ButtonClasses.CURRENT_CATEGORY, ButtonClasses.CATEGORY],
+          () => console.log('Click!'),
+        ),
+        new Button({ text: 'Button' }, ButtonClasses.BIG, () => console.log('Click!')),
+        new Button({ text: 'Button' }, ButtonClasses.BIG, () => console.log('Click!'), basketSvg),
+        new InputText(
+          {
+            name: 'name',
+            placeholder: 'John',
+            maxLength: 20,
+            minLength: 2,
+          },
+          'Name',
+          () => ({
             status: false,
             errorText: 'Error',
-          };
-        },
-      ),
-      new InputText(
-        { name: 'password', placeholder: '********', maxLength: 20, minLength: 8 },
-        'Password',
-        function callback() {
-          return {
+          }),
+        ),
+        new InputText(
+          { name: 'password', placeholder: '********', maxLength: 20, minLength: 8 },
+          'Password',
+          () => ({
             status: true,
             errorText: 'Error',
-          };
-        },
+          }),
+        ),
       ),
 
       // more short variant, use function Tag. Result is equivalent!
