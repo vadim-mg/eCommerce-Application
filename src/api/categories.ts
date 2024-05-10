@@ -5,8 +5,6 @@ const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
   projectKey: process.env.CTP_PROJECT_KEY,
 });
 
-const getCategories = () => {
-  return apiRoot.categories().get().execute();
-};
+const getCategories = () => apiRoot.categories().get().execute();
 
 export default { getCategories };
