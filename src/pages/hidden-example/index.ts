@@ -14,6 +14,7 @@ import basketSvg from '@Assets/icons/basket.svg';
 // import api for example
 import categoriesApi from '@Src/api/categories';
 
+import Select from '@Src/components/ui/select';
 import classes from './style.module.scss';
 
 export default class HiddenExamplePage extends BasePage {
@@ -101,12 +102,29 @@ export default class HiddenExamplePage extends BasePage {
     categoriesApi
       .getCategories()
       .then((resp) => {
+        const categoryList = resp.body.results.map((category) => category.name['en-GB']);
+
+        const selectCategory1 = new Select('Select category', categoryList, (selectedValue) => {
+          console.log(`selected value: ${selectedValue}`);
+        });
+        this.#content.node.append(selectCategory1.node);
+        const category1 = categoryList[0];
+        console.log(category1);
+        selectCategory1.selectedValue = category1;
+
+        const selectCategory2 = new Select('', categoryList, (selectedValue) => {
+          console.log(`selected value: ${selectedValue}`);
+        });
+        this.#content.node.append(selectCategory2.node);
+        const category2 = categoryList[2];
+        selectCategory2.selectedValue = category2;
+
         console.log('resp.body.results');
         console.log(resp.body.results);
         this.#content.node.append(
           tag({ tag: 'ul', text: `categories` }).node,
-          ...resp.body.results.map(
-            (category) => tag({ tag: 'li', text: `${category.name['en-GB']}` }).node,
+          ...categoryList.map(
+            (categoryName: string) => tag({ tag: 'li', text: `${categoryName}` }).node,
           ),
         );
       })
