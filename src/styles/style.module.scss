@@ -1,0 +1,18 @@
+// main global style for project's index.ts
+//*****************************************
+
+// styles for components write in components style.module.scss
+
+@import '~normalize.css/normalize.css';
+@import './fonts.scss';
+@import './variables.scss';
+
+body {
+  background-color: var(--color-grey-light);
+  font-family: var(--font-main);
+  color: var(--color-black);
+}
+
+.red {
+  color: var(--color-red-main);
+}
