@@ -43,9 +43,7 @@ export default class Router {
     this.#page.render();
 
     if (needChangeHistory) {
-      const pageName = `${this.#currentRoutePath} page`;
       window.history.pushState(this.#currentRoutePath, '', `${this.#currentRoutePath}`);
-      document.title = pageName;
     }
   };
 
