@@ -20,8 +20,27 @@ export default class LoginPage extends FormPage {
       { tag: 'main', class: classes.login },
       new BaseForm(
         { class: classes.loginForm },
-        new InputText(true, 'login', 'login'),
-        new InputText(true, 'password', 'password'),
+        new InputText(
+          {
+            name: 'name',
+            placeholder: 'John',
+            maxLength: 20,
+            minLength: 2,
+          },
+          'Name',
+          () => ({
+            status: false,
+            errorText: 'Error',
+          }),
+        ),
+        new InputText(
+          { name: 'password', placeholder: '********', maxLength: 20, minLength: 8 },
+          'Password',
+          () => ({
+            status: true,
+            errorText: 'Error',
+          }),
+        ),
         new Button({ text: 'Hello!!' }, [ButtonClasses.BIG], () => {
           console.log('login');
         }),
