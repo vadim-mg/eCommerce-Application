@@ -39,14 +39,13 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
   #addContent = (state: AccordionState, children: BaseElement<HTMLElement>[]) => {
     this.contentContainer = new Container({ tag: 'div', class: [classes.container] }, ...children);
     this.node.append(this.contentContainer.node);
-    // задержка на отрисовку эллементов
+    // element rendering delay
     setTimeout(() => {
       this.fullHeight = this.contentContainer.node.offsetHeight;
       console.log(`Высота: ${this.fullHeight}px`);
 
       this.#setDefaultState(state);
     }, 1);
-
   };
 
   #setDefaultState = (state: AccordionState) => {

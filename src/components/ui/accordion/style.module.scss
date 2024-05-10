@@ -6,21 +6,22 @@
 .container {
   display: block;
   overflow: hidden;
+  border: none;
   transition: all var(--transition-time);
 }
 .header {
   display: block;
+  font-size: 1.125rem;
+  color: var(--color-black);
+  padding: 0.75rem 0;
   cursor: pointer;
 }
 .title {
   display: block;
 }
-.arrow {
-  display: block;
+.open .header {
+  background: url('../../../assets/icons/arrow-top.svg') no-repeat right 1rem center;
 }
-.open .container {
-  display: block;
-}
-.close .container {
-  display: block;
+.closed .header {
+  background: url('../../../assets/icons/arrow-down.svg') no-repeat right 1rem center;
 }

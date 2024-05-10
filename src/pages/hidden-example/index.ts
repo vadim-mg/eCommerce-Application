@@ -78,8 +78,9 @@ export default class HiddenExamplePage extends ContentPage {
       ),
       new BaseElement<HTMLElement>(
         { tag: 'div', class: classes.columFlex },
+        new BaseElement({ tag: 'h2', textContent: 'Example accordion' }),
         new Accordion(
-          'Accordion',
+          'Closed default',
           AccordionState.CLOSED,
           new BaseElement({
             tag: 'p',
@@ -93,7 +94,7 @@ export default class HiddenExamplePage extends ContentPage {
           }),
         ),
         new Accordion(
-          'Accordion',
+          'Open default',
           AccordionState.OPEN,
           new BaseElement({
             tag: 'p',
