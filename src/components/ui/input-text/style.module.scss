@@ -10,6 +10,13 @@
 .inputRow {
   display: flex;
   position: relative;
+
+  .invalid {
+    .input {
+      border: 1px solid var(--color-red-main);
+      outline: none;
+    }
+  }
 }
 
 .label {
@@ -56,6 +63,12 @@
   }
 }
 
+.invalid {
+  .input {
+    border: 1px solid var(--color-red-main);
+    outline: none;
+  }
+}
 .errorText {
   color: var(--color-red-main);
   margin-top: 0.5rem;
