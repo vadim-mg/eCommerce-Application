@@ -1,5 +1,4 @@
 import BaseElement from '@Src/components/common/base-element';
-import BasePage from '@Src/components/common/base-page';
 import tag from '@Src/components/common/tag';
 import CheckBox from '@Src/components/ui/checkbox';
 
@@ -14,9 +13,10 @@ import basketSvg from '@Assets/icons/basket.svg';
 // import api for example
 import categoriesApi from '@Src/api/categories';
 
+import ContentPage from '@Src/components/common/content-page';
 import classes from './style.module.scss';
 
-export default class HiddenExamplePage extends BasePage {
+export default class HiddenExamplePage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
   constructor() {
