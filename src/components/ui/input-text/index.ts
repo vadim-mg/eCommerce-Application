@@ -1,17 +1,14 @@
-import BaseElement from '@Src/components/common/base-element';
+import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 
 import classes from './style.module.scss';
-
-export enum InputsPatterns {
-  TEXT = `/^[a-zA-Z]+(?:[-s]?[a-zA-Z]+)*$/`,
-  PASSWORD = `/^(?=.*[a-zA-Z])(?=.*).{8,}$/`,
-}
 
 interface ValidationError {
   status: boolean;
   errorText: string;
 }
 type CallbackValidation = () => ValidationError;
+
+type InputProps = Omit<ElementProps<HTMLInputElement>, 'tag'>;
 
 export default class InputText extends BaseElement<HTMLInputElement> {
   inputElement!: BaseElement<HTMLInputElement>;
@@ -25,51 +22,38 @@ export default class InputText extends BaseElement<HTMLInputElement> {
   labelElement?: BaseElement<HTMLLabelElement>;
 
   constructor(
-    required: boolean,
-    name: string,
-    placeholder?: string,
-    pattern?: string,
+    propsInput: InputProps,
     labelText?: string,
     callbackValidation?: CallbackValidation,
   ) {
     super({ tag: 'div', class: classes.wrapper });
-    this.#createContent(required, name, placeholder, pattern, labelText);
+    this.#createContent(propsInput, labelText);
     if (callbackValidation) {
       this.inputElement.node.addEventListener(
-        'change',
+        'input',
         this.#validate.bind(this, callbackValidation),
       );
     }
   }
 
-  #createContent = (
-    required: boolean,
-    name: string,
-    placeholder?: string,
-    pattern?: string,
-    labelText?: string,
-  ) => {
+  #createContent = (props: InputProps, labelText?: string) => {
     // if we want an input with a label
-    if (labelText) {
-      this.#addLabel(name, labelText);
+    if (labelText && props.name) {
+      this.#addLabel(props.name, labelText);
     }
-    this.#addInput(required, name, pattern, placeholder);
+    this.#addInput(props);
     this.#addClearButton();
     this.#addErrorElement();
   };
 
-  #addInput = (required: boolean, name: string, pattern?: string, placeholder?: string) => {
+  #addInput = (props: InputProps) => {
     this.inputRow = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.inputRow });
 
     this.inputElement = new BaseElement<HTMLInputElement>({
       tag: 'input',
-      class: classes.input,
       type: 'text',
-      name,
-      id: name,
-      placeholder,
-      required,
-      pattern,
+      class: classes.input,
+      ...props,
     });
     this.inputRow.node.append(this.inputElement.node);
     this.node.append(this.inputRow.node);
@@ -101,12 +85,25 @@ export default class InputText extends BaseElement<HTMLInputElement> {
   };
 
   #validate = (callbackValidation: CallbackValidation) => {
+    console.log('!');
     const error = callbackValidation();
     if (!error.status) {
       this.errorElement.node.innerHTML = error.errorText;
-      this.showError();
-    } else if (!this.isHiddenError()) {
-      this.hiddenError();
+      if (this.isHiddenError()) {
+        this.showError();
+      }
+      if (!this.inputRow.node.classList.contains(classes.invalid)) {
+        this.inputRow.node.classList.add(classes.invalid);
+      }
+      this.inputRow.node.classList.add(classes.invalid);
+    } else {
+      if (!this.isHiddenError()) {
+        this.hiddenError();
+      }
+      if (this.inputRow.node.classList.contains(classes.invalid)) {
+        console.log('&');
+        this.inputRow.node.classList.remove(classes.invalid);
+      }
     }
   };
 
