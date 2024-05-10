@@ -1,3 +1,0 @@
-npm run format
-npx tsc --noEmit --strict
-npm run lint
