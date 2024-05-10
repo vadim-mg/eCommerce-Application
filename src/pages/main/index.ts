@@ -1,10 +1,10 @@
 import BaseElement from '@Src/components/common/base-element';
-import BasePage from '@Src/components/common/base-page';
 import tag from '@Src/components/common/tag';
 import Link from '@Src/components/ui/link';
+import ContentPage from '@Src/components/common/content-page';
 import classes from './style.module.scss';
 
-export default class MainPage extends BasePage {
+export default class MainPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
   constructor() {

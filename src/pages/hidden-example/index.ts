@@ -1,10 +1,10 @@
 import BaseElement from '@Src/components/common/base-element';
-import BasePage from '@Src/components/common/base-page';
 import tag from '@Src/components/common/tag';
 import CheckBox from '@Src/components/ui/checkbox';
 import Header from '@Src/components/ui/header';
 
 import Button, { ButtonClasses } from '@Src/components/ui/button';
+import InputText from '@Src/components/ui/input-text';
 
 // imports pictures for example
 import imageBoard from '@Img/board-game-example-image.webp';
@@ -14,9 +14,11 @@ import basketSvg from '@Assets/icons/basket.svg';
 // import api for example
 import categoriesApi from '@Src/api/categories';
 
+import ContentPage from '@Src/components/common/content-page';
+import Select from '@Src/components/ui/select';
 import classes from './style.module.scss';
 
-export default class HiddenExamplePage extends BasePage {
+export default class HiddenExamplePage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
   constructor() {
@@ -43,15 +45,39 @@ export default class HiddenExamplePage extends BasePage {
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'two' }),
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'three', title: 'dfdfd' }),
       ),
-      new Button({ text: 'Buy' }, ButtonClasses.NORMAL, () => console.log('Click!'), basketSvg),
-      new Button({ text: 'Category' }, ButtonClasses.CATEGORY, () => console.log('Click!')),
-      new Button(
-        { text: 'Category' },
-        [ButtonClasses.CURRENT_CATEGORY, ButtonClasses.CATEGORY],
-        () => console.log('Click!'),
+      new BaseElement<HTMLElement>(
+        { tag: 'div', class: classes.elements },
+        new Button({ text: 'Buy' }, ButtonClasses.NORMAL, () => console.log('Click!'), basketSvg),
+        new Button({ text: 'Category' }, ButtonClasses.CATEGORY, () => console.log('Click!')),
+        new Button(
+          { text: 'Category' },
+          [ButtonClasses.CURRENT_CATEGORY, ButtonClasses.CATEGORY],
+          () => console.log('Click!'),
+        ),
+        new Button({ text: 'Button' }, ButtonClasses.BIG, () => console.log('Click!')),
+        new Button({ text: 'Button' }, ButtonClasses.BIG, () => console.log('Click!'), basketSvg),
+        new InputText(
+          {
+            name: 'name',
+            placeholder: 'John',
+            maxLength: 20,
+            minLength: 2,
+          },
+          'Name',
+          () => ({
+            status: false,
+            errorText: 'Error',
+          }),
+        ),
+        new InputText(
+          { name: 'password', placeholder: '********', maxLength: 20, minLength: 8 },
+          'Password',
+          () => ({
+            status: true,
+            errorText: 'Error',
+          }),
+        ),
       ),
-      new Button({ text: 'Button' }, ButtonClasses.BIG, () => console.log('Click!')),
-      new Button({ text: 'Button' }, ButtonClasses.BIG, () => console.log('Click!'), basketSvg),
 
       // more short variant, use function Tag. Result is equivalent!
       tag({ tag: 'h1', text: 'Hello' }),
@@ -77,12 +103,29 @@ export default class HiddenExamplePage extends BasePage {
     categoriesApi
       .getCategories()
       .then((resp) => {
+        const categoryList = resp.body.results.map((category) => category.name['en-GB']);
+
+        const selectCategory1 = new Select('Select category', categoryList, (selectedValue) => {
+          console.log(`selected value: ${selectedValue}`);
+        });
+        this.#content.node.append(selectCategory1.node);
+        const category1 = categoryList[0];
+        console.log(category1);
+        selectCategory1.selectedValue = category1;
+
+        const selectCategory2 = new Select('', categoryList, (selectedValue) => {
+          console.log(`selected value: ${selectedValue}`);
+        });
+        this.#content.node.append(selectCategory2.node);
+        const category2 = categoryList[2];
+        selectCategory2.selectedValue = category2;
+
         console.log('resp.body.results');
         console.log(resp.body.results);
         this.#content.node.append(
           tag({ tag: 'ul', text: `categories` }).node,
-          ...resp.body.results.map(
-            (category) => tag({ tag: 'li', text: `${category.name['en-GB']}` }).node,
+          ...categoryList.map(
+            (categoryName: string) => tag({ tag: 'li', text: `${categoryName}` }).node,
           ),
         );
       })

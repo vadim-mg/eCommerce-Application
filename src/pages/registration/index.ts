@@ -1,13 +1,13 @@
 import BaseElement from '@Src/components/common/base-element';
-import BasePage from '@Src/components/common/base-page';
 import tag from '@Src/components/common/tag';
+import FormPage from '@Src/components/common/form-page';
 import classes from './style.module.scss';
 
-export default class RegistrationPage extends BasePage {
+export default class RegistrationPage extends FormPage {
   #content: BaseElement<HTMLDivElement> | null;
 
   constructor() {
-    super({ containerTag: 'div', title: 'Registration page' });
+    super({ title: 'Registration page' });
     this.#content = null;
     this.#showContent();
   }
