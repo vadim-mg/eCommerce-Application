@@ -17,6 +17,8 @@ export default class Header extends BaseElement<HTMLElement> {
 
   navigationList!: BaseElement<HTMLUListElement>;
 
+  burgerButton!: BaseElement<HTMLDivElement>;
+
   #isLoginedUser: boolean = true;
 
   constructor(props: HeaderProps) {
@@ -37,8 +39,11 @@ export default class Header extends BaseElement<HTMLElement> {
     });
     this.createUserActionsContent();
 
+    this.createBurgerButton();
+
     this.node.append(this.logoNavigationWrapper.node);
     this.node.append(this.userActionsWrapper.node);
+    this.node.append(this.burgerButton.node);
   };
 
   createUserActionsContent = () => {
@@ -128,4 +133,21 @@ export default class Header extends BaseElement<HTMLElement> {
       i += 1;
     }
   };
+
+  createBurgerButton = () => {
+    this.burgerButton = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.burgerButton,
+    });
+
+    let i = 0;
+    while (i < 3) {
+      const burgerBtnLine = new BaseElement<HTMLDivElement>({
+        tag: 'div',
+        class: classes.burgerBtnLine,
+      });
+      this.burgerButton.node.append(burgerBtnLine.node);
+      i += 1;
+    }
+  }
 }

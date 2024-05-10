@@ -4,6 +4,7 @@
   background-color: var(--color-black);
   padding: 0.5rem 2.25rem;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   max-width: 100%;
@@ -27,6 +28,22 @@
   gap: 4rem;
 }
 
+@media (max-width: 620px) {
+  .logo-navigation-wrapper {
+    gap: 3%;
+  }
+  .header {
+    padding: 0.5rem 1rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .logo-navigation-wrapper {
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+}
+
 .user-actions-wrapper {
   display: flex;
   align-items: center;
@@ -45,8 +62,8 @@
 }
 
 .basket-icon {
-  width: 37.5px;
-  height: 37.5px;
+  width: 2.344rem;
+  height: 2.344rem;
 }
 
 .navigation-list {
@@ -105,4 +122,24 @@
 
 .navigation-list li:active::before {
   background-color: var(--color-orange-main);
+}
+
+.burger-button {
+  display: none;
+}
+
+.burger-btn-line {
+  width: 2.81rem;
+  height: 0.25rem;
+  background-color: var(--color-white);
+  border-radius: 0.313rem;
+}
+
+@media (max-width: 950px) {
+  .burger-button {
+    display: flex;
+    flex-direction: column;
+    gap: 0.594rem;
+    cursor: pointer;
+  }
 }
