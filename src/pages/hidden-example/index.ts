@@ -1,7 +1,6 @@
 import BaseElement from '@Src/components/common/base-element';
 import tag from '@Src/components/common/tag';
 import CheckBox from '@Src/components/ui/checkbox';
-import Header from '@Src/components/ui/header';
 
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
@@ -34,7 +33,6 @@ export default class HiddenExamplePage extends ContentPage {
         tag: 'main',
         class: classes.hiddenExample,
       },
-      new Header({}),
 
       // variant1 use class BaseElement<T>
       new BaseElement<HTMLDivElement>({ tag: 'h1', text: 'Hello' }),

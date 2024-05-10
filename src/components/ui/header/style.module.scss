@@ -5,12 +5,13 @@
   padding: 0.5rem 2.25rem;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  max-width: 100%;
 }
 
 .logo-icon {
   width: 21.375rem;
   height: 4.937rem;
-  margin-right: 4rem;
 }
 
 .user-icon {
@@ -22,6 +23,8 @@
 .logo-navigation-wrapper {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 4rem;
 }
 
 .user-actions-wrapper {
@@ -32,6 +35,8 @@
 
 .button-container {
   display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 2rem;
 }
 
@@ -51,6 +56,20 @@
   padding: 0;
   color: var(--color-white);
   list-style-type: none;
+}
+
+@media (max-width: 1170px) {
+  .navigation-list {
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+}
+
+@media (max-width: 950px) {
+  .navigation-list,
+  .button-container {
+    display: none;
+  }
 }
 
 .navigation-list li {
