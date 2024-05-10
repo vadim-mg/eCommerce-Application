@@ -5,7 +5,8 @@
 }
 .container {
   display: block;
-  transition: height var(--transition-time);
+  overflow: hidden;
+  transition: all var(--transition-time);
 }
 .header {
   display: block;
@@ -18,8 +19,8 @@
   display: block;
 }
 .open .container {
-  height: max-content;
+  display: block;
 }
 .close .container {
-  height: 0;
+  display: block;
 }

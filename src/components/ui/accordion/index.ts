@@ -8,49 +8,75 @@ export enum AccordionState {
   CLOSED,
 }
 
-export default class Accordion extends BaseElement<HTMLSelectElement> {
+export default class Accordion extends BaseElement<HTMLDivElement> {
   contentContainer!: Container;
 
-  arrowElement!: BaseElement<HTMLElement>;
+  fullHeight!: number;
 
-  header!: BaseElement<HTMLElement>;
+  isOpen: boolean = false;
 
   constructor(title: string, state: AccordionState, ...children: BaseElement<HTMLElement>[]) {
     super({ tag: 'div', class: [classes.accordion] });
-    this.#createAccordion(title, children);
-    this.#setDefaultState(state);
+    this.#createAccordion(state, title, children);
   }
 
-  #createAccordion(title: string, children: BaseElement<HTMLElement>[]) {
+  #createAccordion(state: AccordionState, title: string, children: BaseElement<HTMLElement>[]) {
     this.#addHeader(title);
-    this.#addContent(children);
+    this.#addContent(state, children);
   }
 
-  #addHeader(title: string) {
-    this.header = new BaseElement({ tag: 'div', class: [classes.header] });
+  #addHeader = (title: string) => {
+    const header = new BaseElement({ tag: 'div', class: [classes.header] });
     const titleText = new BaseElement({ tag: 'div', class: [classes.title], textContent: title });
-    this.header.node.append(titleText.node);
-    this.arrowElement = new BaseElement({ tag: 'div', class: [classes.arrow] });
-    this.header.node.addEventListener('click', this.#changeState.bind(this));
-    this.header.node.append(this.arrowElement.node);
-    this.node.append(this.header.node);
-  }
+    header.node.append(titleText.node);
+    this.node.append(header.node);
 
-  #addContent(children: BaseElement<HTMLElement>[]) {
+    header.node.addEventListener('click', () => {
+      this.#toggleAccordion();
+    });
+  };
+
+  #addContent = (state: AccordionState, children: BaseElement<HTMLElement>[]) => {
     this.contentContainer = new Container({ tag: 'div', class: [classes.container] }, ...children);
     this.node.append(this.contentContainer.node);
-  }
+    // задержка на отрисовку эллементов
+    setTimeout(() => {
+      this.fullHeight = this.contentContainer.node.offsetHeight;
+      console.log(`Высота: ${this.fullHeight}px`);
 
-  #setDefaultState(state: AccordionState) {
+      this.#setDefaultState(state);
+    }, 1);
+
+  };
+
+  #setDefaultState = (state: AccordionState) => {
     if (state === AccordionState.OPEN) {
+      this.isOpen = true;
       this.node.classList.add(classes.open);
+      this.#showContent();
     } else {
-      this.node.classList.add(classes.close);
+      this.isOpen = false;
+      this.node.classList.add(classes.closed);
+      this.#hiddenContent();
     }
-  }
+  };
 
-  #changeState() {
-    this.node.classList.toggle(classes.close);
+  #toggleAccordion = () => {
+    this.isOpen = !this.isOpen;
     this.node.classList.toggle(classes.open);
-  }
+    this.node.classList.toggle(classes.closed);
+    if (this.isOpen) {
+      this.#showContent();
+    } else {
+      this.#hiddenContent();
+    }
+  };
+
+  #showContent = () => {
+    this.contentContainer.node.style.height = `${this.fullHeight}px`;
+  };
+
+  #hiddenContent = () => {
+    this.contentContainer.node.style.height = '0';
+  };
 }
