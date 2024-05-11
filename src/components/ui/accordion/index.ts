@@ -47,11 +47,11 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
     );
     this.node.append(this.contentContainer.node);
     // element rendering delay
-    setTimeout(() => {
+    window.requestAnimationFrame(() => {
       this.fullHeight = this.contentWrapper.node.offsetHeight;
       this.#setDefaultState(state);
       console.log(children[1].node.offsetHeight);
-    }, 1);
+    });
   };
 
   #setDefaultState = (state: AccordionState) => {
@@ -89,6 +89,9 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
     window.addEventListener('resize', () => {
       this.fullHeight = this.contentWrapper.node.offsetHeight;
       console.log(this.fullHeight);
+      if (this.isOpen) {
+        this.#showContent();
+      }
     });
   };
 }
