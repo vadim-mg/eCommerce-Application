@@ -6,6 +6,7 @@
 .container {
   display: block;
   border: none;
+  overflow: hidden;
   transition: all var(--transition-time);
 }
 .header {
@@ -17,12 +18,6 @@
 }
 .title {
   display: block;
-}
-.open .container {
-  overflow: auto;
-}
-.closed .container {
-  overflow: hidden;
 }
 .open .header {
   background: url('../../../assets/icons/arrow-top.svg') no-repeat right 1rem center;
