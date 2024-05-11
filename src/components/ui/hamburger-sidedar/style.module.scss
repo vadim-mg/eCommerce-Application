@@ -1,8 +1,37 @@
+@import '@Src/styles/variables.scss';
+
 .sidebar {
+  position: fixed;
+  right: 0;
+  top: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100vh;
+  background-color: var(--color-black);
+  border: none;
+  z-index: 5;
+  transition: width var(--transition-time);
+
+  div {
+    border: none;
+  }
 }
 .wrapper {
+  position: relative;
+  padding: 2rem;
 }
 .closed {
+  width: 0;
 }
 .open {
+  width: 100%;
+}
+.cross {
+  position: absolute;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: url('./../../../assets/icons/cross.svg') no-repeat center;
+  right: 1rem;
+  top: 1rem;
+  z-index: 6;
 }

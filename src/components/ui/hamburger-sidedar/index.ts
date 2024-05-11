@@ -14,6 +14,9 @@ type DivProps = Omit<ElementProps<HTMLDivElement>, 'tag'>;
 export default class HamburgerSidebar extends BaseElement<HTMLElement> {
   closeElement!: BaseElement<HTMLElement>;
 
+  elementCalled!: HTMLElement;
+
+
   constructor(props: DivProps, ...children: BaseElement<HTMLElement>[]) {
     super({ tag: 'div', ...props });
     this.node.classList.add(classes.sidebar);
@@ -30,25 +33,16 @@ export default class HamburgerSidebar extends BaseElement<HTMLElement> {
   #addCloseButton = () => {
     this.closeElement = new BaseElement({ tag: 'div', class: classes.cross });
     this.node.append(this.closeElement.node);
-    this.closeElement.node.addEventListener('click', () => this.closeSidebar());
-  };
-
-  #closeOnOutside = (event: Event) => {
-    const target = event.target as HTMLElement;
-    if (target.closest(classes.sidebar)) {
-      this.closeSidebar();
-    }
+    this.closeElement.node.addEventListener('click', this.closeSidebar.bind(this));
   };
 
   closeSidebar = () => {
     this.node.classList.toggle(classes.open);
     this.node.classList.toggle(classes.closed);
-    window.removeEventListener('click', this.#closeOnOutside.bind(this));
   };
 
   openSidebar = () => {
     this.node.classList.toggle(classes.open);
     this.node.classList.toggle(classes.closed);
-    window.addEventListener('click', this.#closeOnOutside.bind(this));
   };
 }

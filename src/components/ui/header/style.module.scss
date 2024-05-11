@@ -75,9 +75,6 @@
   color: var(--color-white);
   list-style-type: none;
 }
-.mobile-menu {
-  border: none;
-}
 
 @media (max-width: 1170px) {
   .navigation-list {
@@ -149,5 +146,18 @@
     flex-direction: column;
     gap: 0.594rem;
     cursor: pointer;
+  }
+}
+
+.mobile-menu {
+  border: none;
+  ul {
+    display: flex;
+    flex-direction: column;
+    border: none;
+
+    li {
+      margin-bottom: 1rem;
+    }
   }
 }
