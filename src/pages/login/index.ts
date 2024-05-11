@@ -8,12 +8,45 @@ import classes from './style.module.scss';
 export default class LoginPage extends FormPage {
   #content: BaseElement<HTMLDivElement> | null;
 
+  form!: BaseForm;
+
   constructor() {
     console.log('1');
     super({ title: 'Login page' });
     this.#content = null;
-    this.#showContent();
+    // this.#showContent();
   }
+
+  renderForm(): Node {
+    this.form = new BaseForm(
+      { class: classes.loginForm },
+      new InputText(
+        {
+          name: 'name',
+          placeholder: 'John',
+          maxLength: 20,
+          minLength: 2,
+        },
+        'Name',
+        () => ({
+          status: false,
+          errorText: 'Error',
+        }),
+      ),
+      new InputText(
+        { name: 'password', placeholder: '********', maxLength: 20, minLength: 8 },
+        'Password',
+        () => ({
+          status: true,
+          errorText: 'Error',
+        }),
+      ),
+      new Button({ text: 'Hello!!' }, [ButtonClasses.BIG], () => {
+        console.log('login');
+      }),
+    )
+    return this.form.node;
+  };
 
   #showContent = () => {
     this.#content = new BaseElement<HTMLDivElement>(

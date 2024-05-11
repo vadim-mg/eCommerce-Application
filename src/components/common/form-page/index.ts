@@ -10,7 +10,7 @@ type FormProps = {
   title: string;
 };
 
-export default class FormPage extends BasePage {
+export default abstract class FormPage extends BasePage {
   protected container: Container;
 
   modalContainer!: BaseElement<HTMLDivElement>;
@@ -27,15 +27,21 @@ export default class FormPage extends BasePage {
     this.container = new Wrapper(
       { tag: 'div', class: classes.formPage },
       // new BaseElement({ tag: 'h1', text: props.title }),
-      // this.createBasicContent('Sorry! This is an invalid email address or password'),
+      this.#createBasicContent('Sorry! This is an invalid email address or password'),
     );
   }
 
-  createBasicContent = (errorText: string) => {
+  abstract renderForm():Node;
+
+  #createBasicContent = (errorText: string) => {
     this.logoComponent = new BaseElement<HTMLImageElement>({ tag: 'img', src: logoSvgLight });
     this.createErrorComponent(errorText);
     this.formWrapper = new BaseElement<HTMLDivElement>({ tag: 'div' });
-    this.modalContainer = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.modalContainer });
+    this.formWrapper.node.append(this.renderForm());
+    this.modalContainer = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.modalContainer,
+    });
 
     this.modalContainer.node.append(this.logoComponent.node);
     this.modalContainer.node.append(this.errorComponent.node);
@@ -44,11 +50,22 @@ export default class FormPage extends BasePage {
   };
 
   createErrorComponent = (errorText: string) => {
-    const errorIcon = new BaseElement<HTMLImageElement>({ tag: 'img', class: classes.errorIcon, src: errorSvg });
+    const errorIcon = new BaseElement<HTMLImageElement>({
+      tag: 'img',
+      class: classes.errorIcon,
+      src: errorSvg,
+    });
     const errorTextElement = new BaseElement<HTMLParagraphElement>({ tag: 'p', text: errorText });
-    this.errorComponent = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.errorComponent });
+    this.errorComponent = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.errorComponent,
+    });
     this.errorComponent.node.append(errorIcon.node);
     this.errorComponent.node.append(errorTextElement.node);
+  };
+
+  hideErrorComponent = () => {
+    this.errorComponent.node.hidden = true;
   }
 
   render = () => {
