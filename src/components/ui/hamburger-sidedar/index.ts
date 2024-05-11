@@ -16,7 +16,6 @@ export default class HamburgerSidebar extends BaseElement<HTMLElement> {
 
   elementCalled!: HTMLElement;
 
-
   constructor(props: DivProps, ...children: BaseElement<HTMLElement>[]) {
     super({ tag: 'div', ...props });
     this.node.classList.add(classes.sidebar);

@@ -15,21 +15,31 @@ interface StringKeyObject {
 
 export const LinkPath: StringKeyObject = {
   LOGIN: '/login',
+  LOGOUT: '/#',
+  SINGUP: '/singup',
   REGISTRATION: '/registration',
   HOME: '/main',
   CATALOGUE: '/catalogue',
   ABOUT: '/about',
 };
 
-const navItems: StringKeyObject = {
+const mainNavItems: StringKeyObject = {
   HOME: 'Home',
   CATALOGUE: 'Catalogue',
   ABOUT: 'About shop',
+
 };
 
-const createListLinks = (): BaseElement<HTMLUListElement> => {
+const sidebarNavItems: StringKeyObject = {
+  LOGOUT: 'Logout',
+  LOGIN: 'Login',
+  SINGUP: 'Sing in',
+  PROFILE: 'Profile'
+};
+
+const createListLinks = (obj: StringKeyObject): BaseElement<HTMLUListElement> => {
   const list = new BaseElement<HTMLUListElement>({ tag: 'ul', class: classes.navigationList });
-  const listLinksName = Object.keys(navItems);
+  const listLinksName = Object.keys(obj);
 
   listLinksName.forEach((name) => {
     const listItem = new BaseElement<HTMLLIElement>({
@@ -38,7 +48,7 @@ const createListLinks = (): BaseElement<HTMLUListElement> => {
     const link = new BaseElement<HTMLLinkElement>({
       tag: 'a',
       href: LinkPath[name],
-      textContent: navItems[name],
+      textContent: obj[name],
     });
     listItem.node.append(link.node);
     list.node.append(listItem.node);
@@ -147,7 +157,7 @@ export default class Header extends BaseElement<HTMLElement> {
       src: logoSvg,
     });
 
-    this.navigationList = createListLinks();
+    this.navigationList = createListLinks(mainNavItems);
 
     const navigation = new BaseElement<HTMLElement>(
       {
@@ -180,7 +190,8 @@ export default class Header extends BaseElement<HTMLElement> {
   };
 
   createBurgerMenu = () => {
-    this.navigationListBurger = createListLinks();
+    const burgerLinksName = Object.assign(mainNavItems, sidebarNavItems);
+    this.navigationListBurger = createListLinks(burgerLinksName);
     this.hamburgerSidebar = new HamburgerSidebar(
       { class: classes.mobileMenu },
       this.navigationListBurger,
