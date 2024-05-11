@@ -47,7 +47,6 @@ const createListLinks = (): BaseElement<HTMLUListElement> => {
   return list;
 };
 
-
 export default class Header extends BaseElement<HTMLElement> {
   logoNavigationWrapper!: BaseElement<HTMLDivElement>;
 
@@ -162,8 +161,6 @@ export default class Header extends BaseElement<HTMLElement> {
     this.logoNavigationWrapper.node.append(navigation.node);
   };
 
-
-
   createBurgerButton = () => {
     this.burgerButton = new BaseElement<HTMLDivElement>({
       tag: 'div',
@@ -184,8 +181,10 @@ export default class Header extends BaseElement<HTMLElement> {
 
   createBurgerMenu = () => {
     this.navigationListBurger = createListLinks();
-    this.hamburgerSidebar = new HamburgerSidebar({ class: classes.mobileMenu }, this.navigationListBurger);
+    this.hamburgerSidebar = new HamburgerSidebar(
+      { class: classes.mobileMenu },
+      this.navigationListBurger,
+    );
     this.node.append(this.hamburgerSidebar.node);
   };
 }
-
