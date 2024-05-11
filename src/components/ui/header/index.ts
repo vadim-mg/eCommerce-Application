@@ -5,8 +5,48 @@ import basketSvg from '@Assets/icons/basket.svg';
 import Button, { ButtonClasses } from '../button';
 
 import classes from './style.module.scss';
+import HamburgerSidebar from '../hamburger-sidedar';
 
 type HeaderProps = Omit<ElementProps<HTMLElement>, 'tag'>;
+
+interface StringKeyObject {
+  [key: string]: string;
+}
+
+export const LinkPath: StringKeyObject = {
+  LOGIN: '/login',
+  REGISTRATION: '/registration',
+  HOME: '/main',
+  CATALOGUE: '/catalogue',
+  ABOUT: '/about',
+};
+
+const navItems: StringKeyObject = {
+  HOME: 'Home',
+  CATALOGUE: 'Catalogue',
+  ABOUT: 'About shop',
+};
+
+const createListLinks = (): BaseElement<HTMLUListElement> => {
+  const list = new BaseElement<HTMLUListElement>({ tag: 'ul', class: classes.navigationList });
+  const listLinksName = Object.keys(navItems);
+
+  listLinksName.forEach((name) => {
+    const listItem = new BaseElement<HTMLLIElement>({
+      tag: 'li',
+    });
+    const link = new BaseElement<HTMLLinkElement>({
+      tag: 'a',
+      href: LinkPath[name],
+      textContent: navItems[name],
+    });
+    listItem.node.append(link.node);
+    list.node.append(listItem.node);
+  });
+
+  return list;
+};
+
 
 export default class Header extends BaseElement<HTMLElement> {
   logoNavigationWrapper!: BaseElement<HTMLDivElement>;
@@ -17,7 +57,11 @@ export default class Header extends BaseElement<HTMLElement> {
 
   navigationList!: BaseElement<HTMLUListElement>;
 
+  navigationListBurger!: BaseElement<HTMLUListElement>;
+
   burgerButton!: BaseElement<HTMLDivElement>;
+
+  hamburgerSidebar!: HamburgerSidebar;
 
   #isLoginedUser: boolean = true;
 
@@ -39,6 +83,7 @@ export default class Header extends BaseElement<HTMLElement> {
     });
     this.createUserActionsContent();
 
+    this.createBurgerMenu();
     this.createBurgerButton();
 
     this.node.append(this.logoNavigationWrapper.node);
@@ -103,11 +148,7 @@ export default class Header extends BaseElement<HTMLElement> {
       src: logoSvg,
     });
 
-    this.navigationList = new BaseElement<HTMLUListElement>({
-      tag: 'ul',
-      class: classes.navigationList,
-    });
-    this.createListItems();
+    this.navigationList = createListLinks();
 
     const navigation = new BaseElement<HTMLElement>(
       {
@@ -121,18 +162,7 @@ export default class Header extends BaseElement<HTMLElement> {
     this.logoNavigationWrapper.node.append(navigation.node);
   };
 
-  createListItems = () => {
-    let i = 0;
-    const itemNames = ['Home', 'Catalogue', 'About shop'];
-    while (i < 3) {
-      const listItem = new BaseElement<HTMLLIElement>({
-        tag: 'li',
-        textContent: itemNames[i],
-      });
-      this.navigationList.node.append(listItem.node);
-      i += 1;
-    }
-  };
+
 
   createBurgerButton = () => {
     this.burgerButton = new BaseElement<HTMLDivElement>({
@@ -149,5 +179,13 @@ export default class Header extends BaseElement<HTMLElement> {
       this.burgerButton.node.append(burgerBtnLine.node);
       i += 1;
     }
-  }
+    this.burgerButton.node.addEventListener('click', this.hamburgerSidebar.openSidebar);
+  };
+
+  createBurgerMenu = () => {
+    this.navigationListBurger = createListLinks();
+    this.hamburgerSidebar = new HamburgerSidebar({ class: classes.mobileMenu }, this.navigationListBurger);
+    this.node.append(this.hamburgerSidebar.node);
+  };
 }
+

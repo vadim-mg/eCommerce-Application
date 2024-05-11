@@ -42,8 +42,6 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
     // element rendering delay
     setTimeout(() => {
       this.fullHeight = this.contentContainer.node.offsetHeight;
-      console.log(`Высота: ${this.fullHeight}px`);
-
       this.#setDefaultState(state);
     }, 1);
   };
