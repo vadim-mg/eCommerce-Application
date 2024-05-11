@@ -14,6 +14,7 @@
 .logo-icon {
   width: 21.375rem;
   height: 4.937rem;
+  max-width: 100%;
 }
 
 .user-icon {
@@ -42,6 +43,7 @@
   .logo-navigation-wrapper {
     width: 100%;
     margin-bottom: 1.5rem;
+    justify-content: center;
   }
 }
 
