@@ -9,6 +9,10 @@
   overflow: hidden;
   transition: all var(--transition-time);
 }
+.wrapper {
+  display: block;
+  border: none;
+}
 .header {
   display: block;
   font-size: 1.125rem;
