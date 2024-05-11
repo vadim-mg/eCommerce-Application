@@ -44,9 +44,9 @@ export default class LoginPage extends FormPage {
       new Button({ text: 'Hello!!' }, [ButtonClasses.BIG], () => {
         console.log('login');
       }),
-    )
+    );
     return this.form.node;
-  };
+  }
 
   #showContent = () => {
     this.#content = new BaseElement<HTMLDivElement>(

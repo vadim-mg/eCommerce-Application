@@ -31,7 +31,7 @@ export default abstract class FormPage extends BasePage {
     );
   }
 
-  abstract renderForm():Node;
+  abstract renderForm(): Node;
 
   #createBasicContent = (errorText: string) => {
     this.logoComponent = new BaseElement<HTMLImageElement>({ tag: 'img', src: logoSvgLight });
@@ -66,7 +66,7 @@ export default abstract class FormPage extends BasePage {
 
   hideErrorComponent = () => {
     this.errorComponent.node.hidden = true;
-  }
+  };
 
   render = () => {
     super.render();

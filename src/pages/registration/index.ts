@@ -53,7 +53,7 @@ export default class RegistrationPage extends FormPage {
       new Button({ text: 'Hello!!' }, [ButtonClasses.BIG], () => {
         console.log('login');
       }),
-    )
+    );
     return this.form.node;
-  };
+  }
 }
