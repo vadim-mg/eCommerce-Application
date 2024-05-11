@@ -41,7 +41,10 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
 
   #addContent = (state: AccordionState, children: BaseElement<HTMLElement>[]) => {
     this.contentWrapper = new Container({ tag: 'div', class: [classes.wrapper] }, ...children);
-    this.contentContainer = new Container({ tag: 'div', class: [classes.container] }, this.contentWrapper);
+    this.contentContainer = new Container(
+      { tag: 'div', class: [classes.container] },
+      this.contentWrapper,
+    );
     this.node.append(this.contentContainer.node);
     // element rendering delay
     setTimeout(() => {
@@ -83,7 +86,7 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
   };
 
   #setFullHeight = () => {
-    window.addEventListener("resize", () => {
+    window.addEventListener('resize', () => {
       this.fullHeight = this.contentWrapper.node.offsetHeight;
       console.log(this.fullHeight);
     });
