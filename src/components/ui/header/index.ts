@@ -27,14 +27,13 @@ const mainNavItems: StringKeyObject = {
   HOME: 'Home',
   CATALOGUE: 'Catalogue',
   ABOUT: 'About shop',
-
 };
 
 const sidebarNavItems: StringKeyObject = {
-  LOGOUT: 'Logout',
   LOGIN: 'Login',
   SINGUP: 'Sing in',
-  PROFILE: 'Profile'
+  PROFILE: 'Profile',
+  LOGOUT: 'Logout',
 };
 
 const createListLinks = (obj: StringKeyObject): BaseElement<HTMLUListElement> => {
