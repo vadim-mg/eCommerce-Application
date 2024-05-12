@@ -11,6 +11,8 @@ export enum AccordionState {
 export default class Accordion extends BaseElement<HTMLDivElement> {
   contentContainer!: Container;
 
+  contentWrapper!: Container;
+
   fullHeight!: number;
 
   isOpen: boolean = false;
@@ -18,6 +20,8 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
   constructor(title: string, state: AccordionState, ...children: BaseElement<HTMLElement>[]) {
     super({ tag: 'div', class: [classes.accordion] });
     this.#createAccordion(state, title, children);
+    // mobile flip support
+    this.#setFullHeight();
   }
 
   #createAccordion(state: AccordionState, title: string, children: BaseElement<HTMLElement>[]) {
@@ -30,22 +34,27 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
     const titleText = new BaseElement({ tag: 'div', class: [classes.title], textContent: title });
     header.node.append(titleText.node);
     this.node.append(header.node);
-
     header.node.addEventListener('click', () => {
       this.#toggleAccordion();
     });
   };
 
   #addContent = (state: AccordionState, children: BaseElement<HTMLElement>[]) => {
-    this.contentContainer = new Container({ tag: 'div', class: [classes.container] }, ...children);
+    this.contentWrapper = new BaseElement<HTMLDivElement>(
+      { tag: 'div', class: [classes.wrapper] },
+      ...children,
+    );
+    this.contentContainer = new BaseElement<HTMLDivElement>(
+      { tag: 'div', class: [classes.container] },
+      this.contentWrapper,
+    );
     this.node.append(this.contentContainer.node);
     // element rendering delay
-    setTimeout(() => {
-      this.fullHeight = this.contentContainer.node.offsetHeight;
-      console.log(`Высота: ${this.fullHeight}px`);
-
+    window.requestAnimationFrame(() => {
+      this.fullHeight = this.contentWrapper.node.offsetHeight;
       this.#setDefaultState(state);
-    }, 1);
+      console.log(children[1].node.offsetHeight);
+    });
   };
 
   #setDefaultState = (state: AccordionState) => {
@@ -77,5 +86,15 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
 
   #hiddenContent = () => {
     this.contentContainer.node.style.height = '0';
+  };
+
+  #setFullHeight = () => {
+    window.addEventListener('resize', () => {
+      this.fullHeight = this.contentWrapper.node.offsetHeight;
+      console.log(this.fullHeight);
+      if (this.isOpen) {
+        this.#showContent();
+      }
+    });
   };
 }
