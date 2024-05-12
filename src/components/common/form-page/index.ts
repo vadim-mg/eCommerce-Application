@@ -5,12 +5,13 @@ import errorSvg from '@Assets/icons/error.svg';
 import BasePage from '../base-page';
 import classes from './style.module.scss';
 import BaseElement from '../base-element';
+import BaseForm from '../base-form';
 
 type FormProps = {
   title: string;
 };
 
-export default abstract class FormPage extends BasePage {
+export default class FormPage extends BasePage {
   protected container: Container;
 
   modalContainer!: BaseElement<HTMLDivElement>;
@@ -26,18 +27,19 @@ export default abstract class FormPage extends BasePage {
     super({ title: props.title });
     this.container = new Wrapper(
       { tag: 'div', class: classes.formPage },
-      // new BaseElement({ tag: 'h1', text: props.title }),
       this.#createBasicContent(),
     );
   }
 
-  abstract renderForm(): Node;
+  addForm = (form: BaseForm) => {
+    this.formWrapper.node.append(form.node);
+  }
 
   #createBasicContent = (errorText: string = '') => {
     this.logoComponent = new BaseElement<HTMLImageElement>({ tag: 'img', src: logoSvgLight });
     this.createErrorComponent(errorText);
     this.formWrapper = new BaseElement<HTMLDivElement>({ tag: 'div' });
-    this.formWrapper.node.append(this.renderForm());
+  
     this.modalContainer = new BaseElement<HTMLDivElement>({
       tag: 'div',
       class: classes.modalContainer,
