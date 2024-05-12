@@ -53,3 +53,11 @@
   flex-wrap: wrap;
   align-items: center;
 }
+
+.columFlex {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  flex-direction: column;
+}

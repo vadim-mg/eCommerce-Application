@@ -1,9 +1,9 @@
 import BaseElement from '@Src/components/common/base-element';
 import tag from '@Src/components/common/tag';
 import CheckBox from '@Src/components/ui/checkbox';
-
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
+import Accordion, { AccordionState } from '@Src/components/ui/accordion';
 
 // imports pictures for example
 import imageBoard from '@Img/board-game-example-image.webp';
@@ -76,6 +76,38 @@ export default class HiddenExamplePage extends ContentPage {
           }),
         ),
       ),
+      new BaseElement<HTMLElement>(
+        { tag: 'div', class: classes.columFlex },
+        new BaseElement({ tag: 'h2', textContent: 'Example accordion' }),
+        new Accordion(
+          'Closed default',
+          AccordionState.CLOSED,
+          new BaseElement({
+            tag: 'p',
+            textContent:
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Pulvinar elementum integer enim neque volutpat. Turpis egestas pretium aenean pharetra magna ac placerat vestibulum.',
+          }),
+          new BaseElement({
+            tag: 'p',
+            textContent:
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Pulvinar elementum integer enim neque volutpat. Turpis egestas pretium aenean pharetra magna ac placerat vestibulum.',
+          }),
+        ),
+        new Accordion(
+          'Open default',
+          AccordionState.OPEN,
+          new BaseElement({
+            tag: 'p',
+            textContent:
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Pulvinar elementum integer enim neque volutpat. Turpis egestas pretium aenean pharetra magna ac placerat vestibulum.',
+          }),
+          new BaseElement({
+            tag: 'p',
+            textContent:
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Pulvinar elementum integer enim neque volutpat. Turpis egestas pretium aenean pharetra magna ac placerat vestibulum.',
+          }),
+        ),
+      ),
 
       // more short variant, use function Tag. Result is equivalent!
       tag({ tag: 'h1', text: 'Hello' }),
@@ -92,7 +124,7 @@ export default class HiddenExamplePage extends ContentPage {
       tag({ tag: 'div', text: 'example2 - google font', class: classes.example3 }),
       tag<HTMLImageElement>({ tag: 'img', src: imageBoard, class: classes.example2 }),
       tag<HTMLImageElement>({ tag: 'img', src: imageSvg, class: classes.imageExample }),
-      new CheckBox({}, 'example', 'example'),
+      new CheckBox({}, 'example', true),
     );
   };
 

@@ -3,6 +3,7 @@
 .header {
   background-color: var(--color-black);
   padding: 0.5rem 2.25rem;
+  font-weight: 300;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -13,6 +14,7 @@
 .logo-icon {
   width: 21.375rem;
   height: 4.937rem;
+  max-width: 100%;
 }
 
 .user-icon {
@@ -41,6 +43,7 @@
   .logo-navigation-wrapper {
     width: 100%;
     margin-bottom: 1.5rem;
+    justify-content: center;
   }
 }
 
@@ -89,9 +92,13 @@
   }
 }
 
-.navigation-list li {
+.nav-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
   position: relative;
   padding-left: 1rem;
+  padding-bottom: 0;
   cursor: pointer;
   transition: color var(--transition-time);
 
@@ -142,5 +149,18 @@
     flex-direction: column;
     gap: 0.594rem;
     cursor: pointer;
+  }
+}
+
+.mobile-menu {
+  border: none;
+  ul {
+    display: flex;
+    flex-direction: column;
+    border: none;
+
+    li {
+      margin-bottom: 1rem;
+    }
   }
 }
