@@ -18,9 +18,13 @@ export default class FormPage extends BasePage {
 
   logoComponent!: BaseElement<HTMLImageElement>;
 
-  errorComponent!: BaseElement<HTMLDivElement>;
+  errorTextElement!: BaseElement<HTMLParagraphElement>;
+
+  errMessageWrapper!: BaseElement<HTMLDivElement>;
 
   formWrapper!: BaseElement<HTMLDivElement>;
+
+  #errorText!: string;
 
   constructor(props: FormProps) {
     console.log(2);
@@ -33,43 +37,45 @@ export default class FormPage extends BasePage {
 
   addForm = (form: BaseForm) => {
     this.formWrapper.node.append(form.node);
-  }
+  };
 
-  #createBasicContent = (errorText: string = '') => {
+  #createBasicContent = () => {
     this.logoComponent = new BaseElement<HTMLImageElement>({ tag: 'img', src: logoSvgLight });
-    this.createErrorComponent(errorText);
+    this.createErrorComponent();
     this.formWrapper = new BaseElement<HTMLDivElement>({ tag: 'div' });
-  
+
     this.modalContainer = new BaseElement<HTMLDivElement>({
       tag: 'div',
       class: classes.modalContainer,
     });
 
     this.modalContainer.node.append(this.logoComponent.node);
-    this.modalContainer.node.append(this.errorComponent.node);
+    this.modalContainer.node.append(this.errMessageWrapper.node);
     this.modalContainer.node.append(this.formWrapper.node);
     return this.modalContainer;
   };
 
-  createErrorComponent = (errorText: string) => {
+  createErrorComponent = () => {
     const errorIcon = new BaseElement<HTMLImageElement>({
       tag: 'img',
       class: classes.errorIcon,
       src: errorSvg,
     });
-    const errorTextElement = new BaseElement<HTMLParagraphElement>({ tag: 'p', text: errorText });
-    this.errorComponent = new BaseElement<HTMLDivElement>({
+    this.errorTextElement = new BaseElement<HTMLParagraphElement>({ tag: 'p' });
+    this.errMessageWrapper = new BaseElement<HTMLDivElement>({
       tag: 'div',
       class: classes.errorComponent,
     });
-    this.errorComponent.node.append(errorIcon.node);
-    this.errorComponent.node.append(errorTextElement.node);
+    this.errMessageWrapper.node.append(errorIcon.node);
+    this.errMessageWrapper.node.append(this.errorTextElement.node);
 
-    this.errorComponent.node.hidden = true;
+    this.errMessageWrapper.node.hidden = true;
   };
 
-  showErrorComponent = () => {
-    this.errorComponent.node.hidden = false;
+  showErrorComponent = (errMessage: string) => {
+    this.#errorText = errMessage;
+    this.errorTextElement.node.textContent = this.#errorText;
+    this.errMessageWrapper.node.hidden = false;
   };
 
   render = () => {
