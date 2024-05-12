@@ -40,8 +40,8 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
   };
 
   #addContent = (state: AccordionState, children: BaseElement<HTMLElement>[]) => {
-    this.contentWrapper = new Container({ tag: 'div', class: [classes.wrapper] }, ...children);
-    this.contentContainer = new Container(
+    this.contentWrapper = new BaseElement<HTMLDivElement>({ tag: 'div', class: [classes.wrapper] }, ...children);
+    this.contentContainer = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: [classes.container] },
       this.contentWrapper,
     );
