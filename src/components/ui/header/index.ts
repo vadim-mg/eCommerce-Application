@@ -15,13 +15,13 @@ interface StringKeyObject {
 }
 
 export const LinkPath: StringKeyObject = {
-  LOGIN: '/login',
-  LOGOUT: '/#',
-  SINGUP: '/singup',
-  REGISTRATION: '/registration',
-  HOME: '/main',
-  CATALOGUE: '/catalogue',
-  ABOUT: '/about',
+  LOGIN: 'login',
+  LOGOUT: 'logout',
+  SINGUP: 'registration',
+  REGISTRATION: 'registration',
+  HOME: 'main',
+  CATALOGUE: 'catalogue',
+  ABOUT: 'about',
 };
 
 const mainNavItems: StringKeyObject = {
