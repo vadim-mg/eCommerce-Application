@@ -16,7 +16,11 @@ export default class MainPage extends ContentPage {
   }
 
   #createContent = () => {
-    const tempAuthCheckbox = new CheckBox({ class: classes.isLoggedIn }, 'isLoggedIn', State.getInstance().isLoggedIn);
+    const tempAuthCheckbox = new CheckBox(
+      { class: classes.isLoggedIn },
+      'isLoggedIn',
+      State.getInstance().isLoggedIn,
+    );
     tempAuthCheckbox.node.addEventListener('input', (event) => {
       // temporary auth state checker
       State.getInstance().isLoggedIn = (event.target as HTMLInputElement).checked;
@@ -33,7 +37,7 @@ export default class MainPage extends ContentPage {
       new Link({ text: 'rs.school', href: 'https://rs.school', target: '_blank' }),
       new Link({ text: 'example', href: 'hiddenExample' }),
       new BaseElement({ tag: 'br' }),
-      tempAuthCheckbox
+      tempAuthCheckbox,
     );
   };
 

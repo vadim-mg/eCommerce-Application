@@ -13,8 +13,11 @@ export default class CheckBox extends BaseElement<HTMLElement> {
 
   labelElement!: BaseElement<HTMLLabelElement>;
 
-
-  constructor(props: Omit<ElementProps<HTMLDivElement>, 'tag'>, labelText: string, value: boolean) {
+  constructor(
+    props: Omit<ElementProps<HTMLDivElement>, 'tag'>,
+    labelText: string,
+    value: boolean,
+  ) {
     super({ tag: 'div', ...props });
     this.node.classList.add(classes.checkboxWrapper);
     this.#createContent(labelText, value);
