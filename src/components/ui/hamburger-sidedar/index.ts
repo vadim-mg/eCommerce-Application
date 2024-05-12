@@ -5,7 +5,6 @@ Don't forget to add the ability to close the sidebar when the content is clicked
 using the method HamburgerSidebar.closeSidebar() based on the logic of the specific block. */
 
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
-import Container from '../container';
 
 import classes from './style.module.scss';
 
@@ -25,14 +24,17 @@ export default class HamburgerSidebar extends BaseElement<HTMLElement> {
   }
 
   #addContent = (children: BaseElement<HTMLElement>[]) => {
-    const wrapper = new Container({ tag: 'div', class: classes.wrapper }, ...children);
+    const wrapper = new BaseElement<HTMLElement>(
+      { tag: 'div', class: classes.wrapper },
+      ...children,
+    );
     this.node.append(wrapper.node);
   };
 
   #addCloseButton = () => {
-    this.closeElement = new BaseElement({ tag: 'div', class: classes.cross });
+    this.closeElement = new BaseElement<HTMLElement>({ tag: 'div', class: classes.cross });
     this.node.append(this.closeElement.node);
-    this.closeElement.node.addEventListener('click', this.closeSidebar.bind(this));
+    this.closeElement.node.addEventListener('click', this.closeSidebar);
   };
 
   closeSidebar = () => {

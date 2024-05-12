@@ -6,6 +6,7 @@ import Button, { ButtonClasses } from '../button';
 
 import classes from './style.module.scss';
 import HamburgerSidebar from '../hamburger-sidedar';
+import Link from '../link';
 
 type HeaderProps = Omit<ElementProps<HTMLElement>, 'tag'>;
 
@@ -36,18 +37,18 @@ const sidebarNavItems: StringKeyObject = {
   LOGOUT: 'Logout',
 };
 
-const createListLinks = (obj: StringKeyObject): BaseElement<HTMLUListElement> => {
+const createListLinks = (navList: StringKeyObject): BaseElement<HTMLUListElement> => {
   const list = new BaseElement<HTMLUListElement>({ tag: 'ul', class: classes.navigationList });
-  const listLinksName = Object.keys(obj);
+  const listLinksName = Object.keys(navList);
 
   listLinksName.forEach((name) => {
     const listItem = new BaseElement<HTMLLIElement>({
       tag: 'li',
     });
-    const link = new BaseElement<HTMLLinkElement>({
-      tag: 'a',
+    const link = new Link({
       href: LinkPath[name],
-      textContent: obj[name],
+      textContent: navList[name],
+      class: classes.navLink,
     });
     listItem.node.append(link.node);
     list.node.append(listItem.node);
@@ -189,11 +190,11 @@ export default class Header extends BaseElement<HTMLElement> {
   };
 
   createBurgerMenu = () => {
-    const burgerLinksName = Object.assign(mainNavItems, sidebarNavItems);
-    this.navigationListBurger = createListLinks(burgerLinksName);
+    const burgerLinksName = { ...mainNavItems, ...sidebarNavItems };
+    const navigationListBurger = createListLinks(burgerLinksName);
     this.hamburgerSidebar = new HamburgerSidebar(
       { class: classes.mobileMenu },
-      this.navigationListBurger,
+      navigationListBurger,
     );
     this.node.append(this.hamburgerSidebar.node);
   };

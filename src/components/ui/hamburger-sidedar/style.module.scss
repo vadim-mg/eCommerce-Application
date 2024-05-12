@@ -16,21 +16,25 @@
     border: none;
   }
 }
+
 .wrapper {
   position: relative;
   padding: 2rem;
 }
+
 .closed {
   width: 0;
 }
+
 .open {
   width: 100%;
 }
+
 .cross {
   position: absolute;
   width: 1.5rem;
   height: 1.5rem;
-  background: url('./../../../assets/icons/cross.svg') no-repeat center;
+  background: url('/src/assets/icons/cross.svg') no-repeat center;
   right: 1rem;
   top: 1rem;
   z-index: 6;
