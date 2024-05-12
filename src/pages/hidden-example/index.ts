@@ -124,7 +124,7 @@ export default class HiddenExamplePage extends ContentPage {
       tag({ tag: 'div', text: 'example2 - google font', class: classes.example3 }),
       tag<HTMLImageElement>({ tag: 'img', src: imageBoard, class: classes.example2 }),
       tag<HTMLImageElement>({ tag: 'img', src: imageSvg, class: classes.imageExample }),
-      new CheckBox({}, 'example', 'example'),
+      new CheckBox({}, 'example', true),
     );
   };
 
