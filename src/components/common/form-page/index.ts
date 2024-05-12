@@ -2,6 +2,7 @@ import Container from '@Src/components/ui/container';
 import Wrapper from '@Src/components/ui/wrapper';
 import logoSvgLight from '@Assets/icons/logo-light.svg';
 import errorSvg from '@Assets/icons/error.svg';
+import Link from '@Src/components/ui/link';
 import BasePage from '../base-page';
 import classes from './style.module.scss';
 import BaseElement from '../base-element';
@@ -17,6 +18,8 @@ export default class FormPage extends BasePage {
   modalContainer!: BaseElement<HTMLDivElement>;
 
   logoComponent!: BaseElement<HTMLImageElement>;
+
+  logoComponentLink!: Link;
 
   errorTextElement!: BaseElement<HTMLParagraphElement>;
 
@@ -40,7 +43,8 @@ export default class FormPage extends BasePage {
   };
 
   #createBasicContent = () => {
-    this.logoComponent = new BaseElement<HTMLImageElement>({ tag: 'img', src: logoSvgLight });
+    // this.logoComponent = new BaseElement<HTMLImageElement>({ tag: 'img', src: logoSvgLight });
+    this.createLogoComponent();
     this.createErrorComponent();
     this.formWrapper = new BaseElement<HTMLDivElement>({ tag: 'div' });
 
@@ -49,11 +53,17 @@ export default class FormPage extends BasePage {
       class: classes.modalContainer,
     });
 
-    this.modalContainer.node.append(this.logoComponent.node);
+    this.modalContainer.node.append(this.logoComponentLink.node);
     this.modalContainer.node.append(this.errMessageWrapper.node);
     this.modalContainer.node.append(this.formWrapper.node);
     return this.modalContainer;
   };
+
+  createLogoComponent = () => {
+    this.logoComponent = new BaseElement<HTMLImageElement>({ tag: 'img', src: logoSvgLight });
+    this.logoComponentLink = new Link({ href: 'main' });
+    this.logoComponentLink.node.append(this.logoComponent.node);
+  }
 
   createErrorComponent = () => {
     const errorIcon = new BaseElement<HTMLImageElement>({
