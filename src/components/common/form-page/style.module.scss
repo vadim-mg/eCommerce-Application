@@ -15,7 +15,12 @@
   border: 0.25rem solid var(--color-black);
   padding: 1rem 3rem 2rem;
   width: 22.5rem;
-  // height: 37.19rem;
+}
+
+@media (max-width: 480px) {
+  .modal-container {
+    width: calc(100% - 6rem);
+  }
 }
 
 .error-component {

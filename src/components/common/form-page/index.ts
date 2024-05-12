@@ -27,13 +27,13 @@ export default abstract class FormPage extends BasePage {
     this.container = new Wrapper(
       { tag: 'div', class: classes.formPage },
       // new BaseElement({ tag: 'h1', text: props.title }),
-      this.#createBasicContent('Sorry! This is an invalid email address or password'),
+      this.#createBasicContent(),
     );
   }
 
   abstract renderForm(): Node;
 
-  #createBasicContent = (errorText: string) => {
+  #createBasicContent = (errorText: string = '') => {
     this.logoComponent = new BaseElement<HTMLImageElement>({ tag: 'img', src: logoSvgLight });
     this.createErrorComponent(errorText);
     this.formWrapper = new BaseElement<HTMLDivElement>({ tag: 'div' });
@@ -62,10 +62,12 @@ export default abstract class FormPage extends BasePage {
     });
     this.errorComponent.node.append(errorIcon.node);
     this.errorComponent.node.append(errorTextElement.node);
+
+    this.errorComponent.node.hidden = true;
   };
 
-  hideErrorComponent = () => {
-    this.errorComponent.node.hidden = true;
+  showErrorComponent = () => {
+    this.errorComponent.node.hidden = false;
   };
 
   render = () => {
