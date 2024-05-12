@@ -186,6 +186,7 @@ export default class Header extends BaseElement<HTMLElement> {
       this.burgerButton.node.append(burgerBtnLine.node);
       i += 1;
     }
+
     this.burgerButton.node.addEventListener('click', this.hamburgerSidebar.openSidebar);
   };
 
