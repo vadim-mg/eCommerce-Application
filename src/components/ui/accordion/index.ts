@@ -1,5 +1,4 @@
 import BaseElement from '@Src/components/common/base-element';
-import Container from '../container';
 
 import classes from './style.module.scss';
 
@@ -9,9 +8,9 @@ export enum AccordionState {
 }
 
 export default class Accordion extends BaseElement<HTMLDivElement> {
-  contentContainer!: Container;
+  contentContainer!: BaseElement<HTMLDivElement>;
 
-  contentWrapper!: Container;
+  contentWrapper!: BaseElement<HTMLDivElement>;
 
   fullHeight!: number;
 
