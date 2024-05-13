@@ -56,4 +56,8 @@ export default class Router {
       name: route.name,
       routeToPage: () => this.route(routePath as PageRouteKey),
     }));
+
+  refresh = () => {
+    this.route(this.#currentRoutePath, false);
+  };
 }
