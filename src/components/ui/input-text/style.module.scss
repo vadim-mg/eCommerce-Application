@@ -76,22 +76,23 @@
   margin-top: 0.5rem;
   font-size: 0.75rem;
 }
-.clear {
-  width: 2.75rem;
-  height: 2.75rem;
-  cursor: pointer;
-  background: url('/src/assets/icons/cross.svg') no-repeat center;
-  position: absolute;
-  right: 0;
-}
 .hidden {
   display: none;
 }
-.toggle-visibility {
+
+@mixin input-icons {
   width: 2.75rem;
   height: 2.75rem;
   cursor: pointer;
-  background: url('/src/assets/icons/password-visibility.svg') no-repeat center;
   position: absolute;
+}
+.clear {
+  @include input-icons;
+  background: url('/src/assets/icons/cross.svg') no-repeat center;
+  right: 0;
+}
+.toggle-visibility {
+  @include input-icons;
+  background: url('/src/assets/icons/password-visibility.svg') no-repeat center;
   right: 0.41rem;
 }
