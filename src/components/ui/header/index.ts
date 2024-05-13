@@ -1,12 +1,13 @@
-import BaseElement, { ElementProps } from '@Src/components/common/base-element';
+import basketSvg from '@Assets/icons/basket.svg';
 import logoSvg from '@Assets/icons/logo.svg';
 import userSvg from '@Assets/icons/user.svg';
-import basketSvg from '@Assets/icons/basket.svg';
+import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import HamburgerSidebar from '@Src/components/ui/hamburger-sidedar';
 import Link from '@Src/components/ui/link';
 import State from '@Src/state';
 
+import Router from '@Src/router';
 import classes from './style.module.scss';
 
 type HeaderProps = Omit<ElementProps<HTMLElement>, 'tag'>;
@@ -39,12 +40,6 @@ const sidebarNavItems: StringKeyObject = {
   LOGOUT: 'Logout',
 };
 
-function getCurrentLinkPath(): string {
-  const currentUrl = window.location.href;
-  const currentUrlPath = currentUrl.slice(currentUrl.lastIndexOf('/') + 1);
-  console.log(currentUrlPath);
-  return currentUrlPath;
-}
 
 export default class Header extends BaseElement<HTMLElement> {
   logoNavigationWrapper!: BaseElement<HTMLDivElement>;
@@ -134,10 +129,10 @@ export default class Header extends BaseElement<HTMLElement> {
       class: classes.buttonContainer,
     });
     this.loginButton = new Button({ text: 'Log in' }, ButtonClasses.NORMAL, () => {
-      window.location.href = LinkPath.LOGIN;
+      Router.getInstance().route('login');
     });
     this.signinButton = new Button({ text: 'Sign in' }, ButtonClasses.NORMAL, () => {
-      window.location.href = LinkPath.SINGUP;
+      Router.getInstance().route('registration');
     });
     this.buttonContainer.node.append(this.loginButton.node);
     this.buttonContainer.node.append(this.signinButton.node);
@@ -243,15 +238,15 @@ export default class Header extends BaseElement<HTMLElement> {
   #createListLinks = (navList: StringKeyObject): BaseElement<HTMLUListElement> => {
     const list = new BaseElement<HTMLUListElement>({ tag: 'ul', class: classes.navigationList });
     const listLinksName = Object.keys(navList);
-    const currentLinkPath = getCurrentLinkPath();
 
     listLinksName.forEach((name) => {
       const listItem = new BaseElement<HTMLLIElement>({
         tag: 'li',
+        class: Router.isCurrentPath(LinkPath[name]) ? classes.current : '',
       });
       const link = new Link({
         href: LinkPath[name],
-        textContent: navList[name],
+        text: navList[name],
         class: classes.navLink,
       });
       listItem.node.append(link.node);
@@ -276,31 +271,8 @@ export default class Header extends BaseElement<HTMLElement> {
           this.#changeNavView();
         });
       }
-      this.#checkCurrentPageLink(currentLinkPath, name, listItem);
     });
-    this.#setCurrentPageLink();
 
     return list;
-  };
-
-  #setCurrentPageLink = () => {
-    if (this.currentPageLinks && this.currentPageLinks.length > 0) {
-      this.currentPageLinks.forEach((el) => {
-        el.node.classList.add(classes.current);
-      });
-    }
-  };
-
-  #checkCurrentPageLink = (
-    currentLinkPath: string,
-    path: string,
-    listItem: BaseElement<HTMLLIElement>,
-  ) => {
-    console.log(LinkPath[path]);
-    console.log(currentLinkPath);
-    if (LinkPath[path] === currentLinkPath) {
-      this.currentPageLinks.push(listItem);
-      console.log('!!');
-    }
   };
 }

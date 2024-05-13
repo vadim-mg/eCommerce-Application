@@ -25,6 +25,8 @@ export default class Router {
     return Router.#instance;
   };
 
+  static isCurrentPath = (path: string) => Router.getInstance().#currentRoutePath === path;
+
   addPopStateEventListener = () => {
     window.addEventListener('popstate', (event) => {
       if (event.state) {
