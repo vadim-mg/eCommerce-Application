@@ -13,6 +13,8 @@ export default class LoginPage extends FormPage {
 
   trimmedEmailValue!: string;
 
+  trimmedPasswordValue!: string;
+
   constructor() {
     console.log('1');
     super({ title: 'Login page' });
@@ -31,15 +33,12 @@ export default class LoginPage extends FormPage {
           type: 'email',
         },
         'E-mail',
-        this.validateEmail
+        this.validateEmail,
       ),
       new InputText(
-        { name: 'password', placeholder: '********', maxLength: 20, minLength: 8 },
+        { name: 'password', placeholder: '********', minLength: 8, type: 'password' },
         'Password',
-        () => ({
-          status: true,
-          errorText: 'Error',
-        }),
+        this.validatePaswword,
       ),
       new Button({ text: 'Log in', class: classes.loginButton }, [ButtonClasses.BIG], () => {
         console.log('login');
@@ -47,6 +46,39 @@ export default class LoginPage extends FormPage {
     );
     return this.form;
   }
+
+  validatePaswword = (inputValue: string) => {
+    const uppercaseRegex = /[A-Z]/;
+    const lowercaseRegex = /[a-z]/;
+    const digitRegex = /[0-9]/;
+    const specialCharsRegex = /[!@#$%^&*]/;
+
+    this.trimmedPasswordValue = inputValue.trim();
+    if (
+      !this.trimmedPasswordValue.match(uppercaseRegex) ||
+      !this.trimmedPasswordValue.match(lowercaseRegex)
+    ) {
+      return {
+        status: false,
+        errorText:
+          'Password must contain at least one uppercase letter and one lowercase letter. Password must be at least 8 characters long.',
+      };
+    }
+    if (
+      !this.trimmedPasswordValue.match(digitRegex) ||
+      !this.trimmedPasswordValue.match(specialCharsRegex)
+    ) {
+      return {
+        status: false,
+        errorText:
+          'Password must contain at least one digit and may optionally contain at least one special character (!@#$%^&*). Password must be at least 8 characters long.',
+      };
+    }
+    return {
+      status: true,
+      errorText: '',
+    };
+  };
 
   validateEmail = (inputValue: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -57,26 +89,28 @@ export default class LoginPage extends FormPage {
       if (!this.trimmedEmailValue.includes('@')) {
         return {
           status: false,
-          errorText: 'Your email address should include an "@ symbol separating the local part and domain name',
-        }
+          errorText:
+            'Your email address should include an "@ symbol separating the local part and domain name',
+        };
       }
       if (!this.trimmedEmailValue.match(domainRegex)) {
         return {
           status: false,
           errorText: 'Please include a domain name in your email address (e.g., example.com)',
-        }
+        };
       }
       return {
         status: false,
-        errorText: 'Please enter a valid email address. It should follow the format: user@example.com',
-      }
+        errorText:
+          'Please enter a valid email address. It should follow the format: user@example.com',
+      };
     }
-    
+
     return {
       status: true,
       errorText: '',
-    }
-  }
+    };
+  };
 
   renderSignupPromptComponent = () => {
     this.signupPromptElement = new BaseElement(
