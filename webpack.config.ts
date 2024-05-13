@@ -1,10 +1,9 @@
-import path from 'path';
+import Dotenv from 'dotenv-webpack';
+import EslintPlugin from 'eslint-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { resolve as _resolve } from 'path';
 import { merge } from 'webpack-merge';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import EslintPlugin from 'eslint-webpack-plugin';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import Dotenv from 'dotenv-webpack';
 
 import devConfig from './webpack.dev.config';
 import prodConfig from './webpack.prod.config';
