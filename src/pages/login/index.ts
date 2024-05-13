@@ -11,6 +11,8 @@ export default class LoginPage extends FormPage {
 
   signupPromptElement!: BaseElement<HTMLDivElement>;
 
+  trimmedEmailValue!: string;
+
   constructor() {
     console.log('1');
     super({ title: 'Login page' });
@@ -23,16 +25,13 @@ export default class LoginPage extends FormPage {
       { class: classes.loginForm },
       new InputText(
         {
-          name: 'name',
-          placeholder: 'John',
-          maxLength: 20,
+          name: 'email',
+          placeholder: 'user@example.com',
           minLength: 2,
+          type: 'email',
         },
-        'Name',
-        () => ({
-          status: false,
-          errorText: 'Error',
-        }),
+        'E-mail',
+        this.validateEmail
       ),
       new InputText(
         { name: 'password', placeholder: '********', maxLength: 20, minLength: 8 },
@@ -49,12 +48,43 @@ export default class LoginPage extends FormPage {
     return this.form;
   }
 
+  validateEmail = (inputValue: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const domainRegex = /@([^\s@]+\.[^\s@]+)$/;
+
+    this.trimmedEmailValue = inputValue.trim();
+    if (!this.trimmedEmailValue.match(emailRegex)) {
+      if (!this.trimmedEmailValue.includes('@')) {
+        return {
+          status: false,
+          errorText: 'Your email address should include an "@ symbol separating the local part and domain name',
+        }
+      }
+      if (!this.trimmedEmailValue.match(domainRegex)) {
+        return {
+          status: false,
+          errorText: 'Please include a domain name in your email address (e.g., example.com)',
+        }
+      }
+      return {
+        status: false,
+        errorText: 'Please enter a valid email address. It should follow the format: user@example.com',
+      }
+    }
+    
+    return {
+      status: true,
+      errorText: '',
+    }
+  }
+
   renderSignupPromptComponent = () => {
-    this.signupPromptElement = new BaseElement({ tag: 'div', class: classes.signupPromptWrapper },
+    this.signupPromptElement = new BaseElement(
+      { tag: 'div', class: classes.signupPromptWrapper },
       new BaseElement({ tag: 'p', textContent: 'or' }),
       new BaseElement({ tag: 'p', textContent: 'if you don"t already have an account' }),
-      new Link({ text: 'Sign up', class: classes.signupLink }),
-    )
+      new Link({ href: 'Sign in', text: 'Sign up', class: classes.signupLink }),
+    );
     return this.signupPromptElement;
-  }
+  };
 }

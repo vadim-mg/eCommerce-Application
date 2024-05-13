@@ -44,7 +44,7 @@ export default class FormPage extends BasePage {
 
   addSignupPrompt = (signupPrompt: BaseElement<HTMLDivElement>) => {
     this.formWrapper.node.append(signupPrompt.node);
-  }
+  };
 
   #createBasicContent = () => {
     this.createLogoComponent();
@@ -66,7 +66,7 @@ export default class FormPage extends BasePage {
     this.logoComponent = new BaseElement<HTMLImageElement>({ tag: 'img', src: logoSvgLight });
     this.logoComponentLink = new Link({ href: 'main', class: classes.logoLink });
     this.logoComponentLink.node.append(this.logoComponent.node);
-  }
+  };
 
   createErrorComponent = () => {
     const errorIcon = new BaseElement<HTMLImageElement>({

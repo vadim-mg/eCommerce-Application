@@ -6,7 +6,7 @@ interface ValidationError {
   status: boolean;
   errorText: string;
 }
-type CallbackValidation = () => ValidationError;
+type CallbackValidation = (input: string) => ValidationError;
 
 type InputProps = Omit<ElementProps<HTMLInputElement>, 'tag'>;
 
@@ -85,8 +85,9 @@ export default class InputText extends BaseElement<HTMLInputElement> {
   };
 
   #validate = (callbackValidation: CallbackValidation) => {
+    const input = this.getValue();
     console.log('!');
-    const error = callbackValidation();
+    const error = callbackValidation(input);
     if (!error.status) {
       this.errorElement.node.innerHTML = error.errorText;
       if (this.isHiddenError()) {
