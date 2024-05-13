@@ -1,24 +1,36 @@
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 import classes from './style.module.scss';
 
+let counterValue = 0;
+
+const counter = () => {
+  counterValue += 1;
+  return counterValue;
+};
+
 export default class CheckBox extends BaseElement<HTMLElement> {
   inputElement!: BaseElement<HTMLInputElement>;
 
   labelElement!: BaseElement<HTMLLabelElement>;
 
-  constructor(props: Omit<ElementProps<HTMLDivElement>, 'tag'>, labelText: string, value: string) {
-    super({ tag: 'div', class: classes.checkboxWrapper, ...props });
+  constructor(
+    props: Omit<ElementProps<HTMLDivElement>, 'tag'>,
+    labelText: string,
+    value: boolean,
+  ) {
+    super({ tag: 'div', ...props });
+    this.node.classList.add(classes.checkboxWrapper);
     this.#createContent(labelText, value);
   }
 
-  #createContent = (textContent: string, value: string) => {
+  #createContent = (textContent: string, value: boolean) => {
+    const uniqueId = `cb${counter()}`;
     this.inputElement = new BaseElement<HTMLInputElement>({
       tag: 'input',
       class: classes.checkboxInput,
       type: 'checkbox',
-      name: value,
-      id: value,
-      checked: false,
+      id: uniqueId,
+      checked: value,
     });
 
     this.labelElement = new BaseElement<HTMLLabelElement>({
@@ -26,7 +38,7 @@ export default class CheckBox extends BaseElement<HTMLElement> {
       class: classes.checkboxLabel,
       text: textContent,
     });
-    this.labelElement.node.setAttribute('for', value);
+    this.labelElement.node.setAttribute('for', uniqueId);
 
     this.node.append(this.inputElement.node);
     this.node.append(this.labelElement.node);
