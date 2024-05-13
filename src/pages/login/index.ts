@@ -48,31 +48,23 @@ export default class LoginPage extends FormPage {
   }
 
   validatePaswword = (inputValue: string) => {
-    const uppercaseRegex = /[A-Z]/;
-    const lowercaseRegex = /[a-z]/;
-    const digitRegex = /[0-9]/;
-    const specialCharsRegex = /[!@#$%^&*]/;
-
     this.trimmedPasswordValue = inputValue.trim();
-    if (
-      !this.trimmedPasswordValue.match(uppercaseRegex) ||
-      !this.trimmedPasswordValue.match(lowercaseRegex)
-    ) {
+
+    const passwordValidationRequirements = [/[A-Z]/, /[a-z]/, /[0-9]/, /[!@#$%^&*]/];
+    const meetAllRequirements = passwordValidationRequirements.every(requirement => requirement.test(this.trimmedPasswordValue));
+    if (!meetAllRequirements) {
       return {
         status: false,
         errorText:
-          'Password must contain at least one uppercase letter and one lowercase letter. Password must be at least 8 characters long.',
-      };
+        'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (!@#$%^&*)',
+      }
     }
-    if (
-      !this.trimmedPasswordValue.match(digitRegex) ||
-      !this.trimmedPasswordValue.match(specialCharsRegex)
-    ) {
+    if (this.trimmedPasswordValue.length < 8) {
       return {
         status: false,
         errorText:
-          'Password must contain at least one digit and may optionally contain at least one special character (!@#$%^&*). Password must be at least 8 characters long.',
-      };
+        'Password must be at least 8 characters long',
+      }
     }
     return {
       status: true,
