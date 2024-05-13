@@ -51,6 +51,8 @@ export default class Router {
 
   static isRouteExist = (route: string) => !!ROUTES[route as PageRouteKey];
 
+  static isOwnUrl = (route: string) => route.search('http') < 0;
+
   // return list of routes
   list = () =>
     Object.entries(this.#list).map(([routePath, route]) => ({
