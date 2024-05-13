@@ -63,7 +63,7 @@ export default class FormPage extends BasePage {
     this.logoComponent = new BaseElement<HTMLImageElement>({ tag: 'img', src: logoSvgLight });
     this.logoComponentLink = new Link({ href: 'main' });
     this.logoComponentLink.node.append(this.logoComponent.node);
-  }
+  };
 
   createErrorComponent = () => {
     const errorIcon = new BaseElement<HTMLImageElement>({
