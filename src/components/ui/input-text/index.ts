@@ -19,6 +19,8 @@ export default class InputText extends BaseElement<HTMLInputElement> {
 
   clearButtonElement!: BaseElement<HTMLDivElement>;
 
+  toggleVisibilityElement!: BaseElement<HTMLDivElement>;
+
   labelElement?: BaseElement<HTMLLabelElement>;
 
   constructor(
@@ -42,7 +44,12 @@ export default class InputText extends BaseElement<HTMLInputElement> {
       this.#addLabel(props.name, labelText);
     }
     this.#addInput(props);
-    this.#addClearButton();
+    // check if the input type is password, show toggle visibility button
+    if (props.type === 'password') {
+      this.#addTogglePasswodBtn();
+    } else {
+      this.#addClearButton();
+    }
     this.#addErrorElement();
   };
 
@@ -84,6 +91,18 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     this.inputRow.node.append(this.clearButtonElement.node);
   };
 
+  #addTogglePasswodBtn = () => {
+    this.toggleVisibilityElement = new BaseElement({
+      tag: 'div',
+      class: [classes.toggleVisibility],
+    });
+    this.toggleVisibilityElement.node.addEventListener(
+      'click',
+      this.togglePasswordVisibility.bind(this),
+    );
+    this.inputRow.node.append(this.toggleVisibilityElement.node);
+  };
+
   #validate = (callbackValidation: CallbackValidation) => {
     const input = this.getValue();
     console.log('!');
@@ -106,6 +125,10 @@ export default class InputText extends BaseElement<HTMLInputElement> {
         this.inputRow.node.classList.remove(classes.invalid);
       }
     }
+  };
+
+  togglePasswordVisibility = () => {
+    this.inputElement.node.type = this.inputElement.node.type === 'password' ? 'text' : 'password';
   };
 
   clearInput = () => {

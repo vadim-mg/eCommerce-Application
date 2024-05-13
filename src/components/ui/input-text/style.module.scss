@@ -87,3 +87,11 @@
 .hidden {
   display: none;
 }
+.toggle-visibility {
+  width: 60px;
+  height: 50px;
+  cursor: pointer;
+  background: url('/src/assets/icons/password-visibility.svg') no-repeat center;
+  position: absolute;
+  right: 0;
+}
