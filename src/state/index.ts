@@ -1,3 +1,5 @@
+import Router from "@Src/router";
+
 export default class State {
   #isLoggedIn: boolean;
 
@@ -22,5 +24,7 @@ export default class State {
 
   set isLoggedIn(value: boolean) {
     this.#isLoggedIn = value;
+    console.log(`Current state is: ${this.#isLoggedIn}`);
+    Router.getInstance().refresh();
   }
 }
