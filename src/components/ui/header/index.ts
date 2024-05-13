@@ -18,7 +18,7 @@ interface StringKeyObject {
 export const LinkPath: StringKeyObject = {
   LOGIN: 'login',
   LOGOUT: 'logout',
-  SINGIN: 'registration',
+  SINGUP: 'registration',
   REGISTRATION: 'registration',
   HOME: 'main',
   CATALOGUE: 'catalogue',
@@ -34,11 +34,17 @@ const mainNavItems: StringKeyObject = {
 
 const sidebarNavItems: StringKeyObject = {
   LOGIN: 'Login',
-  SINGIN: 'Sing in',
+  SINGUP: 'Sing in',
   PROFILE: 'Profile',
   LOGOUT: 'Logout',
 };
 
+function getCurrentLinkPath(): string {
+  const currentUrl = window.location.href;
+  const currentUrlPath = currentUrl.slice(currentUrl.lastIndexOf('/') + 1);
+  console.log(currentUrlPath);
+  return currentUrlPath;
+}
 
 export default class Header extends BaseElement<HTMLElement> {
   logoNavigationWrapper!: BaseElement<HTMLDivElement>;
@@ -71,12 +77,15 @@ export default class Header extends BaseElement<HTMLElement> {
 
   userProfileLink!: Link;
 
+  currentPageLinks!: BaseElement<HTMLLIElement>[];
+
   constructor(props: HeaderProps) {
     super({ tag: 'header', class: classes.header, ...props });
     this.#createContent();
   }
 
   #createContent = () => {
+    this.currentPageLinks = [];
     this.logoNavigationWrapper = new BaseElement<HTMLDivElement>({
       tag: 'div',
       class: classes.logoNavigationWrapper,
@@ -128,22 +137,21 @@ export default class Header extends BaseElement<HTMLElement> {
       window.location.href = LinkPath.LOGIN;
     });
     this.signinButton = new Button({ text: 'Sign in' }, ButtonClasses.NORMAL, () => {
-      window.location.href = LinkPath.SINGIN;
+      window.location.href = LinkPath.SINGUP;
     });
     this.buttonContainer.node.append(this.loginButton.node);
     this.buttonContainer.node.append(this.signinButton.node);
 
     this.userProfileIco = new Link({
       href: LinkPath.PROFILE,
-      class: classes.linkUserIcon
-    },);
+      class: classes.linkUserIcon,
+    });
     const userProfileIcoSVG = new BaseElement<HTMLImageElement>({
       tag: 'img',
       class: classes.userIcon,
       src: userSvg,
     });
     this.userProfileIco.node.append(userProfileIcoSVG.node);
-
 
     this.logoutButton = new Button({ text: 'Log out' }, ButtonClasses.NORMAL, () => {
       // there need a callback for unlogging, now it is testing exemple
@@ -158,7 +166,7 @@ export default class Header extends BaseElement<HTMLElement> {
   };
 
   #changeNavView() {
-    if (State.getInstance().isLoggedIn) {
+    if (!State.getInstance().isLoggedIn) {
       this.userProfileIco.node.classList.add(classes.hidden);
       this.userProfileLink.node.classList.add(classes.hidden);
       this.logoutButton.node.classList.add(classes.hidden);
@@ -234,6 +242,7 @@ export default class Header extends BaseElement<HTMLElement> {
   #createListLinks = (navList: StringKeyObject): BaseElement<HTMLUListElement> => {
     const list = new BaseElement<HTMLUListElement>({ tag: 'ul', class: classes.navigationList });
     const listLinksName = Object.keys(navList);
+    const currentLinkPath = getCurrentLinkPath();
 
     listLinksName.forEach((name) => {
       const listItem = new BaseElement<HTMLLIElement>({
@@ -247,9 +256,15 @@ export default class Header extends BaseElement<HTMLElement> {
       listItem.node.append(link.node);
       list.node.append(listItem.node);
 
-      if (name === 'LOGIN') { this.loginLink = listItem; };
-      if (name === 'SINGIN') { this.signinLink = listItem; };
-      if (name === 'PROFILE') { this.userProfileLink = listItem; }
+      if (name === 'LOGIN') {
+        this.loginLink = listItem;
+      }
+      if (name === 'SINGUP') {
+        this.signinLink = listItem;
+      }
+      if (name === 'PROFILE') {
+        this.userProfileLink = listItem;
+      }
       if (name === 'LOGOUT') {
         this.logoutLink = listItem;
         link.node.addEventListener('click', (event: Event) => {
@@ -260,8 +275,31 @@ export default class Header extends BaseElement<HTMLElement> {
           this.#changeNavView();
         });
       }
+      this.#checkCurrentPageLink(currentLinkPath, name, listItem);
     });
+    this.#setCurrentPageLink();
 
     return list;
   };
-};
+
+  #setCurrentPageLink = () => {
+    if (this.currentPageLinks && this.currentPageLinks.length > 0) {
+      this.currentPageLinks.forEach((el) => {
+        el.node.classList.add(classes.current);
+      });
+    }
+  };
+
+  #checkCurrentPageLink = (
+    currentLinkPath: string,
+    path: string,
+    listItem: BaseElement<HTMLLIElement>,
+  ) => {
+    console.log(LinkPath[path]);
+    console.log(currentLinkPath);
+    if (LinkPath[path] === currentLinkPath) {
+      this.currentPageLinks.push(listItem);
+      console.log('!!');
+    }
+  };
+}

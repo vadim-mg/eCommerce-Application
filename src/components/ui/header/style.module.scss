@@ -115,12 +115,13 @@
     transform: rotate(45deg);
   }
 
-  &:hover {
+  &:active {
     color: var(--color-orange-light);
   }
-
-  &:active {
-    color: var(--color-orange-main);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--color-orange-light);
+    }
   }
 }
 
@@ -167,4 +168,14 @@
 
 .hidden {
   display: none;
+}
+
+.current {
+  color: var(--color-orange-main);
+  pointer-events: none;
+  .nav-link {
+    &::before {
+      background-color: var(--color-orange-main);
+    }
+  }
 }
