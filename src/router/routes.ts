@@ -3,7 +3,7 @@ import HiddenApiPage from '@Src/pages/hidden-api';
 import HiddenExamplePage from '@Src/pages/hidden-example';
 import LoginPage from '@Src/pages/login';
 import MainPage from '@Src/pages/main';
-import RegistrationPage from '@Src/pages/registration';
+import SignupPage from '@Src/pages/signup';
 
 export enum AppRoutes {
   LOGIN = 'login',
@@ -49,7 +49,7 @@ const ROUTES = {
   },
   [AppRoutes.SIGNUP]: {
     name: 'Sign Up',
-    pageConstructor: RegistrationPage,
+    pageConstructor: SignupPage,
     protected: false,
   },
   [AppRoutes.MAIN]: {

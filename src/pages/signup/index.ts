@@ -1,10 +1,10 @@
-import FormPage from '@Src/components/common/form-page';
 import BaseForm from '@Src/components/common/base-form';
-import InputText from '@Src/components/ui/input-text';
+import FormPage from '@Src/components/common/form-page';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
+import InputText from '@Src/components/ui/input-text';
 import classes from './style.module.scss';
 
-export default class RegistrationPage extends FormPage {
+export default class SignupPage extends FormPage {
   form!: BaseForm;
 
   constructor() {
