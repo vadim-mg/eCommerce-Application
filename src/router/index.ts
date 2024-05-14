@@ -38,7 +38,7 @@ export default class Router {
   route = (routePath = this.#currentRoutePath, needChangeHistory = true) => {
     this.#currentRoutePath = this.list().some((val) => val.routePath === routePath)
       ? routePath
-      : AppRoutes.MAIN;
+      : AppRoutes.NOT_FOUND;
 
     const appRoute = this.#list[this.#currentRoutePath];
 

@@ -3,6 +3,7 @@ import HiddenApiPage from '@Src/pages/hidden-api';
 import HiddenExamplePage from '@Src/pages/hidden-example';
 import LoginPage from '@Src/pages/login';
 import MainPage from '@Src/pages/main';
+import NotFound from '@Src/pages/not-found';
 import SignupPage from '@Src/pages/signup';
 
 export enum AppRoutes {
@@ -15,7 +16,7 @@ export enum AppRoutes {
   // PROFILE = 'profile',
   // CART = 'cart',
   // PRODUCT = 'product',
-  // 404 = '404',
+  NOT_FOUND = '404',
 
   // hidden routes
   HIDDEN_EXAMPLE = 'hiddenExample',
@@ -55,6 +56,11 @@ const ROUTES = {
   [AppRoutes.MAIN]: {
     name: 'Main',
     pageConstructor: MainPage,
+    protected: false,
+  },
+  [AppRoutes.NOT_FOUND]: {
+    name: '404',
+    pageConstructor: NotFound,
     protected: false,
   },
   // only for development
