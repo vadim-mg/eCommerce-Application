@@ -25,9 +25,17 @@ export default class NotFound extends ContentPage {
       class: classes.span,
     });
     header.node.append(span.node);
-    const text = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.text, });
-    const p1 = new BaseElement<HTMLElement>({ tag: 'p', class: classes.text, text: 'Your path has led you into the unknown.' });
-    const p2 = new BaseElement<HTMLElement>({ tag: 'p', class: classes.text, text: 'Roll the dice and ' });
+    const text = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.text });
+    const p1 = new BaseElement<HTMLElement>({
+      tag: 'p',
+      class: classes.text,
+      text: 'Your path has led you into the unknown.',
+    });
+    const p2 = new BaseElement<HTMLElement>({
+      tag: 'p',
+      class: classes.text,
+      text: 'Roll the dice and ',
+    });
     const link = new Link({
       href: AppRoutes.MAIN,
       text: 'start over',
