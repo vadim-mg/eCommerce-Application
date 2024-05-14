@@ -1,5 +1,7 @@
 import { CustomerDraft, CustomerSignin } from '@commercetools/platform-sdk';
 import customerApi from '@Src/api/customers';
+import Router from '@Src/router';
+import { AppRoutes } from '@Src/router/routes';
 import State from '@Src/state';
 
 // read https://docs.commercetools.com/api/projects/customers#authenticate-sign-in-customer
@@ -20,6 +22,7 @@ const signUp = (customer: CustomerDraft) =>
 
 const signOut = () => {
   State.getInstance().isLoggedIn = false;
+  Router.getInstance().route(AppRoutes.LOGOUT);
 };
 
 export default { signIn, signUp, signOut };
