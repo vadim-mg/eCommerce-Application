@@ -15,39 +15,56 @@ export default class Footer extends BaseElement<HTMLElement> {
   };
 
   #addTeamLinks = () => {
-
-    const blockHeading = new BaseElement<HTMLDivElement>({ tag: 'div', text: 'Development team:', class: classes.teamTitle });
+    const blockHeading = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      text: 'Development team:',
+      class: classes.teamTitle,
+    });
     const ul = new BaseElement<HTMLUListElement>(
       { tag: 'ul', class: classes.teamList },
-      new BaseElement<HTMLLIElement>({ tag: 'li', class: classes.teamItem, },
+      new BaseElement<HTMLLIElement>(
+        { tag: 'li', class: classes.teamItem },
         new Link({
           text: 'Vadim Mg',
           href: 'https://github.com/vadim-mg',
           target: '_blank',
           class: classes.teamLink,
-        })),
-      new BaseElement<HTMLLIElement>({ tag: 'li', class: classes.teamItem, },
+        }),
+      ),
+      new BaseElement<HTMLLIElement>(
+        { tag: 'li', class: classes.teamItem },
         new Link({
           text: 'Yanina Lysukha',
           href: 'https://github.com/YanaLysukha',
           target: '_blank',
           class: classes.teamLink,
-        })),
-      new BaseElement<HTMLLIElement>({ tag: 'li', class: classes.teamItem, },
+        }),
+      ),
+      new BaseElement<HTMLLIElement>(
+        { tag: 'li', class: classes.teamItem },
         new Link({
           text: 'Natalia Repkina',
           href: 'https://github.com/Nuttik',
           target: '_blank',
           class: classes.teamLink,
-        })),
+        }),
+      ),
     );
 
-    const wrapper = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.teamWrapper, }, blockHeading, ul);
+    const wrapper = new BaseElement<HTMLDivElement>(
+      { tag: 'div', class: classes.teamWrapper },
+      blockHeading,
+      ul,
+    );
     this.node.append(wrapper.node);
   };
 
   #addCopy = () => {
-    const copy = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.copy, text: '2024 ©' });
+    const copy = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.copy,
+      text: '2024 ©',
+    });
     this.node.append(copy.node);
   };
 
