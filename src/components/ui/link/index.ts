@@ -9,8 +9,8 @@ type AppHref = {
 
 type LinkProps = Omit<Omit<ElementProps<HTMLLinkElement>, 'tag'>, 'href'> & AppHref;
 export default class Link extends BaseElement<HTMLElement> {
-  constructor(props: LinkProps) {
-    super({ tag: 'a', ...props });
+  constructor(props: LinkProps, ...children: BaseElement<HTMLElement>[]) {
+    super({ tag: 'a', ...props }, ...children);
     this.node.classList.add(classes.link);
 
     const href = props.href ?? '';
