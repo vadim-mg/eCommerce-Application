@@ -25,6 +25,6 @@
     - ...
   - **constants** - contain files with constants
   - **router** - contains router (can be called from any part of app by Router.getInstance().route(....))
-  - **state** - contains app state (can be called from any part of app by State.getInstance().State.isLoggedIn)
+  - **state** - contains app state (can be called from any part of app by State.getInstance().isLoggedIn)
   - **styles** - common styles for all project
   - **tests** - contains [tests fo jest](./tests.md)

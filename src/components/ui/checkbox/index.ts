@@ -51,4 +51,12 @@ export default class CheckBox extends BaseElement<HTMLElement> {
   get checked() {
     return this.inputElement.node.checked;
   }
+
+  set disabled(value) {
+    this.inputElement.node.disabled = value;
+  }
+
+  get disabled() {
+    return this.inputElement.node.disabled;
+  }
 }

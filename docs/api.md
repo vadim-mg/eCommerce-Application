@@ -13,3 +13,7 @@
 - [HTTP API documentation](https://docs.commercetools.com/api)
 - [Available for us api scopes](https://mc.us-central1.gcp.commercetools.com/board-game-shop/settings/developer/api-clients/uebui5fA_dNYcgNOoJVUgO6p) (if need more need create new API with all need scopes)
 - [How to structure API](https://docs.commercetools.com/sdk/js-sdk-getting-started#how-to-structure-your-api-call) (todo in next sprints)
+
+[@commercetools/sdk-client-v2 - FULL docs](https://commercetools.github.io/commercetools-sdk-typescript/)
+
+[customers api](https://docs.commercetools.com/api/projects/customers#authenticate-sign-in-customer)

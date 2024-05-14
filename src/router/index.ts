@@ -25,6 +25,8 @@ export default class Router {
     return Router.#instance;
   };
 
+  static isCurrentPath = (path: string) => Router.getInstance().#currentRoutePath === path;
+
   addPopStateEventListener = () => {
     window.addEventListener('popstate', (event) => {
       if (event.state) {
@@ -49,6 +51,8 @@ export default class Router {
 
   static isRouteExist = (route: string) => !!ROUTES[route as PageRouteKey];
 
+  static isOwnUrl = (route: string) => route.search('http') < 0;
+
   // return list of routes
   list = () =>
     Object.entries(this.#list).map(([routePath, route]) => ({
@@ -56,4 +60,8 @@ export default class Router {
       name: route.name,
       routeToPage: () => this.route(routePath as PageRouteKey),
     }));
+
+  refresh = () => {
+    this.route(this.#currentRoutePath, false);
+  };
 }
