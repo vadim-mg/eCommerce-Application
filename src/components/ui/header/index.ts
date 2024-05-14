@@ -138,7 +138,7 @@ export default class Header extends BaseElement<HTMLElement> {
     this.buttonContainer.node.append(this.signinButton.node);
 
     this.userProfileIco = new Link({
-      href: LinkPath.PROFILE,
+      href: AppRoutes.PROFILE,
       class: classes.linkUserIcon,
     });
     const userProfileIcoSVG = new BaseElement<HTMLImageElement>({
