@@ -7,6 +7,11 @@
   background: var(--color-black);
   color: var(--color-orange-light);
   padding: 1rem 2.5rem;
+
+  @media (max-width: 620px) {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 }
 
 .team-wrapper {
@@ -54,4 +59,8 @@
   background-size: contain;
   width: 10.75rem;
   height: 4rem;
+  @media (max-width: 620px) {
+    width: 5.5rem;
+    height: 2rem;
+  }
 }
