@@ -102,7 +102,6 @@ export default class InputText extends BaseElement<HTMLInputElement> {
 
   #validate = (callbackValidation: CallbackValidation) => {
     const input = this.value;
-    console.log('!');
     const error = callbackValidation(input);
     if (!error.status) {
       this.errorElement.node.innerHTML = error.errorText;
@@ -118,7 +117,6 @@ export default class InputText extends BaseElement<HTMLInputElement> {
         this.hiddenError();
       }
       if (this.inputRow.node.classList.contains(classes.invalid)) {
-        console.log('&');
         this.inputRow.node.classList.remove(classes.invalid);
       }
     }

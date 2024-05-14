@@ -9,7 +9,6 @@ export default class LoginPage extends FormPage {
   form!: BaseForm;
 
   constructor() {
-    console.log('1');
     super({ title: 'Login page' });
     this.addForm(this.renderForm());
     this.addAdditionalLink('if you don"t already have an account', 'Sign in');

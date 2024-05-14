@@ -32,7 +32,6 @@ export default class FormPage extends BasePage {
   #errorText!: string;
 
   constructor(props: FormProps) {
-    console.log(2);
     super({ title: props.title });
     this.container = new Wrapper(
       { tag: 'div', class: classes.formPage },
