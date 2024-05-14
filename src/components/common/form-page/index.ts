@@ -43,14 +43,14 @@ export default class FormPage extends BasePage {
     this.formWrapper.node.append(form.node);
   };
 
-  addAdditionalLink = (promptMessage: string, linkPath: string) => {
+  addAdditionalLink = (promptMessage: string, linkPath: string, linkText: string) => {
     this.signupPromptElement = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.signupPromptWrapper },
       new BaseElement({ tag: 'p', textContent: 'or' }),
       new BaseElement({ tag: 'p', textContent: promptMessage }),
-      new Link({ href: linkPath, text: linkPath, class: classes.signupLink }),
+      new Link({ href: linkPath, text: linkText, class: classes.signupLink }),
     );
-    this.modalContainer.node.append(this.signupPromptElement.node);
+    this.formWrapper.node.append(this.signupPromptElement.node);
   };
 
   #createBasicContent = () => {
