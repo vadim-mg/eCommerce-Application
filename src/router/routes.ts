@@ -19,7 +19,7 @@ export enum AppRoutes {
 
   // hidden routes
   HIDDEN_EXAMPLE = 'hiddenExample',
-  HIDDEN_API = 'hiddenApi'
+  HIDDEN_API = 'hiddenApi',
 }
 
 // todo: i think about it :)
