@@ -5,30 +5,66 @@ import LoginPage from '@Src/pages/login';
 import MainPage from '@Src/pages/main';
 import RegistrationPage from '@Src/pages/registration';
 
+export enum AppRoutes {
+  LOGIN = 'login',
+  LOGOUT = 'logout',
+  SIGNUP = 'signup',
+  MAIN = 'main',
+  // CATALOGUE = 'catalogue',
+  // ABOUT = 'about',
+  // PROFILE = 'profile',
+  // CART = 'cart',
+  // PRODUCT = 'product',
+  // 404 = '404',
+
+  // hidden routes
+  HIDDEN_EXAMPLE = 'hiddenExample',
+  HIDDEN_API = 'hiddenApi'
+}
+
+// todo: i think about it :)
+
+// type Route = {
+//   name: string,
+//   pageConstructor?: LoginPage | RegistrationPage | null,
+//   redirect?: AppRoutes,
+//   protected: boolean,
+// };
+
+// type Routes = {
+//   [key in AppRoutes]: Route;
+// };;
+
 const ROUTES = {
-  login: {
+  [AppRoutes.LOGIN]: {
     name: 'Login',
     pageConstructor: LoginPage,
     protected: false,
   },
-  registration: {
-    name: 'Register',
+  [AppRoutes.LOGOUT]: {
+    name: 'Logout',
+    pageConstructor: null,
+    redirect: AppRoutes.MAIN,
+    protected: false,
+  },
+  [AppRoutes.SIGNUP]: {
+    name: 'Sign Up',
     pageConstructor: RegistrationPage,
     protected: false,
   },
-  main: {
+  [AppRoutes.MAIN]: {
     name: 'Main',
     pageConstructor: MainPage,
     protected: false,
   },
   // only for development
   // todo: remove it in prod
-  hiddenExample: {
+  [AppRoutes.HIDDEN_EXAMPLE]: {
     name: 'HiddenExample',
     pageConstructor: BasePage,
     protected: false,
   },
-  hiddenApi: {
+  [AppRoutes.HIDDEN_API]: {
     name: 'HiddenApi',
     pageConstructor: BasePage,
     protected: false,
@@ -49,6 +85,5 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export type PageRoute = typeof ROUTES;
-export type PageRouteKey = keyof PageRoute;
 
 export default ROUTES;

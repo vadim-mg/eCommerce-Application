@@ -1,6 +1,6 @@
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 import Router from '@Src/router';
-import { PageRouteKey } from '@Src/router/routes';
+import { AppRoutes } from '@Src/router/routes';
 import classes from './style.module.scss';
 
 export default class Link extends BaseElement<HTMLElement> {
@@ -14,7 +14,7 @@ export default class Link extends BaseElement<HTMLElement> {
       this.node.addEventListener('click', (event) => {
         event.preventDefault();
         if (Router.isRouteExist(href)) {
-          Router.getInstance().route(href as PageRouteKey);
+          Router.getInstance().route(href as AppRoutes);
         }
       });
     }
