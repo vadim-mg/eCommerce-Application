@@ -1,16 +1,17 @@
-import FormPage from '@Src/components/common/form-page';
 import BaseForm from '@Src/components/common/base-form';
-import InputText from '@Src/components/ui/input-text';
+import FormPage from '@Src/components/common/form-page';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
+import InputText from '@Src/components/ui/input-text';
+import { validateEmail, validatePassword } from '@Src/utils/helpers';
 import classes from './style.module.scss';
 
 export default class LoginPage extends FormPage {
   form!: BaseForm;
 
   constructor() {
-    console.log('1');
     super({ title: 'Login page' });
     this.addForm(this.renderForm());
+    this.addAdditionalLink("if you don't already have an account", 'registration', 'Sign in');
   }
 
   renderForm(): BaseForm {
@@ -18,26 +19,20 @@ export default class LoginPage extends FormPage {
       { class: classes.loginForm },
       new InputText(
         {
-          name: 'name',
-          placeholder: 'John',
-          maxLength: 20,
+          name: 'email',
+          placeholder: 'user@example.com',
           minLength: 2,
+          type: 'email',
         },
-        'Name',
-        () => ({
-          status: false,
-          errorText: 'Error',
-        }),
+        'E-mail',
+        validateEmail,
       ),
       new InputText(
-        { name: 'password', placeholder: '********', maxLength: 20, minLength: 8 },
+        { name: 'password', minLength: 8, type: 'password' },
         'Password',
-        () => ({
-          status: true,
-          errorText: 'Error',
-        }),
+        validatePassword,
       ),
-      new Button({ text: 'Hello!!' }, [ButtonClasses.BIG], () => {
+      new Button({ text: 'Log in', class: classes.loginButton }, [ButtonClasses.BIG], () => {
         console.log('login');
       }),
     );

@@ -29,6 +29,7 @@ export default class MainPage extends ContentPage {
         target: '_blank',
         class: classes.listItem,
       }),
+
       new Link({ text: 'example', href: AppRoutes.HIDDEN_EXAMPLE, class: classes.listItem }),
       new Link({ text: 'api', href: AppRoutes.HIDDEN_API, class: classes.listItem }),
       new BaseElement({ tag: 'br' }),

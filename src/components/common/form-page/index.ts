@@ -28,10 +28,11 @@ export default class FormPage extends BasePage {
 
   formWrapper!: BaseElement<HTMLDivElement>;
 
+  signupPromptElement!: BaseElement<HTMLDivElement>;
+
   #errorText!: string;
 
   constructor(props: FormProps) {
-    console.log(2);
     super({ title: props.title });
     this.container = new Wrapper(
       { tag: 'div', class: classes.formPage },
@@ -43,8 +44,17 @@ export default class FormPage extends BasePage {
     this.formWrapper.node.append(form.node);
   };
 
+  addAdditionalLink = (promptMessage: string, linkPath: string, linkText: string) => {
+    this.signupPromptElement = new BaseElement<HTMLDivElement>(
+      { tag: 'div', class: classes.signupPromptWrapper },
+      new BaseElement({ tag: 'p', textContent: 'or' }),
+      new BaseElement({ tag: 'p', textContent: promptMessage }),
+      new Link({ href: linkPath, text: linkText, class: classes.signupLink }),
+    );
+    this.formWrapper.node.append(this.signupPromptElement.node);
+  };
+
   #createBasicContent = () => {
-    // this.logoComponent = new BaseElement<HTMLImageElement>({ tag: 'img', src: logoSvgLight });
     this.createLogoComponent();
     this.createErrorComponent();
     this.formWrapper = new BaseElement<HTMLDivElement>({ tag: 'div' });

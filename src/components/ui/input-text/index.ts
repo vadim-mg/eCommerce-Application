@@ -6,7 +6,7 @@ interface ValidationError {
   status: boolean;
   errorText: string;
 }
-type CallbackValidation = () => ValidationError;
+type CallbackValidation = (input: string) => ValidationError;
 
 type InputProps = Omit<ElementProps<HTMLInputElement>, 'tag'>;
 
@@ -18,6 +18,8 @@ export default class InputText extends BaseElement<HTMLInputElement> {
   errorElement!: BaseElement<HTMLDivElement>;
 
   clearButtonElement!: BaseElement<HTMLDivElement>;
+
+  toggleVisibilityElement!: BaseElement<HTMLDivElement>;
 
   labelElement?: BaseElement<HTMLLabelElement>;
 
@@ -42,7 +44,12 @@ export default class InputText extends BaseElement<HTMLInputElement> {
       this.#addLabel(props.name, labelText);
     }
     this.#addInput(props);
-    this.#addClearButton();
+    // check if the input type is password, show toggle visibility button
+    if (props.type === 'password') {
+      this.#addTogglePasswordBtn();
+    } else {
+      this.#addClearButton();
+    }
     this.#addErrorElement();
   };
 
@@ -84,9 +91,18 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     this.inputRow.node.append(this.clearButtonElement.node);
   };
 
+  #addTogglePasswordBtn = () => {
+    this.toggleVisibilityElement = new BaseElement({
+      tag: 'div',
+      class: [classes.hidePassword],
+    });
+    this.toggleVisibilityElement.node.addEventListener('click', this.togglePasswordVisibility);
+    this.inputRow.node.append(this.toggleVisibilityElement.node);
+  };
+
   #validate = (callbackValidation: CallbackValidation) => {
-    console.log('!');
-    const error = callbackValidation();
+    const input = this.value;
+    const error = callbackValidation(input);
     if (!error.status) {
       this.errorElement.node.innerHTML = error.errorText;
       if (this.isHiddenError()) {
@@ -101,9 +117,20 @@ export default class InputText extends BaseElement<HTMLInputElement> {
         this.hiddenError();
       }
       if (this.inputRow.node.classList.contains(classes.invalid)) {
-        console.log('&');
         this.inputRow.node.classList.remove(classes.invalid);
       }
+    }
+  };
+
+  togglePasswordVisibility = () => {
+    if (this.inputElement.node.type === 'password') {
+      this.inputElement.node.type = 'text';
+      this.toggleVisibilityElement.node.classList.remove(classes.hidePassword);
+      this.toggleVisibilityElement.node.classList.add(classes.showPassword);
+    } else {
+      this.inputElement.node.type = 'password';
+      this.toggleVisibilityElement.node.classList.remove(classes.showPassword);
+      this.toggleVisibilityElement.node.classList.add(classes.hidePassword);
     }
   };
 

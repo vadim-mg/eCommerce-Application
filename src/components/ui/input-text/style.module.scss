@@ -4,11 +4,13 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: 100%;
 }
 
 .inputRow {
   display: flex;
   position: relative;
+  width: 100%;
 
   .invalid {
     .input {
@@ -30,6 +32,7 @@
   border: solid 1px var(--color-grey);
   border-radius: 0.5rem;
   padding: 0.75rem;
+  width: 100%;
   font-size: 1rem;
   line-height: 1.25rem;
   transition: all var(--transition-time);
@@ -73,14 +76,28 @@
   margin-top: 0.5rem;
   font-size: 0.75rem;
 }
-.clear {
+.hidden {
+  display: none;
+}
+
+@mixin input-icons {
   width: 2.75rem;
   height: 2.75rem;
   cursor: pointer;
-  background: url('/src/assets/icons/cross.svg') no-repeat center;
   position: absolute;
+}
+.clear {
+  @include input-icons;
+  background: url('/src/assets/icons/cross.svg') no-repeat center;
   right: 0;
 }
-.hidden {
-  display: none;
+.show-password {
+  @include input-icons;
+  background: url('/src/assets/icons/show.svg') no-repeat center;
+  right: 0.41rem;
+}
+.hide-password {
+  @include input-icons;
+  background: url('/src/assets/icons/hide.svg') no-repeat center;
+  right: 0.41rem;
 }
