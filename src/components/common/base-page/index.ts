@@ -8,7 +8,6 @@ export default class BasePage {
   protected title: string;
 
   constructor(props: PageProps = { title: '' }) {
-    console.log(3);
     this.title = props.title;
   }
 
