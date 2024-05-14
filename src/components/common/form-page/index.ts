@@ -1,12 +1,12 @@
-import Container from '@Src/components/ui/container';
-import Wrapper from '@Src/components/ui/wrapper';
-import logoSvgLight from '@Assets/icons/logo-light.svg';
 import errorSvg from '@Assets/icons/error.svg';
+import logoSvgLight from '@Assets/icons/logo-light.svg';
+import Container from '@Src/components/ui/container';
 import Link from '@Src/components/ui/link';
-import BasePage from '../base-page';
-import classes from './style.module.scss';
+import Wrapper from '@Src/components/ui/wrapper';
 import BaseElement from '../base-element';
 import BaseForm from '../base-form';
+import BasePage from '../base-page';
+import classes from './style.module.scss';
 
 type FormProps = {
   title: string;
@@ -42,7 +42,7 @@ export default class FormPage extends BasePage {
     this.formWrapper.node.append(form.node);
   };
 
-  addSignupPrompt = (signupPrompt: BaseElement<HTMLDivElement>) => {
+  addAdditionalLink = (signupPrompt: BaseElement<HTMLDivElement>) => {
     this.formWrapper.node.append(signupPrompt.node);
   };
 
