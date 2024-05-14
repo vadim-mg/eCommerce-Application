@@ -77,7 +77,7 @@ const ROUTES = {
   [AppRoutes.PROFILE]: {
     name: 'profile',
     pageConstructor: ProfilePage,
-    protected: false,
+    protected: true,
   },
   [AppRoutes.CART]: {
     name: 'cart',
