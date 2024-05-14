@@ -1,4 +1,4 @@
-import BaseElement, { ElementProps, Callback } from '@Src/components/common/base-element';
+import BaseElement, { Callback, ElementProps } from '@Src/components/common/base-element';
 
 import classes from './style.module.scss';
 
@@ -47,6 +47,7 @@ export default class Button extends BaseElement<HTMLButtonElement> {
   };
 
   onClickHandler = (event: Event) => {
+    event.preventDefault();
     this.#onClickCb(event);
   };
 
