@@ -18,7 +18,8 @@ export default class AboutPage extends ContentPage {
         tag: 'main',
         class: classes.about,
       },
-      tag<HTMLHeadingElement>({ tag: 'h1', text: this.title }),);
+      tag<HTMLHeadingElement>({ tag: 'h1', text: this.title }),
+    );
   };
 
   #showContent = () => {
