@@ -18,7 +18,8 @@ export default class NotFound extends ContentPage {
         tag: 'main',
         class: classes.notFound,
       },
-      tag<HTMLHeadingElement>({ tag: 'h1', text: '404' }),);
+      tag<HTMLHeadingElement>({ tag: 'h1', text: '404' }),
+    );
   };
 
   #showContent = () => {

@@ -18,7 +18,8 @@ export default class CartPage extends ContentPage {
         tag: 'main',
         class: classes.cart,
       },
-      tag<HTMLHeadingElement>({ tag: 'h1', text: this.title }),);
+      tag<HTMLHeadingElement>({ tag: 'h1', text: this.title }),
+    );
   };
 
   #showContent = () => {

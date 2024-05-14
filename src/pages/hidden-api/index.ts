@@ -64,7 +64,6 @@ export default class HiddenApiPage extends ContentPage {
           errorText: 'Error',
         }),
       )),
-
       (this.#lastName = new InputText(
         {
           name: 'lastName',
@@ -79,7 +78,6 @@ export default class HiddenApiPage extends ContentPage {
           errorText: 'Error',
         }),
       )),
-
       (this.#dateOfBirth = new InputText(
         {
           name: 'date of birth',
@@ -95,7 +93,6 @@ export default class HiddenApiPage extends ContentPage {
           errorText: 'Error',
         }),
       )),
-
       (this.#email = new InputText(
         {
           name: 'email',
@@ -111,7 +108,6 @@ export default class HiddenApiPage extends ContentPage {
           errorText: 'Error',
         }),
       )),
-
       (this.#password = new InputText(
         {
           name: 'password',
@@ -126,13 +122,11 @@ export default class HiddenApiPage extends ContentPage {
           errorText: 'Error',
         }),
       )),
-
       (this.#errorField = new BaseElement<HTMLParagraphElement>({
         tag: 'p',
         text: '',
         class: classes.error,
       })),
-
       new Button({ text: 'signup', class: classes.button }, ButtonClasses.BIG, this.#signUp),
       new Button({ text: 'login', class: classes.button }, ButtonClasses.BIG, this.#signIn),
       new Button({ text: 'logout', class: classes.button }, ButtonClasses.BIG, auth.signOut),
