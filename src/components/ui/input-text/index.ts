@@ -94,12 +94,9 @@ export default class InputText extends BaseElement<HTMLInputElement> {
   #addTogglePasswordBtn = () => {
     this.toggleVisibilityElement = new BaseElement({
       tag: 'div',
-      class: [classes.toggleVisibility],
+      class: [classes.hidePassword],
     });
-    this.toggleVisibilityElement.node.addEventListener(
-      'click',
-      this.togglePasswordVisibility,
-    );
+    this.toggleVisibilityElement.node.addEventListener('click', this.togglePasswordVisibility);
     this.inputRow.node.append(this.toggleVisibilityElement.node);
   };
 
@@ -128,7 +125,15 @@ export default class InputText extends BaseElement<HTMLInputElement> {
   };
 
   togglePasswordVisibility = () => {
-    this.inputElement.node.type = this.inputElement.node.type === 'password' ? 'text' : 'password';
+    if (this.inputElement.node.type === 'password') {
+      this.inputElement.node.type = 'text';
+      this.toggleVisibilityElement.node.classList.remove(classes.hidePassword);
+      this.toggleVisibilityElement.node.classList.add(classes.showPassword);
+    } else {
+      this.inputElement.node.type = 'password';
+      this.toggleVisibilityElement.node.classList.remove(classes.showPassword);
+      this.toggleVisibilityElement.node.classList.add(classes.hidePassword);
+    }
   };
 
   clearInput = () => {
@@ -147,9 +152,9 @@ export default class InputText extends BaseElement<HTMLInputElement> {
 
   get value() {
     return this.inputElement.node.value;
-  };
+  }
 
   set value(value: string) {
     this.inputElement.node.value = value;
-  };
+  }
 }

@@ -1,4 +1,4 @@
-import Router from "@Src/router";
+import Router from '@Src/router';
 
 export default class State {
   #isLoggedIn: boolean;

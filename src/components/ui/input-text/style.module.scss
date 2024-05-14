@@ -91,8 +91,13 @@
   background: url('/src/assets/icons/cross.svg') no-repeat center;
   right: 0;
 }
-.toggle-visibility {
+.show-password {
   @include input-icons;
-  background: url('/src/assets/icons/password-visibility.svg') no-repeat center;
+  background: url('/src/assets/icons/show.svg') no-repeat center;
+  right: 0.41rem;
+}
+.hide-password {
+  @include input-icons;
+  background: url('/src/assets/icons/hide.svg') no-repeat center;
   right: 0.41rem;
 }

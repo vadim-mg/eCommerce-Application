@@ -46,3 +46,17 @@
     height: auto;
   }
 }
+
+.signup-prompt-wrapper {
+  text-align: center;
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: var(--color-grey-dark);
+
+  .signup-link {
+    text-decoration: underline;
+    color: #000000;
+    font-weight: 500;
+    font-size: 1rem;
+  }
+}

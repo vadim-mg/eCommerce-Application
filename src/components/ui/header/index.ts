@@ -40,7 +40,6 @@ const sidebarNavItems: StringKeyObject = {
   LOGOUT: 'Logout',
 };
 
-
 export default class Header extends BaseElement<HTMLElement> {
   logoNavigationWrapper!: BaseElement<HTMLDivElement>;
 
