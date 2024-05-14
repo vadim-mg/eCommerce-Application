@@ -13,13 +13,16 @@ export default class NotFound extends ContentPage {
   }
 
   #createContent = () => {
-    this.#content = new BaseElement<HTMLDivElement>(
-      {
-        tag: 'main',
-        class: classes.notFound,
-      },);
+    this.#content = new BaseElement<HTMLDivElement>({
+      tag: 'main',
+      class: classes.notFound,
+    });
     const header = new BaseElement<HTMLDivElement>({ tag: 'h1', text: '404', class: classes.h1 });
-    const span = new BaseElement<HTMLDivElement>({ tag: 'span', text: 'Page not found', class: classes.span });
+    const span = new BaseElement<HTMLDivElement>({
+      tag: 'span',
+      text: 'Page not found',
+      class: classes.span,
+    });
     header.node.append(span.node);
     const text = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.text });
     text.node.innerHTML = `<p>Your path has led you into the unknown.<br>Roll the dice and <a href=${AppRoutes.MAIN}>start over<a>.</p>`;

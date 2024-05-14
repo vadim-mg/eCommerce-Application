@@ -18,7 +18,8 @@ export default class ProductPage extends ContentPage {
         tag: 'main',
         class: classes.product,
       },
-      tag<HTMLHeadingElement>({ tag: 'h1', text: this.title }),);
+      tag<HTMLHeadingElement>({ tag: 'h1', text: this.title }),
+    );
   };
 
   #showContent = () => {
