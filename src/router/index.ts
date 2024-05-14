@@ -1,4 +1,6 @@
 import BasePage from '@Src/components/common/base-page';
+import auth from '@Src/controllers/auth';
+import State from '@Src/state';
 import ROUTES, { AppRoutes, PageRoute } from './routes';
 
 export default class Router {
@@ -25,7 +27,7 @@ export default class Router {
     return Router.#instance;
   };
 
-  static isCurrentPath = (path: string) => Router.getInstance().#currentRoutePath === path;
+  static isCurrentPath = (path: AppRoutes) => Router.getInstance().#currentRoutePath === path;
 
   addPopStateEventListener = () => {
     window.addEventListener('popstate', (event) => {
@@ -41,6 +43,12 @@ export default class Router {
       : AppRoutes.NOT_FOUND;
 
     const appRoute = this.#list[this.#currentRoutePath];
+
+    // logout can be used only on time for logged user
+    if(routePath === AppRoutes.LOGOUT && State.getInstance().isLoggedIn){
+      auth.signOut();
+      return;
+    }
 
     if ('redirect' in appRoute) {
       this.route(appRoute.redirect);
