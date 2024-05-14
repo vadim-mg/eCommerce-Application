@@ -10,6 +10,6 @@
   },
   "files.eol": "\n",
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true
+    "source.organizeImports": "explicit"
   }
 }
