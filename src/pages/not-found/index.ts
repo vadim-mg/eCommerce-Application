@@ -1,5 +1,6 @@
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
+import Link from '@Src/components/ui/link';
 import { AppRoutes } from '@Src/router/routes';
 import classes from './style.module.scss';
 
@@ -24,8 +25,17 @@ export default class NotFound extends ContentPage {
       class: classes.span,
     });
     header.node.append(span.node);
-    const text = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.text });
-    text.node.innerHTML = `<p>Your path has led you into the unknown.<br>Roll the dice and <a href=${AppRoutes.MAIN}>start over<a>.</p>`;
+    const text = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.text, });
+    const p1 = new BaseElement<HTMLElement>({ tag: 'p', class: classes.text, text: 'Your path has led you into the unknown.' });
+    const p2 = new BaseElement<HTMLElement>({ tag: 'p', class: classes.text, text: 'Roll the dice and ' });
+    const link = new Link({
+      href: AppRoutes.MAIN,
+      text: 'start over',
+      class: classes.link,
+    });
+    text.node.append(p1.node);
+    text.node.append(p2.node);
+    p2.node.append(link.node);
     this.#content.node.append(header.node);
     this.#content.node.append(text.node);
   };
