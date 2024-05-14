@@ -3,8 +3,13 @@ import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
 import classes from './style.module.scss';
 
+type AppHref = {
+  href: string | AppRoutes;
+};
+
+type LinkProps = Omit<Omit<ElementProps<HTMLLinkElement>, 'tag'>, 'href'> & AppHref;
 export default class Link extends BaseElement<HTMLElement> {
-  constructor(props: Omit<ElementProps<HTMLLinkElement>, 'tag'>) {
+  constructor(props: LinkProps) {
     super({ tag: 'a', ...props });
     this.node.classList.add(classes.link);
 
