@@ -123,9 +123,9 @@ export default class InputText extends BaseElement<HTMLInputElement> {
 
   get value() {
     return this.inputElement.node.value;
-  };
+  }
 
   set value(value: string) {
     this.inputElement.node.value = value;
-  };
+  }
 }

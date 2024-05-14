@@ -1,12 +1,13 @@
-import Container from '@Src/components/ui/container';
-import Wrapper from '@Src/components/ui/wrapper';
-import logoSvgLight from '@Assets/icons/logo-light.svg';
 import errorSvg from '@Assets/icons/error.svg';
+import logoSvgLight from '@Assets/icons/logo-light.svg';
+import Container from '@Src/components/ui/container';
 import Link from '@Src/components/ui/link';
-import BasePage from '../base-page';
-import classes from './style.module.scss';
+import Wrapper from '@Src/components/ui/wrapper';
+import { AppRoutes } from '@Src/router/routes';
 import BaseElement from '../base-element';
 import BaseForm from '../base-form';
+import BasePage from '../base-page';
+import classes from './style.module.scss';
 
 type FormProps = {
   title: string;
@@ -61,7 +62,7 @@ export default class FormPage extends BasePage {
 
   createLogoComponent = () => {
     this.logoComponent = new BaseElement<HTMLImageElement>({ tag: 'img', src: logoSvgLight });
-    this.logoComponentLink = new Link({ href: 'main' });
+    this.logoComponentLink = new Link({ href: AppRoutes.MAIN });
     this.logoComponentLink.node.append(this.logoComponent.node);
   };
 
