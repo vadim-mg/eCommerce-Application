@@ -1,20 +1,22 @@
 import BaseElement from '@Src/components/common/base-element';
 import tag from '@Src/components/common/tag';
-import CheckBox from '@Src/components/ui/checkbox';
-import Button, { ButtonClasses } from '@Src/components/ui/button';
-import InputText from '@Src/components/ui/input-text';
 import Accordion, { AccordionState } from '@Src/components/ui/accordion';
+import Button, { ButtonClasses } from '@Src/components/ui/button';
+import CheckBox from '@Src/components/ui/checkbox';
+import InputText from '@Src/components/ui/input-text';
 
 // imports pictures for example
-import imageBoard from '@Img/board-game-example-image.webp';
-import imageSvg from '@Assets/icons/favicon.svg';
 import basketSvg from '@Assets/icons/basket.svg';
+import imageSvg from '@Assets/icons/favicon.svg';
+import imageBoard from '@Img/board-game-example-image.webp';
 
 // import api for example
 import categoriesApi from '@Src/api/categories';
 
 import ContentPage from '@Src/components/common/content-page';
+import Link from '@Src/components/ui/link';
 import Select from '@Src/components/ui/select';
+import { AppRoutes } from '@Src/router/routes';
 import classes from './style.module.scss';
 
 export default class HiddenExamplePage extends ContentPage {
@@ -33,6 +35,25 @@ export default class HiddenExamplePage extends ContentPage {
         tag: 'main',
         class: classes.hiddenExample,
       },
+
+      tag<HTMLDivElement>(
+        {
+          tag: 'main',
+          class: classes.main,
+        },
+        tag<HTMLHeadingElement>({ tag: 'h1', text: 'Exapmle page' }),
+        new Link({ text: 'error404', href: AppRoutes.NOT_FOUND, class: classes.listItem }),
+        new Link({ text: 'product', href: AppRoutes.PRODUCT, class: classes.listItem }),
+        new Link({
+          text: 'rs.school',
+          href: 'https://rs.school',
+          target: '_blank',
+          class: classes.listItem,
+        }),
+        new Link({ text: 'example', href: AppRoutes.HIDDEN_EXAMPLE, class: classes.listItem }),
+        new Link({ text: 'api', href: AppRoutes.HIDDEN_API, class: classes.listItem }),
+        new BaseElement({ tag: 'br' }),
+      ),
 
       // variant1 use class BaseElement<T>
       new BaseElement<HTMLDivElement>({ tag: 'h1', text: 'Hello' }),

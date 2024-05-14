@@ -8,6 +8,7 @@ import Link from '@Src/components/ui/link';
 import State from '@Src/state';
 
 import Router from '@Src/router';
+import { AppRoutes } from '@Src/router/routes';
 import classes from './style.module.scss';
 
 type HeaderProps = Omit<ElementProps<HTMLElement>, 'tag'>;
@@ -128,16 +129,16 @@ export default class Header extends BaseElement<HTMLElement> {
       class: classes.buttonContainer,
     });
     this.loginButton = new Button({ text: 'Log in' }, ButtonClasses.NORMAL, () => {
-      Router.getInstance().route('login');
+      Router.getInstance().route(AppRoutes.LOGIN);
     });
     this.signinButton = new Button({ text: 'Sign in' }, ButtonClasses.NORMAL, () => {
-      Router.getInstance().route('registration');
+      Router.getInstance().route(AppRoutes.SIGNUP);
     });
     this.buttonContainer.node.append(this.loginButton.node);
     this.buttonContainer.node.append(this.signinButton.node);
 
     this.userProfileIco = new Link({
-      href: LinkPath.PROFILE,
+      href: AppRoutes.PROFILE,
       class: classes.linkUserIcon,
     });
     const userProfileIcoSVG = new BaseElement<HTMLImageElement>({
@@ -150,6 +151,7 @@ export default class Header extends BaseElement<HTMLElement> {
     this.logoutButton = new Button({ text: 'Log out' }, ButtonClasses.NORMAL, () => {
       // there need a callback for unlogging, now it is testing exemple
       State.getInstance().isLoggedIn = !State.getInstance().isLoggedIn;
+      Router.getInstance().route(AppRoutes.LOGOUT);
       // after unlogging change button
       this.#changeNavView();
     });
@@ -266,6 +268,7 @@ export default class Header extends BaseElement<HTMLElement> {
           event.preventDefault();
           // there need a callback for unlogging, now it is testing exemple
           State.getInstance().isLoggedIn = !State.getInstance().isLoggedIn;
+          Router.getInstance().route(AppRoutes.LOGOUT);
           // after unlogging change button
           this.#changeNavView();
         });
