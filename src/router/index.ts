@@ -1,7 +1,7 @@
 import BasePage from '@Src/components/common/base-page';
 import auth from '@Src/controllers/auth';
 import State from '@Src/state';
-import ROUTES, { AppRoutes, PageRoute } from './routes';
+import ROUTES, { AppRoutes, PageRoute, RouteVisibility } from './routes';
 
 export default class Router {
   #currentRoutePath: AppRoutes;
@@ -43,6 +43,7 @@ export default class Router {
       this.route(AppRoutes.MAIN);
       return;
     }
+
     this.#currentRoutePath = this.list().some((val) => val.routePath === routePath)
       ? routePath
       : AppRoutes.NOT_FOUND;
@@ -52,6 +53,16 @@ export default class Router {
     // logout can be used only one time for logged user
     if (routePath === AppRoutes.LOGOUT && State.getInstance().isLoggedIn) {
       auth.signOut();
+      return;
+    }
+
+    // login, signup should redirect to main #64
+    if (
+      'visibility' in appRoute &&
+      appRoute.visibility === RouteVisibility.onlyNotAuth &&
+      State.getInstance().isLoggedIn
+    ) {
+      this.route(AppRoutes.MAIN);
       return;
     }
 
