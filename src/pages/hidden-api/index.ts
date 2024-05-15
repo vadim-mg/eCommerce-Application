@@ -64,8 +64,6 @@ export default class HiddenApiPage extends ContentPage {
           errorText: 'Error',
         }),
       )),
-
-
       (this.#lastName = new InputText(
         {
           name: 'lastName',

@@ -75,25 +75,25 @@ const ROUTES = {
   },
 
   [AppRoutes.CATALOGUE]: {
-    name: 'catalogue',
+    name: 'Catalogue',
     pageConstructor: CataloguePage,
     protected: false,
     visibility: RouteVisibility.everyOne,
   },
   [AppRoutes.ABOUT]: {
-    name: 'about',
+    name: 'About',
     pageConstructor: AboutPage,
     protected: false,
     visibility: RouteVisibility.everyOne,
   },
   [AppRoutes.PROFILE]: {
-    name: 'profile',
+    name: 'Profile',
     pageConstructor: ProfilePage,
     protected: true,
     visibility: RouteVisibility.onlyAuth,
   },
   [AppRoutes.CART]: {
-    name: 'cart',
+    name: 'Cart',
     pageConstructor: CartPage,
     protected: false,
     visibility: RouteVisibility.everyOne,
