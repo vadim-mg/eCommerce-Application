@@ -137,17 +137,18 @@ export default class Header extends BaseElement<HTMLElement> {
         ButtonClasses.NORMAL,
         routeToSignup,
       ),
-      new Link({
-        href: AppRoutes.PROFILE,
-        class: classes.linkUserIcon,
-      }),
-
-      new BaseElement<HTMLImageElement>({
-        tag: 'img',
-        class: classes.userIcon,
-        src: userSvg,
-        hidden: !State.getInstance().isLoggedIn,
-      }),
+      new Link(
+        {
+          href: AppRoutes.PROFILE,
+          class: classes.linkUserIcon,
+        },
+        new BaseElement<HTMLImageElement>({
+          tag: 'img',
+          class: classes.userIcon,
+          src: userSvg,
+          hidden: !State.getInstance().isLoggedIn,
+        }),
+      ),
 
       new Button(
         { text: 'Log out', hidden: !State.getInstance().isLoggedIn },
