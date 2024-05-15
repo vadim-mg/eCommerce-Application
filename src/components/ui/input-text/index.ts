@@ -38,6 +38,12 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     }
   }
 
+  isValid = (callbackValidation: CallbackValidation) => {
+    const input = this.value;
+    const error = callbackValidation(input);
+    return error.status;
+  }
+
   #createContent = (props: InputProps, labelText?: string) => {
     // if we want an input with a label
     if (labelText && props.name) {
