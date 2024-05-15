@@ -71,8 +71,12 @@ export default class FormPage extends BasePage {
   };
 
   createLogoComponent = () => {
-    this.logoComponent = new BaseElement<HTMLImageElement>({ tag: 'img', src: logoSvgLight });
-    this.logoComponentLink = new Link({ href: AppRoutes.MAIN });
+    this.logoComponent = new BaseElement<HTMLImageElement>({
+      tag: 'img',
+      src: logoSvgLight,
+      class: classes.logoImg,
+    });
+    this.logoComponentLink = new Link({ href: AppRoutes.MAIN, class: classes.logoLink });
     this.logoComponentLink.node.append(this.logoComponent.node);
   };
 
