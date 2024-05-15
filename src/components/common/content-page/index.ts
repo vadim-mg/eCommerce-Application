@@ -1,7 +1,6 @@
 import Container from '@Src/components/ui/container';
 import Footer from '@Src/components/ui/footer';
 import Header from '@Src/components/ui/header';
-import BaseElement from '../base-element';
 import BasePage from '../base-page';
 import classes from './style.module.scss';
 
