@@ -1,0 +1,66 @@
+@import '@Src/styles/variables.scss';
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-black);
+  color: var(--color-orange-light);
+  padding: 1rem 2.5rem;
+
+  @media (max-width: 620px) {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+.team-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.team-title {
+  font-weight: 600;
+  line-height: 1.5rem;
+  padding-left: 2rem;
+  background: url('/src/assets/icons/git.svg') no-repeat left center;
+}
+
+.team-list {
+  font-size: 0.75rem;
+  margin-top: 0;
+  margin-left: 1rem;
+}
+
+.team-item {
+  font-weight: 300;
+}
+
+.team-link {
+  color: var(--color-orange-light);
+  line-height: 1.5rem;
+  &:active {
+    color: var(--color-orange-main);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--color-orange-main);
+    }
+  }
+}
+
+.copy {
+  font-size: 1.25rem;
+}
+
+.rss-link {
+  display: block;
+  background: url('/src/assets/icons/rs_school_logo.svg') no-repeat center;
+  background-size: contain;
+  width: 10.75rem;
+  height: 4rem;
+  @media (max-width: 620px) {
+    width: 5.5rem;
+    height: 2rem;
+  }
+}
