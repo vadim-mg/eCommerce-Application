@@ -35,13 +35,13 @@ export default class LoginPage extends FormPage {
         },
         'E-mail',
         validateEmail,
-        this.updateLoginButton,
+        this.changeBtnLogin,
       )),
       (this.#password = new InputText(
         { name: 'password', minLength: 8, type: 'password' },
         'Password',
         validatePassword,
-        this.updateLoginButton,
+        this.changeBtnLogin,
       )),
       (this.#loginButton = new Button(
         { text: 'Log in', class: classes.loginButton },
@@ -53,7 +53,7 @@ export default class LoginPage extends FormPage {
     return this.form;
   }
 
-  updateLoginButton = () => {
+  changeBtnLogin = () => {
     if (this.#password.isValid(validatePassword) && this.#email.isValid(validateEmail)) {
       this.#loginButton.enable();
     } else {
