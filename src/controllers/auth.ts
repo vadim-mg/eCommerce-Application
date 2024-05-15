@@ -11,6 +11,7 @@ const signIn = (customer: CustomerSignin) =>
   customerApi.signIn(customer).then((response) => {
     if (response.statusCode === 200) {
       State.getInstance().isLoggedIn = true;
+      Router.getInstance().route(AppRoutes.MAIN);
     }
   });
 
@@ -18,6 +19,8 @@ const signUp = (customer: CustomerDraft) =>
   customerApi.signUp(customer).then(({ body }) => {
     console.log(`body.customer.id`);
     console.log(body.customer.id);
+    State.getInstance().isLoggedIn = true;
+    Router.getInstance().route(AppRoutes.MAIN);
   });
 
 const signOut = () => {
