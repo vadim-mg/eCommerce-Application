@@ -32,12 +32,17 @@ export default class Router {
   addPopStateEventListener = () => {
     window.addEventListener('popstate', (event) => {
       if (event.state) {
-        this.route(window.location.pathname.slice(1) as AppRoutes, true);
+        this.route(window.location.pathname.slice(1) as AppRoutes, false);
       }
     });
   };
 
   route = (routePath = this.#currentRoutePath, needChangeHistory = true) => {
+    // route without path redirect to main
+    if (routePath.length === 0) {
+      this.route(AppRoutes.MAIN);
+      return;
+    }
     this.#currentRoutePath = this.list().some((val) => val.routePath === routePath)
       ? routePath
       : AppRoutes.NOT_FOUND;
