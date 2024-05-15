@@ -26,7 +26,7 @@ export default class LoginPage extends FormPage {
     this.form = new BaseForm(
       { class: classes.loginForm },
 
-      this.#email = new InputText(
+      (this.#email = new InputText(
         {
           name: 'email',
           placeholder: 'user@example.com',
@@ -35,17 +35,19 @@ export default class LoginPage extends FormPage {
         },
         'E-mail',
         validateEmail,
-      ),
-      this.#password = new InputText(
+        this.updateLoginButton,
+      )),
+      (this.#password = new InputText(
         { name: 'password', minLength: 8, type: 'password' },
         'Password',
         validatePassword,
-      ),
-      this.#loginButton = new Button(
+        this.updateLoginButton,
+      )),
+      (this.#loginButton = new Button(
         { text: 'Log in', class: classes.loginButton },
         [ButtonClasses.BIG],
         this.#signIn,
-      ),
+      )),
     );
     this.#loginButton.disable();
     return this.form;
@@ -57,7 +59,7 @@ export default class LoginPage extends FormPage {
     } else {
       this.#loginButton.disable();
     }
-  }
+  };
 
   #signIn = () => {
     this.hideErrorComponent();

@@ -106,7 +106,7 @@ export default class FormPage extends BasePage {
   hideErrorComponent = () => {
     this.errorTextElement.node.textContent = '';
     this.errMessageWrapper.node.hidden = true;
-  }
+  };
 
   render = () => {
     super.render();
