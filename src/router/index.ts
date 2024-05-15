@@ -32,7 +32,7 @@ export default class Router {
   addPopStateEventListener = () => {
     window.addEventListener('popstate', (event) => {
       if (event.state) {
-        this.route(window.location.pathname.slice(1) as AppRoutes, true);
+        this.route(window.location.pathname.slice(1) as AppRoutes, false);
       }
     });
   };
