@@ -38,6 +38,11 @@ export default class Router {
   };
 
   route = (routePath = this.#currentRoutePath, needChangeHistory = true) => {
+    // route without path redirect to main
+    if (routePath.length === 0) {
+      this.route(AppRoutes.MAIN);
+      return;
+    }
     this.#currentRoutePath = this.list().some((val) => val.routePath === routePath)
       ? routePath
       : AppRoutes.NOT_FOUND;
