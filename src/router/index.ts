@@ -66,6 +66,16 @@ export default class Router {
       return;
     }
 
+    // protected pages for not signed-in users should redirect to login
+    if (
+      'visibility' in appRoute &&
+      appRoute.visibility === RouteVisibility.onlyAuth &&
+      !State.getInstance().isLoggedIn
+    ) {
+      this.route(AppRoutes.LOGIN);
+      return;
+    }
+
     if ('redirect' in appRoute) {
       this.route(appRoute.redirect);
     } else {
