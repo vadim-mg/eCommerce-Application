@@ -31,7 +31,6 @@ export default class LoginPage extends FormPage {
           name: 'email',
           placeholder: 'user@example.com',
           minLength: 2,
-          type: 'email',
         },
         'E-mail',
         validateEmail,
