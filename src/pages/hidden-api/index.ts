@@ -102,12 +102,17 @@ export default class HiddenApiPage extends ContentPage {
           value: TEST_USER.email,
           type: 'email',
         },
-        'Name',
+        'email',
         () => ({
           status: false,
           errorText: 'Error',
         }),
       )),
+      new Button(
+        { text: 'check email', class: classes.button },
+        ButtonClasses.NORMAL,
+        this.#checkEmail,
+      ),
       (this.#password = new InputText(
         {
           name: 'password',
@@ -171,6 +176,16 @@ export default class HiddenApiPage extends ContentPage {
         email: this.#email.value,
         password: this.#password.value,
       })
+      .catch((error: HttpErrorType) => {
+        this.#showError(error.message);
+      });
+  };
+
+  #checkEmail = () => {
+    this.#clearError();
+    auth
+      .isEmailExist(this.#email.value)
+      .then((exist) => this.#showError(exist ? 'Email exist' : 'Email not exist!'))
       .catch((error: HttpErrorType) => {
         this.#showError(error.message);
       });

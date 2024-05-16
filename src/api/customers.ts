@@ -20,4 +20,15 @@ const signIn = (customer: CustomerSignin) =>
     })
     .execute();
 
-export default { signIn, signUp };
+// Search for Customers whose email address matches the Query Predicate
+const returnCustomerByEmail = (email: string) =>
+  apiRoot
+    .customers()
+    .get({
+      queryArgs: {
+        where: `email="${email}"`,
+      },
+    })
+    .execute();
+
+export default { signIn, signUp, returnCustomerByEmail };

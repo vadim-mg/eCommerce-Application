@@ -7,6 +7,8 @@ import State from '@Src/state';
 // read https://docs.commercetools.com/api/projects/customers#authenticate-sign-in-customer
 // read https://docs.commercetools.com/api/projects/customers#create-sign-up-customer-in-store
 
+// All catches must be in functions that call this functions
+
 const signIn = (customer: CustomerSignin) =>
   customerApi.signIn(customer).then((response) => {
     if (response.statusCode === 200) {
@@ -28,4 +30,7 @@ const signOut = () => {
   Router.getInstance().route(AppRoutes.LOGOUT);
 };
 
-export default { signIn, signUp, signOut };
+const isEmailExist = (email: string) =>
+  customerApi.returnCustomerByEmail(email).then(({ body }) => body.results.length === 1);
+
+export default { signIn, signUp, signOut, isEmailExist };
