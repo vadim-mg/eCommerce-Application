@@ -11,7 +11,7 @@ export default class State {
   static #instance: State | null;
 
   private constructor() {
-    const { isLoggedIn } = JSON.parse(sessionStorage.getItem(AUTH_STATE) ?? '{}') as AuthState;
+    const { isLoggedIn } = JSON.parse(localStorage.getItem(AUTH_STATE) ?? '{}') as AuthState;
     this.#isLoggedIn = isLoggedIn ?? false;
   }
 
@@ -30,7 +30,7 @@ export default class State {
   set isLoggedIn(value: boolean) {
     this.#isLoggedIn = value;
     console.log(`Current state is: ${this.#isLoggedIn}`);
-    sessionStorage.setItem(
+    localStorage.setItem(
       AUTH_STATE,
       JSON.stringify({
         isLoggedIn: this.#isLoggedIn,
