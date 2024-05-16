@@ -23,6 +23,8 @@ export default class InputText extends BaseElement<HTMLInputElement> {
 
   labelElement?: BaseElement<HTMLLabelElement>;
 
+  isValid!: boolean;
+
   constructor(
     propsInput: InputProps,
     labelText?: string,
@@ -47,7 +49,7 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     // check if the input type is password, show toggle visibility button
     if (props.type === 'password') {
       this.#addTogglePasswordBtn();
-    } else {
+    } else if (props.type !== 'date') {
       this.#addClearButton();
     }
     this.#addErrorElement();
@@ -112,6 +114,7 @@ export default class InputText extends BaseElement<HTMLInputElement> {
         this.inputRow.node.classList.add(classes.invalid);
       }
       this.inputRow.node.classList.add(classes.invalid);
+      this.isValid = false;
     } else {
       if (!this.isHiddenError()) {
         this.hiddenError();
@@ -119,6 +122,7 @@ export default class InputText extends BaseElement<HTMLInputElement> {
       if (this.inputRow.node.classList.contains(classes.invalid)) {
         this.inputRow.node.classList.remove(classes.invalid);
       }
+      this.isValid = true;
     }
   };
 

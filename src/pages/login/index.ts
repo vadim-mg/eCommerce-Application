@@ -2,12 +2,12 @@ import BaseForm from '@Src/components/common/base-form';
 import FormPage from '@Src/components/common/form-page';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
-import { validateEmail, validatePassword } from '@Src/utils/helpers';
 import auth from '@Src/controllers/auth';
+import { validateEmail, validatePassword } from '@Src/utils/helpers';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import classes from './style.module.scss';
 
-interface ValidationError {
+export interface ValidationError {
   status: boolean;
   errorText: string;
 }
@@ -35,13 +35,13 @@ export default class LoginPage extends FormPage {
     this.#isValidEmail = validateEmail(input).status;
     this.changeBtnLoginState();
     return validateEmail(this.#email.value);
-  }
+  };
 
   checkPasswordValidation = (input: string): ValidationError => {
     this.#isValidPassword = validatePassword(input).status;
     this.changeBtnLoginState();
     return validatePassword(this.#password.value);
-  }
+  };
 
   renderForm(): BaseForm {
     this.form = new BaseForm(

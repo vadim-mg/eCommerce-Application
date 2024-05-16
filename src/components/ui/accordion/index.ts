@@ -52,7 +52,6 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
     window.requestAnimationFrame(() => {
       this.fullHeight = this.contentWrapper.node.offsetHeight;
       this.#setDefaultState(state);
-      console.log(children[1].node.offsetHeight);
     });
   };
 
