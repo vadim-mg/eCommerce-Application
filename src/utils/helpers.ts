@@ -72,13 +72,36 @@ export const validateEmail = (inputValue: string) => {
   };
 };
 
-export const validateFirstName = (inputValue: string) => {
+export const validateUserName = (inputValue: string) => {
   const regex = /^[a-zA-Z]+$/;
   if (!inputValue.match(regex)) {
     return {
       status: false,
-      errorText:
-        'Name must contain at least one character and no special characters or numbers',
+      errorText: 'Name must contain at least one character and no special characters or numbers',
+    };
+  }
+  return {
+    status: true,
+    errorText: '',
+  };
+};
+
+export const validateDateOfBirth = (inputValue: string) => {
+  const minimumAge = 13;
+  const date = new Date(inputValue);
+  const currentDate = new Date();
+  const userDateOfBirth = new Date(date.getFullYear() + minimumAge, date.getMonth(), date.getDate());
+  console.log(currentDate);
+  if (!Number.isNaN(date.getTime())) {
+    return {
+      status: false,
+      errorText: 'Invalid Date of Birth',
+    };
+  }
+  if (userDateOfBirth >= currentDate) {
+    return {
+      status: false,
+      errorText: 'The user must be over 13 years old',
     };
   }
   return {

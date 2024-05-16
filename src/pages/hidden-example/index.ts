@@ -17,7 +17,7 @@ import ContentPage from '@Src/components/common/content-page';
 import Link from '@Src/components/ui/link';
 import Select from '@Src/components/ui/select';
 import { AppRoutes } from '@Src/router/routes';
-import { validateFirstName } from '@Src/utils/helpers';
+import { validateDateOfBirth, validateUserName } from '@Src/utils/helpers';
 import classes from './style.module.scss';
 
 export default class HiddenExamplePage extends ContentPage {
@@ -83,7 +83,7 @@ export default class HiddenExamplePage extends ContentPage {
             minLength: 1,
           },
           'Name',
-          validateFirstName,
+          validateUserName,
         ),
         new InputText(
           { name: 'password', placeholder: '********', maxLength: 20, minLength: 8 },
@@ -92,6 +92,11 @@ export default class HiddenExamplePage extends ContentPage {
             status: true,
             errorText: 'Error',
           }),
+        ),
+        new InputText(
+          { name: 'date of birth', type: 'date' },
+          'date of birth',
+          validateDateOfBirth,
         ),
       ),
       new BaseElement<HTMLElement>(

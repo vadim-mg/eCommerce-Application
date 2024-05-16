@@ -47,7 +47,7 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     // check if the input type is password, show toggle visibility button
     if (props.type === 'password') {
       this.#addTogglePasswordBtn();
-    } else {
+    } else if (props.type !== 'date') {
       this.#addClearButton();
     }
     this.#addErrorElement();
