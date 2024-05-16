@@ -17,7 +17,7 @@ import ContentPage from '@Src/components/common/content-page';
 import Link from '@Src/components/ui/link';
 import Select from '@Src/components/ui/select';
 import { AppRoutes } from '@Src/router/routes';
-import { validateDateOfBirth, validatePostalCode, validateUserData } from '@Src/utils/helpers';
+import { validateDateOfBirth, validatePostalCode, validateRegistrationEmail, validateRegistrationPassword } from '@Src/utils/helpers';
 import classes from './style.module.scss';
 
 export default class HiddenExamplePage extends ContentPage {
@@ -37,7 +37,7 @@ export default class HiddenExamplePage extends ContentPage {
   checkPostalCodeValidation = (inputValue: string) => {
     const result = validatePostalCode(inputValue, this.#selectedValue);
     return result;
-  }
+  };
 
   #createContent = () => {
     const countriesList = ['Belarus', 'Russia', 'Poland'];
@@ -93,15 +93,12 @@ export default class HiddenExamplePage extends ContentPage {
             minLength: 1,
           },
           'Name',
-          validateUserData,
+          validateRegistrationEmail,
         ),
         new InputText(
           { name: 'password', placeholder: '********', maxLength: 20, minLength: 8 },
           'Password',
-          () => ({
-            status: true,
-            errorText: 'Error',
-          }),
+          validateRegistrationPassword,
         ),
         new InputText(
           { name: 'date of birth', type: 'date' },
@@ -119,7 +116,7 @@ export default class HiddenExamplePage extends ContentPage {
           this.checkPostalCodeValidation,
         ),
       ),
-      // 
+      //
       new BaseElement<HTMLElement>(
         { tag: 'div', class: classes.columFlex },
         new BaseElement({ tag: 'h2', textContent: 'Example accordion' }),

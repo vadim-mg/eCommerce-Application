@@ -2,6 +2,25 @@ function sum(a: number, b: number) {
   return a + b;
 }
 
+// this function was created for registration form
+export const validateRegistrationPassword = (inputValue: string) => {
+  const passwordValidationRequirements = [/[A-Z]/, /[a-z]/, /[0-9]/];
+  const meetAllRequirements = passwordValidationRequirements.every((requirement) =>
+    requirement.test(inputValue),
+  );
+  if (!meetAllRequirements || inputValue.length < 8) {
+    return {
+      status: false,
+      errorText:
+        'Password must contain at least one uppercase letter, one lowercase letter, one digit. It must be at least 8 characters long',
+    };
+  }
+  return {
+    status: true,
+    errorText: '',
+  };
+}
+
 export const validatePassword = (inputValue: string) => {
   const trimmedPasswordValue = inputValue.trim();
 
@@ -33,6 +52,22 @@ export const validatePassword = (inputValue: string) => {
     errorText: '',
   };
 };
+
+// this function was created for registration form
+export const validateRegistrationEmail = (inputValue: string) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!inputValue.match(emailRegex)) {
+    return {
+      status: false,
+      errorText:
+        'Please enter a valid email address. It should follow the format: user@example.com',
+    };
+  }
+  return {
+    status: true,
+    errorText: '',
+  };
+}
 
 export const validateEmail = (inputValue: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -78,7 +113,8 @@ export const validateUserData = (inputValue: string) => {
   if (!inputValue.match(regex)) {
     return {
       status: false,
-      errorText: 'This field must contain at least one character and no special characters or numbers',
+      errorText:
+        'This field must contain at least one character and no special characters or numbers',
     };
   }
   return {
@@ -122,7 +158,7 @@ const countriesRegex: ICountriesRegex = {
   Russia: /^\d{6}$/,
   Poland: /^\d{2}-\d{3}$/,
   Belarus: /^\d{6}$/,
-}
+};
 
 // this method takes country input value as an argument too
 export const validatePostalCode = (inputValue: string, country: string) => {
@@ -137,6 +173,6 @@ export const validatePostalCode = (inputValue: string, country: string) => {
     status: true,
     errorText: '',
   };
-}
+};
 
 export default sum;
