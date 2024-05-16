@@ -12,8 +12,8 @@ import { CustomerDraft } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
 
 const TEST_USER: CustomerDraft = {
-  email: 'test5@example.com',
-  password: '123456',
+  email: 'test15@example.com',
+  password: 'Asdf1234!@',
   firstName: 'Anna',
   lastName: 'Frank',
   dateOfBirth: '2005-05-05',
