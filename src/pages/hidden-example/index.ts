@@ -17,11 +17,15 @@ import ContentPage from '@Src/components/common/content-page';
 import Link from '@Src/components/ui/link';
 import Select from '@Src/components/ui/select';
 import { AppRoutes } from '@Src/router/routes';
-import { validateDateOfBirth, validateUserName } from '@Src/utils/helpers';
+import { validateDateOfBirth, validatePostalCode, validateUserData } from '@Src/utils/helpers';
 import classes from './style.module.scss';
 
 export default class HiddenExamplePage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
+
+  #selectedValue!: string;
+
+  postalCodeInput!: InputText;
 
   constructor() {
     super({ containerTag: 'div', title: 'Hidden Example page' });
@@ -30,7 +34,13 @@ export default class HiddenExamplePage extends ContentPage {
     this.#showCategories();
   }
 
+  checkPostalCodeValidation = (inputValue: string) => {
+    const result = validatePostalCode(inputValue, this.#selectedValue);
+    return result;
+  }
+
   #createContent = () => {
+    const countriesList = ['Belarus', 'Russia', 'Poland'];
     this.#content = new BaseElement<HTMLDivElement>(
       {
         tag: 'main',
@@ -83,7 +93,7 @@ export default class HiddenExamplePage extends ContentPage {
             minLength: 1,
           },
           'Name',
-          validateUserName,
+          validateUserData,
         ),
         new InputText(
           { name: 'password', placeholder: '********', maxLength: 20, minLength: 8 },
@@ -98,7 +108,18 @@ export default class HiddenExamplePage extends ContentPage {
           'date of birth',
           validateDateOfBirth,
         ),
+        // I added this inputs to check postal code validation
+        new Select('Select country', countriesList, (selectedValue) => {
+          this.#selectedValue = selectedValue;
+          console.log(`selected value: ${selectedValue}`);
+        }),
+        new InputText(
+          { name: 'postal code', placeholder: 'postal code' },
+          'postal code',
+          this.checkPostalCodeValidation,
+        ),
       ),
+      // 
       new BaseElement<HTMLElement>(
         { tag: 'div', class: classes.columFlex },
         new BaseElement({ tag: 'h2', textContent: 'Example accordion' }),

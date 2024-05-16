@@ -72,12 +72,13 @@ export const validateEmail = (inputValue: string) => {
   };
 };
 
-export const validateUserName = (inputValue: string) => {
+// the function can be used to validate user first name, last name and city
+export const validateUserData = (inputValue: string) => {
   const regex = /^[a-zA-Z]+$/;
   if (!inputValue.match(regex)) {
     return {
       status: false,
-      errorText: 'Name must contain at least one character and no special characters or numbers',
+      errorText: 'This field must contain at least one character and no special characters or numbers',
     };
   }
   return {
@@ -90,8 +91,11 @@ export const validateDateOfBirth = (inputValue: string) => {
   const minimumAge = 13;
   const date = new Date(inputValue);
   const currentDate = new Date();
-  const userDateOfBirth = new Date(date.getFullYear() + minimumAge, date.getMonth(), date.getDate());
-  console.log(currentDate);
+  const userDateOfBirth = new Date(
+    date.getFullYear() + minimumAge,
+    date.getMonth(),
+    date.getDate(),
+  );
   if (!Number.isNaN(date.getTime())) {
     return {
       status: false,
@@ -102,6 +106,31 @@ export const validateDateOfBirth = (inputValue: string) => {
     return {
       status: false,
       errorText: 'The user must be over 13 years old',
+    };
+  }
+  return {
+    status: true,
+    errorText: '',
+  };
+};
+
+interface ICountriesRegex {
+  [country: string]: RegExp;
+}
+
+const countriesRegex: ICountriesRegex = {
+  Russia: /^\d{6}$/,
+  Poland: /^\d{2}-\d{3}$/,
+  Belarus: /^\d{6}$/,
+}
+
+// this method takes country input value as an argument too
+export const validatePostalCode = (inputValue: string, country: string) => {
+  const regex = countriesRegex[country];
+  if (!inputValue.match(regex)) {
+    return {
+      status: false,
+      errorText: `Invalid postal code format for ${country}`,
     };
   }
   return {
