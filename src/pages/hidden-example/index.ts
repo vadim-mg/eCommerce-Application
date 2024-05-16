@@ -17,6 +17,7 @@ import ContentPage from '@Src/components/common/content-page';
 import Link from '@Src/components/ui/link';
 import Select from '@Src/components/ui/select';
 import { AppRoutes } from '@Src/router/routes';
+import { validateFirstName } from '@Src/utils/helpers';
 import classes from './style.module.scss';
 
 export default class HiddenExamplePage extends ContentPage {
@@ -79,14 +80,10 @@ export default class HiddenExamplePage extends ContentPage {
           {
             name: 'name',
             placeholder: 'John',
-            maxLength: 20,
-            minLength: 2,
+            minLength: 1,
           },
           'Name',
-          () => ({
-            status: false,
-            errorText: 'Error',
-          }),
+          validateFirstName,
         ),
         new InputText(
           { name: 'password', placeholder: '********', maxLength: 20, minLength: 8 },

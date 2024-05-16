@@ -72,4 +72,19 @@ export const validateEmail = (inputValue: string) => {
   };
 };
 
+export const validateFirstName = (inputValue: string) => {
+  const regex = /^[a-zA-Z]+$/;
+  if (!inputValue.match(regex)) {
+    return {
+      status: false,
+      errorText:
+        'Name must contain at least one character and no special characters or numbers',
+    };
+  }
+  return {
+    status: true,
+    errorText: '',
+  };
+}
+
 export default sum;
