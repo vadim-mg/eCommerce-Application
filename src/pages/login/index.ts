@@ -7,6 +7,11 @@ import auth from '@Src/controllers/auth';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import classes from './style.module.scss';
 
+interface ValidationError {
+  status: boolean;
+  errorText: string;
+}
+
 export default class LoginPage extends FormPage {
   form!: BaseForm;
 
@@ -16,10 +21,26 @@ export default class LoginPage extends FormPage {
 
   #loginButton!: Button;
 
+  #isValidEmail!: boolean;
+
+  #isValidPassword!: boolean;
+
   constructor() {
     super({ title: 'Login page' });
     this.addForm(this.renderForm());
     this.addAdditionalLink("if you don't already have an account", 'signup', 'Sign up');
+  }
+
+  checkEmailValidation = (input: string): ValidationError => {
+    this.#isValidEmail = validateEmail(input).status;
+    this.changeBtnLoginState();
+    return validateEmail(this.#email.value);
+  }
+
+  checkPasswordValidation = (input: string): ValidationError => {
+    this.#isValidPassword = validatePassword(input).status;
+    this.changeBtnLoginState();
+    return validatePassword(this.#password.value);
   }
 
   renderForm(): BaseForm {
@@ -33,14 +54,12 @@ export default class LoginPage extends FormPage {
           minLength: 2,
         },
         'E-mail',
-        validateEmail,
-        this.changeBtnLogin,
+        this.checkEmailValidation,
       )),
       (this.#password = new InputText(
         { name: 'password', minLength: 8, type: 'password' },
         'Password',
-        validatePassword,
-        this.changeBtnLogin,
+        this.checkPasswordValidation,
       )),
       (this.#loginButton = new Button(
         { text: 'Log in', class: classes.loginButton },
@@ -52,8 +71,8 @@ export default class LoginPage extends FormPage {
     return this.form;
   }
 
-  changeBtnLogin = () => {
-    if (this.#password.isValid(validatePassword) && this.#email.isValid(validateEmail)) {
+  changeBtnLoginState = () => {
+    if (this.#isValidEmail && this.#isValidPassword) {
       this.#loginButton.enable();
     } else {
       this.#loginButton.disable();

@@ -8,8 +8,6 @@ interface ValidationError {
 }
 type CallbackValidation = (input: string) => ValidationError;
 
-type UpdateLoginButton = () => void;
-
 type InputProps = Omit<ElementProps<HTMLInputElement>, 'tag'>;
 
 export default class InputText extends BaseElement<HTMLInputElement> {
@@ -29,23 +27,16 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     propsInput: InputProps,
     labelText?: string,
     callbackValidation?: CallbackValidation,
-    updateLoginButton?: UpdateLoginButton,
   ) {
     super({ tag: 'div', class: classes.wrapper });
     this.#createContent(propsInput, labelText);
     if (callbackValidation) {
       this.inputElement.node.addEventListener(
         'input',
-        this.#validate.bind(this, callbackValidation, updateLoginButton),
+        this.#validate.bind(this, callbackValidation),
       );
     }
   }
-
-  isValid = (callbackValidation: CallbackValidation) => {
-    const input = this.value;
-    const error = callbackValidation(input);
-    return error.status;
-  };
 
   #createContent = (props: InputProps, labelText?: string) => {
     // if we want an input with a label
@@ -109,7 +100,7 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     this.inputRow.node.append(this.toggleVisibilityElement.node);
   };
 
-  #validate = (callbackValidation: CallbackValidation, updateLoginButton?: UpdateLoginButton) => {
+  #validate = (callbackValidation: CallbackValidation) => {
     const input = this.value;
     const error = callbackValidation(input);
     if (!error.status) {
@@ -128,10 +119,6 @@ export default class InputText extends BaseElement<HTMLInputElement> {
       if (this.inputRow.node.classList.contains(classes.invalid)) {
         this.inputRow.node.classList.remove(classes.invalid);
       }
-    }
-
-    if (updateLoginButton) {
-      updateLoginButton();
     }
   };
 
