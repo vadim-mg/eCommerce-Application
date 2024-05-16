@@ -7,8 +7,14 @@ export const validatePassword = (inputValue: string) => {
 
   const passwordValidationRequirements = [/[A-Z]/, /[a-z]/, /[0-9]/, /[!@#$%^&*]/];
   const meetAllRequirements = passwordValidationRequirements.every((requirement) =>
-    requirement.test(trimmedPasswordValue),
+    requirement.test(inputValue),
   );
+  if (trimmedPasswordValue !== inputValue) {
+    return {
+      status: false,
+      errorText: 'Password must not contain leading or trailing whitespace',
+    };
+  }
   if (!meetAllRequirements) {
     return {
       status: false,
@@ -16,7 +22,7 @@ export const validatePassword = (inputValue: string) => {
         'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (!@#$%^&*)',
     };
   }
-  if (trimmedPasswordValue.length < 8) {
+  if (inputValue.length < 8) {
     return {
       status: false,
       errorText: 'Password must be at least 8 characters long',
@@ -33,15 +39,21 @@ export const validateEmail = (inputValue: string) => {
   const domainRegex = /@([^\s@]+\.[^\s@]+)$/;
 
   const trimmedEmailValue = inputValue.trim();
-  if (!trimmedEmailValue.match(emailRegex)) {
-    if (!trimmedEmailValue.includes('@')) {
+  if (!inputValue.match(emailRegex)) {
+    if (inputValue !== trimmedEmailValue) {
+      return {
+        status: false,
+        errorText: 'Email address must not contain leading or trailing whitespace',
+      };
+    }
+    if (!inputValue.includes('@')) {
       return {
         status: false,
         errorText:
           'Your email address should include an "@ symbol separating the local part and domain name',
       };
     }
-    if (!trimmedEmailValue.match(domainRegex)) {
+    if (!inputValue.match(domainRegex)) {
       return {
         status: false,
         errorText: 'Please include a domain name in your email address (e.g., example.com)',
