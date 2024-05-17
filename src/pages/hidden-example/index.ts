@@ -103,6 +103,7 @@ export default class HiddenExamplePage extends ContentPage {
         new Accordion(
           'Closed default',
           AccordionState.CLOSED,
+          classes.accordion,
           new BaseElement({
             tag: 'p',
             textContent:
@@ -117,6 +118,7 @@ export default class HiddenExamplePage extends ContentPage {
         new Accordion(
           'Open default',
           AccordionState.OPEN,
+          classes.accordion,
           new BaseElement({
             tag: 'p',
             textContent:

@@ -18,7 +18,8 @@ enum Placehorders {
   STREET = 'Street 1',
   CITY = 'City',
   POSTAL_CODE = '12345',
-};
+  PASSWORD = '********',
+}
 
 enum FormTitle {
   USER = 'User details',
@@ -29,63 +30,11 @@ enum FormTitle {
 const country = ['Belarus', 'Poland', 'Russia'];
 
 interface UserData {
-  emeil?: string;
+  emil?: string;
   firstName?: string;
   lastName?: string;
   birthday?: string;
 }
-
-function createAddress(title: string, state: AccordionState, type: string): Accordion {
-  const accordion = new Accordion(title, state,
-    (new InputText(
-      {
-        name: 'Street',
-        placeholder: Placehorders.STREET,
-        minLength: 1,
-        type: 'text',
-      },
-      'Street',
-      () => ({
-        status: false,
-        errorText: 'Error',
-      }),
-    )),
-    (new InputText(
-      {
-        name: 'City',
-        placeholder: Placehorders.CITY,
-        minLength: 1,
-        type: 'text',
-      },
-      'City',
-      () => ({
-        status: false,
-        errorText: 'Error',
-      }),
-    )),
-    (new InputText(
-      {
-        name: 'Postal code',
-        placeholder: Placehorders.POSTAL_CODE,
-        minLength: 1,
-        type: 'text',
-      },
-      'Postal code',
-      () => ({
-        status: false,
-        errorText: 'Error',
-      }),
-    )),
-    (new Select('Country', country,
-      () => ({
-        status: false,
-        errorText: 'Error',
-      }),)),
-    (new CheckBox({ class: classes.checkbox }, `Use us default ${type} addres`, false)),
-  );
-  return accordion;
-};
-
 
 
 export default class SignupPage extends FormPage {
@@ -119,15 +68,14 @@ export default class SignupPage extends FormPage {
 
   #nextButton!: Button;
 
-  #singupButton!: Button;
+  #signupButton!: Button;
 
   #userData: UserData;
-
 
   constructor() {
     super({ title: 'Registration page' });
     this.addForm(this.renderForm());
-    this.addAdditionalLink("if you already have an account", 'login', 'Log in');
+    this.addAdditionalLink('if you already have an account', 'login', 'Log in');
     this.#userData = {} as UserData;
   }
 
@@ -139,7 +87,11 @@ export default class SignupPage extends FormPage {
   #createFormUserDetails = (): BaseForm => {
     this.#formUserDetails = new BaseForm(
       { class: classes.form },
-      (this.#formTitle = new BaseElement({ tag: 'div', class: classes.formTitle, text: FormTitle.USER })),
+      new BaseElement({
+        tag: 'div',
+        class: classes.formTitle,
+        text: FormTitle.USER,
+      }),
       (this.#email = new InputText(
         {
           name: 'email',
@@ -195,7 +147,7 @@ export default class SignupPage extends FormPage {
         [ButtonClasses.BIG],
         () => {
           this.#changeForm(this.#createFormAddresses());
-        }
+        },
       )),
     );
     return this.#formUserDetails;
@@ -204,14 +156,32 @@ export default class SignupPage extends FormPage {
   #createFormAddresses = (): BaseForm => {
     this.#formAddress = new BaseForm(
       { class: classes.form },
-      (this.#formTitle = new BaseElement({ tag: 'div', class: classes.formTitle, text: FormTitle.ADDRESS })),
-      (this.#deliveryAddress = createAddress('1. Delivery address', AccordionState.OPEN, 'shipping')),
-      (new CheckBox({ class: classes.checkbox }, `Use the shipping address for billing purposes`, false)),
-      (this.#billingAddress = createAddress('2. Billing address', AccordionState.CLOSED, 'billing')),
+      new BaseElement({
+        tag: 'div',
+        class: classes.formTitle,
+        text: FormTitle.ADDRESS,
+      }),
+      (this.#deliveryAddress = this.#createAddress(
+        '1. Delivery address',
+        AccordionState.OPEN,
+        'shipping',
+      )),
+      new CheckBox(
+        { class: classes.checkbox },
+        `Use the shipping address for billing purposes`,
+        false,
+      ),
+      (this.#billingAddress = this.#createAddress(
+        '2. Billing address',
+        AccordionState.CLOSED,
+        'billing',
+      )),
       (this.#nextButton = new Button(
         { text: 'Next', class: classes.buttonNext },
         [ButtonClasses.BIG],
-        this.#createPasswordForm,
+        () => {
+          this.#changeForm(this.#createPasswordForm());
+        },
       )),
     );
 
@@ -220,16 +190,112 @@ export default class SignupPage extends FormPage {
 
   #changeForm = (form: BaseForm) => {
     this.form.node.replaceWith(form.node);
-
+    if (this.additionalLinkElement.node) {
+      this.additionalLinkElement.node.remove();
+    }
     this.form = form;
-
   };
 
   #createPasswordForm = () => {
     this.#formPassword = new BaseForm(
       { class: classes.form },
-      (this.#formTitle = new BaseElement({ tag: 'div', class: classes.formTitle, text: FormTitle.ADDRESS })),
+      new BaseElement({
+        tag: 'div',
+        class: classes.formTitle,
+        text: FormTitle.PASSWORD,
+      }),
+      (this.#password = new InputText(
+        {
+          name: 'password',
+          minLength: 8,
+          type: 'password',
+          placeholder: Placehorders.PASSWORD,
+        },
+        'Password',
+        this.checkPasswordValidation,
+      )),
+      new BaseElement({
+        tag: 'div',
+        class: classes.passwordInfo,
+        text: '! The password must be at least 6 characters long. It must contain Latin letters, at least one digit and at least one capital letter.',
+      }),
+      (this.#signupButton = new Button(
+        { text: 'Sign up', class: classes.buttonSignup },
+        [ButtonClasses.BIG],
+        () => {
+          // проверяем валидность пароля
+          // регистрируем пользователя
+          // настраиваем данные пользователя по данным из формы
+        },
+      )),
     );
+    return this.#formPassword;
+  };
+
+  #createAddress(title: string, state: AccordionState, type: string): Accordion {
+    const accordion = new Accordion(
+      title,
+      state,
+      classes.accordion,
+      new InputText(
+        {
+          name: 'Street',
+          placeholder: Placehorders.STREET,
+          minLength: 1,
+          type: 'text',
+        },
+        'Street',
+        () => ({
+          status: false,
+          errorText: 'Error',
+        }),
+      ),
+      new InputText(
+        {
+          name: 'City',
+          placeholder: Placehorders.CITY,
+          minLength: 1,
+          type: 'text',
+        },
+        'City',
+        () => ({
+          status: false,
+          errorText: 'Error',
+        }),
+      ),
+      new InputText(
+        {
+          name: 'Postal code',
+          placeholder: Placehorders.POSTAL_CODE,
+          minLength: 1,
+          type: 'text',
+        },
+        'Postal code',
+        () => ({
+          status: false,
+          errorText: 'Error',
+        }),
+      ),
+      new Select('Country', country, () => ({
+        status: false,
+        errorText: 'Error',
+      })),
+      new CheckBox({ class: [classes.checkboxAccordion] }, `Use us default ${type} addres`, false),
+    );
+    accordion.header.node.addEventListener('click', this.#toggleAddressAccordion);
+    return accordion;
+  }
+
+  #toggleAddressAccordion = (event: Event) => {
+    const deliveryHeaderNode = this.#deliveryAddress.header.node;
+    const billingHeaderNode = this.#billingAddress.header.node;
+    const target = event.target as Node;
+
+    if (deliveryHeaderNode.contains(target)) {
+      this.#billingAddress.toggleAccordion();
+    } else if (billingHeaderNode.contains(target)) {
+      this.#deliveryAddress.toggleAccordion();
+    }
   };
 
   checkEmailValidation = (input: string): ValidationError => {
@@ -239,17 +305,16 @@ export default class SignupPage extends FormPage {
 
   checkPasswordValidation = (input: string): ValidationError => {
     this.#isValidPassword = validatePassword(input).status;
-    this.changeBtnState(this.#singupButton, this.#password);
+    this.changeBtnState(this.#signupButton, this.#password);
     return validatePassword(this.#password.value);
   };
 
   changeBtnState = (button: Button, ...inputs: InputText[]): void => {
     const result = inputs.every((input) => input.isValid);
     if (result) {
-      this.#singupButton.enable();
+      this.#signupButton.enable();
     } else {
-      this.#singupButton.disable();
+      this.#signupButton.disable();
     }
   };
-
 }
