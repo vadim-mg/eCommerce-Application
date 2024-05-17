@@ -163,6 +163,20 @@ export default class HiddenApiPage extends ContentPage {
         password: this.#password.value,
         firstName: this.#firstName.value,
         lastName: 'Hardcoded Smith',
+        addresses: [
+          {
+            id: '1',
+            country: 'RU',
+            city: 'Moscow',
+            postalCode: '650001',
+            // streetName: 'arbat',
+            // building: '25',
+            // apartment: '10'
+            additionalAddressInfo: 'Arbat street 25, 10',
+          },
+        ],
+        defaultShippingAddress: 0,
+        defaultBillingAddress: 0,
       })
       .catch((error: HttpErrorType) => {
         this.#showError(error.message);
