@@ -31,4 +31,6 @@ const returnCustomerByEmail = (email: string) =>
     })
     .execute();
 
-export default { signIn, signUp, returnCustomerByEmail };
+const me = () => apiRoot.me().get().execute();
+
+export default { signIn, signUp, returnCustomerByEmail, me };

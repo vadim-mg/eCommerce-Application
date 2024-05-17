@@ -140,6 +140,7 @@ export default class HiddenApiPage extends ContentPage {
         'isLoggedIn',
         State.getInstance().isLoggedIn,
       )),
+      new Button({ text: 'me', class: classes.button }, ButtonClasses.BIG, this.#me),
     );
 
     this.#authCheckbox.disabled = true;
@@ -186,6 +187,18 @@ export default class HiddenApiPage extends ContentPage {
     auth
       .isEmailExist(this.#email.value)
       .then((exist) => this.#showError(exist ? 'Email exist' : 'Email not exist!'))
+      .catch((error: HttpErrorType) => {
+        this.#showError(error.message);
+      });
+  };
+
+  #me = () => {
+    this.#clearError();
+    auth
+      .me()
+      .then((info) => {
+        this.#showError(JSON.stringify(info));
+      })
       .catch((error: HttpErrorType) => {
         this.#showError(error.message);
       });

@@ -33,4 +33,6 @@ const signOut = () => {
 const isEmailExist = (email: string) =>
   customerApi.returnCustomerByEmail(email).then(({ body }) => body.results.length === 1);
 
-export default { signIn, signUp, signOut, isEmailExist };
+const me = () => customerApi.me();
+
+export default { signIn, signUp, signOut, isEmailExist, me };
