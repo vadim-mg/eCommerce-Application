@@ -6,8 +6,13 @@ import Button, { ButtonClasses } from '@Src/components/ui/button';
 import CheckBox from '@Src/components/ui/checkbox';
 import InputText from '@Src/components/ui/input-text';
 import Select from '@Src/components/ui/select';
-import { validateEmail, validatePassword } from '@Src/utils/helpers';
-import { ValidationError } from '../login';
+import {
+  validateDateOfBirth,
+  validatePostalCode,
+  validateRegistrationEmail,
+  validateRegistrationPassword,
+  validateUserData,
+} from '@Src/utils/helpers';
 import classes from './style.module.scss';
 
 enum Placehorders {
@@ -36,9 +41,9 @@ interface UserData {
   birthday?: string;
 }
 
-/* function isFormFull(...inputs: InputText[]): boolean {
+function isFormFull(...inputs: InputText[]): boolean {
   return inputs.every((input) => input.isValid);
-}; */
+}
 
 export default class SignupPage extends FormPage {
   form!: BaseForm;
@@ -51,23 +56,13 @@ export default class SignupPage extends FormPage {
 
   #formPassword!: BaseForm;
 
-  #email!: InputText;
-
-  #password!: InputText;
-
-  #firstName!: InputText;
-
-  #lastName!: InputText;
-
-  #dateOfBirth!: InputText;
-
   #deliveryAddress!: Accordion;
 
   #billingAddress!: Accordion;
 
-  #isValidEmail!: boolean;
+  #inputsBilling!: BaseElement<HTMLElement>[];
 
-  #isValidPassword!: boolean;
+  #inputsDelivery!: BaseElement<HTMLElement>[];
 
   #nextButton!: Button;
 
@@ -88,6 +83,11 @@ export default class SignupPage extends FormPage {
   }
 
   #createFormUserDetails = (): BaseForm => {
+    let mail: InputText;
+    let firstName: InputText;
+    let lastName: InputText;
+    let dateOfBirth: InputText;
+
     this.#formUserDetails = new BaseForm(
       { class: classes.form },
       new BaseElement({
@@ -95,7 +95,7 @@ export default class SignupPage extends FormPage {
         class: classes.formTitle,
         text: FormTitle.USER,
       }),
-      (this.#email = new InputText(
+      (mail = new InputText(
         {
           name: 'email',
           placeholder: Placehorders.EMAIL,
@@ -103,9 +103,9 @@ export default class SignupPage extends FormPage {
           type: 'email',
         },
         'E-mail',
-        this.checkEmailValidation,
+        () => validateRegistrationEmail(mail.value),
       )),
-      (this.#firstName = new InputText(
+      (firstName = new InputText(
         {
           name: 'firstName',
           placeholder: Placehorders.FIRST_NAME,
@@ -113,12 +113,9 @@ export default class SignupPage extends FormPage {
           minLength: 2,
         },
         'First Name',
-        () => ({
-          status: false,
-          errorText: 'Error',
-        }),
+        () => validateUserData(firstName.value),
       )),
-      (this.#lastName = new InputText(
+      (lastName = new InputText(
         {
           name: 'lastName',
           placeholder: Placehorders.LAST_NAME,
@@ -126,12 +123,9 @@ export default class SignupPage extends FormPage {
           minLength: 2,
         },
         'Last Name',
-        () => ({
-          status: false,
-          errorText: 'Error',
-        }),
+        () => validateUserData(lastName.value),
       )),
-      (this.#dateOfBirth = new InputText(
+      (dateOfBirth = new InputText(
         {
           name: 'date-of-birth',
           placeholder: Placehorders.DATE_OF_BIRTHDAY,
@@ -140,15 +134,16 @@ export default class SignupPage extends FormPage {
           max: '2020-01-01',
         },
         'Date of birth',
-        () => ({
-          status: false,
-          errorText: 'Error',
-        }),
+        () => validateDateOfBirth(dateOfBirth.value),
       )),
       (this.#nextButton = new Button(
         { text: 'Next', class: classes.buttonNext },
         [ButtonClasses.BIG],
         () => {
+          // проверить все поля
+          console.log(isFormFull(mail, firstName, lastName, dateOfBirth));
+          // собрать все данные в объект #userData
+          console.log(mail.value, firstName.value, lastName.value, dateOfBirth.value);
           this.#changeForm(this.#createFormAddresses());
         },
       )),
@@ -157,6 +152,18 @@ export default class SignupPage extends FormPage {
   };
 
   #createFormAddresses = (): BaseForm => {
+    this.#inputsDelivery = [];
+    this.#inputsBilling = [];
+
+    const checkboxSwitchAddress: CheckBox = new CheckBox(
+      { class: classes.checkbox },
+      `Use the shipping address for billing purposes`,
+      false,
+    );
+    checkboxSwitchAddress.node.addEventListener('change', () => {
+      console.log('!!');
+    });
+
     this.#formAddress = new BaseForm(
       { class: classes.form },
       new BaseElement({
@@ -164,26 +171,28 @@ export default class SignupPage extends FormPage {
         class: classes.formTitle,
         text: FormTitle.ADDRESS,
       }),
-      (this.#deliveryAddress = this.#createAddress(
+      (this.#deliveryAddress = this.#createAddressAccordion(
         '1. Delivery address',
         AccordionState.OPEN,
         'shipping',
+        this.#inputsDelivery,
       )),
-      new CheckBox(
-        { class: classes.checkbox },
-        `Use the shipping address for billing purposes`,
-        false,
-      ),
-      (this.#billingAddress = this.#createAddress(
+      checkboxSwitchAddress,
+      (this.#billingAddress = this.#createAddressAccordion(
         '2. Billing address',
         AccordionState.CLOSED,
         'billing',
+        this.#inputsBilling,
       )),
       (this.#nextButton = new Button(
         { text: 'Next', class: classes.buttonNext },
         [ButtonClasses.BIG],
         () => {
-          this.#changeForm(this.#createPasswordForm());
+          // проверить все поля
+          console.log(this.#validateFormAddress());
+          // собрать все данные в объект #userData
+          // console.log(mail.value, firstName.value, lastName.value, dateOfBirth.value);
+          // this.#changeForm(this.#createPasswordForm());
         },
       )),
     );
@@ -191,6 +200,21 @@ export default class SignupPage extends FormPage {
     return this.#formAddress;
   };
 
+  #validateFormAddress = (): boolean => {
+    const inputs: InputText[] = [];
+    this.#inputsDelivery.forEach((el) => {
+      if (el instanceof InputText) inputs.push(el);
+    });
+    this.#inputsBilling.forEach((el) => {
+      if (el instanceof InputText) inputs.push(el);
+    });
+    return isFormFull(...inputs);
+  };
+
+  /* #saveDataFromFormAddress = () => {
+
+  };
+*/
   #changeForm = (form: BaseForm) => {
     this.form.node.replaceWith(form.node);
     if (this.additionalLinkElement.node) {
@@ -200,6 +224,8 @@ export default class SignupPage extends FormPage {
   };
 
   #createPasswordForm = () => {
+    let password: InputText;
+
     this.#formPassword = new BaseForm(
       { class: classes.form },
       new BaseElement({
@@ -207,7 +233,7 @@ export default class SignupPage extends FormPage {
         class: classes.formTitle,
         text: FormTitle.PASSWORD,
       }),
-      (this.#password = new InputText(
+      (password = new InputText(
         {
           name: 'password',
           minLength: 8,
@@ -215,7 +241,7 @@ export default class SignupPage extends FormPage {
           placeholder: Placehorders.PASSWORD,
         },
         'Password',
-        this.checkPasswordValidation,
+        () => validateRegistrationPassword(password.value),
       )),
       new BaseElement({
         tag: 'div',
@@ -235,12 +261,23 @@ export default class SignupPage extends FormPage {
     return this.#formPassword;
   };
 
-  #createAddress(title: string, state: AccordionState, type: string): Accordion {
+  #createAddressAccordion(
+    title: string,
+    state: AccordionState,
+    type: string,
+    arrayForInputs: BaseElement<HTMLElement>[],
+  ): Accordion {
+    let userStreet: InputText;
+    let userCity: InputText;
+    let userPostalCode: InputText;
+    let userCountry: Select;
+    let checkbox: CheckBox;
+
     const accordion = new Accordion(
       title,
       state,
       classes.accordion,
-      new InputText(
+      (userStreet = new InputText(
         {
           name: 'Street',
           placeholder: Placehorders.STREET,
@@ -248,12 +285,9 @@ export default class SignupPage extends FormPage {
           type: 'text',
         },
         'Street',
-        () => ({
-          status: false,
-          errorText: 'Error',
-        }),
-      ),
-      new InputText(
+        () => validateUserData(userStreet.value),
+      )),
+      (userCity = new InputText(
         {
           name: 'City',
           placeholder: Placehorders.CITY,
@@ -261,12 +295,13 @@ export default class SignupPage extends FormPage {
           type: 'text',
         },
         'City',
-        () => ({
-          status: false,
-          errorText: 'Error',
-        }),
-      ),
-      new InputText(
+        () => validateUserData(userCity.value),
+      )),
+      (userCountry = new Select('Country', country, () => ({
+        status: false,
+        errorText: 'Error',
+      }))),
+      (userPostalCode = new InputText(
         {
           name: 'Postal code',
           placeholder: Placehorders.POSTAL_CODE,
@@ -274,17 +309,19 @@ export default class SignupPage extends FormPage {
           type: 'text',
         },
         'Postal code',
-        () => ({
-          status: false,
-          errorText: 'Error',
-        }),
-      ),
-      new Select('Country', country, () => ({
-        status: false,
-        errorText: 'Error',
-      })),
-      new CheckBox({ class: [classes.checkboxAccordion] }, `Use us default ${type} addres`, false),
+        () => validatePostalCode(userPostalCode.value, userCountry.value),
+      )),
+      (checkbox = new CheckBox(
+        { class: [classes.checkboxAccordion] },
+        `Use us default ${type} address`,
+        false,
+      )),
     );
+    arrayForInputs.push(userStreet);
+    arrayForInputs.push(userCity);
+    arrayForInputs.push(userPostalCode);
+    arrayForInputs.push(userCountry);
+    arrayForInputs.push(checkbox);
     accordion.header.node.addEventListener('click', this.#toggleAddressAccordion);
     return accordion;
   }
@@ -301,14 +338,13 @@ export default class SignupPage extends FormPage {
     }
   };
 
-  checkEmailValidation = (input: string): ValidationError => {
-    this.#isValidEmail = validateEmail(input).status;
-    return validateEmail(this.#email.value);
-  };
+  // #checkEmailValidation = (): ValidationError => validateRegistrationEmail(this.#email.value);
 
-  checkPasswordValidation = (input: string): ValidationError => {
-    this.#isValidPassword = validatePassword(input).status;
-    return validatePassword(this.#password.value);
-  };
+  // #checkPasswordValidation = (): ValidationError => validateRegistrationPassword(this.#password.value);
 
+  // #checkUserData = (value: string): ValidationError => validateUserData(value);
+
+  // #checkUserDateOfBirth = (value: string): ValidationError => validateDateOfBirth(value);
+
+  // checkValidatePostalCode = (): ValidationError => validatePostalCode(this.#postalCode.value, this.#country.value);
 }

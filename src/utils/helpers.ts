@@ -147,12 +147,6 @@ export const validateDateOfBirth = (inputValue: string) => {
     date.getMonth(),
     date.getDate(),
   );
-  if (!Number.isNaN(date.getTime())) {
-    return {
-      status: false,
-      errorText: 'Invalid Date of Birth',
-    };
-  }
   if (userDateOfBirth >= currentDate) {
     return {
       status: false,
