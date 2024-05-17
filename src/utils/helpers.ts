@@ -22,6 +22,12 @@ export const validateRegistrationPassword = (inputValue: string) => {
   };
 };
 
+// Password must not contain leading or trailing whitespace.
+// Password must contain at least one uppercase letter (A-Z).
+// Password must contain at least one lowercase letter (a-z).
+// Password must contain at least one digit (0-9).
+// (Optional) Password must contain at least one special character (e.g., !@#$%^&*).
+// Password must be at least 8 characters long.
 export const validatePassword = (inputValue: string) => {
   const trimmedPasswordValue = inputValue.trim();
 
@@ -71,6 +77,10 @@ export const validateRegistrationEmail = (inputValue: string) => {
   };
 };
 
+// Email address must not contain leading or trailing whitespace.
+// Email address must contain an '@' symbol separating local part and domain name.
+// Email address must contain a domain name (e.g., example.com).
+// Email address must be properly formatted (e.g., user@example.com).
 export const validateEmail = (inputValue: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const domainRegex = /@([^\s@]+\.[^\s@]+)$/;
