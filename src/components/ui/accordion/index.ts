@@ -18,7 +18,12 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
 
   isOpen: boolean = false;
 
-  constructor(title: string, state: AccordionState, className: string, ...children: BaseElement<HTMLElement>[]) {
+  constructor(
+    title: string,
+    state: AccordionState,
+    className: string,
+    ...children: BaseElement<HTMLElement>[]
+  ) {
     super({ tag: 'div', class: [classes.accordion] });
     this.node.classList.add(className);
     this.#createAccordion(state, title, children);

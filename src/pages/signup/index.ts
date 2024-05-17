@@ -36,6 +36,9 @@ interface UserData {
   birthday?: string;
 }
 
+/* function isFormFull(...inputs: InputText[]): boolean {
+  return inputs.every((input) => input.isValid);
+}; */
 
 export default class SignupPage extends FormPage {
   form!: BaseForm;
@@ -305,16 +308,7 @@ export default class SignupPage extends FormPage {
 
   checkPasswordValidation = (input: string): ValidationError => {
     this.#isValidPassword = validatePassword(input).status;
-    this.changeBtnState(this.#signupButton, this.#password);
     return validatePassword(this.#password.value);
   };
 
-  changeBtnState = (button: Button, ...inputs: InputText[]): void => {
-    const result = inputs.every((input) => input.isValid);
-    if (result) {
-      this.#signupButton.enable();
-    } else {
-      this.#signupButton.disable();
-    }
-  };
 }
