@@ -30,6 +30,11 @@ export default class ContentPage extends BasePage {
   render = () => {
     super.render();
     document.body.classList.add(classes.contentPage);
-    document.body.append(this.header.node, this.banner.node, this.container.node, this.footer.node);
+    document.body.append(
+      this.header.node,
+      this.banner.node,
+      this.container.node,
+      this.footer.node,
+    );
   };
 }
