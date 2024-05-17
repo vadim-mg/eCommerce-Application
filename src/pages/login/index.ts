@@ -35,13 +35,13 @@ export default class LoginPage extends FormPage {
     this.#isValidEmail = validateEmail(input).status;
     this.changeBtnLoginState();
     return validateEmail(this.#email.value);
-  }
+  };
 
   checkPasswordValidation = (input: string): ValidationError => {
     this.#isValidPassword = validatePassword(input).status;
     this.changeBtnLoginState();
     return validatePassword(this.#password.value);
-  }
+  };
 
   renderForm(): BaseForm {
     this.form = new BaseForm(
