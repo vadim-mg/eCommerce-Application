@@ -17,7 +17,12 @@ import ContentPage from '@Src/components/common/content-page';
 import Link from '@Src/components/ui/link';
 import Select from '@Src/components/ui/select';
 import { AppRoutes } from '@Src/router/routes';
-import { validateDateOfBirth, validatePostalCode, validateRegistrationEmail, validateRegistrationPassword } from '@Src/utils/helpers';
+import {
+  validateDateOfBirth,
+  validatePostalCode,
+  validateRegistrationEmail,
+  validateRegistrationPassword,
+} from '@Src/utils/helpers';
 import classes from './style.module.scss';
 
 export default class HiddenExamplePage extends ContentPage {

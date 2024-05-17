@@ -3,6 +3,7 @@ function sum(a: number, b: number) {
 }
 
 // this function was created for registration form
+// Password: Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number
 export const validateRegistrationPassword = (inputValue: string) => {
   const passwordValidationRequirements = [/[A-Z]/, /[a-z]/, /[0-9]/];
   const meetAllRequirements = passwordValidationRequirements.every((requirement) =>
@@ -19,7 +20,7 @@ export const validateRegistrationPassword = (inputValue: string) => {
     status: true,
     errorText: '',
   };
-}
+};
 
 export const validatePassword = (inputValue: string) => {
   const trimmedPasswordValue = inputValue.trim();
@@ -54,6 +55,7 @@ export const validatePassword = (inputValue: string) => {
 };
 
 // this function was created for registration form
+// Email: A properly formatted email address (e.g., example@email.com)
 export const validateRegistrationEmail = (inputValue: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!inputValue.match(emailRegex)) {
@@ -67,7 +69,7 @@ export const validateRegistrationEmail = (inputValue: string) => {
     status: true,
     errorText: '',
   };
-}
+};
 
 export const validateEmail = (inputValue: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -108,6 +110,8 @@ export const validateEmail = (inputValue: string) => {
 };
 
 // the function can be used to validate user first name, last name and city
+// First name: Must contain at least one character and no special characters or numbers
+// the same requirement for last name and city
 export const validateUserData = (inputValue: string) => {
   const regex = /^[a-zA-Z]+$/;
   if (!inputValue.match(regex)) {
@@ -123,6 +127,7 @@ export const validateUserData = (inputValue: string) => {
   };
 };
 
+// Date of birth: A valid date input ensuring the user is above a certain age (e.g., 13 years old or older)
 export const validateDateOfBirth = (inputValue: string) => {
   const minimumAge = 13;
   const date = new Date(inputValue);
@@ -161,6 +166,7 @@ const countriesRegex: ICountriesRegex = {
 };
 
 // this method takes country input value as an argument too
+// Postal code: Must follow the format for the country (e.g., 12345 or A1B 2C3 for the U.S. and Canada, respectively)
 export const validatePostalCode = (inputValue: string, country: string) => {
   const regex = countriesRegex[country];
   if (!inputValue.match(regex)) {
@@ -174,5 +180,7 @@ export const validatePostalCode = (inputValue: string, country: string) => {
     errorText: '',
   };
 };
+
+// I didn't add validation for countries as they are selected from the drop-down list
 
 export default sum;
