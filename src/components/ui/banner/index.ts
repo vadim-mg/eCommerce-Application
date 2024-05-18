@@ -43,7 +43,7 @@ export default class Banner extends BaseElement<HTMLElement> {
     this.node.addEventListener('click', () => {
       navigator.clipboard.writeText(this.bigBtnText.node.innerText);
     });
-  }
+  };
 
   createBannerTextContent = () => {
     const bannerTextPart1 = new BaseElement<HTMLSpanElement>({
@@ -93,7 +93,11 @@ export default class Banner extends BaseElement<HTMLElement> {
       text: 'PLAYMORE',
       class: classes.bigBtnText,
     });
-    this.bannerButton = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.bannerButton, title: 'Copy promo code' });
+    this.bannerButton = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.bannerButton,
+      title: 'Copy promo code',
+    });
     this.bannerButton.node.append(smallBtnText.node);
     this.bannerButton.node.append(this.bigBtnText.node);
     return this.bannerButton;
