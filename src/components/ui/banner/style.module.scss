@@ -74,10 +74,21 @@
 }
 
 .banner-button {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  background: var(--color-orange-main);
   padding: 1.5rem 2rem;
   line-height: 175%;
   border-radius: 1rem;
-  align-items: baseline;
+  transition: background-color var(--transition-time);
+  cursor: pointer;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--color-orange-light);
+    }
+  }
 }
 
 .small-btn-text {

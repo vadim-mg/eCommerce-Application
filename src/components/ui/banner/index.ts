@@ -1,6 +1,6 @@
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 import classes from './style.module.scss';
-import Button, { ButtonClasses } from '../button';
+// import Button, { ButtonClasses } from '../button';
 
 type BannerProps = Omit<ElementProps<HTMLElement>, 'tag'>;
 
@@ -13,7 +13,7 @@ export default class Banner extends BaseElement<HTMLElement> {
 
   bannerTextContent!: BaseElement<HTMLParagraphElement>;
 
-  bannerButton!: Button;
+  bannerButton!: BaseElement<HTMLDivElement>;
 
   highlightBadgeSection!: BaseElement<HTMLDivElement>;
 
@@ -21,9 +21,12 @@ export default class Banner extends BaseElement<HTMLElement> {
 
   mobileHighlightBadge!: BaseElement<HTMLParagraphElement>;
 
+  bigBtnText!: BaseElement<HTMLSpanElement>;
+
   constructor(props: BannerProps) {
     super({ tag: 'div', class: classes.banner, ...props });
     this.addBannerContent();
+    this.addListenerToBannerBtn();
   }
 
   addBannerContent = () => {
@@ -35,6 +38,12 @@ export default class Banner extends BaseElement<HTMLElement> {
     this.createHighlightBadgeSection();
     this.node.append(this.bannerContentWrapper.node);
   };
+
+  addListenerToBannerBtn = () => {
+    this.node.addEventListener('click', () => {
+      navigator.clipboard.writeText(this.bigBtnText.node.innerText);
+    });
+  }
 
   createBannerTextContent = () => {
     const bannerTextPart1 = new BaseElement<HTMLSpanElement>({
@@ -79,16 +88,14 @@ export default class Banner extends BaseElement<HTMLElement> {
       text: 'Use promo code: ',
       class: classes.smallBtnText,
     });
-    const bigBtnText = new BaseElement<HTMLSpanElement>({
+    this.bigBtnText = new BaseElement<HTMLSpanElement>({
       tag: 'span',
       text: 'PLAYMORE',
       class: classes.bigBtnText,
     });
-    this.bannerButton = new Button({ class: classes.bannerButton }, ButtonClasses.BIG, () =>
-      console.log('use promo'),
-    );
+    this.bannerButton = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.bannerButton, title: 'Copy promo code' });
     this.bannerButton.node.append(smallBtnText.node);
-    this.bannerButton.node.append(bigBtnText.node);
+    this.bannerButton.node.append(this.bigBtnText.node);
     return this.bannerButton;
   };
 
@@ -130,8 +137,4 @@ export default class Banner extends BaseElement<HTMLElement> {
     });
     return this.mobileHighlightBadge;
   };
-
-  // removeBanner = () => {
-
-  // }
 }

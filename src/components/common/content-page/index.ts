@@ -25,7 +25,10 @@ export default class ContentPage extends BasePage {
   constructor(props: ContentPageProps) {
     super({ title: props.title });
     this.header = new Header({});
-    this.placeForBanner = new BaseElement<HTMLElement>({ tag: 'div', class: classes.bannerWrapper });
+    this.placeForBanner = new BaseElement<HTMLElement>({
+      tag: 'div',
+      class: classes.bannerWrapper,
+    });
     this.container = new Container({ tag: props.containerTag, class: classes.content });
     this.footer = new Footer();
   }
