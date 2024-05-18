@@ -12,8 +12,8 @@ import { CustomerDraft } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
 
 const TEST_USER: CustomerDraft = {
-  email: 'test5@example.com',
-  password: '123456',
+  email: 'test15@example.com',
+  password: 'Asdf1234!@',
   firstName: 'Anna',
   lastName: 'Frank',
   dateOfBirth: '2005-05-05',
@@ -102,12 +102,17 @@ export default class HiddenApiPage extends ContentPage {
           value: TEST_USER.email,
           type: 'email',
         },
-        'Name',
+        'email',
         () => ({
           status: false,
           errorText: 'Error',
         }),
       )),
+      new Button(
+        { text: 'check email', class: classes.button },
+        ButtonClasses.NORMAL,
+        this.#checkEmail,
+      ),
       (this.#password = new InputText(
         {
           name: 'password',
@@ -135,6 +140,7 @@ export default class HiddenApiPage extends ContentPage {
         'isLoggedIn',
         State.getInstance().isLoggedIn,
       )),
+      new Button({ text: 'me', class: classes.button }, ButtonClasses.BIG, this.#me),
     );
 
     this.#authCheckbox.disabled = true;
@@ -157,6 +163,20 @@ export default class HiddenApiPage extends ContentPage {
         password: this.#password.value,
         firstName: this.#firstName.value,
         lastName: 'Hardcoded Smith',
+        addresses: [
+          {
+            id: '1',
+            country: 'RU',
+            city: 'Moscow',
+            postalCode: '650001',
+            // streetName: 'arbat',
+            // building: '25',
+            // apartment: '10'
+            additionalAddressInfo: 'Arbat street 25, 10',
+          },
+        ],
+        defaultShippingAddress: 0,
+        defaultBillingAddress: 0,
       })
       .catch((error: HttpErrorType) => {
         this.#showError(error.message);
@@ -170,6 +190,28 @@ export default class HiddenApiPage extends ContentPage {
       .signIn({
         email: this.#email.value,
         password: this.#password.value,
+      })
+      .catch((error: HttpErrorType) => {
+        this.#showError(error.message);
+      });
+  };
+
+  #checkEmail = () => {
+    this.#clearError();
+    auth
+      .isEmailExist(this.#email.value)
+      .then((exist) => this.#showError(exist ? 'Email exist' : 'Email not exist!'))
+      .catch((error: HttpErrorType) => {
+        this.#showError(error.message);
+      });
+  };
+
+  #me = () => {
+    this.#clearError();
+    auth
+      .me()
+      .then((info) => {
+        this.#showError(JSON.stringify(info));
       })
       .catch((error: HttpErrorType) => {
         this.#showError(error.message);

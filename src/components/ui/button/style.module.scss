@@ -1,9 +1,6 @@
 @import '@Src/styles/variables.scss';
 
 @mixin button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   color: var(--color-white);
   border-radius: 0.5rem;
   border: none;
