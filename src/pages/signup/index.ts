@@ -449,7 +449,6 @@ export default class SignupPage extends FormPage {
   };
 
   #createPasswordForm = () => {
-
     this.#formPassword = new BaseForm(
       { class: classes.form },
       new BaseElement({
@@ -477,7 +476,7 @@ export default class SignupPage extends FormPage {
         [ButtonClasses.BIG],
         () => {
           this.#onButtonSignup();
-        }
+        },
       )),
     );
     return this.#formPassword;
