@@ -11,7 +11,8 @@ import {
   validatePostalCode,
   validateRegistrationEmail,
   validateRegistrationPassword,
-  validateUserData,
+  validateStreet,
+  validateUserData
 } from '@Src/utils/helpers';
 
 import classes from './style.module.scss';
@@ -306,7 +307,7 @@ export default class SignupPage extends FormPage {
           type: 'text',
         },
         'Street',
-        () => validateUserData(this.#inputsBillingAddress.street.value),
+        () => validateStreet(this.#inputsBillingAddress.street.value),
       ),
       city: new InputText(
         {
@@ -354,7 +355,7 @@ export default class SignupPage extends FormPage {
           type: 'text',
         },
         'Street',
-        () => validateUserData(this.#inputsDeliveryAddress.street.value),
+        () => validateStreet(this.#inputsDeliveryAddress.street.value),
       ),
       city: new InputText(
         {

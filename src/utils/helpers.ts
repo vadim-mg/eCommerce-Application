@@ -119,6 +119,21 @@ export const validateEmail = (inputValue: string) => {
   };
 };
 
+// Street: Must contain at least one character
+export const validateStreet = (inputValue: string) => {
+  if (inputValue.trim().length < 1) {
+    return {
+      status: false,
+      errorText:
+        'This field must contain at least one character',
+    };
+  }
+  return {
+    status: true,
+    errorText: '',
+  };
+};
+
 // the function can be used to validate user first name, last name and city
 // First name: Must contain at least one character and no special characters or numbers
 // the same requirement for last name and city
