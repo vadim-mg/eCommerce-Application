@@ -1,18 +1,16 @@
+import { Customer } from '@commercetools/platform-sdk';
 import Router from '@Src/router';
 
-const AUTH_STATE = 'CJ_ecapp_2024';
-
-type AuthState = {
-  isLoggedIn: boolean;
-};
 export default class State {
   #isLoggedIn: boolean;
+
+  #currentUser: Customer | null;
 
   static #instance: State | null;
 
   private constructor() {
-    const { isLoggedIn } = JSON.parse(localStorage.getItem(AUTH_STATE) ?? '{}') as AuthState;
-    this.#isLoggedIn = isLoggedIn ?? false;
+    this.#isLoggedIn = false;
+    this.#currentUser = null;
   }
 
   // State can be used in any part of App as a singleton
@@ -29,13 +27,15 @@ export default class State {
 
   set isLoggedIn(value: boolean) {
     this.#isLoggedIn = value;
-    console.log(`Current state is: ${this.#isLoggedIn}`);
-    localStorage.setItem(
-      AUTH_STATE,
-      JSON.stringify({
-        isLoggedIn: this.#isLoggedIn,
-      }),
-    );
+    console.log(`Current state is: Is loggedIn: ${this.isLoggedIn}`);
     Router.getInstance().refresh();
+  }
+
+  set currentUser(user: Customer | null) {
+    this.#currentUser = user;
+  }
+
+  get currentUser() {
+    return this.#currentUser;
   }
 }
