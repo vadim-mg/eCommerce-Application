@@ -90,7 +90,7 @@ export default class Banner extends BaseElement<HTMLElement> {
     this.bannerButton.node.append(smallBtnText.node);
     this.bannerButton.node.append(bigBtnText.node);
     return this.bannerButton;
-  }
+  };
 
   createBannerTitle = () => {
     const titleSecondPart = new BaseElement<HTMLSpanElement>({
