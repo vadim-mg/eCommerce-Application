@@ -1,2 +1,44 @@
+@import '@Src/styles/variables.scss';
 .registration {
+}
+
+.form {
+}
+
+.formTitle {
+  width: 100%;
+  text-align: left;
+  font-size: 1.125rem;
+  color: var(--color-grey-dark);
+  &::before {
+    content: 'Registration: ';
+    color: var(--color-black);
+  }
+}
+
+.button-next {
+  margin-top: 1rem;
+}
+
+.address-input {
+  margin-bottom: 1rem;
+}
+
+.accordion {
+  label {
+    margin-top: 1.5rem;
+  }
+  .checkbox-accordion {
+    margin-top: 1.5rem;
+
+    label {
+      margin-top: 0;
+    }
+  }
+}
+
+.password-info {
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  color: var(--color-grey-dark);
 }

@@ -28,7 +28,7 @@ export default class FormPage extends BasePage {
 
   formWrapper!: BaseElement<HTMLDivElement>;
 
-  signupPromptElement!: BaseElement<HTMLDivElement>;
+  additionalLinkElement!: BaseElement<HTMLDivElement>;
 
   #errorText!: string;
 
@@ -45,13 +45,13 @@ export default class FormPage extends BasePage {
   };
 
   addAdditionalLink = (promptMessage: string, linkPath: string, linkText: string) => {
-    this.signupPromptElement = new BaseElement<HTMLDivElement>(
+    this.additionalLinkElement = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.signupPromptWrapper },
       new BaseElement({ tag: 'p', textContent: 'or' }),
       new BaseElement({ tag: 'p', textContent: promptMessage }),
       new Link({ href: linkPath, text: linkText, class: classes.signupLink }),
     );
-    this.formWrapper.node.append(this.signupPromptElement.node);
+    this.formWrapper.node.append(this.additionalLinkElement.node);
   };
 
   #createBasicContent = () => {

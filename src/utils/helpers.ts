@@ -119,9 +119,23 @@ export const validateEmail = (inputValue: string) => {
   };
 };
 
-// the function can be used to validate user first name, last name and city
+// Street: Must contain at least one character
+export const validateStreet = (inputValue: string) => {
+  if (inputValue.trim().length < 1) {
+    return {
+      status: false,
+      errorText: 'This field must contain at least one character',
+    };
+  }
+  return {
+    status: true,
+    errorText: '',
+  };
+};
+
+// the function can be used to validate user first name, last name
 // First name: Must contain at least one character and no special characters or numbers
-// the same requirement for last name and city
+// the same requirement for last name
 export const validateUserData = (inputValue: string) => {
   const regex = /^[a-zA-Z]+$/;
   if (!inputValue.match(regex)) {
@@ -137,8 +151,37 @@ export const validateUserData = (inputValue: string) => {
   };
 };
 
+// the function can be used to validate user city
+// First name: Must contain at least one character and no special characters or numbers
+// The name of the city can save 2 words, for example, Nizhny Novgorod.
+// Therefore, the ability to insert spaces has been added
+// the same requirement for city
+export const validateCity = (inputValue: string) => {
+  const regex = /^[a-zA-Z\s]+$/;
+  const isValid = regex.test(inputValue) && inputValue.trim().length > 0;
+
+  if (!isValid) {
+    return {
+      status: false,
+      errorText:
+        'This field must contain at least one character and no special characters or numbers',
+    };
+  }
+  return {
+    status: true,
+    errorText: '',
+  };
+};
+
 // Date of birth: A valid date input ensuring the user is above a certain age (e.g., 13 years old or older)
 export const validateDateOfBirth = (inputValue: string) => {
+  if (!inputValue) {
+    return {
+      status: false,
+      errorText: 'Please enter a valid date of birth',
+    };
+  }
+
   const minimumAge = 13;
   const date = new Date(inputValue);
   const currentDate = new Date();
@@ -147,12 +190,6 @@ export const validateDateOfBirth = (inputValue: string) => {
     date.getMonth(),
     date.getDate(),
   );
-  if (!Number.isNaN(date.getTime())) {
-    return {
-      status: false,
-      errorText: 'Invalid Date of Birth',
-    };
-  }
   if (userDateOfBirth >= currentDate) {
     return {
       status: false,

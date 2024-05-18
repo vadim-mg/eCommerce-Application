@@ -12,6 +12,8 @@ export default class Select extends BaseElement<HTMLSelectElement> {
 
   #onChangeCallback: ChangeCallback;
 
+  value: string;
+
   // if no need label set labelName=''
   constructor(labelName: string, list: string[], onChangeCallback: ChangeCallback) {
     super({ tag: 'div', class: [classes.component] });
@@ -33,6 +35,7 @@ export default class Select extends BaseElement<HTMLSelectElement> {
           }),
       ),
     );
+    this.value = this.#input.node.value;
 
     this.#renderList();
     this.#addEventListener();
@@ -68,7 +71,6 @@ export default class Select extends BaseElement<HTMLSelectElement> {
     );
 
     inputWrapper.node.addEventListener('click', (event) => {
-      console.log(event.target);
       const target = event.target as HTMLElement;
       if (target.classList.contains(classes.select)) {
         this.#input.node.showPicker();
