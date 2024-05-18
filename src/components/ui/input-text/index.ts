@@ -25,6 +25,8 @@ export default class InputText extends BaseElement<HTMLInputElement> {
 
   isValid!: boolean;
 
+  callbackValidation!: CallbackValidation;
+
   constructor(
     propsInput: InputProps,
     labelText?: string,
@@ -33,9 +35,10 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     super({ tag: 'div', class: classes.wrapper });
     this.#createContent(propsInput, labelText);
     if (callbackValidation) {
+      this.callbackValidation = callbackValidation;
       this.inputElement.node.addEventListener(
         'input',
-        this.#validate.bind(this, callbackValidation),
+        this.validate.bind(this),
       );
     }
   }
@@ -102,9 +105,9 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     this.inputRow.node.append(this.toggleVisibilityElement.node);
   };
 
-  #validate = (callbackValidation: CallbackValidation) => {
+  validate = () => {
     const input = this.value;
-    const error = callbackValidation(input);
+    const error = this.callbackValidation(input);
     if (!error.status) {
       this.errorElement.node.innerHTML = error.errorText;
       if (this.isHiddenError()) {

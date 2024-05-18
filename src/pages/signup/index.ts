@@ -12,7 +12,7 @@ import {
   validateRegistrationEmail,
   validateRegistrationPassword,
   validateStreet,
-  validateUserData
+  validateUserData,
 } from '@Src/utils/helpers';
 
 import classes from './style.module.scss';
@@ -62,6 +62,9 @@ interface InputsMap {
 }
 
 function isFormFull(...inputs: InputText[]): boolean {
+  inputs.forEach((input) => {
+    input.validate();
+  });
   return inputs.every((input) => input.isValid);
 }
 
@@ -259,44 +262,6 @@ export default class SignupPage extends FormPage {
     this.form = form;
   };
 
-  #createPasswordForm = () => {
-    let password: InputText;
-
-    this.#formPassword = new BaseForm(
-      { class: classes.form },
-      new BaseElement({
-        tag: 'div',
-        class: classes.formTitle,
-        text: FormTitle.PASSWORD,
-      }),
-      (password = new InputText(
-        {
-          name: 'password',
-          minLength: 8,
-          type: 'password',
-          placeholder: Placehorders.PASSWORD,
-        },
-        'Password',
-        () => validateRegistrationPassword(password.value),
-      )),
-      new BaseElement({
-        tag: 'div',
-        class: classes.passwordInfo,
-        text: '! The password must be at least 6 characters long. It must contain Latin letters, at least one digit and at least one capital letter.',
-      }),
-      (this.#signupButton = new Button(
-        { text: 'Sign up', class: classes.buttonSignup },
-        [ButtonClasses.BIG],
-        () => {
-          // проверяем валидность пароля
-          // регистрируем пользователя
-          // настраиваем данные пользователя по данным из формы
-        },
-      )),
-    );
-    return this.#formPassword;
-  };
-
   #createBillingAddressInputs = () => {
     this.#inputsBillingAddress = {
       street: new InputText(
@@ -435,5 +400,43 @@ export default class SignupPage extends FormPage {
     } else if (billingHeaderNode.contains(target)) {
       this.#deliveryAddress.toggleAccordion();
     }
+  };
+
+  #createPasswordForm = () => {
+    let password: InputText;
+
+    this.#formPassword = new BaseForm(
+      { class: classes.form },
+      new BaseElement({
+        tag: 'div',
+        class: classes.formTitle,
+        text: FormTitle.PASSWORD,
+      }),
+      (password = new InputText(
+        {
+          name: 'password',
+          minLength: 8,
+          type: 'password',
+          placeholder: Placehorders.PASSWORD,
+        },
+        'Password',
+        () => validateRegistrationPassword(password.value),
+      )),
+      new BaseElement({
+        tag: 'div',
+        class: classes.passwordInfo,
+        text: '! The password must be at least 6 characters long. It must contain Latin letters, at least one digit and at least one capital letter.',
+      }),
+      (this.#signupButton = new Button(
+        { text: 'Sign up', class: classes.buttonSignup },
+        [ButtonClasses.BIG],
+        () => {
+          // проверяем валидность пароля
+          // регистрируем пользователя
+          // настраиваем данные пользователя по данным из формы
+        },
+      )),
+    );
+    return this.#formPassword;
   };
 }

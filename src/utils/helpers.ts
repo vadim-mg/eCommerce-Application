@@ -124,8 +124,7 @@ export const validateStreet = (inputValue: string) => {
   if (inputValue.trim().length < 1) {
     return {
       status: false,
-      errorText:
-        'This field must contain at least one character',
+      errorText: 'This field must contain at least one character',
     };
   }
   return {
