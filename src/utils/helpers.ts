@@ -133,9 +133,9 @@ export const validateStreet = (inputValue: string) => {
   };
 };
 
-// the function can be used to validate user first name, last name and city
+// the function can be used to validate user first name, last name
 // First name: Must contain at least one character and no special characters or numbers
-// the same requirement for last name and city
+// the same requirement for last name
 export const validateUserData = (inputValue: string) => {
   const regex = /^[a-zA-Z]+$/;
   if (!inputValue.match(regex)) {
@@ -143,6 +143,27 @@ export const validateUserData = (inputValue: string) => {
       status: false,
       errorText:
         'This field must contain at least one character and no special characters or numbers',
+    };
+  }
+  return {
+    status: true,
+    errorText: '',
+  };
+};
+
+// the function can be used to validate user city
+// First name: Must contain at least one character and no special characters or numbers
+// The name of the city can save 2 words, for example, Nizhny Novgorod.
+// Therefore, the ability to insert spaces has been added
+// the same requirement for city
+export const validateCity = (inputValue: string) => {
+  const regex = /^[a-zA-Z\s]+$/;
+  const isValid = regex.test(inputValue) && inputValue.trim().length > 0;
+
+  if (!isValid) {
+    return {
+      status: false,
+      errorText: 'This field must contain at least one character and no special characters or numbers',
     };
   }
   return {

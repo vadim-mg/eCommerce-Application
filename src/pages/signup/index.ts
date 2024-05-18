@@ -7,6 +7,7 @@ import CheckBox from '@Src/components/ui/checkbox';
 import InputText from '@Src/components/ui/input-text';
 import Select from '@Src/components/ui/select';
 import {
+  validateCity,
   validateDateOfBirth,
   validatePostalCode,
   validateRegistrationEmail,
@@ -86,6 +87,8 @@ export default class SignupPage extends FormPage {
   #inputsBillingAddress!: InputsMap;
 
   #inputsDeliveryAddress!: InputsMap;
+
+  #checkboxSwitchAddress!: CheckBox;
 
   #nextButton!: Button;
 
@@ -175,14 +178,12 @@ export default class SignupPage extends FormPage {
   };
 
   #createFormAddresses = (): BaseForm => {
-    const checkboxSwitchAddress: CheckBox = new CheckBox(
+    this.#checkboxSwitchAddress = new CheckBox(
       { class: classes.checkbox },
       `Use the shipping address for billing purposes`,
       false,
     );
-    checkboxSwitchAddress.node.addEventListener('change', () => {
-      console.log('!!');
-    });
+    this.#checkboxSwitchAddress.inputElement.node.addEventListener('change', this.#toggleCopyAddressData);
 
     this.#formAddress = new BaseForm(
       { class: classes.form },
@@ -195,7 +196,7 @@ export default class SignupPage extends FormPage {
         '1. Delivery address',
         AccordionState.OPEN,
       )),
-      checkboxSwitchAddress,
+      this.#checkboxSwitchAddress,
       (this.#billingAddress = this.#createBillingAddressAccordion(
         '2. Billing address',
         AccordionState.CLOSED,
@@ -222,15 +223,14 @@ export default class SignupPage extends FormPage {
   };
 
   #validateFormAddress = (): boolean => {
+    // isFormFull validates only InputText data types, so we collect only such elements into the array,
+    // excluding Checkbox and Select
     const inputs: InputText[] = [];
-    // Собираем все инпуты из this.#inputsBillingAddress
     Object.values(this.#inputsBillingAddress).forEach((input) => {
       if (input instanceof InputText) {
         inputs.push(input);
       }
     });
-
-    // Добавляем инпуты из this.#inputsDeliveryAddress
     Object.values(this.#inputsDeliveryAddress).forEach((input) => {
       if (input instanceof InputText) {
         inputs.push(input);
@@ -247,11 +247,19 @@ export default class SignupPage extends FormPage {
     this.#userData.billingCountry = this.#inputsBillingAddress.country.value;
     this.#userData.billingIsDefault = this.#inputsBillingAddress.checkboxDefault.checked;
 
-    this.#userData.deliveryStreet = this.#inputsDeliveryAddress.street.value;
-    this.#userData.deliveryCity = this.#inputsDeliveryAddress.city.value;
-    this.#userData.deliveryCode = this.#inputsDeliveryAddress.postalCode.value;
-    this.#userData.deliveryCountry = this.#inputsDeliveryAddress.country.value;
-    this.#userData.deliveryIsDefault = this.#inputsDeliveryAddress.checkboxDefault.checked;
+    if (this.#checkboxSwitchAddress.checked) {
+      this.#userData.deliveryStreet = this.#inputsBillingAddress.street.value;
+      this.#userData.deliveryCity = this.#inputsBillingAddress.city.value;
+      this.#userData.deliveryCode = this.#inputsBillingAddress.postalCode.value;
+      this.#userData.deliveryCountry = this.#inputsBillingAddress.country.value;
+      this.#userData.deliveryIsDefault = this.#inputsBillingAddress.checkboxDefault.checked;
+    } else {
+      this.#userData.deliveryStreet = this.#inputsDeliveryAddress.street.value;
+      this.#userData.deliveryCity = this.#inputsDeliveryAddress.city.value;
+      this.#userData.deliveryCode = this.#inputsDeliveryAddress.postalCode.value;
+      this.#userData.deliveryCountry = this.#inputsDeliveryAddress.country.value;
+      this.#userData.deliveryIsDefault = this.#inputsDeliveryAddress.checkboxDefault.checked;
+    }
   };
 
   #changeForm = (form: BaseForm) => {
@@ -282,7 +290,7 @@ export default class SignupPage extends FormPage {
           type: 'text',
         },
         'City',
-        () => validateUserData(this.#inputsBillingAddress.city.value),
+        () => validateCity(this.#inputsBillingAddress.city.value),
       ),
       country: new Select('Country', country, () => ({
         status: true,
@@ -330,7 +338,7 @@ export default class SignupPage extends FormPage {
           type: 'text',
         },
         'City',
-        () => validateUserData(this.#inputsDeliveryAddress.city.value),
+        () => validateCity(this.#inputsDeliveryAddress.city.value),
       ),
       country: new Select('Country', country, () => ({
         status: true,
@@ -394,11 +402,27 @@ export default class SignupPage extends FormPage {
     const deliveryHeaderNode = this.#deliveryAddress.header.node;
     const billingHeaderNode = this.#billingAddress.header.node;
     const target = event.target as Node;
-
     if (deliveryHeaderNode.contains(target)) {
       this.#billingAddress.toggleAccordion();
     } else if (billingHeaderNode.contains(target)) {
       this.#deliveryAddress.toggleAccordion();
+    }
+  };
+
+  #toggleCopyAddressData = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (target.checked) {
+      this.#inputsBillingAddress.street.value = this.#inputsDeliveryAddress.street.value;
+      this.#inputsBillingAddress.city.value = this.#inputsDeliveryAddress.city.value;
+      this.#inputsBillingAddress.country.value = this.#inputsDeliveryAddress.country.value;
+      this.#inputsBillingAddress.postalCode.value = this.#inputsDeliveryAddress.postalCode.value;
+      this.#inputsBillingAddress.checkboxDefault.checked = this.#inputsDeliveryAddress.checkboxDefault.checked;
+    } else {
+      this.#inputsBillingAddress.street.value = '';
+      this.#inputsBillingAddress.city.value = '';
+      this.#inputsBillingAddress.country.value = this.#inputsDeliveryAddress.country.value;
+      this.#inputsBillingAddress.postalCode.value = '';
+      this.#inputsBillingAddress.checkboxDefault.checked = false;
     }
   };
 

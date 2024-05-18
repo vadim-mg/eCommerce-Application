@@ -36,10 +36,7 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     this.#createContent(propsInput, labelText);
     if (callbackValidation) {
       this.callbackValidation = callbackValidation;
-      this.inputElement.node.addEventListener(
-        'input',
-        this.validate.bind(this),
-      );
+      this.inputElement.node.addEventListener('input', this.validate.bind(this));
     }
   }
 
