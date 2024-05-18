@@ -1,4 +1,5 @@
-import { CustomerDraft, CustomerSignin } from '@commercetools/platform-sdk';
+import { CustomerSignin, MyCustomerDraft } from '@commercetools/platform-sdk';
+import apiRoot from '@Src/api/api-root';
 import customerApi from '@Src/api/customers';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
@@ -12,21 +13,29 @@ import State from '@Src/state';
 const signIn = (customer: CustomerSignin) =>
   customerApi.signIn(customer).then((response) => {
     if (response.statusCode === 200) {
+      const { email, password } = customer;
+      apiRoot.loginUser({ username: email, password });
       State.getInstance().isLoggedIn = true;
+      State.getInstance().currentUser = response.body.customer;
       Router.getInstance().route(AppRoutes.MAIN);
     }
   });
 
-const signUp = (customer: CustomerDraft) =>
-  customerApi.signUp(customer).then(({ body }) => {
-    console.log(`body.customer.id`);
-    console.log(body.customer.id);
-    State.getInstance().isLoggedIn = true;
-    Router.getInstance().route(AppRoutes.MAIN);
+const signUp = (customer: MyCustomerDraft) =>
+  customerApi.signUp(customer).then((response) => {
+    if (response.statusCode === 201) {
+      const { email, password } = customer;
+      apiRoot.loginUser({ username: email, password });
+      State.getInstance().isLoggedIn = true;
+      State.getInstance().currentUser = response.body.customer;
+      Router.getInstance().route(AppRoutes.MAIN);
+    }
   });
 
 const signOut = () => {
+  apiRoot.logoutUser();
   State.getInstance().isLoggedIn = false;
+  State.getInstance().currentUser = null;
   Router.getInstance().route(AppRoutes.LOGOUT);
 };
 

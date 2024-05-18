@@ -26,6 +26,12 @@ class TokenCache {
 
   get = (tokenCacheOptions?: TokenCacheOptions) => {
     const key = this.#getKey(tokenCacheOptions);
+    // const experationTime = (JSON.parse(this.#storage.getItem(key) ?? '{}') as TokenStore).expirationTime;
+    // console.log(`token ${this.#tokenName}:`);
+    // console.log(JSON.parse(this.#storage.getItem(key) ?? '{}') as TokenStore);
+    // console.log(`experation time ${experationTime}:`);
+    // console.log(`experation time ${new Date(experationTime).toString()}:`);
+    // console.log(`experation time ${new Date().toString()}:`);
     return JSON.parse(this.#storage.getItem(key) ?? '{}') as TokenStore;
   };
 

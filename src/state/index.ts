@@ -1,5 +1,6 @@
 import { Customer } from '@commercetools/platform-sdk';
 import Router from '@Src/router';
+import { passwordTokenCache } from '@Src/utils/token-cache';
 
 export default class State {
   #isLoggedIn: boolean;
@@ -9,7 +10,7 @@ export default class State {
   static #instance: State | null;
 
   private constructor() {
-    this.#isLoggedIn = false;
+    this.#isLoggedIn = !!passwordTokenCache.get().token;
     this.#currentUser = null;
   }
 
