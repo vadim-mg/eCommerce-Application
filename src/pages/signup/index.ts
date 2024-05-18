@@ -21,7 +21,7 @@ enum Placehorders {
   FIRST_NAME = 'John',
   LAST_NAME = 'Smith',
   DATE_OF_BIRTHDAY = '2005-05-05',
-  ADDRESS = 'Street 1',
+  STREET = 'Street 1',
   CITY = 'City',
   POSTAL_CODE = '12345',
   PASSWORD = '********',
@@ -40,12 +40,12 @@ interface UserData {
   firstName?: string;
   lastName?: string;
   birthday?: string;
-  deliveryAddress?: string;
+  deliveryStreet?: string;
   deliveryCity?: string;
   deliveryCountry?: string;
   deliveryCode?: string;
   deliveryIsDefault?: boolean;
-  billingAddress?: string;
+  billingStreet?: string;
   billingCity?: string;
   billingCountry?: string;
   billingCode?: string;
@@ -53,7 +53,7 @@ interface UserData {
 }
 
 interface InputsMap {
-  address: InputText;
+  street: InputText;
   city: InputText;
   postalCode: InputText;
   country: Select;
@@ -236,14 +236,14 @@ export default class SignupPage extends FormPage {
   };
 
   #saveDataFromFormAddress = () => {
-    console.log(this.#inputsBillingAddress.address);
-    this.#userData.billingAddress = this.#inputsBillingAddress.address.value;
+    console.log(this.#inputsBillingAddress.street);
+    this.#userData.billingStreet = this.#inputsBillingAddress.street.value;
     this.#userData.billingCity = this.#inputsBillingAddress.city.value;
     this.#userData.billingCode = this.#inputsBillingAddress.postalCode.value;
     this.#userData.billingCountry = this.#inputsBillingAddress.country.value;
     this.#userData.billingIsDefault = this.#inputsBillingAddress.checkboxDefault.checked;
 
-    this.#userData.deliveryAddress = this.#inputsDeliveryAddress.address.value;
+    this.#userData.deliveryStreet = this.#inputsDeliveryAddress.street.value;
     this.#userData.deliveryCity = this.#inputsDeliveryAddress.city.value;
     this.#userData.deliveryCode = this.#inputsDeliveryAddress.postalCode.value;
     this.#userData.deliveryCountry = this.#inputsDeliveryAddress.country.value;
@@ -298,15 +298,15 @@ export default class SignupPage extends FormPage {
 
   #createBillingAddressInputs = () => {
     this.#inputsBillingAddress = {
-      address: new InputText(
+      street: new InputText(
         {
-          name: 'Address',
-          placeholder: Placehorders.ADDRESS,
+          name: 'Street',
+          placeholder: Placehorders.STREET,
           minLength: 1,
           type: 'text',
         },
-        'Address',
-        () => validateUserData(this.#inputsBillingAddress.address.value),
+        'Street',
+        () => validateUserData(this.#inputsBillingAddress.street.value),
       ),
       city: new InputText(
         {
@@ -346,15 +346,15 @@ export default class SignupPage extends FormPage {
 
   #createDeliveryAddressInputs = () => {
     this.#inputsDeliveryAddress = {
-      address: new InputText(
+      street: new InputText(
         {
-          name: 'Address',
-          placeholder: Placehorders.ADDRESS,
+          name: 'Street',
+          placeholder: Placehorders.STREET,
           minLength: 1,
           type: 'text',
         },
-        'Address',
-        () => validateUserData(this.#inputsDeliveryAddress.address.value),
+        'Street',
+        () => validateUserData(this.#inputsDeliveryAddress.street.value),
       ),
       city: new InputText(
         {
@@ -398,7 +398,7 @@ export default class SignupPage extends FormPage {
       title,
       state,
       classes.accordion,
-      this.#inputsBillingAddress.address,
+      this.#inputsBillingAddress.street,
       this.#inputsBillingAddress.city,
       this.#inputsBillingAddress.country,
       this.#inputsBillingAddress.postalCode,
@@ -414,7 +414,7 @@ export default class SignupPage extends FormPage {
       title,
       state,
       classes.accordion,
-      this.#inputsDeliveryAddress.address,
+      this.#inputsDeliveryAddress.street,
       this.#inputsDeliveryAddress.city,
       this.#inputsDeliveryAddress.country,
       this.#inputsDeliveryAddress.postalCode,
