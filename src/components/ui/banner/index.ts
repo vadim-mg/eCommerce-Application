@@ -130,4 +130,8 @@ export default class Banner extends BaseElement<HTMLElement> {
     });
     return this.mobileHighlightBadge;
   };
+
+  // removeBanner = () => {
+
+  // }
 }

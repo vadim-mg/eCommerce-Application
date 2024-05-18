@@ -23,8 +23,6 @@ export default class MainPage extends ContentPage {
       tag<HTMLHeadingElement>({ tag: 'h1', text: 'MainPage' }),
       new Link({ text: 'error404', href: AppRoutes.NOT_FOUND, class: classes.listItem }),
       new Link({ text: 'product', href: AppRoutes.PRODUCT, class: classes.listItem }),
-      new Link({ text: 'profile', href: AppRoutes.PROFILE, class: classes.listItem }),
-      new Link({ text: 'logout', href: AppRoutes.LOGOUT, class: classes.listItem }),
       new Link({
         text: 'rs.school',
         href: 'https://rs.school',
@@ -35,6 +33,8 @@ export default class MainPage extends ContentPage {
       new Link({ text: 'example', href: AppRoutes.HIDDEN_EXAMPLE, class: classes.listItem }),
       new Link({ text: 'api', href: AppRoutes.HIDDEN_API, class: classes.listItem }),
       new BaseElement({ tag: 'br' }),
+      new Link({ text: 'profile', href: AppRoutes.PROFILE, class: classes.listItem }),
+      new Link({ text: 'logout', href: AppRoutes.LOGOUT, class: classes.listItem }),
     );
   };
 
