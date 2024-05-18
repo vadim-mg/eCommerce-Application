@@ -18,7 +18,7 @@
 
 .banner-content-wrapper {
   display: flex;
-  gap: 6.94rem;
+  justify-content: space-between;
   height: 100%;
 }
 
@@ -35,12 +35,13 @@
 .banner-title {
   font-weight: 700;
   font-size: 64px;
+  line-height: 120%;
   margin: 0;
 }
 
 .banner-text-content {
   font-family: var(--font-family);
-  line-height: 175%;
+  line-height: 180%;
   margin: 0;
   width: 75%;
 }
@@ -48,8 +49,10 @@
 .highlight-badge-section {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+
+  width: 47.4%;
 }
 
 .highlight-badge {
@@ -57,6 +60,12 @@
   font-size: 7rem;
   line-height: 114%;
   text-shadow: 0 8px 8px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 1550px) {
+  .highlight-badge {
+    font-size: 5rem;
+  }
 }
 
 .highlight {
@@ -67,6 +76,7 @@
   padding: 24px 32px;
   line-height: 175%;
   border-radius: 16px;
+  align-items: baseline;
 }
 
 .small-btn-text {
@@ -75,8 +85,72 @@
 }
 
 .big-btn-text {
-    font-weight: 600;
-    font-size: 32px;
-    letter-spacing: 0.12em;
-    margin-left: 6px;
+  font-weight: 600;
+  font-size: 32px;
+  letter-spacing: 0.12em;
+  margin-left: 6px;
+}
+
+.highlight-badge-mobile {
+  font-weight: 700;
+  font-size: 48px;
+  margin: 0;
+
+  display: none;
+}
+
+.title-second-part {
+  font-size: 4rem;
+}
+
+@media (max-width: 1160px) {
+  .main-banner-section {
+    width: 50%;
+  }
+  .highlight-badge-section {
+    width: 43%;
+  }
+  .highlight-badge {
+    font-size: 4rem;
+  }
+}
+
+@media (max-width: 1018px) {
+  .highlight-badge-section {
+    display: none;
+  }
+  .highlight-badge-mobile {
+    display: block;
+  }
+  .main-banner-section {
+    width: 100%;
+    padding: 3.5rem;
+    gap: 2.5rem;
+  }
+  .banner-text-content {
+    width: 100%;
+    font-weight: 300;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-banner-section {
+    padding: 53px 22px 38px;
+    gap: 2rem;
+  }
+  .banner {
+    margin: 1.5rem 0;
+  }
+}
+
+@media (max-width: 530px) {
+  .banner-button {
+    flex-direction: column;
+    padding: 24px 64px;
+    line-height: 140%;
+  }
+  .title-second-part {
+    font-size: 40px;
+    display: block;
+  }
 }

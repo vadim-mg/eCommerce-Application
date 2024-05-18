@@ -19,6 +19,8 @@ export default class Banner extends BaseElement<HTMLElement> {
 
   highlightBadge!: BaseElement<HTMLParagraphElement>;
 
+  mobileHighlightBadge!: BaseElement<HTMLParagraphElement>;
+
   constructor(props: BannerProps) {
     super({ tag: 'div', class: classes.banner, ...props });
     this.addBannerContent();
@@ -35,39 +37,77 @@ export default class Banner extends BaseElement<HTMLElement> {
   };
 
   createBannerTextContent = () => {
-    const bannerTextPart1 = new BaseElement<HTMLSpanElement>({ tag: 'span', text: 'Celebrate Our Grand Opening with a ' });
-    const bannerTextPart2 = new BaseElement<HTMLSpanElement>({ tag: 'span', text: 'Special Gift: 20% ', class: classes.highlight });
-    const bannerTextPart3 = new BaseElement<HTMLSpanElement>({ tag: 'span', text: 'Off Promo Code for All Games!' });
-    this.bannerTextContent = new BaseElement<HTMLParagraphElement>({
-      tag: 'p',
-      class: classes.bannerTextContent,
-    }, bannerTextPart1, bannerTextPart2, bannerTextPart3);
+    const bannerTextPart1 = new BaseElement<HTMLSpanElement>({
+      tag: 'span',
+      text: 'Celebrate Our Grand Opening with a ',
+    });
+    const bannerTextPart2 = new BaseElement<HTMLSpanElement>({
+      tag: 'span',
+      text: 'Special Gift: 20% ',
+      class: classes.highlight,
+    });
+    const bannerTextPart3 = new BaseElement<HTMLSpanElement>({
+      tag: 'span',
+      text: 'Off Promo Code for All Games!',
+    });
+    this.bannerTextContent = new BaseElement<HTMLParagraphElement>(
+      {
+        tag: 'p',
+        class: classes.bannerTextContent,
+      },
+      bannerTextPart1,
+      bannerTextPart2,
+      bannerTextPart3,
+    );
     return this.bannerTextContent;
-  }
+  };
 
   createMainBannerSection = () => {
-    this.bannerTitle = new BaseElement<HTMLHeadingElement>({
-      tag: 'h1',
-      class: classes.bannerTitle,
-      text: 'Level Up Your Collection!',
+    // this.bannerTitle = new BaseElement<HTMLHeadingElement>({
+    //   tag: 'h1',
+    //   class: classes.bannerTitle,
+    //   text: 'Level Up Your Collection!',
+    // });
+    // this.createMobileHighlightBadge();
+    const smallBtnText = new BaseElement<HTMLSpanElement>({
+      tag: 'span',
+      text: 'Use promo code: ',
+      class: classes.smallBtnText,
     });
-    const smallBtnText = new BaseElement<HTMLSpanElement>({ tag: 'span', text: 'Use promo code: ', class: classes.smallBtnText });
-    const bigBtnText = new BaseElement<HTMLSpanElement>({ tag: 'span', text: ' PLAYMORE', class: classes.bigBtnText });
-    this.bannerButton = new Button(
-      { class: classes.bannerButton },
-      ButtonClasses.BIG,
-      () => console.log('use promo'),
+    const bigBtnText = new BaseElement<HTMLSpanElement>({
+      tag: 'span',
+      text: 'PLAYMORE',
+      class: classes.bigBtnText,
+    });
+    this.bannerButton = new Button({ class: classes.bannerButton }, ButtonClasses.BIG, () =>
+      console.log('use promo'),
     );
     this.bannerButton.node.append(smallBtnText.node);
     this.bannerButton.node.append(bigBtnText.node);
     this.mainBannerSection = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.mainBannerSection },
-      this.bannerTitle,
+      // this.bannerTitle,
+      this.createBannerTitle(),
+      this.createMobileHighlightBadge(),
       this.createBannerTextContent(),
       this.bannerButton,
     );
     this.bannerContentWrapper.node.append(this.mainBannerSection.node);
   };
+
+  createBannerTitle = () => {
+    const titleSecondPart = new BaseElement<HTMLSpanElement>({
+      tag: 'span',
+      text: ' Your Collection!',
+      class: classes.titleSecondPart,
+    });
+    this.bannerTitle = new BaseElement<HTMLHeadingElement>({
+      tag: 'h1',
+      class: classes.bannerTitle,
+      text: 'Level Up',
+    }, titleSecondPart);
+    return this.bannerTitle
+  }
 
   createHighlightBadgeSection = () => {
     this.highlightBadge = new BaseElement<HTMLParagraphElement>({
@@ -81,4 +121,13 @@ export default class Banner extends BaseElement<HTMLElement> {
     );
     this.bannerContentWrapper.node.append(this.highlightBadgeSection.node);
   };
+
+  createMobileHighlightBadge = () => {
+    this.mobileHighlightBadge = new BaseElement<HTMLParagraphElement>({
+      tag: 'p',
+      class: classes.highlightBadgeMobile,
+      text: '-20% for ALL',
+    });
+    return this.mobileHighlightBadge;
+  }
 }
