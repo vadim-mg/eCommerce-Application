@@ -183,7 +183,10 @@ export default class SignupPage extends FormPage {
       `Use the shipping address for billing purposes`,
       false,
     );
-    this.#checkboxSwitchAddress.inputElement.node.addEventListener('change', this.#toggleCopyAddressData);
+    this.#checkboxSwitchAddress.inputElement.node.addEventListener(
+      'change',
+      this.#toggleCopyAddressData,
+    );
 
     this.#formAddress = new BaseForm(
       { class: classes.form },
@@ -416,7 +419,8 @@ export default class SignupPage extends FormPage {
       this.#inputsBillingAddress.city.value = this.#inputsDeliveryAddress.city.value;
       this.#inputsBillingAddress.country.value = this.#inputsDeliveryAddress.country.value;
       this.#inputsBillingAddress.postalCode.value = this.#inputsDeliveryAddress.postalCode.value;
-      this.#inputsBillingAddress.checkboxDefault.checked = this.#inputsDeliveryAddress.checkboxDefault.checked;
+      this.#inputsBillingAddress.checkboxDefault.checked =
+        this.#inputsDeliveryAddress.checkboxDefault.checked;
     } else {
       this.#inputsBillingAddress.street.value = '';
       this.#inputsBillingAddress.city.value = '';

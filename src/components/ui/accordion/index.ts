@@ -27,8 +27,6 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
     super({ tag: 'div', class: [classes.accordion] });
     this.node.classList.add(className);
     this.#createAccordion(state, title, children);
-    // mobile flip support
-    this.#setFullHeight();
   }
 
   #createAccordion(state: AccordionState, title: string, children: BaseElement<HTMLElement>[]) {
@@ -59,7 +57,6 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
     this.node.append(this.contentContainer.node);
     // element rendering delay
     window.requestAnimationFrame(() => {
-      this.fullHeight = this.contentWrapper.node.offsetHeight;
       this.#setDefaultState(state);
     });
   };
@@ -68,11 +65,9 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
     if (state === AccordionState.OPEN) {
       this.isOpen = true;
       this.node.classList.add(classes.open);
-      this.#showContent();
     } else {
       this.isOpen = false;
       this.node.classList.add(classes.closed);
-      this.#hiddenContent();
     }
   };
 
@@ -80,28 +75,7 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
     this.isOpen = !this.isOpen;
     this.node.classList.toggle(classes.open);
     this.node.classList.toggle(classes.closed);
-    if (this.isOpen) {
-      this.#showContent();
-    } else {
-      this.#hiddenContent();
-    }
+
   };
 
-  #showContent = () => {
-    this.contentContainer.node.style.height = `${this.fullHeight}px`;
-  };
-
-  #hiddenContent = () => {
-    this.contentContainer.node.style.height = '0';
-  };
-
-  #setFullHeight = () => {
-    window.addEventListener('resize', () => {
-      this.fullHeight = this.contentWrapper.node.offsetHeight;
-      console.log(this.fullHeight);
-      if (this.isOpen) {
-        this.#showContent();
-      }
-    });
-  };
 }

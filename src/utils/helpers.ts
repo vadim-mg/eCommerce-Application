@@ -163,7 +163,8 @@ export const validateCity = (inputValue: string) => {
   if (!isValid) {
     return {
       status: false,
-      errorText: 'This field must contain at least one character and no special characters or numbers',
+      errorText:
+        'This field must contain at least one character and no special characters or numbers',
     };
   }
   return {

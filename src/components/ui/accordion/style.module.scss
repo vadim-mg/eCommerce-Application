@@ -9,7 +9,8 @@
   display: block;
   border: none;
   overflow: hidden;
-  transition: all var(--transition-time);
+  transition: max-height 0.5s ease-in-out;
+  max-height: 0;
 }
 
 .wrapper {
@@ -27,6 +28,14 @@
 
 .title {
   display: block;
+}
+
+.open .container {
+  max-height: 1000px;
+}
+
+.closed .container {
+  max-height: 0;
 }
 
 .open .header {
