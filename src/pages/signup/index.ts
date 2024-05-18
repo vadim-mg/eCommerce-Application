@@ -38,10 +38,10 @@ enum FormTitle {
 const country = ['Belarus', 'Poland', 'Russia'];
 
 interface UserData {
-  emil?: string;
+  mail?: string;
   firstName?: string;
   lastName?: string;
-  birthday?: string;
+  dateOfBirth?: string;
   deliveryStreet?: string;
   deliveryCity?: string;
   deliveryCountry?: string;
@@ -54,12 +54,19 @@ interface UserData {
   billingIsDefault?: boolean;
 }
 
-interface InputsMap {
+interface InputsAddress {
   street: InputText;
   city: InputText;
   postalCode: InputText;
   country: Select;
   checkboxDefault: CheckBox;
+}
+
+interface InputsUserDetail {
+  mail: InputText;
+  firstName: InputText;
+  lastName: InputText;
+  dateOfBirth: InputText;
 }
 
 function isFormFull(...inputs: InputText[]): boolean {
@@ -68,6 +75,28 @@ function isFormFull(...inputs: InputText[]): boolean {
   });
   return inputs.every((input) => input.isValid);
 }
+
+function validateForm(arg: InputsUserDetail | InputsAddress | InputsAddress[]): boolean {
+  // isFormFull validates only InputText data types, so we collect only such elements into the array,
+  // excluding Checkbox and Select
+  const inputs: InputText[] = [];
+  if (Array.isArray(arg)) {
+    arg.forEach((el) => {
+      Object.values(el).forEach((input) => {
+        if (input instanceof InputText) {
+          inputs.push(input);
+        }
+      });
+    });
+  } else {
+    Object.values(arg).forEach((input) => {
+      if (input instanceof InputText) {
+        inputs.push(input);
+      }
+    });
+  }
+  return isFormFull(...inputs);
+};
 
 export default class SignupPage extends FormPage {
   form!: BaseForm;
@@ -84,13 +113,13 @@ export default class SignupPage extends FormPage {
 
   #billingAddress!: Accordion;
 
-  #inputsBillingAddress!: InputsMap;
+  #inputsUserDetail!: InputsUserDetail;
 
-  #inputsDeliveryAddress!: InputsMap;
+  #inputsBillingAddress!: InputsAddress;
+
+  #inputsDeliveryAddress!: InputsAddress;
 
   #checkboxSwitchAddress!: CheckBox;
-
-  #nextButton!: Button;
 
   #signupButton!: Button;
 
@@ -109,19 +138,8 @@ export default class SignupPage extends FormPage {
   }
 
   #createFormUserDetails = (): BaseForm => {
-    let mail: InputText;
-    let firstName: InputText;
-    let lastName: InputText;
-    let dateOfBirth: InputText;
-
-    this.#formUserDetails = new BaseForm(
-      { class: classes.form },
-      new BaseElement({
-        tag: 'div',
-        class: classes.formTitle,
-        text: FormTitle.USER,
-      }),
-      (mail = new InputText(
+    this.#inputsUserDetail = {
+      mail: new InputText(
         {
           name: 'email',
           placeholder: Placehorders.EMAIL,
@@ -129,9 +147,9 @@ export default class SignupPage extends FormPage {
           type: 'email',
         },
         'E-mail',
-        () => validateRegistrationEmail(mail.value),
-      )),
-      (firstName = new InputText(
+        () => validateRegistrationEmail(this.#inputsUserDetail.mail.value),
+      ),
+      firstName: new InputText(
         {
           name: 'firstName',
           placeholder: Placehorders.FIRST_NAME,
@@ -139,9 +157,9 @@ export default class SignupPage extends FormPage {
           minLength: 2,
         },
         'First Name',
-        () => validateUserData(firstName.value),
-      )),
-      (lastName = new InputText(
+        () => validateUserData(this.#inputsUserDetail.firstName.value),
+      ),
+      lastName: new InputText(
         {
           name: 'lastName',
           placeholder: Placehorders.LAST_NAME,
@@ -149,9 +167,9 @@ export default class SignupPage extends FormPage {
           minLength: 2,
         },
         'Last Name',
-        () => validateUserData(lastName.value),
-      )),
-      (dateOfBirth = new InputText(
+        () => validateUserData(this.#inputsUserDetail.lastName.value),
+      ),
+      dateOfBirth: new InputText(
         {
           name: 'date-of-birth',
           placeholder: Placehorders.DATE_OF_BIRTHDAY,
@@ -160,17 +178,28 @@ export default class SignupPage extends FormPage {
           max: '2020-01-01',
         },
         'Date of birth',
-        () => validateDateOfBirth(dateOfBirth.value),
-      )),
-      (this.#nextButton = new Button(
+        () => validateDateOfBirth(this.#inputsUserDetail.dateOfBirth.value),
+      ),
+
+    };
+
+    this.#formUserDetails = new BaseForm(
+      { class: classes.form },
+      new BaseElement({
+        tag: 'div',
+        class: classes.formTitle,
+        text: FormTitle.USER,
+      }),
+      this.#inputsUserDetail.mail,
+      this.#inputsUserDetail.firstName,
+      this.#inputsUserDetail.lastName,
+      this.#inputsUserDetail.dateOfBirth,
+      (new Button(
         { text: 'Next', class: classes.buttonNext },
         [ButtonClasses.BIG],
         () => {
-          // проверить все поля
-          console.log(isFormFull(mail, firstName, lastName, dateOfBirth));
-          // собрать все данные в объект #userData
-          console.log(mail.value, firstName.value, lastName.value, dateOfBirth.value);
-          this.#changeForm(this.#createFormAddresses());
+          console.log(validateDateOfBirth(this.#inputsUserDetail.dateOfBirth.value));
+          this.#onButtonUserDetail();
         },
       )),
     );
@@ -204,7 +233,7 @@ export default class SignupPage extends FormPage {
         '2. Billing address',
         AccordionState.CLOSED,
       )),
-      (this.#nextButton = new Button(
+      (new Button(
         { text: 'Next', class: classes.buttonNext },
         [ButtonClasses.BIG],
         () => {
@@ -217,33 +246,27 @@ export default class SignupPage extends FormPage {
   };
 
   #onButtonFormAddress = () => {
-    if (this.#validateFormAddress()) {
+    if (validateForm([this.#inputsBillingAddress, this.#inputsDeliveryAddress])) {
       this.#saveDataFromFormAddress();
       this.#changeForm(this.#createPasswordForm());
     }
-    console.log(this.#userData);
-    // вывести просьбу заполнить все инпуты
   };
 
-  #validateFormAddress = (): boolean => {
-    // isFormFull validates only InputText data types, so we collect only such elements into the array,
-    // excluding Checkbox and Select
-    const inputs: InputText[] = [];
-    Object.values(this.#inputsBillingAddress).forEach((input) => {
-      if (input instanceof InputText) {
-        inputs.push(input);
-      }
-    });
-    Object.values(this.#inputsDeliveryAddress).forEach((input) => {
-      if (input instanceof InputText) {
-        inputs.push(input);
-      }
-    });
-    return isFormFull(...inputs);
+  #onButtonUserDetail = () => {
+    if (validateForm(this.#inputsUserDetail)) {
+      this.#saveDataFromUserDetail();
+      this.#changeForm(this.#createFormAddresses());
+    }
+  };
+
+  #saveDataFromUserDetail = () => {
+    this.#userData.mail = this.#inputsUserDetail.mail.value;
+    this.#userData.firstName = this.#inputsUserDetail.firstName.value;
+    this.#userData.lastName = this.#inputsUserDetail.lastName.value;
+    this.#userData.dateOfBirth = this.#inputsUserDetail.dateOfBirth.value;
   };
 
   #saveDataFromFormAddress = () => {
-    console.log(this.#inputsBillingAddress.street);
     this.#userData.billingStreet = this.#inputsBillingAddress.street.value;
     this.#userData.billingCity = this.#inputsBillingAddress.city.value;
     this.#userData.billingCode = this.#inputsBillingAddress.postalCode.value;

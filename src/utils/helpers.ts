@@ -175,6 +175,13 @@ export const validateCity = (inputValue: string) => {
 
 // Date of birth: A valid date input ensuring the user is above a certain age (e.g., 13 years old or older)
 export const validateDateOfBirth = (inputValue: string) => {
+  if (!inputValue) {
+    return {
+      status: false,
+      errorText: 'Please enter a valid date of birth',
+    };
+  }
+
   const minimumAge = 13;
   const date = new Date(inputValue);
   const currentDate = new Date();
