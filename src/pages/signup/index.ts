@@ -13,6 +13,7 @@ import {
   validateRegistrationPassword,
   validateUserData,
 } from '@Src/utils/helpers';
+
 import classes from './style.module.scss';
 
 enum Placehorders {
@@ -20,7 +21,7 @@ enum Placehorders {
   FIRST_NAME = 'John',
   LAST_NAME = 'Smith',
   DATE_OF_BIRTHDAY = '2005-05-05',
-  STREET = 'Street 1',
+  ADDRESS = 'Street 1',
   CITY = 'City',
   POSTAL_CODE = '12345',
   PASSWORD = '********',
@@ -39,6 +40,24 @@ interface UserData {
   firstName?: string;
   lastName?: string;
   birthday?: string;
+  deliveryAddress?: string;
+  deliveryCity?: string;
+  deliveryCountry?: string;
+  deliveryCode?: string;
+  deliveryIsDefault?: boolean;
+  billingAddress?: string;
+  billingCity?: string;
+  billingCountry?: string;
+  billingCode?: string;
+  billingIsDefault?: boolean;
+}
+
+interface InputsMap {
+  address: InputText;
+  city: InputText;
+  postalCode: InputText;
+  country: Select;
+  checkboxDefault: CheckBox;
 }
 
 function isFormFull(...inputs: InputText[]): boolean {
@@ -60,9 +79,9 @@ export default class SignupPage extends FormPage {
 
   #billingAddress!: Accordion;
 
-  #inputsBilling!: BaseElement<HTMLElement>[];
+  #inputsBillingAddress!: InputsMap;
 
-  #inputsDelivery!: BaseElement<HTMLElement>[];
+  #inputsDeliveryAddress!: InputsMap;
 
   #nextButton!: Button;
 
@@ -152,9 +171,6 @@ export default class SignupPage extends FormPage {
   };
 
   #createFormAddresses = (): BaseForm => {
-    this.#inputsDelivery = [];
-    this.#inputsBilling = [];
-
     const checkboxSwitchAddress: CheckBox = new CheckBox(
       { class: classes.checkbox },
       `Use the shipping address for billing purposes`,
@@ -171,28 +187,20 @@ export default class SignupPage extends FormPage {
         class: classes.formTitle,
         text: FormTitle.ADDRESS,
       }),
-      (this.#deliveryAddress = this.#createAddressAccordion(
+      (this.#deliveryAddress = this.#createDeliveryAddressAccordion(
         '1. Delivery address',
         AccordionState.OPEN,
-        'shipping',
-        this.#inputsDelivery,
       )),
       checkboxSwitchAddress,
-      (this.#billingAddress = this.#createAddressAccordion(
+      (this.#billingAddress = this.#createBillingAddressAccordion(
         '2. Billing address',
         AccordionState.CLOSED,
-        'billing',
-        this.#inputsBilling,
       )),
       (this.#nextButton = new Button(
         { text: 'Next', class: classes.buttonNext },
         [ButtonClasses.BIG],
         () => {
-          // проверить все поля
-          console.log(this.#validateFormAddress());
-          // собрать все данные в объект #userData
-          // console.log(mail.value, firstName.value, lastName.value, dateOfBirth.value);
-          // this.#changeForm(this.#createPasswordForm());
+          this.#onButtonFormAddress();
         },
       )),
     );
@@ -200,21 +208,48 @@ export default class SignupPage extends FormPage {
     return this.#formAddress;
   };
 
+  #onButtonFormAddress = () => {
+    if (this.#validateFormAddress()) {
+      this.#saveDataFromFormAddress();
+      this.#changeForm(this.#createPasswordForm());
+    }
+    console.log(this.#userData);
+    // вывести просьбу заполнить все инпуты
+  };
+
   #validateFormAddress = (): boolean => {
     const inputs: InputText[] = [];
-    this.#inputsDelivery.forEach((el) => {
-      if (el instanceof InputText) inputs.push(el);
+    // Собираем все инпуты из this.#inputsBillingAddress
+    Object.values(this.#inputsBillingAddress).forEach((input) => {
+      if (input instanceof InputText) {
+        inputs.push(input);
+      }
     });
-    this.#inputsBilling.forEach((el) => {
-      if (el instanceof InputText) inputs.push(el);
+
+    // Добавляем инпуты из this.#inputsDeliveryAddress
+    Object.values(this.#inputsDeliveryAddress).forEach((input) => {
+      if (input instanceof InputText) {
+        inputs.push(input);
+      }
     });
     return isFormFull(...inputs);
   };
 
-  /* #saveDataFromFormAddress = () => {
+  #saveDataFromFormAddress = () => {
+    console.log(this.#inputsBillingAddress.address);
+    this.#userData.billingAddress = this.#inputsBillingAddress.address.value;
+    this.#userData.billingCity = this.#inputsBillingAddress.city.value;
+    this.#userData.billingCode = this.#inputsBillingAddress.postalCode.value;
+    this.#userData.billingCountry = this.#inputsBillingAddress.country.value;
+    this.#userData.billingIsDefault = this.#inputsBillingAddress.checkboxDefault.checked;
 
+    this.#userData.deliveryAddress = this.#inputsDeliveryAddress.address.value;
+    this.#userData.deliveryCity = this.#inputsDeliveryAddress.city.value;
+    this.#userData.deliveryCode = this.#inputsDeliveryAddress.postalCode.value;
+    this.#userData.deliveryCountry = this.#inputsDeliveryAddress.country.value;
+    this.#userData.deliveryIsDefault = this.#inputsDeliveryAddress.checkboxDefault.checked;
   };
-*/
+
   #changeForm = (form: BaseForm) => {
     this.form.node.replaceWith(form.node);
     if (this.additionalLinkElement.node) {
@@ -261,33 +296,19 @@ export default class SignupPage extends FormPage {
     return this.#formPassword;
   };
 
-  #createAddressAccordion(
-    title: string,
-    state: AccordionState,
-    type: string,
-    arrayForInputs: BaseElement<HTMLElement>[],
-  ): Accordion {
-    let userStreet: InputText;
-    let userCity: InputText;
-    let userPostalCode: InputText;
-    let userCountry: Select;
-    let checkbox: CheckBox;
-
-    const accordion = new Accordion(
-      title,
-      state,
-      classes.accordion,
-      (userStreet = new InputText(
+  #createBillingAddressInputs = () => {
+    this.#inputsBillingAddress = {
+      address: new InputText(
         {
-          name: 'Street',
-          placeholder: Placehorders.STREET,
+          name: 'Address',
+          placeholder: Placehorders.ADDRESS,
           minLength: 1,
           type: 'text',
         },
-        'Street',
-        () => validateUserData(userStreet.value),
-      )),
-      (userCity = new InputText(
+        'Address',
+        () => validateUserData(this.#inputsBillingAddress.address.value),
+      ),
+      city: new InputText(
         {
           name: 'City',
           placeholder: Placehorders.CITY,
@@ -295,13 +316,13 @@ export default class SignupPage extends FormPage {
           type: 'text',
         },
         'City',
-        () => validateUserData(userCity.value),
-      )),
-      (userCountry = new Select('Country', country, () => ({
-        status: false,
+        () => validateUserData(this.#inputsBillingAddress.city.value),
+      ),
+      country: new Select('Country', country, () => ({
+        status: true,
         errorText: 'Error',
-      }))),
-      (userPostalCode = new InputText(
+      })),
+      postalCode: new InputText(
         {
           name: 'Postal code',
           placeholder: Placehorders.POSTAL_CODE,
@@ -309,19 +330,96 @@ export default class SignupPage extends FormPage {
           type: 'text',
         },
         'Postal code',
-        () => validatePostalCode(userPostalCode.value, userCountry.value),
-      )),
-      (checkbox = new CheckBox(
+        () =>
+          validatePostalCode(
+            this.#inputsBillingAddress.postalCode.value,
+            this.#inputsBillingAddress.country.value,
+          ),
+      ),
+      checkboxDefault: new CheckBox(
         { class: [classes.checkboxAccordion] },
-        `Use us default ${type} address`,
+        `Use us default billing address`,
         false,
-      )),
+      ),
+    };
+  };
+
+  #createDeliveryAddressInputs = () => {
+    this.#inputsDeliveryAddress = {
+      address: new InputText(
+        {
+          name: 'Address',
+          placeholder: Placehorders.ADDRESS,
+          minLength: 1,
+          type: 'text',
+        },
+        'Address',
+        () => validateUserData(this.#inputsDeliveryAddress.address.value),
+      ),
+      city: new InputText(
+        {
+          name: 'City',
+          placeholder: Placehorders.CITY,
+          minLength: 1,
+          type: 'text',
+        },
+        'City',
+        () => validateUserData(this.#inputsDeliveryAddress.city.value),
+      ),
+      country: new Select('Country', country, () => ({
+        status: true,
+        errorText: 'Error',
+      })),
+      postalCode: new InputText(
+        {
+          name: 'Postal code',
+          placeholder: Placehorders.POSTAL_CODE,
+          minLength: 1,
+          type: 'text',
+        },
+        'Postal code',
+        () =>
+          validatePostalCode(
+            this.#inputsDeliveryAddress.postalCode.value,
+            this.#inputsDeliveryAddress.country.value,
+          ),
+      ),
+      checkboxDefault: new CheckBox(
+        { class: [classes.checkboxAccordion] },
+        `Use us default delivery address`,
+        false,
+      ),
+    };
+  };
+
+  #createBillingAddressAccordion(title: string, state: AccordionState): Accordion {
+    this.#createBillingAddressInputs();
+    const accordion = new Accordion(
+      title,
+      state,
+      classes.accordion,
+      this.#inputsBillingAddress.address,
+      this.#inputsBillingAddress.city,
+      this.#inputsBillingAddress.country,
+      this.#inputsBillingAddress.postalCode,
+      this.#inputsBillingAddress.checkboxDefault,
     );
-    arrayForInputs.push(userStreet);
-    arrayForInputs.push(userCity);
-    arrayForInputs.push(userPostalCode);
-    arrayForInputs.push(userCountry);
-    arrayForInputs.push(checkbox);
+    accordion.header.node.addEventListener('click', this.#toggleAddressAccordion);
+    return accordion;
+  }
+
+  #createDeliveryAddressAccordion(title: string, state: AccordionState): Accordion {
+    this.#createDeliveryAddressInputs();
+    const accordion = new Accordion(
+      title,
+      state,
+      classes.accordion,
+      this.#inputsDeliveryAddress.address,
+      this.#inputsDeliveryAddress.city,
+      this.#inputsDeliveryAddress.country,
+      this.#inputsDeliveryAddress.postalCode,
+      this.#inputsDeliveryAddress.checkboxDefault,
+    );
     accordion.header.node.addEventListener('click', this.#toggleAddressAccordion);
     return accordion;
   }
@@ -337,14 +435,4 @@ export default class SignupPage extends FormPage {
       this.#deliveryAddress.toggleAccordion();
     }
   };
-
-  // #checkEmailValidation = (): ValidationError => validateRegistrationEmail(this.#email.value);
-
-  // #checkPasswordValidation = (): ValidationError => validateRegistrationPassword(this.#password.value);
-
-  // #checkUserData = (value: string): ValidationError => validateUserData(value);
-
-  // #checkUserDateOfBirth = (value: string): ValidationError => validateDateOfBirth(value);
-
-  // checkValidatePostalCode = (): ValidationError => validatePostalCode(this.#postalCode.value, this.#country.value);
 }

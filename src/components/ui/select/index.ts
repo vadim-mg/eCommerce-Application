@@ -71,7 +71,6 @@ export default class Select extends BaseElement<HTMLSelectElement> {
     );
 
     inputWrapper.node.addEventListener('click', (event) => {
-      console.log(event.target);
       const target = event.target as HTMLElement;
       if (target.classList.contains(classes.select)) {
         this.#input.node.showPicker();
