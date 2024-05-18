@@ -52,6 +52,7 @@ interface UserData {
   billingCountry?: string;
   billingCode?: string;
   billingIsDefault?: boolean;
+  password?: string;
 }
 
 interface InputsAddress {
@@ -96,7 +97,7 @@ function validateForm(arg: InputsUserDetail | InputsAddress | InputsAddress[]): 
     });
   }
   return isFormFull(...inputs);
-};
+}
 
 export default class SignupPage extends FormPage {
   form!: BaseForm;
@@ -118,6 +119,8 @@ export default class SignupPage extends FormPage {
   #inputsBillingAddress!: InputsAddress;
 
   #inputsDeliveryAddress!: InputsAddress;
+
+  #passwordInput!: InputText;
 
   #checkboxSwitchAddress!: CheckBox;
 
@@ -147,7 +150,7 @@ export default class SignupPage extends FormPage {
           type: 'email',
         },
         'E-mail',
-        () => validateRegistrationEmail(this.#inputsUserDetail.mail.value),
+        () => validateRegistrationEmail(this.#inputsUserDetail.mail.value), // TODO: check the uniqueness of the address on the server side
       ),
       firstName: new InputText(
         {
@@ -180,7 +183,6 @@ export default class SignupPage extends FormPage {
         'Date of birth',
         () => validateDateOfBirth(this.#inputsUserDetail.dateOfBirth.value),
       ),
-
     };
 
     this.#formUserDetails = new BaseForm(
@@ -194,14 +196,9 @@ export default class SignupPage extends FormPage {
       this.#inputsUserDetail.firstName,
       this.#inputsUserDetail.lastName,
       this.#inputsUserDetail.dateOfBirth,
-      (new Button(
-        { text: 'Next', class: classes.buttonNext },
-        [ButtonClasses.BIG],
-        () => {
-          console.log(validateDateOfBirth(this.#inputsUserDetail.dateOfBirth.value));
-          this.#onButtonUserDetail();
-        },
-      )),
+      new Button({ text: 'Next', class: classes.buttonNext }, [ButtonClasses.BIG], () => {
+        this.#onButtonUserDetail();
+      }),
     );
     return this.#formUserDetails;
   };
@@ -233,13 +230,9 @@ export default class SignupPage extends FormPage {
         '2. Billing address',
         AccordionState.CLOSED,
       )),
-      (new Button(
-        { text: 'Next', class: classes.buttonNext },
-        [ButtonClasses.BIG],
-        () => {
-          this.#onButtonFormAddress();
-        },
-      )),
+      new Button({ text: 'Next', class: classes.buttonNext }, [ButtonClasses.BIG], () => {
+        this.#onButtonFormAddress();
+      }),
     );
 
     return this.#formAddress;
@@ -250,6 +243,7 @@ export default class SignupPage extends FormPage {
       this.#saveDataFromFormAddress();
       this.#changeForm(this.#createPasswordForm());
     }
+    console.log(this.#userData);
   };
 
   #onButtonUserDetail = () => {
@@ -257,6 +251,7 @@ export default class SignupPage extends FormPage {
       this.#saveDataFromUserDetail();
       this.#changeForm(this.#createFormAddresses());
     }
+    console.log(this.#userData);
   };
 
   #saveDataFromUserDetail = () => {
@@ -454,7 +449,6 @@ export default class SignupPage extends FormPage {
   };
 
   #createPasswordForm = () => {
-    let password: InputText;
 
     this.#formPassword = new BaseForm(
       { class: classes.form },
@@ -463,7 +457,7 @@ export default class SignupPage extends FormPage {
         class: classes.formTitle,
         text: FormTitle.PASSWORD,
       }),
-      (password = new InputText(
+      (this.#passwordInput = new InputText(
         {
           name: 'password',
           minLength: 8,
@@ -471,7 +465,7 @@ export default class SignupPage extends FormPage {
           placeholder: Placehorders.PASSWORD,
         },
         'Password',
-        () => validateRegistrationPassword(password.value),
+        () => validateRegistrationPassword(this.#passwordInput.value),
       )),
       new BaseElement({
         tag: 'div',
@@ -482,12 +476,24 @@ export default class SignupPage extends FormPage {
         { text: 'Sign up', class: classes.buttonSignup },
         [ButtonClasses.BIG],
         () => {
-          // проверяем валидность пароля
-          // регистрируем пользователя
-          // настраиваем данные пользователя по данным из формы
-        },
+          this.#onButtonSignup();
+        }
       )),
     );
     return this.#formPassword;
+  };
+
+  #onButtonSignup = () => {
+    if (validateRegistrationPassword(this.#passwordInput.value)) {
+      this.#userData.password = this.#passwordInput.value;
+      // TODO:
+      // implement server side registration
+      // all registration data is stored in the object this.#userData
+      // 1.send a user registration request
+      // 2. send a request to set up a delivery address
+      // 3. send a request to set up a billing address
+      // 4. send a request to set up date of birthday
+    }
+    console.log(this.#userData);
   };
 }
