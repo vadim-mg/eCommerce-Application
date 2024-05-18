@@ -3,6 +3,7 @@ import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import Link from '@Src/components/ui/link';
 import { AppRoutes } from '@Src/router/routes';
+import Banner from '@Src/components/ui/banner';
 import classes from './style.module.scss';
 
 export default class MainPage extends ContentPage {
@@ -10,6 +11,8 @@ export default class MainPage extends ContentPage {
 
   constructor() {
     super({ containerTag: 'div', title: 'Main page' });
+    this.banner = new Banner({});
+    this.placeForBanner.node.append(this.banner.node);
     this.#createContent();
     this.#showContent();
   }

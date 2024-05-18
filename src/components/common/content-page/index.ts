@@ -4,6 +4,7 @@ import Header from '@Src/components/ui/header';
 import Banner from '@Src/components/ui/banner';
 import BasePage from '../base-page';
 import classes from './style.module.scss';
+import BaseElement from '../base-element';
 
 type ContentPageProps = {
   title: string;
@@ -15,14 +16,16 @@ export default class ContentPage extends BasePage {
 
   header: Header;
 
-  banner: Banner;
+  placeForBanner: BaseElement<HTMLElement>;
+
+  banner!: Banner;
 
   footer: Footer;
 
   constructor(props: ContentPageProps) {
     super({ title: props.title });
     this.header = new Header({});
-    this.banner = new Banner({});
+    this.placeForBanner = new BaseElement<HTMLElement>({ tag: 'div', class: classes.bannerWrapper });
     this.container = new Container({ tag: props.containerTag, class: classes.content });
     this.footer = new Footer();
   }
@@ -32,7 +35,7 @@ export default class ContentPage extends BasePage {
     document.body.classList.add(classes.contentPage);
     document.body.append(
       this.header.node,
-      this.banner.node,
+      this.placeForBanner.node,
       this.container.node,
       this.footer.node,
     );
