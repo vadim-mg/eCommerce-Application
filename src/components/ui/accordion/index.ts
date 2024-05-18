@@ -75,7 +75,5 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
     this.isOpen = !this.isOpen;
     this.node.classList.toggle(classes.open);
     this.node.classList.toggle(classes.closed);
-
   };
-
 }
