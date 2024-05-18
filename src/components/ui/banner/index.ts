@@ -63,12 +63,6 @@ export default class Banner extends BaseElement<HTMLElement> {
   };
 
   createMainBannerSection = () => {
-    // this.bannerTitle = new BaseElement<HTMLHeadingElement>({
-    //   tag: 'h1',
-    //   class: classes.bannerTitle,
-    //   text: 'Level Up Your Collection!',
-    // });
-    // this.createMobileHighlightBadge();
     const smallBtnText = new BaseElement<HTMLSpanElement>({
       tag: 'span',
       text: 'Use promo code: ',
@@ -86,7 +80,6 @@ export default class Banner extends BaseElement<HTMLElement> {
     this.bannerButton.node.append(bigBtnText.node);
     this.mainBannerSection = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.mainBannerSection },
-      // this.bannerTitle,
       this.createBannerTitle(),
       this.createMobileHighlightBadge(),
       this.createBannerTextContent(),
@@ -101,13 +94,16 @@ export default class Banner extends BaseElement<HTMLElement> {
       text: ' Your Collection!',
       class: classes.titleSecondPart,
     });
-    this.bannerTitle = new BaseElement<HTMLHeadingElement>({
-      tag: 'h1',
-      class: classes.bannerTitle,
-      text: 'Level Up',
-    }, titleSecondPart);
-    return this.bannerTitle
-  }
+    this.bannerTitle = new BaseElement<HTMLHeadingElement>(
+      {
+        tag: 'h1',
+        class: classes.bannerTitle,
+        text: 'Level Up',
+      },
+      titleSecondPart,
+    );
+    return this.bannerTitle;
+  };
 
   createHighlightBadgeSection = () => {
     this.highlightBadge = new BaseElement<HTMLParagraphElement>({
@@ -129,5 +125,5 @@ export default class Banner extends BaseElement<HTMLElement> {
       text: '-20% for ALL',
     });
     return this.mobileHighlightBadge;
-  }
+  };
 }
