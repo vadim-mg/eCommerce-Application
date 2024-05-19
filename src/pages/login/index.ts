@@ -77,7 +77,6 @@ export default class LoginPage extends FormPage {
     }
   };
 
-
   #signIn = () => {
     this.hideErrorComponent();
     auth
