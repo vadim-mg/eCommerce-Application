@@ -26,7 +26,6 @@ export default class Banner extends BaseElement<HTMLElement> {
   constructor(props: BannerProps) {
     super({ tag: 'div', class: classes.banner, ...props });
     this.addBannerContent();
-    // this.addListenerToBannerBtn();
   }
 
   addBannerContent = () => {
@@ -37,12 +36,6 @@ export default class Banner extends BaseElement<HTMLElement> {
     this.createMainBannerSection();
     this.createHighlightBadgeSection();
     this.node.append(this.bannerContentWrapper.node);
-  };
-
-  addListenerToBannerBtn = () => {
-    this.node.addEventListener('click', () => {
-      navigator.clipboard.writeText(this.bigBtnText.node.innerText);
-    });
   };
 
   createBannerTextContent = () => {
@@ -93,15 +86,8 @@ export default class Banner extends BaseElement<HTMLElement> {
       text: 'PLAYMORE',
       class: classes.bigBtnText,
     });
-    // this.bannerButton = new BaseElement<HTMLDivElement>({
-    //   tag: 'div',
-    //   class: classes.bannerButton,
-    //   title: 'Copy promo code',
-    // });
-    this.bannerButton = new Button(
-      { class: classes.bannerButton },
-      ButtonClasses.BIG,
-      () => navigator.clipboard.writeText(this.bigBtnText.node.innerText),
+    this.bannerButton = new Button({ class: classes.bannerButton, title: 'Copy promo code' }, ButtonClasses.BIG, () =>
+      navigator.clipboard.writeText(this.bigBtnText.node.innerText),
     );
     this.bannerButton.node.append(smallBtnText.node);
     this.bannerButton.node.append(this.bigBtnText.node);
