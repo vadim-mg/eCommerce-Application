@@ -19,17 +19,12 @@
 .button-next {
 }
 
-.accordion {
-  input,
-  select {
-    margin-bottom: 1rem;
-
-    @media (max-height: 800px) {
-      margin-bottom: 0.5rem;
-    }
-  }
-  .checkbox-accordion {
-    margin-bottom: 0;
+.accordion > div:nth-child(2) > div:nth-child(1) {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  @media (max-height: 800px) {
+    gap: 0.5rem;
   }
 }
 
