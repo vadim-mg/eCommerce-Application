@@ -30,7 +30,7 @@
   gap: 0.75rem;
   color: var(--color-red-main);
   line-height: 112%;
-  &[hidden]{
+  &[hidden] {
     display: none;
   }
 }
@@ -60,7 +60,7 @@
   font-size: 0.9rem;
   color: var(--color-grey-dark);
 
-  p{
+  p {
     margin-bottom: 0.375rem;
     margin-top: 0.37rem;
   }

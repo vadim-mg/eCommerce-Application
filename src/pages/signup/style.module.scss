@@ -19,9 +19,9 @@
 .button-next {
 }
 
-
 .accordion {
-  input, select {
+  input,
+  select {
     margin-bottom: 1rem;
 
     @media (max-height: 760px) {
@@ -30,7 +30,6 @@
   }
   .checkbox-accordion {
     margin-bottom: 0;
-
   }
 }
 
