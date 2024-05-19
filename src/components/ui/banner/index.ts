@@ -86,8 +86,10 @@ export default class Banner extends BaseElement<HTMLElement> {
       text: 'PLAYMORE',
       class: classes.bigBtnText,
     });
-    this.bannerButton = new Button({ class: classes.bannerButton, title: 'Copy promo code' }, ButtonClasses.BIG, () =>
-      navigator.clipboard.writeText(this.bigBtnText.node.innerText),
+    this.bannerButton = new Button(
+      { class: classes.bannerButton, title: 'Copy promo code' },
+      ButtonClasses.BIG,
+      () => navigator.clipboard.writeText(this.bigBtnText.node.innerText),
     );
     this.bannerButton.node.append(smallBtnText.node);
     this.bannerButton.node.append(this.bigBtnText.node);
