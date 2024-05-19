@@ -1,3 +1,4 @@
+import CopyPlugin from 'copy-webpack-plugin';
 import Dotenv from 'dotenv-webpack';
 import EslintPlugin from 'eslint-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
@@ -39,6 +40,9 @@ const baseConfig = (isProd: boolean) => ({
       chunkFilename: '[id].[contenthash:6].css',
     }),
     new Dotenv(),
+    new CopyPlugin({
+      patterns: [{ from: 'static', to: '' }],
+    }),
   ],
   module: {
     rules: [
