@@ -22,7 +22,7 @@
 
 .label {
   font-size: 0.875rem;
-  line-height: 1, 125rem;
+  line-height: 1.125rem;
   color: var(--color-grey-dark);
   margin-bottom: 0.5rem;
 }
@@ -31,7 +31,7 @@
   background-color: #fafafa;
   border: solid 1px var(--color-grey);
   border-radius: 0.5rem;
-  padding: 0.75rem;
+  padding: 0.5rem 0.75rem 0.375rem;
   width: 100%;
   font-size: 1rem;
   line-height: 1.25rem;
@@ -81,8 +81,8 @@
 }
 
 @mixin input-icons {
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 2.25rem;
+  height: 2.25rem;
   cursor: pointer;
   position: absolute;
 }

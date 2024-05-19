@@ -17,23 +17,20 @@
 }
 
 .button-next {
-  margin-top: 1rem;
 }
 
-.address-input {
-  margin-bottom: 1rem;
-}
 
 .accordion {
-  label {
-    margin-top: 1.5rem;
+  input, select {
+    margin-bottom: 1rem;
+
+    @media (max-height: 760px) {
+      margin-bottom: 0.5rem;
+    }
   }
   .checkbox-accordion {
-    margin-top: 1.5rem;
+    margin-bottom: 0;
 
-    label {
-      margin-top: 0;
-    }
   }
 }
 

@@ -25,7 +25,7 @@ enum Placehorders {
   DATE_OF_BIRTHDAY = '2005-05-05',
   STREET = 'Street 1',
   CITY = 'City',
-  POSTAL_CODE = '12345',
+  POSTAL_CODE = 'Postal code',
   PASSWORD = '********',
 }
 
