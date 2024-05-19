@@ -4,6 +4,7 @@
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .checkbox-input {
@@ -17,6 +18,8 @@
   min-height: 26px;
   display: flex;
   align-items: center;
+  font-size: 0.875rem;
+  line-height: 1.125rem;
   cursor: pointer;
 
   &::before {
