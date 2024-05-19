@@ -1,6 +1,6 @@
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 import classes from './style.module.scss';
-// import Button, { ButtonClasses } from '../button';
+import Button, { ButtonClasses } from '../button';
 
 type BannerProps = Omit<ElementProps<HTMLElement>, 'tag'>;
 
@@ -13,7 +13,7 @@ export default class Banner extends BaseElement<HTMLElement> {
 
   bannerTextContent!: BaseElement<HTMLParagraphElement>;
 
-  bannerButton!: BaseElement<HTMLDivElement>;
+  bannerButton!: Button;
 
   highlightBadgeSection!: BaseElement<HTMLDivElement>;
 
@@ -26,7 +26,7 @@ export default class Banner extends BaseElement<HTMLElement> {
   constructor(props: BannerProps) {
     super({ tag: 'div', class: classes.banner, ...props });
     this.addBannerContent();
-    this.addListenerToBannerBtn();
+    // this.addListenerToBannerBtn();
   }
 
   addBannerContent = () => {
@@ -93,11 +93,16 @@ export default class Banner extends BaseElement<HTMLElement> {
       text: 'PLAYMORE',
       class: classes.bigBtnText,
     });
-    this.bannerButton = new BaseElement<HTMLDivElement>({
-      tag: 'div',
-      class: classes.bannerButton,
-      title: 'Copy promo code',
-    });
+    // this.bannerButton = new BaseElement<HTMLDivElement>({
+    //   tag: 'div',
+    //   class: classes.bannerButton,
+    //   title: 'Copy promo code',
+    // });
+    this.bannerButton = new Button(
+      { class: classes.bannerButton },
+      ButtonClasses.BIG,
+      () => navigator.clipboard.writeText(this.bigBtnText.node.innerText),
+    );
     this.bannerButton.node.append(smallBtnText.node);
     this.bannerButton.node.append(this.bigBtnText.node);
     return this.bannerButton;
