@@ -140,7 +140,7 @@ export const validateUserData = (inputValue: string) => {
   if (!inputValue.match(regex)) {
     return {
       status: false,
-      errorText: 'This field must contain at least one letter',
+      errorText: 'This field must contain at least one english letter',
     };
   }
   return {
@@ -161,7 +161,7 @@ export const validateCity = (inputValue: string) => {
   if (!isValid) {
     return {
       status: false,
-      errorText: 'This field must contain at least one letter',
+      errorText: 'This field must contain at least one english letter',
     };
   }
   return {

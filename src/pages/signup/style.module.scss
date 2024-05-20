@@ -3,10 +3,26 @@
 }
 
 .form {
+  max-width: 22.5rem;
+}
+
+@media (min-width: 912px) {
+  .form-big {
+    display: grid;
+    grid-template-areas:
+      'title title'
+      'accordion-delivery accordion-billing'
+      '. button';
+    align-items: start;
+    gap: 2rem;
+    max-width: min-content;
+    width: min-content;
+  }
 }
 
 .formTitle {
-  width: 100%;
+  grid-area: title;
+  max-width: 100%;
   text-align: left;
   font-size: 1.125rem;
   color: var(--color-grey-dark);
@@ -18,6 +34,14 @@
 }
 
 .button-next {
+  grid-area: button;
+}
+
+.accordion:last-child {
+  grid-area: accordion-delivery;
+}
+.accordion:first-child {
+  grid-area: accordion-billing;
 }
 
 .accordion > div:nth-child(2) > div:nth-child(1) {

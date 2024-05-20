@@ -127,6 +127,7 @@ export default class SignupPage extends FormPage {
     this.addAdditionalLink('if you already have an account', 'login', 'Log in');
     this.#userData = {} as UserData;
     this.addEventListeners();
+    this.#changeForm(this.#createFormUserDetails());
   }
 
   renderForm(): BaseForm {
@@ -237,10 +238,10 @@ export default class SignupPage extends FormPage {
         '1. Delivery address',
         AccordionState.OPEN,
       )),
-      this.#checkboxSwitchAddress,
+      // this.#checkboxSwitchAddress,
       (this.#billingAddress = this.#createBillingAddressAccordion(
         '2. Billing address',
-        AccordionState.CLOSED,
+        AccordionState.OPEN,
       )),
       new Button({ text: 'Next', class: classes.buttonNext }, [ButtonClasses.BIG], () => {
         this.#handlerOnClickButtonFormAddress();
@@ -266,7 +267,7 @@ export default class SignupPage extends FormPage {
         this.#inputsUserDetail.mail.value,
         () => {
           this.#saveDataFromUserDetail();
-          this.#changeForm(this.#createFormAddresses());
+          this.#changeForm(this.#createFormAddresses(), FormTitle.ADDRESS);
         },
         this.#inputsUserDetail.mail.showError,
       ).finally(() => {
@@ -321,13 +322,18 @@ export default class SignupPage extends FormPage {
     }
   };
 
-  #changeForm = (form: BaseForm) => {
+  #changeForm = (form: BaseForm, formTitle?: FormTitle) => {
     this.hideErrorComponent();
     this.form.node.replaceWith(form.node);
     if (this.additionalLinkElement.node) {
       this.additionalLinkElement.node.remove();
     }
     this.form = form;
+    if (formTitle === FormTitle.ADDRESS) {
+      this.form.node.classList.add(classes.formBig);
+    } else {
+      this.form.node.classList.remove(classes.formBig);
+    }
   };
 
   #createBillingAddressInputs = () => {
@@ -438,7 +444,7 @@ export default class SignupPage extends FormPage {
       this.#inputsBillingAddress.postalCode,
       this.#inputsBillingAddress.checkboxDefault,
     );
-    accordion.header.node.addEventListener('click', this.#toggleAddressAccordion);
+    // accordion.header.node.addEventListener('click', this.#toggleAddressAccordion);
     return accordion;
   }
 
@@ -453,8 +459,9 @@ export default class SignupPage extends FormPage {
       this.#inputsDeliveryAddress.country,
       this.#inputsDeliveryAddress.postalCode,
       this.#inputsDeliveryAddress.checkboxDefault,
+      this.#checkboxSwitchAddress,
     );
-    accordion.header.node.addEventListener('click', this.#toggleAddressAccordion);
+    // accordion.header.node.addEventListener('click', this.#toggleAddressAccordion);
     return accordion;
   }
 
