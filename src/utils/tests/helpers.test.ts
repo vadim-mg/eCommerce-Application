@@ -134,8 +134,7 @@ describe('helpers module', () => {
       const result = validateUserData('');
       expect(result).toEqual({
         status: false,
-        errorText:
-          'This field must contain at least one character and no special characters or numbers',
+        errorText: 'This field must contain at least one english letter',
       });
     });
 
@@ -143,8 +142,7 @@ describe('helpers module', () => {
       const result = validateUserData('John2');
       expect(result).toEqual({
         status: false,
-        errorText:
-          'This field must contain at least one character and no special characters or numbers',
+        errorText: 'This field must contain at least one english letter',
       });
     });
 
@@ -152,8 +150,7 @@ describe('helpers module', () => {
       const result = validateUserData('John&');
       expect(result).toEqual({
         status: false,
-        errorText:
-          'This field must contain at least one character and no special characters or numbers',
+        errorText: 'This field must contain at least one english letter',
       });
     });
   });
@@ -173,8 +170,7 @@ describe('helpers module', () => {
       const result = validateCity('');
       expect(result).toEqual({
         status: false,
-        errorText:
-          'This field must contain at least one character and no special characters or numbers',
+        errorText: 'This field must contain at least one english letter',
       });
     });
 
@@ -182,8 +178,7 @@ describe('helpers module', () => {
       const result = validateCity('City1%');
       expect(result).toEqual({
         status: false,
-        errorText:
-          'This field must contain at least one character and no special characters or numbers',
+        errorText: 'This field must contain at least one english letter',
       });
     });
   });
