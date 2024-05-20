@@ -16,6 +16,8 @@ import {
   validateUserData,
 } from '@Src/utils/helpers';
 
+import { HttpErrorType } from '@commercetools/sdk-client-v2';
+import auth from '@Src/controllers/auth';
 import classes from './style.module.scss';
 
 enum Placehorders {
@@ -36,6 +38,7 @@ enum FormTitle {
 }
 
 const country = ['Belarus', 'Poland', 'Russia'];
+const COUNTRY_CODES = ['BE', 'PL', 'RU'];
 
 interface UserData {
   mail?: string;
@@ -44,12 +47,12 @@ interface UserData {
   dateOfBirth?: string;
   deliveryStreet?: string;
   deliveryCity?: string;
-  deliveryCountry?: string;
+  deliveryCountry: string;
   deliveryCode?: string;
   deliveryIsDefault?: boolean;
   billingStreet?: string;
   billingCity?: string;
-  billingCountry?: string;
+  billingCountry: string;
   billingCode?: string;
   billingIsDefault?: boolean;
   password?: string;
@@ -70,33 +73,25 @@ interface InputsUserDetail {
   dateOfBirth: InputText;
 }
 
-function isFormFull(...inputs: InputText[]): boolean {
+function validateForm(form: InputsUserDetail | InputsAddress | InputsAddress[]): boolean {
+  const validatedForms = Array.isArray(form) ? form : [form];
+
+  const inputs = validatedForms.reduce(
+    (acc: InputText[], validatedForm) => [
+      ...acc,
+      ...Object.values(validatedForm)
+        // validates only InputText data types, so we collect only such elements into the array,
+        // excluding Checkbox and Select
+        .filter((input) => input instanceof InputText),
+    ],
+    [],
+  );
+
   inputs.forEach((input) => {
     input.validate();
   });
+  console.log(inputs);
   return inputs.every((input) => input.isValid);
-}
-
-function validateForm(arg: InputsUserDetail | InputsAddress | InputsAddress[]): boolean {
-  // isFormFull validates only InputText data types, so we collect only such elements into the array,
-  // excluding Checkbox and Select
-  const inputs: InputText[] = [];
-  if (Array.isArray(arg)) {
-    arg.forEach((el) => {
-      Object.values(el).forEach((input) => {
-        if (input instanceof InputText) {
-          inputs.push(input);
-        }
-      });
-    });
-  } else {
-    Object.values(arg).forEach((input) => {
-      if (input instanceof InputText) {
-        inputs.push(input);
-      }
-    });
-  }
-  return isFormFull(...inputs);
 }
 
 export default class SignupPage extends FormPage {
@@ -131,14 +126,31 @@ export default class SignupPage extends FormPage {
   constructor() {
     super({ title: 'Registration page' });
     this.addForm(this.renderForm());
-    this.addAdditionalLink('if you already have an account', 'login', 'Log in');
     this.#userData = {} as UserData;
+    this.addEventListeners();
+    this.addAdditionalLink('if you already have an account', 'login', 'Log in');
   }
 
   renderForm(): BaseForm {
     this.form = this.#createFormUserDetails();
     return this.form;
   }
+
+  addEventListeners = () => {
+    this.#inputsUserDetail.mail.inputElement.node.addEventListener('change', () => {
+      if (this.#inputsUserDetail.mail.isValid) {
+        SignupPage.isEmailFree(
+          this.#inputsUserDetail.mail.value,
+          () => {
+            this.#inputsUserDetail.mail.isValid = true;
+            this.#inputsUserDetail.mail.errorText = '';
+            this.#inputsUserDetail.mail.hiddenError();
+          },
+          this.#inputsUserDetail.mail.showError,
+        );
+      }
+    });
+  };
 
   #createFormUserDetails = (): BaseForm => {
     this.#inputsUserDetail = {
@@ -150,14 +162,14 @@ export default class SignupPage extends FormPage {
           type: 'email',
         },
         'E-mail',
-        () => validateRegistrationEmail(this.#inputsUserDetail.mail.value), // TODO: check the uniqueness of the address on the server side
+        () => validateRegistrationEmail(this.#inputsUserDetail.mail.value),
       ),
       firstName: new InputText(
         {
           name: 'firstName',
           placeholder: Placehorders.FIRST_NAME,
           maxLength: 20,
-          minLength: 2,
+          minLength: 1,
         },
         'First Name',
         () => validateUserData(this.#inputsUserDetail.firstName.value),
@@ -167,7 +179,7 @@ export default class SignupPage extends FormPage {
           name: 'lastName',
           placeholder: Placehorders.LAST_NAME,
           maxLength: 20,
-          minLength: 2,
+          minLength: 1,
         },
         'Last Name',
         () => validateUserData(this.#inputsUserDetail.lastName.value),
@@ -196,9 +208,11 @@ export default class SignupPage extends FormPage {
       this.#inputsUserDetail.firstName,
       this.#inputsUserDetail.lastName,
       this.#inputsUserDetail.dateOfBirth,
-      new Button({ text: 'Next', class: classes.buttonNext }, [ButtonClasses.BIG], () => {
-        this.#onButtonUserDetail();
-      }),
+      new Button(
+        { text: 'Next', class: classes.buttonNext },
+        [ButtonClasses.BIG],
+        this.#handlerOnClickButtonUserDetail,
+      ),
     );
     return this.#formUserDetails;
   };
@@ -225,20 +239,20 @@ export default class SignupPage extends FormPage {
         '1. Delivery address',
         AccordionState.OPEN,
       )),
-      this.#checkboxSwitchAddress,
+      // this.#checkboxSwitchAddress,
       (this.#billingAddress = this.#createBillingAddressAccordion(
         '2. Billing address',
-        AccordionState.CLOSED,
+        AccordionState.OPEN,
       )),
       new Button({ text: 'Next', class: classes.buttonNext }, [ButtonClasses.BIG], () => {
-        this.#onButtonFormAddress();
+        this.#handlerOnClickButtonFormAddress();
       }),
     );
 
     return this.#formAddress;
   };
 
-  #onButtonFormAddress = () => {
+  #handlerOnClickButtonFormAddress = () => {
     if (validateForm([this.#inputsBillingAddress, this.#inputsDeliveryAddress])) {
       this.#saveDataFromFormAddress();
       this.#changeForm(this.#createPasswordForm());
@@ -246,13 +260,39 @@ export default class SignupPage extends FormPage {
     console.log(this.#userData);
   };
 
-  #onButtonUserDetail = () => {
+  #handlerOnClickButtonUserDetail = (event: Event) => {
+    const button = event.target as HTMLButtonElement;
     if (validateForm(this.#inputsUserDetail)) {
-      this.#saveDataFromUserDetail();
-      this.#changeForm(this.#createFormAddresses());
+      button.disabled = true;
+      SignupPage.isEmailFree(
+        this.#inputsUserDetail.mail.value,
+        () => {
+          this.#saveDataFromUserDetail();
+          this.#changeForm(this.#createFormAddresses(), FormTitle.ADDRESS);
+        },
+        this.#inputsUserDetail.mail.showError,
+      ).finally(() => {
+        button.disabled = false;
+      });
     }
     console.log(this.#userData);
   };
+
+  static isEmailFree = (
+    email: string,
+    onFreeCb: () => void,
+    onErrorCb: (errMessage: string) => void,
+  ) =>
+    auth
+      .isEmailExist(email)
+      .then((exist) => {
+        if (exist) {
+          onErrorCb(`Email ${email} is already exist!`);
+        } else {
+          onFreeCb();
+        }
+      })
+      .catch(onErrorCb);
 
   #saveDataFromUserDetail = () => {
     this.#userData.mail = this.#inputsUserDetail.mail.value;
@@ -283,12 +323,18 @@ export default class SignupPage extends FormPage {
     }
   };
 
-  #changeForm = (form: BaseForm) => {
+  #changeForm = (form: BaseForm, formTitle?: FormTitle) => {
+    this.hideErrorComponent();
     this.form.node.replaceWith(form.node);
     if (this.additionalLinkElement.node) {
       this.additionalLinkElement.node.remove();
     }
     this.form = form;
+    if (formTitle === FormTitle.ADDRESS) {
+      this.form.node.classList.add(classes.formBig);
+    } else {
+      this.form.node.classList.remove(classes.formBig);
+    }
   };
 
   #createBillingAddressInputs = () => {
@@ -399,7 +445,7 @@ export default class SignupPage extends FormPage {
       this.#inputsBillingAddress.postalCode,
       this.#inputsBillingAddress.checkboxDefault,
     );
-    accordion.header.node.addEventListener('click', this.#toggleAddressAccordion);
+    // accordion.header.node.addEventListener('click', this.#toggleAddressAccordion);
     return accordion;
   }
 
@@ -414,8 +460,9 @@ export default class SignupPage extends FormPage {
       this.#inputsDeliveryAddress.country,
       this.#inputsDeliveryAddress.postalCode,
       this.#inputsDeliveryAddress.checkboxDefault,
+      this.#checkboxSwitchAddress,
     );
-    accordion.header.node.addEventListener('click', this.#toggleAddressAccordion);
+    // accordion.header.node.addEventListener('click', this.#toggleAddressAccordion);
     return accordion;
   }
 
@@ -485,13 +532,37 @@ export default class SignupPage extends FormPage {
   #onButtonSignup = () => {
     if (validateRegistrationPassword(this.#passwordInput.value)) {
       this.#userData.password = this.#passwordInput.value;
-      // TODO:
-      // implement server side registration
-      // all registration data is stored in the object this.#userData
-      // 1.send a user registration request
-      // 2. send a request to set up a delivery address
-      // 3. send a request to set up a billing address
-      // 4. send a request to set up date of birthday
+      auth
+        .signUp({
+          email: this.#userData.mail ?? '',
+          password: this.#userData.password,
+          firstName: this.#userData.firstName,
+          lastName: this.#userData.lastName,
+          dateOfBirth: this.#userData.dateOfBirth,
+          addresses: [
+            {
+              id: '0',
+              country: COUNTRY_CODES[country.indexOf(this.#userData?.deliveryCountry)],
+              city: this.#userData.deliveryCity,
+              postalCode: this.#userData.deliveryCode,
+              streetName: this.#userData.deliveryStreet,
+              additionalAddressInfo: '',
+            },
+            {
+              id: '1',
+              country: COUNTRY_CODES[country.indexOf(this.#userData?.billingCountry)],
+              city: this.#userData.billingCity,
+              postalCode: this.#userData.billingCode,
+              streetName: this.#userData.billingStreet,
+              additionalAddressInfo: '',
+            },
+          ],
+          defaultShippingAddress: 0,
+          defaultBillingAddress: 0,
+        })
+        .catch((error: HttpErrorType) => {
+          this.showErrorComponent(error.message);
+        });
     }
     console.log(this.#userData);
   };

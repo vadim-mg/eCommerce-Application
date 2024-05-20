@@ -60,7 +60,7 @@ export default class InputText extends BaseElement<HTMLInputElement> {
 
     this.inputElement = new BaseElement<HTMLInputElement>({
       tag: 'input',
-      type: 'text',
+      type: props.type ?? 'text',
       class: classes.input,
       ...props,
     });
@@ -83,7 +83,7 @@ export default class InputText extends BaseElement<HTMLInputElement> {
       tag: 'div',
       class: [classes.errorText, classes.hidden],
     });
-    this.errorElement.node.innerHTML = '';
+    this.errorText = '';
     this.node.append(this.errorElement.node);
   };
 
@@ -102,27 +102,16 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     this.inputRow.node.append(this.toggleVisibilityElement.node);
   };
 
+  set errorText(text: string) {
+    this.errorElement.node.textContent = text;
+  }
+
   validate = () => {
-    const input = this.value;
-    const error = this.callbackValidation(input);
+    const error = this.callbackValidation(this.value);
     if (!error.status) {
-      this.errorElement.node.innerHTML = error.errorText;
-      if (this.isHiddenError()) {
-        this.showError();
-      }
-      if (!this.inputRow.node.classList.contains(classes.invalid)) {
-        this.inputRow.node.classList.add(classes.invalid);
-      }
-      this.inputRow.node.classList.add(classes.invalid);
-      this.isValid = false;
+      this.showError(error.errorText);
     } else {
-      if (!this.isHiddenError()) {
-        this.hiddenError();
-      }
-      if (this.inputRow.node.classList.contains(classes.invalid)) {
-        this.inputRow.node.classList.remove(classes.invalid);
-      }
-      this.isValid = true;
+      this.hiddenError();
     }
   };
 
@@ -144,9 +133,19 @@ export default class InputText extends BaseElement<HTMLInputElement> {
 
   isHiddenError = () => this.errorElement.node.classList.contains(classes.hidden);
 
-  showError = () => this.errorElement.node.classList.remove(classes.hidden);
+  showError = (errorText: string) => {
+    this.errorText = errorText;
+    this.errorElement.node.classList.remove(classes.hidden);
+    this.inputRow.node.classList.add(classes.invalid);
+    this.isValid = false;
+  };
 
-  hiddenError = () => this.errorElement.node.classList.add(classes.hidden);
+  hiddenError = () => {
+    this.errorText = '';
+    this.errorElement.node.classList.add(classes.hidden);
+    this.inputRow.node.classList.remove(classes.invalid);
+    this.isValid = true;
+  };
 
   setDisabled = (state: boolean) => {
     this.inputElement.node.disabled = state;
