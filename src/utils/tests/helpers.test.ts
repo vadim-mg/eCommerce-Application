@@ -4,56 +4,11 @@ import {
   validateEmail,
   validatePassword,
   validatePostalCode,
-  validateRegistrationEmail,
-  validateRegistrationPassword,
   validateStreet,
   validateUserData,
 } from '../helpers';
 
 describe('helpers module', () => {
-  describe('validateRegistrationPassword', () => {
-    test('check correct password for registration', () => {
-      const result = validateRegistrationPassword('Password12');
-      expect(result).toEqual({ status: true, errorText: '' });
-    });
-
-    test('check registration password length', () => {
-      const result = validateRegistrationPassword('Qwerty1');
-      expect(result).toEqual({
-        status: false,
-        errorText:
-          'Password must contain at least one uppercase letter, one lowercase letter, one digit. It must be at least 8 characters long',
-      });
-    });
-
-    test('check registration password without digits', () => {
-      const result = validateRegistrationPassword('Qwertyyy');
-      expect(result).toEqual({
-        status: false,
-        errorText:
-          'Password must contain at least one uppercase letter, one lowercase letter, one digit. It must be at least 8 characters long',
-      });
-    });
-
-    test('check registration password without uppercase letters', () => {
-      const result = validateRegistrationPassword('qwerty123');
-      expect(result).toEqual({
-        status: false,
-        errorText:
-          'Password must contain at least one uppercase letter, one lowercase letter, one digit. It must be at least 8 characters long',
-      });
-    });
-
-    test('check registration password without lowercase letters', () => {
-      const result = validateRegistrationPassword('QWERTY123');
-      expect(result).toEqual({
-        status: false,
-        errorText:
-          'Password must contain at least one uppercase letter, one lowercase letter, one digit. It must be at least 8 characters long',
-      });
-    });
-  });
-
   describe('validateLoginPassword', () => {
     test('check correct password for login', () => {
       const result = validatePassword('Password12&');
@@ -109,31 +64,6 @@ describe('helpers module', () => {
         status: false,
         errorText:
           'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (!@#$%^&*)',
-      });
-    });
-  });
-
-  describe('validateRegistrationEmail', () => {
-    test('check correct registration email', () => {
-      const result = validateRegistrationEmail('user@example.com');
-      expect(result).toEqual({ status: true, errorText: '' });
-    });
-
-    test('check registration email without @ character', () => {
-      const result = validateRegistrationEmail('userexample.com');
-      expect(result).toEqual({
-        status: false,
-        errorText:
-          'Please enter a valid email address. It should follow the format: user@example.com',
-      });
-    });
-
-    test('check incorrect registration email', () => {
-      const result = validateRegistrationEmail('user@examplecom');
-      expect(result).toEqual({
-        status: false,
-        errorText:
-          'Please enter a valid email address. It should follow the format: user@example.com',
       });
     });
   });

@@ -10,8 +10,8 @@ import {
   validateCity,
   validateDateOfBirth,
   validatePostalCode,
-  validateRegistrationEmail,
-  validateRegistrationPassword,
+  validateEmail,
+  validatePassword,
   validateStreet,
   validateUserData,
 } from '@Src/utils/helpers';
@@ -150,7 +150,7 @@ export default class SignupPage extends FormPage {
           type: 'email',
         },
         'E-mail',
-        () => validateRegistrationEmail(this.#inputsUserDetail.mail.value), // TODO: check the uniqueness of the address on the server side
+        () => validateEmail(this.#inputsUserDetail.mail.value), // TODO: check the uniqueness of the address on the server side
       ),
       firstName: new InputText(
         {
@@ -464,7 +464,7 @@ export default class SignupPage extends FormPage {
           placeholder: Placehorders.PASSWORD,
         },
         'Password',
-        () => validateRegistrationPassword(this.#passwordInput.value),
+        () => validatePassword(this.#passwordInput.value),
       )),
       new BaseElement({
         tag: 'div',
@@ -483,7 +483,7 @@ export default class SignupPage extends FormPage {
   };
 
   #onButtonSignup = () => {
-    if (validateRegistrationPassword(this.#passwordInput.value)) {
+    if (validatePassword(this.#passwordInput.value)) {
       this.#userData.password = this.#passwordInput.value;
       // TODO:
       // implement server side registration
