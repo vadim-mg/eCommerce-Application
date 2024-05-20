@@ -70,33 +70,25 @@ interface InputsUserDetail {
   dateOfBirth: InputText;
 }
 
-function isFormFull(...inputs: InputText[]): boolean {
+function validateForm(form: InputsUserDetail | InputsAddress | InputsAddress[]): boolean {
+  const validatedForms = Array.isArray(form) ? form : [form];
+
+  const inputs = validatedForms.reduce(
+    (acc: InputText[], validatedForm) => [
+      ...acc,
+      ...Object.values(validatedForm)
+        // validates only InputText data types, so we collect only such elements into the array,
+        // excluding Checkbox and Select
+        .filter((input) => input instanceof InputText),
+    ],
+    [],
+  );
+
   inputs.forEach((input) => {
     input.validate();
   });
+  console.log(inputs);
   return inputs.every((input) => input.isValid);
-}
-
-function validateForm(arg: InputsUserDetail | InputsAddress | InputsAddress[]): boolean {
-  // isFormFull validates only InputText data types, so we collect only such elements into the array,
-  // excluding Checkbox and Select
-  const inputs: InputText[] = [];
-  if (Array.isArray(arg)) {
-    arg.forEach((el) => {
-      Object.values(el).forEach((input) => {
-        if (input instanceof InputText) {
-          inputs.push(input);
-        }
-      });
-    });
-  } else {
-    Object.values(arg).forEach((input) => {
-      if (input instanceof InputText) {
-        inputs.push(input);
-      }
-    });
-  }
-  return isFormFull(...inputs);
 }
 
 export default class SignupPage extends FormPage {
@@ -150,7 +142,7 @@ export default class SignupPage extends FormPage {
           type: 'email',
         },
         'E-mail',
-        () => validateRegistrationEmail(this.#inputsUserDetail.mail.value), // TODO: check the uniqueness of the address on the server side
+        () => validateRegistrationEmail(this.#inputsUserDetail.mail.value),
       ),
       firstName: new InputText(
         {
@@ -197,7 +189,7 @@ export default class SignupPage extends FormPage {
       this.#inputsUserDetail.lastName,
       this.#inputsUserDetail.dateOfBirth,
       new Button({ text: 'Next', class: classes.buttonNext }, [ButtonClasses.BIG], () => {
-        this.#onButtonUserDetail();
+        this.#handlerOnClickButtonUserDetail();
       }),
     );
     return this.#formUserDetails;
@@ -231,14 +223,14 @@ export default class SignupPage extends FormPage {
         AccordionState.CLOSED,
       )),
       new Button({ text: 'Next', class: classes.buttonNext }, [ButtonClasses.BIG], () => {
-        this.#onButtonFormAddress();
+        this.#handlerOnClickButtonFormAddress();
       }),
     );
 
     return this.#formAddress;
   };
 
-  #onButtonFormAddress = () => {
+  #handlerOnClickButtonFormAddress = () => {
     if (validateForm([this.#inputsBillingAddress, this.#inputsDeliveryAddress])) {
       this.#saveDataFromFormAddress();
       this.#changeForm(this.#createPasswordForm());
@@ -246,7 +238,7 @@ export default class SignupPage extends FormPage {
     console.log(this.#userData);
   };
 
-  #onButtonUserDetail = () => {
+  #handlerOnClickButtonUserDetail = () => {
     if (validateForm(this.#inputsUserDetail)) {
       this.#saveDataFromUserDetail();
       this.#changeForm(this.#createFormAddresses());
