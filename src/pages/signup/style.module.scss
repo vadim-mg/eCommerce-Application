@@ -14,9 +14,9 @@
       'accordion-delivery accordion-billing'
       '. button';
     align-items: start;
+    grid-template-columns: 1fr 1fr;
     gap: 2rem;
-    max-width: min-content;
-    width: min-content;
+    max-width: 45rem;
   }
 }
 
