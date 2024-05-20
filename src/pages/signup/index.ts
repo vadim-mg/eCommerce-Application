@@ -16,6 +16,7 @@ import {
   validateUserData,
 } from '@Src/utils/helpers';
 
+import auth from '@Src/controllers/auth';
 import classes from './style.module.scss';
 
 enum Placehorders {
@@ -188,9 +189,7 @@ export default class SignupPage extends FormPage {
       this.#inputsUserDetail.firstName,
       this.#inputsUserDetail.lastName,
       this.#inputsUserDetail.dateOfBirth,
-      new Button({ text: 'Next', class: classes.buttonNext }, [ButtonClasses.BIG], () => {
-        this.#handlerOnClickButtonUserDetail();
-      }),
+      new Button({ text: 'Next', class: classes.buttonNext }, [ButtonClasses.BIG], this.#handlerOnClickButtonUserDetail),
     );
     return this.#formUserDetails;
   };
@@ -238,13 +237,37 @@ export default class SignupPage extends FormPage {
     console.log(this.#userData);
   };
 
-  #handlerOnClickButtonUserDetail = () => {
+  #handlerOnClickButtonUserDetail = (event: Event) => {
+    const button = event.target as HTMLButtonElement;
+    button.disabled = true;
     if (validateForm(this.#inputsUserDetail)) {
-      this.#saveDataFromUserDetail();
-      this.#changeForm(this.#createFormAddresses());
+      SignupPage.isEmailFree(
+        this.#inputsUserDetail.mail.value,
+        () => {
+          this.#saveDataFromUserDetail();
+          this.#changeForm(this.#createFormAddresses());
+        },
+        this.showErrorComponent)
+        .finally(() => {
+          button.disabled = false;
+        });
     }
     console.log(this.#userData);
   };
+
+  static isEmailFree = (
+    email: string, onFreeCb: () => void, onErrorCb: (errMessage: string) => void) =>
+    auth
+      .isEmailExist(email)
+      .then((exist) => {
+        if (exist) {
+          onErrorCb(`Email ${email} is already exist!`);
+        } else {
+          onFreeCb();
+        }
+      })
+      .catch(onErrorCb)
+    ;
 
   #saveDataFromUserDetail = () => {
     this.#userData.mail = this.#inputsUserDetail.mail.value;
@@ -276,6 +299,7 @@ export default class SignupPage extends FormPage {
   };
 
   #changeForm = (form: BaseForm) => {
+    this.hideErrorComponent();
     this.form.node.replaceWith(form.node);
     if (this.additionalLinkElement.node) {
       this.additionalLinkElement.node.remove();
