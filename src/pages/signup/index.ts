@@ -16,6 +16,7 @@ import {
   validateUserData,
 } from '@Src/utils/helpers';
 
+import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import auth from '@Src/controllers/auth';
 import classes from './style.module.scss';
 
@@ -531,13 +532,37 @@ export default class SignupPage extends FormPage {
   #onButtonSignup = () => {
     if (validateRegistrationPassword(this.#passwordInput.value)) {
       this.#userData.password = this.#passwordInput.value;
-      // TODO:
-      // implement server side registration
-      // all registration data is stored in the object this.#userData
-      // 1.send a user registration request
-      // 2. send a request to set up a delivery address
-      // 3. send a request to set up a billing address
-      // 4. send a request to set up date of birthday
+      auth
+        .signUp({
+          email: this.#userData.mail ?? '',
+          password: this.#userData.password,
+          firstName: this.#userData.firstName,
+          lastName: this.#userData.lastName,
+          dateOfBirth: this.#userData.dateOfBirth,
+          addresses: [
+            {
+              id: '0',
+              country: 'RU',
+              city: this.#userData.deliveryCity,
+              postalCode: this.#userData.deliveryCode,
+              streetName: this.#userData.deliveryStreet,
+              additionalAddressInfo: '',
+            },
+            {
+              id: '1',
+              country: 'RU',
+              city: this.#userData.billingCity,
+              postalCode: this.#userData.billingCode,
+              streetName: this.#userData.billingStreet,
+              additionalAddressInfo: '',
+            },
+          ],
+          defaultShippingAddress: 0,
+          defaultBillingAddress: 0,
+        })
+        .catch((error: HttpErrorType) => {
+          this.showErrorComponent(error.message);
+        });
     }
     console.log(this.#userData);
   };
