@@ -38,6 +38,7 @@ enum FormTitle {
 }
 
 const country = ['Belarus', 'Poland', 'Russia'];
+const COUNTRY_CODES = ['BE', 'PL', 'RU'];
 
 interface UserData {
   mail?: string;
@@ -46,12 +47,12 @@ interface UserData {
   dateOfBirth?: string;
   deliveryStreet?: string;
   deliveryCity?: string;
-  deliveryCountry?: string;
+  deliveryCountry: string;
   deliveryCode?: string;
   deliveryIsDefault?: boolean;
   billingStreet?: string;
   billingCity?: string;
-  billingCountry?: string;
+  billingCountry: string;
   billingCode?: string;
   billingIsDefault?: boolean;
   password?: string;
@@ -125,10 +126,9 @@ export default class SignupPage extends FormPage {
   constructor() {
     super({ title: 'Registration page' });
     this.addForm(this.renderForm());
-    this.addAdditionalLink('if you already have an account', 'login', 'Log in');
     this.#userData = {} as UserData;
     this.addEventListeners();
-    this.#changeForm(this.#createFormUserDetails());
+    this.addAdditionalLink('if you already have an account', 'login', 'Log in');
   }
 
   renderForm(): BaseForm {
@@ -542,7 +542,7 @@ export default class SignupPage extends FormPage {
           addresses: [
             {
               id: '0',
-              country: 'RU',
+              country: COUNTRY_CODES[country.indexOf(this.#userData?.deliveryCountry)],
               city: this.#userData.deliveryCity,
               postalCode: this.#userData.deliveryCode,
               streetName: this.#userData.deliveryStreet,
@@ -550,7 +550,7 @@ export default class SignupPage extends FormPage {
             },
             {
               id: '1',
-              country: 'RU',
+              country: COUNTRY_CODES[country.indexOf(this.#userData?.billingCountry)],
               city: this.#userData.billingCity,
               postalCode: this.#userData.billingCode,
               streetName: this.#userData.billingStreet,
