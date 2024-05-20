@@ -81,7 +81,7 @@ export const validateRegistrationEmail = (inputValue: string) => {
 // Email address must contain an '@' symbol separating local part and domain name.
 // Email address must contain a domain name (e.g., example.com).
 // Email address must be properly formatted (e.g., user@example.com).
-export const validateEmail = (inputValue: string) => {
+export const validateLoginEmail = (inputValue: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const domainRegex = /@([^\s@]+\.[^\s@]+)$/;
 
