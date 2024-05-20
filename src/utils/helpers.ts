@@ -28,7 +28,7 @@ export const validateRegistrationPassword = (inputValue: string) => {
 // Password must contain at least one digit (0-9).
 // (Optional) Password must contain at least one special character (e.g., !@#$%^&*).
 // Password must be at least 8 characters long.
-export const validatePassword = (inputValue: string) => {
+export const validateLoginPassword = (inputValue: string) => {
   const trimmedPasswordValue = inputValue.trim();
 
   const passwordValidationRequirements = [/[A-Z]/, /[a-z]/, /[0-9]/, /[!@#$%^&*]/];

@@ -3,7 +3,7 @@ import FormPage from '@Src/components/common/form-page';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
 import auth from '@Src/controllers/auth';
-import { validateEmail, validatePassword } from '@Src/utils/helpers';
+import { validateEmail, validateLoginPassword } from '@Src/utils/helpers';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import classes from './style.module.scss';
 
@@ -37,8 +37,8 @@ export default class LoginPage extends FormPage {
   };
 
   checkPasswordValidation = (input: string): ValidationError => {
-    this.#isValidPassword = validatePassword(input).status;
-    return validatePassword(this.#password.value);
+    this.#isValidPassword = validateLoginPassword(input).status;
+    return validateLoginPassword(this.#password.value);
   };
 
   renderForm(): BaseForm {
