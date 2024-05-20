@@ -1,13 +1,13 @@
 import {
-  validateRegistrationPassword,
-  validateLoginPassword,
-  validateRegistrationEmail,
-  validateLoginEmail,
-  validateStreet,
-  validateUserData,
   validateCity,
   validateDateOfBirth,
+  validateEmail,
+  validatePassword,
   validatePostalCode,
+  validateRegistrationEmail,
+  validateRegistrationPassword,
+  validateStreet,
+  validateUserData,
 } from '../helpers';
 
 describe('helpers module', () => {
@@ -56,12 +56,12 @@ describe('helpers module', () => {
 
   describe('validateLoginPassword', () => {
     test('check correct password for login', () => {
-      const result = validateLoginPassword('Password12&');
+      const result = validatePassword('Password12&');
       expect(result).toEqual({ status: true, errorText: '' });
     });
 
     test('check login password leading or trailing whitespace', () => {
-      const result = validateLoginPassword('Password12& ');
+      const result = validatePassword('Password12& ');
       expect(result).toEqual({
         status: false,
         errorText: 'Password must not contain leading or trailing whitespace',
@@ -69,7 +69,7 @@ describe('helpers module', () => {
     });
 
     test('check login password length', () => {
-      const result = validateLoginPassword('Qwer1$');
+      const result = validatePassword('Qwer1$');
       expect(result).toEqual({
         status: false,
         errorText: 'Password must be at least 8 characters long',
@@ -77,7 +77,7 @@ describe('helpers module', () => {
     });
 
     test('check login password without uppercase letters', () => {
-      const result = validateLoginPassword('qwerty1&2');
+      const result = validatePassword('qwerty1&2');
       expect(result).toEqual({
         status: false,
         errorText:
@@ -86,7 +86,7 @@ describe('helpers module', () => {
     });
 
     test('check login password without lowercase letters', () => {
-      const result = validateLoginPassword('QWERTY1&2');
+      const result = validatePassword('QWERTY1&2');
       expect(result).toEqual({
         status: false,
         errorText:
@@ -95,7 +95,7 @@ describe('helpers module', () => {
     });
 
     test('check login password without digits', () => {
-      const result = validateLoginPassword('QWErtyu&%');
+      const result = validatePassword('QWErtyu&%');
       expect(result).toEqual({
         status: false,
         errorText:
@@ -104,7 +104,7 @@ describe('helpers module', () => {
     });
 
     test('check login password without special character (!@#$%^&*)', () => {
-      const result = validateLoginPassword('QWErtyu123');
+      const result = validatePassword('QWErtyu123');
       expect(result).toEqual({
         status: false,
         errorText:
@@ -140,12 +140,12 @@ describe('helpers module', () => {
 
   describe('validateLoginEmail', () => {
     test('check correct login email', () => {
-      const result = validateLoginEmail('user@example.com');
+      const result = validateEmail('user@example.com');
       expect(result).toEqual({ status: true, errorText: '' });
     });
 
     test('check login email with leading or trailing whitespace', () => {
-      const result = validateLoginEmail('user@example.com ');
+      const result = validateEmail('user@example.com ');
       expect(result).toEqual({
         status: false,
         errorText: 'Email address must not contain leading or trailing whitespace',
@@ -153,7 +153,7 @@ describe('helpers module', () => {
     });
 
     test('check login email without @', () => {
-      const result = validateLoginEmail('userexample.com');
+      const result = validateEmail('userexample.com');
       expect(result).toEqual({
         status: false,
         errorText:
@@ -162,7 +162,7 @@ describe('helpers module', () => {
     });
 
     test('check login email with incorrect domain name', () => {
-      const result = validateLoginEmail('user@example');
+      const result = validateEmail('user@example');
       expect(result).toEqual({
         status: false,
         errorText: 'Please include a domain name in your email address (e.g., example.com)',
@@ -170,7 +170,7 @@ describe('helpers module', () => {
     });
 
     test('check incorrect login email', () => {
-      const result = validateLoginEmail('us  er@example.com');
+      const result = validateEmail('us  er@example.com');
       expect(result).toEqual({
         status: false,
         errorText:
