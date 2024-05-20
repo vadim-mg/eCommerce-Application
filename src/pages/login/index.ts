@@ -33,13 +33,11 @@ export default class LoginPage extends FormPage {
 
   checkEmailValidation = (input: string): ValidationError => {
     this.#isValidEmail = validateEmail(input).status;
-    this.changeBtnLoginState();
     return validateEmail(this.#email.value);
   };
 
   checkPasswordValidation = (input: string): ValidationError => {
     this.#isValidPassword = validatePassword(input).status;
-    this.changeBtnLoginState();
     return validatePassword(this.#password.value);
   };
 
@@ -64,18 +62,18 @@ export default class LoginPage extends FormPage {
       (this.#loginButton = new Button(
         { text: 'Log in', class: classes.loginButton },
         [ButtonClasses.BIG],
-        this.#signIn,
+        this.#onButtonLogin,
       )),
     );
-    this.#loginButton.disable();
     return this.form;
   }
 
-  changeBtnLoginState = () => {
-    if (this.#isValidEmail && this.#isValidPassword) {
-      this.#loginButton.enable();
-    } else {
-      this.#loginButton.disable();
+  #onButtonLogin = () => {
+    this.#email.validate();
+    this.#password.validate();
+
+    if (this.#password.isValid && this.#email.isValid) {
+      this.#signIn();
     }
   };
 
