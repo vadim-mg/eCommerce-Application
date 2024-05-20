@@ -161,12 +161,20 @@ describe('helpers module', () => {
       });
     });
 
-    test('check login email without @', () => {
-      const result = validateLoginEmail('userexample.com');
+    test('check login email with incorrect domain name', () => {
+      const result = validateLoginEmail('user@example');
+      expect(result).toEqual({
+        status: false,
+        errorText: 'Please include a domain name in your email address (e.g., example.com)',
+      });
+    });
+
+    test('check incorrect login email', () => {
+      const result = validateLoginEmail('us  er@example.com');
       expect(result).toEqual({
         status: false,
         errorText:
-          'Your email address should include an "@ symbol separating the local part and domain name',
+          'Please enter a valid email address. It should follow the format: user@example.com',
       });
     });
   });
@@ -194,17 +202,29 @@ describe('helpers module', () => {
 
     test('check empty user data', () => {
       const result = validateUserData('');
-      expect(result).toEqual({ status: false, errorText: 'This field must contain at least one character and no special characters or numbers' });
+      expect(result).toEqual({
+        status: false,
+        errorText:
+          'This field must contain at least one character and no special characters or numbers',
+      });
     });
 
     test('check user data with a number', () => {
       const result = validateUserData('John2');
-      expect(result).toEqual({ status: false, errorText: 'This field must contain at least one character and no special characters or numbers' });
+      expect(result).toEqual({
+        status: false,
+        errorText:
+          'This field must contain at least one character and no special characters or numbers',
+      });
     });
 
     test('check user data with a special characters', () => {
       const result = validateUserData('John&');
-      expect(result).toEqual({ status: false, errorText: 'This field must contain at least one character and no special characters or numbers' });
+      expect(result).toEqual({
+        status: false,
+        errorText:
+          'This field must contain at least one character and no special characters or numbers',
+      });
     });
   });
 
@@ -221,12 +241,20 @@ describe('helpers module', () => {
 
     test('check empty city name', () => {
       const result = validateCity('');
-      expect(result).toEqual({ status: false, errorText: 'This field must contain at least one character and no special characters or numbers' });
+      expect(result).toEqual({
+        status: false,
+        errorText:
+          'This field must contain at least one character and no special characters or numbers',
+      });
     });
 
     test('check city name with a number and special character', () => {
       const result = validateCity('City1%');
-      expect(result).toEqual({ status: false, errorText: 'This field must contain at least one character and no special characters or numbers' });
+      expect(result).toEqual({
+        status: false,
+        errorText:
+          'This field must contain at least one character and no special characters or numbers',
+      });
     });
   });
 
@@ -236,10 +264,10 @@ describe('helpers module', () => {
       expect(result).toEqual({ status: true, errorText: '' });
     });
 
-    // test('check incorrect date of birth', () => {
-    //   const result = validateDateOfBirth('mm/05/0000');
-    //   expect(result).toEqual({ status: false, errorText: 'Please enter a valid date of birth' });
-    // });
+    test('check empty date of birth', () => {
+      const result = validateDateOfBirth('');
+      expect(result).toEqual({ status: false, errorText: 'Please enter a valid date of birth' });
+    });
 
     test('check date of birth under 13 years old', () => {
       const result = validateDateOfBirth('05/25/2011');
@@ -265,17 +293,26 @@ describe('helpers module', () => {
 
     test('check incorrect postal code for Russia', () => {
       const result = validatePostalCode('675', 'Russia');
-      expect(result).toEqual({ status: false, errorText: 'Invalid postal code format for Russia' });
+      expect(result).toEqual({
+        status: false,
+        errorText: 'Invalid postal code format for Russia',
+      });
     });
 
     test('check incorrect postal code for Poland', () => {
       const result = validatePostalCode('67565', 'Poland');
-      expect(result).toEqual({ status: false, errorText: 'Invalid postal code format for Poland' });
+      expect(result).toEqual({
+        status: false,
+        errorText: 'Invalid postal code format for Poland',
+      });
     });
 
     test('check incorrect postal code for Belarus', () => {
       const result = validatePostalCode('6756-5', 'Belarus');
-      expect(result).toEqual({ status: false, errorText: 'Invalid postal code format for Belarus' });
+      expect(result).toEqual({
+        status: false,
+        errorText: 'Invalid postal code format for Belarus',
+      });
     });
   });
 });
