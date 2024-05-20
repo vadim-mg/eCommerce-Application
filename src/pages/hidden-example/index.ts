@@ -20,8 +20,8 @@ import { AppRoutes } from '@Src/router/routes';
 import {
   validateDateOfBirth,
   validatePostalCode,
-  validateRegistrationEmail,
-  validateRegistrationPassword,
+  validateEmail,
+  validatePassword,
 } from '@Src/utils/helpers';
 import classes from './style.module.scss';
 
@@ -98,12 +98,12 @@ export default class HiddenExamplePage extends ContentPage {
             minLength: 1,
           },
           'Name',
-          validateRegistrationEmail,
+          validateEmail,
         ),
         new InputText(
           { name: 'password', placeholder: '********', maxLength: 20, minLength: 8 },
           'Password',
-          validateRegistrationPassword,
+          validatePassword,
         ),
         new InputText(
           { name: 'date of birth', type: 'date' },

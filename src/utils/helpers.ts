@@ -2,26 +2,6 @@ function sum(a: number, b: number) {
   return a + b;
 }
 
-// this function was created for registration form
-// Password: Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number
-export const validateRegistrationPassword = (inputValue: string) => {
-  const passwordValidationRequirements = [/[A-Z]/, /[a-z]/, /[0-9]/];
-  const meetAllRequirements = passwordValidationRequirements.every((requirement) =>
-    requirement.test(inputValue),
-  );
-  if (!meetAllRequirements || inputValue.length < 8) {
-    return {
-      status: false,
-      errorText:
-        'Password must contain at least one uppercase letter, one lowercase letter, one digit. It must be at least 8 characters long',
-    };
-  }
-  return {
-    status: true,
-    errorText: '',
-  };
-};
-
 // Password must not contain leading or trailing whitespace.
 // Password must contain at least one uppercase letter (A-Z).
 // Password must contain at least one lowercase letter (a-z).
@@ -52,22 +32,6 @@ export const validatePassword = (inputValue: string) => {
     return {
       status: false,
       errorText: 'Password must be at least 8 characters long',
-    };
-  }
-  return {
-    status: true,
-    errorText: '',
-  };
-};
-
-// this function was created for registration form
-// Email: A properly formatted email address (e.g., example@email.com)
-export const validateRegistrationEmail = (inputValue: string) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!inputValue.match(emailRegex)) {
-    return {
-      status: false,
-      errorText: 'Email should follow the format: user@example.com',
     };
   }
   return {
