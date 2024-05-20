@@ -126,12 +126,28 @@ export default class SignupPage extends FormPage {
     this.addForm(this.renderForm());
     this.addAdditionalLink('if you already have an account', 'login', 'Log in');
     this.#userData = {} as UserData;
+    this.addEventListeners();
   }
 
   renderForm(): BaseForm {
     this.form = this.#createFormUserDetails();
     return this.form;
   }
+
+  addEventListeners = () => {
+    this.#inputsUserDetail.mail.inputElement.node.addEventListener('change', () => {
+      if (this.#inputsUserDetail.mail.isValid) {
+        SignupPage.isEmailFree(
+          this.#inputsUserDetail.mail.value,
+          () => {},
+          (errMessage) => {
+            this.#inputsUserDetail.mail.errorText = errMessage;
+            this.#inputsUserDetail.mail.showError();
+          },
+        );
+      }
+    });
+  };
 
   #createFormUserDetails = (): BaseForm => {
     this.#inputsUserDetail = {
@@ -189,7 +205,11 @@ export default class SignupPage extends FormPage {
       this.#inputsUserDetail.firstName,
       this.#inputsUserDetail.lastName,
       this.#inputsUserDetail.dateOfBirth,
-      new Button({ text: 'Next', class: classes.buttonNext }, [ButtonClasses.BIG], this.#handlerOnClickButtonUserDetail),
+      new Button(
+        { text: 'Next', class: classes.buttonNext },
+        [ButtonClasses.BIG],
+        this.#handlerOnClickButtonUserDetail,
+      ),
     );
     return this.#formUserDetails;
   };
@@ -247,16 +267,19 @@ export default class SignupPage extends FormPage {
           this.#saveDataFromUserDetail();
           this.#changeForm(this.#createFormAddresses());
         },
-        this.showErrorComponent)
-        .finally(() => {
-          button.disabled = false;
-        });
+        this.showErrorComponent,
+      ).finally(() => {
+        button.disabled = false;
+      });
     }
     console.log(this.#userData);
   };
 
   static isEmailFree = (
-    email: string, onFreeCb: () => void, onErrorCb: (errMessage: string) => void) =>
+    email: string,
+    onFreeCb: () => void,
+    onErrorCb: (errMessage: string) => void,
+  ) =>
     auth
       .isEmailExist(email)
       .then((exist) => {
@@ -266,8 +289,7 @@ export default class SignupPage extends FormPage {
           onFreeCb();
         }
       })
-      .catch(onErrorCb)
-    ;
+      .catch(onErrorCb);
 
   #saveDataFromUserDetail = () => {
     this.#userData.mail = this.#inputsUserDetail.mail.value;

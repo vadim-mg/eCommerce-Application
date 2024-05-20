@@ -60,7 +60,7 @@ export default class InputText extends BaseElement<HTMLInputElement> {
 
     this.inputElement = new BaseElement<HTMLInputElement>({
       tag: 'input',
-      type: 'text',
+      type: props.type ?? 'text',
       class: classes.input,
       ...props,
     });
@@ -83,7 +83,7 @@ export default class InputText extends BaseElement<HTMLInputElement> {
       tag: 'div',
       class: [classes.errorText, classes.hidden],
     });
-    this.errorElement.node.innerHTML = '';
+    this.errorText = '';
     this.node.append(this.errorElement.node);
   };
 
@@ -102,11 +102,15 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     this.inputRow.node.append(this.toggleVisibilityElement.node);
   };
 
+  set errorText(text: string) {
+    this.errorElement.node.textContent = text;
+  }
+
   validate = () => {
     const input = this.value;
     const error = this.callbackValidation(input);
     if (!error.status) {
-      this.errorElement.node.innerHTML = error.errorText;
+      this.errorText = error.errorText;
       if (this.isHiddenError()) {
         this.showError();
       }
