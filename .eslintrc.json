@@ -16,14 +16,6 @@
   },
   "rules": {
     "no-console": 0,
-    "@typescript-eslint/no-explicit-any": 2,
-    "indent": [
-      "error",
-      2,
-      {
-        "SwitchCase": 1,
-        "ArrayExpression": "first"
-      }
-    ]
+    "@typescript-eslint/no-explicit-any": 2
   }
 }
