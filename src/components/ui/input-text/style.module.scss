@@ -24,7 +24,7 @@
   font-size: 0.875rem;
   line-height: 1.125rem;
   color: var(--color-grey-dark);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .input {
@@ -73,11 +73,13 @@
 }
 .errorText {
   color: var(--color-red-main);
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
   font-size: 0.75rem;
+  min-height: 1.25rem;
 }
 .hidden {
-  display: none;
+  // display: none;
+  visibility: hidden;
 }
 
 @mixin input-icons {

@@ -104,8 +104,7 @@ export const validateUserData = (inputValue: string) => {
   if (!inputValue.match(regex)) {
     return {
       status: false,
-      errorText:
-        'This field must contain at least one character and no special characters or numbers',
+      errorText: 'This field must contain at least one english letter',
     };
   }
   return {
@@ -126,8 +125,7 @@ export const validateCity = (inputValue: string) => {
   if (!isValid) {
     return {
       status: false,
-      errorText:
-        'This field must contain at least one character and no special characters or numbers',
+      errorText: 'This field must contain at least one english letter',
     };
   }
   return {
