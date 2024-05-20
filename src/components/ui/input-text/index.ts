@@ -107,26 +107,11 @@ export default class InputText extends BaseElement<HTMLInputElement> {
   }
 
   validate = () => {
-    const input = this.value;
-    const error = this.callbackValidation(input);
+    const error = this.callbackValidation(this.value);
     if (!error.status) {
-      this.errorText = error.errorText;
-      if (this.isHiddenError()) {
-        this.showError();
-      }
-      if (!this.inputRow.node.classList.contains(classes.invalid)) {
-        this.inputRow.node.classList.add(classes.invalid);
-      }
-      this.inputRow.node.classList.add(classes.invalid);
-      this.isValid = false;
+      this.showError(error.errorText);
     } else {
-      if (!this.isHiddenError()) {
-        this.hiddenError();
-      }
-      if (this.inputRow.node.classList.contains(classes.invalid)) {
-        this.inputRow.node.classList.remove(classes.invalid);
-      }
-      this.isValid = true;
+      this.hiddenError();
     }
   };
 
@@ -148,9 +133,19 @@ export default class InputText extends BaseElement<HTMLInputElement> {
 
   isHiddenError = () => this.errorElement.node.classList.contains(classes.hidden);
 
-  showError = () => this.errorElement.node.classList.remove(classes.hidden);
+  showError = (errorText: string) => {
+    this.errorText = errorText;
+    this.errorElement.node.classList.remove(classes.hidden);
+    this.inputRow.node.classList.add(classes.invalid);
+    this.isValid = false;
+  };
 
-  hiddenError = () => this.errorElement.node.classList.add(classes.hidden);
+  hiddenError = () => {
+    this.errorText = '';
+    this.errorElement.node.classList.add(classes.hidden);
+    this.inputRow.node.classList.remove(classes.invalid);
+    this.isValid = true;
+  };
 
   setDisabled = (state: boolean) => {
     this.inputElement.node.disabled = state;

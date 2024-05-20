@@ -139,11 +139,12 @@ export default class SignupPage extends FormPage {
       if (this.#inputsUserDetail.mail.isValid) {
         SignupPage.isEmailFree(
           this.#inputsUserDetail.mail.value,
-          () => {},
-          (errMessage) => {
-            this.#inputsUserDetail.mail.errorText = errMessage;
-            this.#inputsUserDetail.mail.showError();
+          () => {
+            this.#inputsUserDetail.mail.isValid = true;
+            this.#inputsUserDetail.mail.errorText = '';
+            this.#inputsUserDetail.mail.hiddenError();
           },
+          this.#inputsUserDetail.mail.showError,
         );
       }
     });
@@ -259,15 +260,15 @@ export default class SignupPage extends FormPage {
 
   #handlerOnClickButtonUserDetail = (event: Event) => {
     const button = event.target as HTMLButtonElement;
-    button.disabled = true;
     if (validateForm(this.#inputsUserDetail)) {
+      button.disabled = true;
       SignupPage.isEmailFree(
         this.#inputsUserDetail.mail.value,
         () => {
           this.#saveDataFromUserDetail();
           this.#changeForm(this.#createFormAddresses());
         },
-        this.showErrorComponent,
+        this.#inputsUserDetail.mail.showError,
       ).finally(() => {
         button.disabled = false;
       });
