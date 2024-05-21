@@ -81,7 +81,12 @@
     content: 'The billing address the same as delivery address';
   }
 
+  &[hidden] {
+    display: none;
+  }
+
   &_hidden {
     display: none;
   }
+
 }
