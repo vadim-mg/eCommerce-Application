@@ -42,7 +42,7 @@ export default class Select extends BaseElement<HTMLSelectElement> {
   }
 
   get selectedValue() {
-    return this.#input.node.options[this.#input.node.selectedIndex].value;
+    return this.#input.node.options[this.#input.node.selectedIndex]?.value ?? '';
   }
 
   set selectedValue(value: string) {
