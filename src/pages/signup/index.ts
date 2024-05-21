@@ -16,6 +16,7 @@ import {
   validateUserData,
 } from '@Src/utils/helpers';
 
+import { MyCustomerDraft } from '@commercetools/platform-sdk';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import auth from '@Src/controllers/auth';
 import classes from './style.module.scss';
@@ -56,6 +57,7 @@ interface UserData {
   billingCode?: string;
   billingIsDefault?: boolean;
   password?: string;
+  billingEqualDelivery: boolean;
 }
 
 interface InputsAddress {
@@ -122,12 +124,17 @@ export default class SignupPage extends FormPage {
 
   #userData: UserData;
 
+  #hiddenBillingBlock!: BaseElement<HTMLDivElement>;
+
   constructor() {
     super({ title: 'Registration page' });
     this.addForm(this.renderForm());
-    this.#userData = {} as UserData;
+    this.#userData = {
+      billingEqualDelivery: true,
+    } as UserData;
     this.addEventListeners();
     this.addAdditionalLink('if you already have an account', 'login', 'Log in');
+    // this.#changeForm(this.#createFormAddresses(), FormTitle.ADDRESS); // todo : clear it after debug
   }
 
   renderForm(): BaseForm {
@@ -219,8 +226,8 @@ export default class SignupPage extends FormPage {
   #createFormAddresses = (): BaseForm => {
     this.#checkboxSwitchAddress = new CheckBox(
       { class: classes.checkbox },
-      `Use the shipping address for billing purposes`,
-      false,
+      `Use the delivery address for billing purposes`,
+      this.#userData.billingEqualDelivery,
     );
     this.#checkboxSwitchAddress.inputElement.node.addEventListener(
       'change',
@@ -243,6 +250,11 @@ export default class SignupPage extends FormPage {
         '2. Billing address',
         AccordionState.OPEN,
       )),
+      (this.#hiddenBillingBlock = new BaseElement({
+        tag: 'div',
+        text: 'The billing address the same as delivery address',
+        class: [classes.hiddenBillingBlock],
+      })),
       new Button({ text: 'Next', class: classes.buttonNext }, [ButtonClasses.BIG], () => {
         this.#handlerOnClickButtonFormAddress();
       }),
@@ -252,7 +264,13 @@ export default class SignupPage extends FormPage {
   };
 
   #handlerOnClickButtonFormAddress = () => {
-    if (validateForm([this.#inputsBillingAddress, this.#inputsDeliveryAddress])) {
+    if (
+      validateForm(
+        this.#checkboxSwitchAddress.checked
+          ? [this.#inputsDeliveryAddress]
+          : [this.#inputsBillingAddress, this.#inputsDeliveryAddress],
+      )
+    ) {
       this.#saveDataFromFormAddress();
       this.#changeForm(this.#createPasswordForm());
     }
@@ -299,24 +317,21 @@ export default class SignupPage extends FormPage {
   };
 
   #saveDataFromFormAddress = () => {
-    this.#userData.billingStreet = this.#inputsBillingAddress.street.value;
-    this.#userData.billingCity = this.#inputsBillingAddress.city.value;
-    this.#userData.billingCode = this.#inputsBillingAddress.postalCode.value;
-    this.#userData.billingCountry = this.#inputsBillingAddress.country.selectedValue;
-    this.#userData.billingIsDefault = this.#inputsBillingAddress.checkboxDefault.checked;
+    this.#userData.deliveryStreet = this.#inputsDeliveryAddress.street.value;
+    this.#userData.deliveryCity = this.#inputsDeliveryAddress.city.value;
+    this.#userData.deliveryCode = this.#inputsDeliveryAddress.postalCode.value;
+    this.#userData.deliveryCountry = this.#inputsDeliveryAddress.country.selectedValue;
+    this.#userData.deliveryIsDefault = this.#inputsDeliveryAddress.checkboxDefault.checked;
+    this.#userData.billingIsDefault = this.#userData.deliveryIsDefault;
 
-    if (this.#checkboxSwitchAddress.checked) {
-      this.#userData.deliveryStreet = this.#inputsBillingAddress.street.value;
-      this.#userData.deliveryCity = this.#inputsBillingAddress.city.value;
-      this.#userData.deliveryCode = this.#inputsBillingAddress.postalCode.value;
-      this.#userData.deliveryCountry = this.#inputsBillingAddress.country.selectedValue;
-      this.#userData.deliveryIsDefault = this.#inputsBillingAddress.checkboxDefault.checked;
-    } else {
-      this.#userData.deliveryStreet = this.#inputsDeliveryAddress.street.value;
-      this.#userData.deliveryCity = this.#inputsDeliveryAddress.city.value;
-      this.#userData.deliveryCode = this.#inputsDeliveryAddress.postalCode.value;
-      this.#userData.deliveryCountry = this.#inputsDeliveryAddress.country.selectedValue;
-      this.#userData.deliveryIsDefault = this.#inputsDeliveryAddress.checkboxDefault.checked;
+    this.#userData.billingEqualDelivery = this.#checkboxSwitchAddress.checked;
+
+    if (!this.#checkboxSwitchAddress.checked) {
+      this.#userData.billingStreet = this.#inputsBillingAddress.street.value;
+      this.#userData.billingCity = this.#inputsBillingAddress.city.value;
+      this.#userData.billingCode = this.#inputsBillingAddress.postalCode.value;
+      this.#userData.billingCountry = this.#inputsBillingAddress.country.selectedValue;
+      this.#userData.billingIsDefault = this.#inputsBillingAddress.checkboxDefault.checked;
     }
   };
 
@@ -384,16 +399,10 @@ export default class SignupPage extends FormPage {
 
   #createDeliveryAddressInputs = () => {
     this.#inputsDeliveryAddress = {
-      street: new InputText(
-        {
-          name: 'Street',
-          placeholder: Placehorders.STREET,
-          minLength: 1,
-          type: 'text',
-        },
-        'Street',
-        () => validateStreet(this.#inputsDeliveryAddress.street.value),
-      ),
+      country: new Select('Country', country, () => ({
+        status: true,
+        errorText: 'Error',
+      })),
       city: new InputText(
         {
           name: 'City',
@@ -404,10 +413,6 @@ export default class SignupPage extends FormPage {
         'City',
         () => validateCity(this.#inputsDeliveryAddress.city.value),
       ),
-      country: new Select('Country', country, () => ({
-        status: true,
-        errorText: 'Error',
-      })),
       postalCode: new InputText(
         {
           name: 'Postal code',
@@ -422,6 +427,16 @@ export default class SignupPage extends FormPage {
             this.#inputsDeliveryAddress.country.selectedValue,
           ),
       ),
+      street: new InputText(
+        {
+          name: 'Street',
+          placeholder: Placehorders.STREET,
+          minLength: 1,
+          type: 'text',
+        },
+        'Street',
+        () => validateStreet(this.#inputsDeliveryAddress.street.value),
+      ),
       checkboxDefault: new CheckBox(
         { class: [classes.checkboxAccordion] },
         `Use us default delivery address`,
@@ -435,14 +450,13 @@ export default class SignupPage extends FormPage {
     const accordion = new Accordion(
       title,
       state,
-      classes.accordion,
-      this.#inputsBillingAddress.street,
-      this.#inputsBillingAddress.city,
+      [classes.accordion, classes.accordionHidden],
       this.#inputsBillingAddress.country,
+      this.#inputsBillingAddress.city,
       this.#inputsBillingAddress.postalCode,
+      this.#inputsBillingAddress.street,
       this.#inputsBillingAddress.checkboxDefault,
     );
-    // accordion.header.node.addEventListener('click', this.#toggleAddressAccordion);
     return accordion;
   }
 
@@ -452,10 +466,10 @@ export default class SignupPage extends FormPage {
       title,
       state,
       classes.accordion,
-      this.#inputsDeliveryAddress.street,
-      this.#inputsDeliveryAddress.city,
       this.#inputsDeliveryAddress.country,
+      this.#inputsDeliveryAddress.city,
       this.#inputsDeliveryAddress.postalCode,
+      this.#inputsDeliveryAddress.street,
       this.#inputsDeliveryAddress.checkboxDefault,
       this.#checkboxSwitchAddress,
     );
@@ -477,19 +491,21 @@ export default class SignupPage extends FormPage {
   #toggleCopyAddressData = (event: Event) => {
     const target = event.target as HTMLInputElement;
     if (target.checked) {
-      this.#inputsBillingAddress.street.value = this.#inputsDeliveryAddress.street.value;
       this.#inputsBillingAddress.city.value = this.#inputsDeliveryAddress.city.value;
       this.#inputsBillingAddress.country.selectedValue =
         this.#inputsDeliveryAddress.country.selectedValue;
       this.#inputsBillingAddress.postalCode.value = this.#inputsDeliveryAddress.postalCode.value;
       this.#inputsBillingAddress.checkboxDefault.checked =
         this.#inputsDeliveryAddress.checkboxDefault.checked;
+      this.#billingAddress.node.classList.add(classes.accordionHidden);
+      this.#hiddenBillingBlock.node.hidden = false;
     } else {
       this.#inputsBillingAddress.street.value = '';
       this.#inputsBillingAddress.city.value = '';
-      this.#inputsBillingAddress.country.selectedValue = '';
       this.#inputsBillingAddress.postalCode.value = '';
       this.#inputsBillingAddress.checkboxDefault.checked = false;
+      this.#billingAddress.node.classList.remove(classes.accordionHidden);
+      this.#hiddenBillingBlock.node.hidden = true;
     }
   };
 
@@ -531,37 +547,59 @@ export default class SignupPage extends FormPage {
   #onButtonSignup = () => {
     if (validatePassword(this.#passwordInput.value).status === true) {
       this.#userData.password = this.#passwordInput.value;
-      auth
-        .signUp({
+
+      console.log(this.#userData);
+
+      const addresses = [
+        {
+          id: '0',
+          country: COUNTRY_CODES[country.indexOf(this.#userData?.deliveryCountry)],
+          city: this.#userData.deliveryCity,
+          postalCode: this.#userData.deliveryCode,
+          streetName: this.#userData.deliveryStreet,
+        },
+      ];
+
+      if (!this.#userData.billingEqualDelivery) {
+        addresses.push({
+          id: '1',
+          country: COUNTRY_CODES[country.indexOf(this.#userData?.billingCountry)],
+          city: this.#userData.billingCity,
+          postalCode: this.#userData.billingCode,
+          streetName: this.#userData.billingStreet,
+        });
+      }
+
+      const defaultBillingAddressIndex = this.#userData.billingEqualDelivery ? 0 : 1;
+
+      const sendingObject = {
+        ...{
           email: this.#userData.mail ?? '',
           password: this.#userData.password,
           firstName: this.#userData.firstName,
           lastName: this.#userData.lastName,
           dateOfBirth: this.#userData.dateOfBirth,
-          addresses: [
-            {
-              id: '0',
-              country: COUNTRY_CODES[country.indexOf(this.#userData?.deliveryCountry)],
-              city: this.#userData.deliveryCity,
-              postalCode: this.#userData.deliveryCode,
-              streetName: this.#userData.deliveryStreet,
-              additionalAddressInfo: '',
-            },
-            {
-              id: '1',
-              country: COUNTRY_CODES[country.indexOf(this.#userData?.billingCountry)],
-              city: this.#userData.billingCity,
-              postalCode: this.#userData.billingCode,
-              streetName: this.#userData.billingStreet,
-              additionalAddressInfo: '',
-            },
-          ],
-          defaultShippingAddress: 0,
-          defaultBillingAddress: 0,
-        })
-        .catch((error: HttpErrorType) => {
-          this.showErrorComponent(error.message);
-        });
+          addresses,
+          defaultShippingAddress: this.#userData.deliveryIsDefault ? 0 : undefined,
+          defaultBillingAddress: this.#userData.billingIsDefault
+            ? defaultBillingAddressIndex
+            : undefined,
+        },
+        ...(this.#userData.deliveryIsDefault
+          ? {
+              defaultShippingAddress: 0,
+            }
+          : {}),
+        ...(this.#userData.billingIsDefault
+          ? {
+              defaultBillingAddress: 1,
+            }
+          : {}),
+      };
+
+      auth.signUp(sendingObject as MyCustomerDraft).catch((error: HttpErrorType) => {
+        this.showErrorComponent(error.message);
+      });
     } else {
       this.showErrorComponent('Password complexity conditions are not met!');
     }

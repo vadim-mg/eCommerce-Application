@@ -21,11 +21,11 @@ export default class Accordion extends BaseElement<HTMLDivElement> {
   constructor(
     title: string,
     state: AccordionState,
-    className: string,
+    className: string | string[],
     ...children: BaseElement<HTMLElement>[]
   ) {
-    super({ tag: 'div', class: [classes.accordion] });
-    this.node.classList.add(className);
+    super({ tag: 'div', class: className });
+    this.node.classList.add(classes.accordion);
     this.#createAccordion(state, title, children);
   }
 
