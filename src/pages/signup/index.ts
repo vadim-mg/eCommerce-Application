@@ -507,6 +507,7 @@ export default class SignupPage extends FormPage {
           minLength: 8,
           type: 'password',
           placeholder: Placehorders.PASSWORD,
+          autocomplete: 'new-password',
         },
         'Password',
         () => validatePassword(this.#passwordInput.value),
