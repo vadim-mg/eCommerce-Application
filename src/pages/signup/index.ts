@@ -16,6 +16,7 @@ import {
   validateUserData,
 } from '@Src/utils/helpers';
 
+import { MyCustomerDraft } from '@commercetools/platform-sdk';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import auth from '@Src/controllers/auth';
 import classes from './style.module.scss';
@@ -128,6 +129,7 @@ export default class SignupPage extends FormPage {
     this.#userData = {} as UserData;
     this.addEventListeners();
     this.addAdditionalLink('if you already have an account', 'login', 'Log in');
+    this.#changeForm(this.#createFormAddresses(), FormTitle.ADDRESS); // todo : kill it
   }
 
   renderForm(): BaseForm {
@@ -384,16 +386,10 @@ export default class SignupPage extends FormPage {
 
   #createDeliveryAddressInputs = () => {
     this.#inputsDeliveryAddress = {
-      street: new InputText(
-        {
-          name: 'Street',
-          placeholder: Placehorders.STREET,
-          minLength: 1,
-          type: 'text',
-        },
-        'Street',
-        () => validateStreet(this.#inputsDeliveryAddress.street.value),
-      ),
+      country: new Select('Country', country, () => ({
+        status: true,
+        errorText: 'Error',
+      })),
       city: new InputText(
         {
           name: 'City',
@@ -404,10 +400,6 @@ export default class SignupPage extends FormPage {
         'City',
         () => validateCity(this.#inputsDeliveryAddress.city.value),
       ),
-      country: new Select('Country', country, () => ({
-        status: true,
-        errorText: 'Error',
-      })),
       postalCode: new InputText(
         {
           name: 'Postal code',
@@ -421,6 +413,16 @@ export default class SignupPage extends FormPage {
             this.#inputsDeliveryAddress.postalCode.value,
             this.#inputsDeliveryAddress.country.selectedValue,
           ),
+      ),
+      street: new InputText(
+        {
+          name: 'Street',
+          placeholder: Placehorders.STREET,
+          minLength: 1,
+          type: 'text',
+        },
+        'Street',
+        () => validateStreet(this.#inputsDeliveryAddress.street.value),
       ),
       checkboxDefault: new CheckBox(
         { class: [classes.checkboxAccordion] },
@@ -436,10 +438,10 @@ export default class SignupPage extends FormPage {
       title,
       state,
       classes.accordion,
-      this.#inputsBillingAddress.street,
-      this.#inputsBillingAddress.city,
       this.#inputsBillingAddress.country,
+      this.#inputsBillingAddress.city,
       this.#inputsBillingAddress.postalCode,
+      this.#inputsBillingAddress.street,
       this.#inputsBillingAddress.checkboxDefault,
     );
     // accordion.header.node.addEventListener('click', this.#toggleAddressAccordion);
@@ -452,10 +454,10 @@ export default class SignupPage extends FormPage {
       title,
       state,
       classes.accordion,
-      this.#inputsDeliveryAddress.street,
-      this.#inputsDeliveryAddress.city,
       this.#inputsDeliveryAddress.country,
+      this.#inputsDeliveryAddress.city,
       this.#inputsDeliveryAddress.postalCode,
+      this.#inputsDeliveryAddress.street,
       this.#inputsDeliveryAddress.checkboxDefault,
       this.#checkboxSwitchAddress,
     );
@@ -531,8 +533,9 @@ export default class SignupPage extends FormPage {
   #onButtonSignup = () => {
     if (validatePassword(this.#passwordInput.value).status === true) {
       this.#userData.password = this.#passwordInput.value;
-      auth
-        .signUp({
+
+      const sendingObject = {
+        ...{
           email: this.#userData.mail ?? '',
           password: this.#userData.password,
           firstName: this.#userData.firstName,
@@ -545,7 +548,6 @@ export default class SignupPage extends FormPage {
               city: this.#userData.deliveryCity,
               postalCode: this.#userData.deliveryCode,
               streetName: this.#userData.deliveryStreet,
-              additionalAddressInfo: '',
             },
             {
               id: '1',
@@ -553,15 +555,26 @@ export default class SignupPage extends FormPage {
               city: this.#userData.billingCity,
               postalCode: this.#userData.billingCode,
               streetName: this.#userData.billingStreet,
-              additionalAddressInfo: '',
             },
           ],
-          defaultShippingAddress: 0,
-          defaultBillingAddress: 0,
-        })
-        .catch((error: HttpErrorType) => {
-          this.showErrorComponent(error.message);
-        });
+          defaultShippingAddress: this.#userData.deliveryIsDefault ? 0 : undefined,
+          defaultBillingAddress: this.#userData.billingIsDefault ? 1 : undefined,
+        },
+        ...(this.#userData.deliveryIsDefault
+          ? {
+              defaultShippingAddress: 0,
+            }
+          : {}),
+        ...(this.#userData.billingIsDefault
+          ? {
+              defaultBillingAddress: 1,
+            }
+          : {}),
+      };
+
+      auth.signUp(sendingObject as MyCustomerDraft).catch((error: HttpErrorType) => {
+        this.showErrorComponent(error.message);
+      });
     } else {
       this.showErrorComponent('Password complexity conditions are not met!');
     }
