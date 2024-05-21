@@ -16,9 +16,9 @@ import {
   validateUserData,
 } from '@Src/utils/helpers';
 
+import auth from '@Src/controllers/auth';
 import { MyCustomerDraft } from '@commercetools/platform-sdk';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
-import auth from '@Src/controllers/auth';
 import classes from './style.module.scss';
 
 enum Placehorders {
@@ -252,7 +252,7 @@ export default class SignupPage extends FormPage {
       )),
       (this.#hiddenBillingBlock = new BaseElement({
         tag: 'div',
-        text: 'The billing address the same as delivery address',
+        text: '2. Billing address:',
         class: [classes.hiddenBillingBlock],
       })),
       new Button({ text: 'Next', class: classes.buttonNext }, [ButtonClasses.BIG], () => {
