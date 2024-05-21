@@ -176,7 +176,6 @@ const countriesRegex: ICountriesRegex = {
 // this method takes country input value as an argument too
 // Postal code: Must follow the format for the country (e.g., 12345 or A1B 2C3 for the U.S. and Canada, respectively)
 export const validatePostalCode = (inputValue: string, country: string) => {
-  console.log(country);
   const regex = countriesRegex[country];
   if (!inputValue.match(regex)) {
     return {
