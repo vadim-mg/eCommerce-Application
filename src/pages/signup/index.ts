@@ -90,7 +90,6 @@ function validateForm(form: InputsUserDetail | InputsAddress | InputsAddress[]):
   inputs.forEach((input) => {
     input.validate();
   });
-  console.log(inputs);
   return inputs.every((input) => input.isValid);
 }
 
@@ -257,7 +256,6 @@ export default class SignupPage extends FormPage {
       this.#saveDataFromFormAddress();
       this.#changeForm(this.#createPasswordForm());
     }
-    console.log(this.#userData);
   };
 
   #handlerOnClickButtonUserDetail = (event: Event) => {
@@ -275,7 +273,6 @@ export default class SignupPage extends FormPage {
         button.disabled = false;
       });
     }
-    console.log(this.#userData);
   };
 
   static isEmailFree = (
@@ -479,7 +476,6 @@ export default class SignupPage extends FormPage {
 
   #toggleCopyAddressData = (event: Event) => {
     const target = event.target as HTMLInputElement;
-    console.log(this.#inputsDeliveryAddress);
     if (target.checked) {
       this.#inputsBillingAddress.street.value = this.#inputsDeliveryAddress.street.value;
       this.#inputsBillingAddress.city.value = this.#inputsDeliveryAddress.city.value;
