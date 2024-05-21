@@ -28,7 +28,7 @@ export default class State {
 
   set isLoggedIn(value: boolean) {
     this.#isLoggedIn = value;
-    console.log(`Current state is: Is loggedIn: ${this.isLoggedIn}`);
+    // console.log(`Current state is: Is loggedIn: ${this.isLoggedIn}`);
     Router.getInstance().refresh();
   }
 
