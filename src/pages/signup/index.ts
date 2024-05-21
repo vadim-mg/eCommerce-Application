@@ -587,13 +587,13 @@ export default class SignupPage extends FormPage {
         },
         ...(this.#userData.deliveryIsDefault
           ? {
-            defaultShippingAddress: 0,
-          }
+              defaultShippingAddress: 0,
+            }
           : {}),
         ...(this.#userData.billingIsDefault
           ? {
-            defaultBillingAddress: 1,
-          }
+              defaultBillingAddress: 1,
+            }
           : {}),
       };
 
