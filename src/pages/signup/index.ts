@@ -305,20 +305,20 @@ export default class SignupPage extends FormPage {
     this.#userData.billingStreet = this.#inputsBillingAddress.street.value;
     this.#userData.billingCity = this.#inputsBillingAddress.city.value;
     this.#userData.billingCode = this.#inputsBillingAddress.postalCode.value;
-    this.#userData.billingCountry = this.#inputsBillingAddress.country.value;
+    this.#userData.billingCountry = this.#inputsBillingAddress.country.selectedValue;
     this.#userData.billingIsDefault = this.#inputsBillingAddress.checkboxDefault.checked;
 
     if (this.#checkboxSwitchAddress.checked) {
       this.#userData.deliveryStreet = this.#inputsBillingAddress.street.value;
       this.#userData.deliveryCity = this.#inputsBillingAddress.city.value;
       this.#userData.deliveryCode = this.#inputsBillingAddress.postalCode.value;
-      this.#userData.deliveryCountry = this.#inputsBillingAddress.country.value;
+      this.#userData.deliveryCountry = this.#inputsBillingAddress.country.selectedValue;
       this.#userData.deliveryIsDefault = this.#inputsBillingAddress.checkboxDefault.checked;
     } else {
       this.#userData.deliveryStreet = this.#inputsDeliveryAddress.street.value;
       this.#userData.deliveryCity = this.#inputsDeliveryAddress.city.value;
       this.#userData.deliveryCode = this.#inputsDeliveryAddress.postalCode.value;
-      this.#userData.deliveryCountry = this.#inputsDeliveryAddress.country.value;
+      this.#userData.deliveryCountry = this.#inputsDeliveryAddress.country.selectedValue;
       this.#userData.deliveryIsDefault = this.#inputsDeliveryAddress.checkboxDefault.checked;
     }
   };
@@ -374,7 +374,7 @@ export default class SignupPage extends FormPage {
         () =>
           validatePostalCode(
             this.#inputsBillingAddress.postalCode.value,
-            this.#inputsBillingAddress.country.value,
+            this.#inputsBillingAddress.country.selectedValue,
           ),
       ),
       checkboxDefault: new CheckBox(
@@ -422,7 +422,7 @@ export default class SignupPage extends FormPage {
         () =>
           validatePostalCode(
             this.#inputsDeliveryAddress.postalCode.value,
-            this.#inputsDeliveryAddress.country.value,
+            this.#inputsDeliveryAddress.country.selectedValue,
           ),
       ),
       checkboxDefault: new CheckBox(
@@ -479,17 +479,19 @@ export default class SignupPage extends FormPage {
 
   #toggleCopyAddressData = (event: Event) => {
     const target = event.target as HTMLInputElement;
+    console.log(this.#inputsDeliveryAddress);
     if (target.checked) {
       this.#inputsBillingAddress.street.value = this.#inputsDeliveryAddress.street.value;
       this.#inputsBillingAddress.city.value = this.#inputsDeliveryAddress.city.value;
-      this.#inputsBillingAddress.country.value = this.#inputsDeliveryAddress.country.value;
+      this.#inputsBillingAddress.country.selectedValue =
+        this.#inputsDeliveryAddress.country.selectedValue;
       this.#inputsBillingAddress.postalCode.value = this.#inputsDeliveryAddress.postalCode.value;
       this.#inputsBillingAddress.checkboxDefault.checked =
         this.#inputsDeliveryAddress.checkboxDefault.checked;
     } else {
       this.#inputsBillingAddress.street.value = '';
       this.#inputsBillingAddress.city.value = '';
-      this.#inputsBillingAddress.country.value = this.#inputsDeliveryAddress.country.value;
+      this.#inputsBillingAddress.country.selectedValue = '';
       this.#inputsBillingAddress.postalCode.value = '';
       this.#inputsBillingAddress.checkboxDefault.checked = false;
     }
@@ -563,8 +565,8 @@ export default class SignupPage extends FormPage {
         .catch((error: HttpErrorType) => {
           this.showErrorComponent(error.message);
         });
-    }else{
-      this.showErrorComponent('Password complexity conditions are not met!')
+    } else {
+      this.showErrorComponent('Password complexity conditions are not met!');
     }
   };
 }

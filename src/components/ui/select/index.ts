@@ -12,7 +12,7 @@ export default class Select extends BaseElement<HTMLSelectElement> {
 
   #onChangeCallback: ChangeCallback;
 
-  value: string;
+  #value: string;
 
   // if no need label set labelName=''
   constructor(labelName: string, list: string[], onChangeCallback: ChangeCallback) {
@@ -35,7 +35,7 @@ export default class Select extends BaseElement<HTMLSelectElement> {
           }),
       ),
     );
-    this.value = this.#input.node.value;
+    this.#value = this.#input.node.value;
 
     this.#renderList();
     this.#addEventListener();
@@ -52,8 +52,8 @@ export default class Select extends BaseElement<HTMLSelectElement> {
   #addEventListener = () => {
     this.#input.node.addEventListener('change', () => {
       console.log('change');
-      this.value = this.selectedValue;
-      console.log(this.value);
+      this.#value = this.selectedValue;
+      console.log(this.#value);
       this.#onChange(this.#input.node.options[this.#input.node.selectedIndex].value);
     });
   };
