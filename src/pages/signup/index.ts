@@ -548,8 +548,6 @@ export default class SignupPage extends FormPage {
     if (validatePassword(this.#passwordInput.value).status === true) {
       this.#userData.password = this.#passwordInput.value;
 
-      console.log(this.#userData);
-
       const addresses = [
         {
           id: '0',
@@ -570,8 +568,6 @@ export default class SignupPage extends FormPage {
         });
       }
 
-      const defaultBillingAddressIndex = this.#userData.billingEqualDelivery ? 0 : 1;
-
       const sendingObject = {
         ...{
           email: this.#userData.mail ?? '',
@@ -580,10 +576,6 @@ export default class SignupPage extends FormPage {
           lastName: this.#userData.lastName,
           dateOfBirth: this.#userData.dateOfBirth,
           addresses,
-          defaultShippingAddress: this.#userData.deliveryIsDefault ? 0 : undefined,
-          defaultBillingAddress: this.#userData.billingIsDefault
-            ? defaultBillingAddressIndex
-            : undefined,
         },
         ...(this.#userData.deliveryIsDefault
           ? {
@@ -592,7 +584,7 @@ export default class SignupPage extends FormPage {
           : {}),
         ...(this.#userData.billingIsDefault
           ? {
-              defaultBillingAddress: 1,
+              defaultBillingAddress: this.#userData.billingEqualDelivery ? 0 : 1,
             }
           : {}),
       };
