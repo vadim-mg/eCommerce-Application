@@ -570,6 +570,8 @@ export default class SignupPage extends FormPage {
         });
       }
 
+      const defaultBillingAddressIndex = this.#userData.billingEqualDelivery ? 0 : 1;
+
       const sendingObject = {
         ...{
           email: this.#userData.mail ?? '',
@@ -579,7 +581,9 @@ export default class SignupPage extends FormPage {
           dateOfBirth: this.#userData.dateOfBirth,
           addresses,
           defaultShippingAddress: this.#userData.deliveryIsDefault ? 0 : undefined,
-          defaultBillingAddress: this.#userData.billingIsDefault ? 1 : undefined,
+          defaultBillingAddress: this.#userData.billingIsDefault
+            ? defaultBillingAddressIndex
+            : undefined,
         },
         ...(this.#userData.deliveryIsDefault
           ? {
