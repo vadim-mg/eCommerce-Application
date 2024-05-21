@@ -51,9 +51,7 @@ export default class Select extends BaseElement<HTMLSelectElement> {
 
   #addEventListener = () => {
     this.#input.node.addEventListener('change', () => {
-      console.log('change');
       this.#value = this.selectedValue;
-      console.log(this.#value);
       this.#onChange(this.#input.node.options[this.#input.node.selectedIndex].value);
     });
   };
