@@ -9,9 +9,9 @@ import Select from '@Src/components/ui/select';
 import {
   validateCity,
   validateDateOfBirth,
-  validatePostalCode,
   validateEmail,
   validatePassword,
+  validatePostalCode,
   validateStreet,
   validateUserData,
 } from '@Src/utils/helpers';
@@ -530,7 +530,7 @@ export default class SignupPage extends FormPage {
   };
 
   #onButtonSignup = () => {
-    if (validatePassword(this.#passwordInput.value)) {
+    if (validatePassword(this.#passwordInput.value).status === true) {
       this.#userData.password = this.#passwordInput.value;
       auth
         .signUp({
@@ -563,7 +563,8 @@ export default class SignupPage extends FormPage {
         .catch((error: HttpErrorType) => {
           this.showErrorComponent(error.message);
         });
+    }else{
+      this.showErrorComponent('Password complexity conditions are not met!')
     }
-    console.log(this.#userData);
   };
 }
