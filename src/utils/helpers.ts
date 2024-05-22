@@ -10,18 +10,15 @@ function sum(a: number, b: number) {
 // Password must be at least 8 characters long.
 export const validatePassword = (inputValue: string) => {
   const trimmedPasswordValue = inputValue.trim();
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/;
 
-  const passwordValidationRequirements = [/[A-Z]/, /[a-z]/, /[0-9]/, /[!@#$%^&*]/];
-  const meetAllRequirements = passwordValidationRequirements.every((requirement) =>
-    requirement.test(inputValue),
-  );
   if (trimmedPasswordValue !== inputValue) {
     return {
       status: false,
       errorText: 'Password must not contain leading or trailing whitespace',
     };
   }
-  if (!meetAllRequirements) {
+  if (!inputValue.match(passwordRegex)) {
     return {
       status: false,
       errorText:

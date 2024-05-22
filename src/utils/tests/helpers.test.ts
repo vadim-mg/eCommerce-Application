@@ -15,6 +15,14 @@ describe('helpers module', () => {
       expect(result).toEqual({ status: true, errorText: '' });
     });
 
+    test('check password with non-English letters', () => {
+      const result = validatePassword('fgFR6&&жяц');
+      expect(result).toEqual({
+        status: false,
+        errorText: 'Password must contain at least one uppercase english letter, one lowercase english letter, one digit, and one special character (!@#$%^&*)',
+      });
+    });
+
     test('check login password leading or trailing whitespace', () => {
       const result = validatePassword('Password12& ');
       expect(result).toEqual({
@@ -180,7 +188,8 @@ describe('helpers module', () => {
       const result = validateCity('');
       expect(result).toEqual({
         status: false,
-        errorText: 'This field must contain at least one english letter and no special characters or numbers',
+        errorText:
+          'This field must contain at least one english letter and no special characters or numbers',
       });
     });
 
@@ -188,7 +197,8 @@ describe('helpers module', () => {
       const result = validateCity('City1%');
       expect(result).toEqual({
         status: false,
-        errorText: 'This field must contain at least one english letter and no special characters or numbers',
+        errorText:
+          'This field must contain at least one english letter and no special characters or numbers',
       });
     });
   });
