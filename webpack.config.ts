@@ -24,6 +24,7 @@ const baseConfig = (isProd: boolean) => ({
   output: {
     path: _resolve(__dirname, 'dist'),
     filename: '[name].[contenthash:6].js',
+    publicPath: '/',
     clean: true,
     assetModuleFilename: 'assets/[name].[contenthash:8][ext]',
   },
