@@ -78,7 +78,8 @@ describe('helpers module', () => {
       const result = validateEmail('.@..com');
       expect(result).toEqual({
         status: false,
-        errorText: 'Please enter a valid email address. It should follow the format: user@example.com',
+        errorText:
+          'Please enter a valid email address. It should follow the format: user@example.com',
       });
     });
 
@@ -86,7 +87,8 @@ describe('helpers module', () => {
       const result = validateEmail('user.@example.com');
       expect(result).toEqual({
         status: false,
-        errorText: 'Please enter a valid email address. It should follow the format: user@example.com',
+        errorText:
+          'Please enter a valid email address. It should follow the format: user@example.com',
       });
     });
 
@@ -104,14 +106,6 @@ describe('helpers module', () => {
         status: false,
         errorText:
           'Your email address should include an "@ symbol separating the local part and domain name',
-      });
-    });
-
-    test('check login email with incorrect domain name', () => {
-      const result = validateEmail('user@example');
-      expect(result).toEqual({
-        status: false,
-        errorText: 'Please include a domain name in your email address (e.g., example.com)',
       });
     });
 

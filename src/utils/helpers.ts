@@ -45,10 +45,8 @@ export const validatePassword = (inputValue: string) => {
 // Email address must contain a domain name (e.g., example.com).
 // Email address must be properly formatted (e.g., user@example.com).
 export const validateEmail = (inputValue: string) => {
-  // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  // const emailRegex = /^(?!.*\.\.)(?!.*\.$)(?!^\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const emailRegex = /^(?!.*\.\.)(?!.*\.$)(?!^\.)[a-zA-Z0-9._%+-]+(?<!\.)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const domainRegex = /@([^\s@]+\.[^\s@]+)$/;
+  const emailRegex =
+    /^(?!.*\.\.)(?!.*\.$)(?!^\.)[a-zA-Z0-9._%+-]+(?<!\.)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   const trimmedEmailValue = inputValue.trim();
   if (!inputValue.match(emailRegex)) {
@@ -63,12 +61,6 @@ export const validateEmail = (inputValue: string) => {
         status: false,
         errorText:
           'Your email address should include an "@ symbol separating the local part and domain name',
-      };
-    }
-    if (!inputValue.match(domainRegex)) {
-      return {
-        status: false,
-        errorText: 'Please include a domain name in your email address (e.g., example.com)',
       };
     }
     return {
