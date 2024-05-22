@@ -19,7 +19,8 @@ describe('helpers module', () => {
       const result = validatePassword('fgFR6&&жяц');
       expect(result).toEqual({
         status: false,
-        errorText: 'Password must contain at least one uppercase english letter, one lowercase english letter, one digit, and one special character (!@#$%^&*)',
+        errorText:
+          'Password must contain at least one uppercase english letter, one lowercase english letter, one digit, and one special character (!@#$%^&*)',
       });
     });
 
