@@ -15,6 +15,15 @@ describe('helpers module', () => {
       expect(result).toEqual({ status: true, errorText: '' });
     });
 
+    test('check password with non-English letters', () => {
+      const result = validatePassword('fgFR6&&жяц');
+      expect(result).toEqual({
+        status: false,
+        errorText:
+          'Password must contain at least one uppercase english letter, one lowercase english letter, one digit, and one special character (!@#$%^&*)',
+      });
+    });
+
     test('check login password leading or trailing whitespace', () => {
       const result = validatePassword('Password12& ');
       expect(result).toEqual({
@@ -36,7 +45,7 @@ describe('helpers module', () => {
       expect(result).toEqual({
         status: false,
         errorText:
-          'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (!@#$%^&*)',
+          'Password must contain at least one uppercase english letter, one lowercase english letter, one digit, and one special character (!@#$%^&*)',
       });
     });
 
@@ -45,7 +54,7 @@ describe('helpers module', () => {
       expect(result).toEqual({
         status: false,
         errorText:
-          'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (!@#$%^&*)',
+          'Password must contain at least one uppercase english letter, one lowercase english letter, one digit, and one special character (!@#$%^&*)',
       });
     });
 
@@ -54,7 +63,7 @@ describe('helpers module', () => {
       expect(result).toEqual({
         status: false,
         errorText:
-          'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (!@#$%^&*)',
+          'Password must contain at least one uppercase english letter, one lowercase english letter, one digit, and one special character (!@#$%^&*)',
       });
     });
 
@@ -63,7 +72,7 @@ describe('helpers module', () => {
       expect(result).toEqual({
         status: false,
         errorText:
-          'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (!@#$%^&*)',
+          'Password must contain at least one uppercase english letter, one lowercase english letter, one digit, and one special character (!@#$%^&*)',
       });
     });
   });
@@ -72,6 +81,24 @@ describe('helpers module', () => {
     test('check correct login email', () => {
       const result = validateEmail('user@example.com');
       expect(result).toEqual({ status: true, errorText: '' });
+    });
+
+    test('check strange email', () => {
+      const result = validateEmail('.@..com');
+      expect(result).toEqual({
+        status: false,
+        errorText:
+          'Please enter a valid email address. It should follow the format: user@example.com',
+      });
+    });
+
+    test('check email with extra dot', () => {
+      const result = validateEmail('user.@example.com');
+      expect(result).toEqual({
+        status: false,
+        errorText:
+          'Please enter a valid email address. It should follow the format: user@example.com',
+      });
     });
 
     test('check login email with leading or trailing whitespace', () => {
@@ -88,14 +115,6 @@ describe('helpers module', () => {
         status: false,
         errorText:
           'Your email address should include an "@ symbol separating the local part and domain name',
-      });
-    });
-
-    test('check login email with incorrect domain name', () => {
-      const result = validateEmail('user@example');
-      expect(result).toEqual({
-        status: false,
-        errorText: 'Please include a domain name in your email address (e.g., example.com)',
       });
     });
 
@@ -170,7 +189,8 @@ describe('helpers module', () => {
       const result = validateCity('');
       expect(result).toEqual({
         status: false,
-        errorText: 'This field must contain at least one english letter',
+        errorText:
+          'This field must contain at least one english letter and no special characters or numbers',
       });
     });
 
@@ -178,7 +198,8 @@ describe('helpers module', () => {
       const result = validateCity('City1%');
       expect(result).toEqual({
         status: false,
-        errorText: 'This field must contain at least one english letter',
+        errorText:
+          'This field must contain at least one english letter and no special characters or numbers',
       });
     });
   });

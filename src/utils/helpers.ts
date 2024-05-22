@@ -10,22 +10,19 @@ function sum(a: number, b: number) {
 // Password must be at least 8 characters long.
 export const validatePassword = (inputValue: string) => {
   const trimmedPasswordValue = inputValue.trim();
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/;
 
-  const passwordValidationRequirements = [/[A-Z]/, /[a-z]/, /[0-9]/, /[!@#$%^&*]/];
-  const meetAllRequirements = passwordValidationRequirements.every((requirement) =>
-    requirement.test(inputValue),
-  );
   if (trimmedPasswordValue !== inputValue) {
     return {
       status: false,
       errorText: 'Password must not contain leading or trailing whitespace',
     };
   }
-  if (!meetAllRequirements) {
+  if (!inputValue.match(passwordRegex)) {
     return {
       status: false,
       errorText:
-        'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (!@#$%^&*)',
+        'Password must contain at least one uppercase english letter, one lowercase english letter, one digit, and one special character (!@#$%^&*)',
     };
   }
   if (inputValue.length < 8) {
@@ -45,8 +42,8 @@ export const validatePassword = (inputValue: string) => {
 // Email address must contain a domain name (e.g., example.com).
 // Email address must be properly formatted (e.g., user@example.com).
 export const validateEmail = (inputValue: string) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const domainRegex = /@([^\s@]+\.[^\s@]+)$/;
+  const emailRegex =
+    /^(?!.*\.\.)(?!.*\.$)(?!^\.)[a-zA-Z0-9._%+-]+(?<!\.)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   const trimmedEmailValue = inputValue.trim();
   if (!inputValue.match(emailRegex)) {
@@ -61,12 +58,6 @@ export const validateEmail = (inputValue: string) => {
         status: false,
         errorText:
           'Your email address should include an "@ symbol separating the local part and domain name',
-      };
-    }
-    if (!inputValue.match(domainRegex)) {
-      return {
-        status: false,
-        errorText: 'Please include a domain name in your email address (e.g., example.com)',
       };
     }
     return {
@@ -125,7 +116,8 @@ export const validateCity = (inputValue: string) => {
   if (!isValid) {
     return {
       status: false,
-      errorText: 'This field must contain at least one english letter',
+      errorText:
+        'This field must contain at least one english letter and no special characters or numbers',
     };
   }
   return {

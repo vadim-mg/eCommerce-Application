@@ -531,7 +531,7 @@ export default class SignupPage extends FormPage {
       new BaseElement({
         tag: 'div',
         class: classes.passwordInfo,
-        text: '! The password must be at least 8 characters long. It must contain at least one digit, one lowercase letter and at least one capital letter.',
+        text: '! Password must contain at least one uppercase english letter, one lowercase english letter, one digit, and one special character (!@#$%^&*).',
       }),
       (this.#signupButton = new Button(
         { text: 'Sign up', class: classes.buttonSignup },
