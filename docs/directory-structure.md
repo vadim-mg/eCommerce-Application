@@ -28,3 +28,5 @@
   - **state** - contains app state (can be called from any part of app by State.getInstance().isLoggedIn)
   - **styles** - common styles for all project
   - **tests** - contains [tests fo jest](./tests.md)
+  - **static** - contains static files that copies to dist by builder
+  - **coverage** - contans statistic with test coverage
