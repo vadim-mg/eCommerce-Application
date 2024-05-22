@@ -17,7 +17,7 @@ import {
 } from '@Src/utils/helpers';
 
 import auth from '@Src/controllers/auth';
-import { MyCustomerDraft } from '@commercetools/platform-sdk';
+import { BaseAddress, CustomerDraft, MyCustomerDraft } from '@commercetools/platform-sdk';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import classes from './style.module.scss';
 
@@ -548,7 +548,7 @@ export default class SignupPage extends FormPage {
     if (validatePassword(this.#passwordInput.value).status === true) {
       this.#userData.password = this.#passwordInput.value;
 
-      const addresses = [
+      const addresses: BaseAddress[] = [
         {
           id: '0',
           country: COUNTRY_CODES[country.indexOf(this.#userData?.deliveryCountry)],
@@ -568,7 +568,7 @@ export default class SignupPage extends FormPage {
         });
       }
 
-      const sendingObject = {
+      const sendingObject: CustomerDraft = {
         ...{
           email: this.#userData.mail ?? '',
           password: this.#userData.password,
@@ -576,6 +576,8 @@ export default class SignupPage extends FormPage {
           lastName: this.#userData.lastName,
           dateOfBirth: this.#userData.dateOfBirth,
           addresses,
+          shippingAddresses: [0],
+          billingAddresses: [this.#userData.billingEqualDelivery ? 0 : 1],
         },
         ...(this.#userData.deliveryIsDefault
           ? {
