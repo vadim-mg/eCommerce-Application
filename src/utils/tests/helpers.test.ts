@@ -74,6 +74,22 @@ describe('helpers module', () => {
       expect(result).toEqual({ status: true, errorText: '' });
     });
 
+    test('check strange email', () => {
+      const result = validateEmail('.@..com');
+      expect(result).toEqual({
+        status: false,
+        errorText: 'Please enter a valid email address. It should follow the format: user@example.com',
+      });
+    });
+
+    test('check email with extra dot', () => {
+      const result = validateEmail('user.@example.com');
+      expect(result).toEqual({
+        status: false,
+        errorText: 'Please enter a valid email address. It should follow the format: user@example.com',
+      });
+    });
+
     test('check login email with leading or trailing whitespace', () => {
       const result = validateEmail('user@example.com ');
       expect(result).toEqual({

@@ -45,7 +45,9 @@ export const validatePassword = (inputValue: string) => {
 // Email address must contain a domain name (e.g., example.com).
 // Email address must be properly formatted (e.g., user@example.com).
 export const validateEmail = (inputValue: string) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // const emailRegex = /^(?!.*\.\.)(?!.*\.$)(?!^\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const emailRegex = /^(?!.*\.\.)(?!.*\.$)(?!^\.)[a-zA-Z0-9._%+-]+(?<!\.)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const domainRegex = /@([^\s@]+\.[^\s@]+)$/;
 
   const trimmedEmailValue = inputValue.trim();
