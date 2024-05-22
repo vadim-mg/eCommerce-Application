@@ -25,7 +25,7 @@ export const validatePassword = (inputValue: string) => {
     return {
       status: false,
       errorText:
-        'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (!@#$%^&*)',
+        'Password must contain at least one uppercase english letter, one lowercase english letter, one digit, and one special character (!@#$%^&*)',
     };
   }
   if (inputValue.length < 8) {
@@ -119,7 +119,8 @@ export const validateCity = (inputValue: string) => {
   if (!isValid) {
     return {
       status: false,
-      errorText: 'This field must contain at least one character and no special characters or numbers',
+      errorText:
+        'This field must contain at least one english letter and no special characters or numbers',
     };
   }
   return {
