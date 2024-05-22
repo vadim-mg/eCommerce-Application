@@ -7,12 +7,7 @@ const config = {
     open: false,
     host: 'localhost',
     static: resolve(__dirname, './dist'),
-    historyApiFallback: {
-      rewrites: [
-        { from: /^\/$/, to: '/index.html' },
-        { from: /./, to: '/index.html' },
-      ],
-    },
+    historyApiFallback: true,
   },
 };
 
