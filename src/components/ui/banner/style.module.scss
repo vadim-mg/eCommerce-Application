@@ -1,0 +1,171 @@
+@import '@Src/styles/variables.scss';
+
+.banner {
+  max-width: 100%;
+  height: 43.875rem;
+  background: url('@Assets/img/banner-bg_sm.jpg');
+  background-repeat: no-repeat;
+  background-position: left top;
+  background-size: cover;
+
+  margin: 1.5rem;
+  border-radius: 2rem;
+
+  color: var(--color-white);
+  font-weight: 400;
+  font-size: 1.5rem;
+}
+
+.banner-content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.main-banner-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4rem;
+  width: 43.5%;
+  padding-top: 5.5rem;
+  padding-left: 4rem;
+}
+
+.banner-title {
+  font-weight: 700;
+  font-size: 4rem;
+  line-height: 120%;
+  margin: 0;
+  text-shadow: 0 8px 8px rgba(0, 0, 0, 0.25);
+}
+
+.banner-text-content {
+  font-family: var(--font-family);
+  line-height: 180%;
+  margin: 0;
+  width: 75%;
+}
+
+.highlight-badge-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+
+  width: 47.4%;
+}
+
+.highlight-badge {
+  font-weight: 700;
+  font-size: 7rem;
+  line-height: 114%;
+  text-shadow: 0 8px 8px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 1550px) {
+  .highlight-badge {
+    font-size: 5rem;
+  }
+}
+
+.highlight {
+  font-weight: 700;
+}
+
+.banner-button {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  background: var(--color-orange-main);
+  padding: 1.5rem 2rem;
+  line-height: 175%;
+  border-radius: 1rem;
+  transition: background-color var(--transition-time);
+  cursor: pointer;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--color-orange-light);
+    }
+  }
+}
+
+.small-btn-text {
+  font-weight: 400;
+  font-size: 1.5rem;
+}
+
+.big-btn-text {
+  font-weight: 600;
+  font-size: 2rem;
+  letter-spacing: 0.12em;
+  margin-left: 0.375rem;
+}
+
+.highlight-badge-mobile {
+  font-weight: 700;
+  font-size: 3rem;
+  margin: 0;
+
+  text-shadow: 0 8px 8px rgba(0, 0, 0, 0.25);
+
+  display: none;
+}
+
+.title-second-part {
+  font-size: 4rem;
+}
+
+@media (max-width: 1160px) {
+  .main-banner-section {
+    width: 50%;
+  }
+  .highlight-badge-section {
+    width: 43%;
+  }
+  .highlight-badge {
+    font-size: 4rem;
+  }
+}
+
+@media (max-width: 1018px) {
+  .highlight-badge-section {
+    display: none;
+  }
+  .highlight-badge-mobile {
+    display: block;
+  }
+  .main-banner-section {
+    width: 80%;
+    padding: 3.5rem;
+    gap: 2.5rem;
+  }
+  .banner-text-content {
+    width: 100%;
+    font-weight: 300;
+  }
+}
+
+@media (max-width: 662px) {
+  .main-banner-section {
+    padding: 3.313rem 1.375rem 2.375rem;
+    gap: 2rem;
+    width: 100%;
+  }
+  .banner {
+    margin: 1.5rem 0;
+  }
+}
+
+@media (max-width: 540px) {
+  .banner-button {
+    flex-direction: column;
+    padding: 1.5rem 4rem;
+    line-height: 140%;
+  }
+  .title-second-part {
+    font-size: 2.5rem;
+    display: block;
+  }
+}

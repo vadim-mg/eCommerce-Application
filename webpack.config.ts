@@ -1,9 +1,10 @@
+import CopyPlugin from 'copy-webpack-plugin';
+import Dotenv from 'dotenv-webpack';
+import EslintPlugin from 'eslint-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { resolve as _resolve } from 'path';
 import { merge } from 'webpack-merge';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import EslintPlugin from 'eslint-webpack-plugin';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import Dotenv from 'dotenv-webpack';
 
 import devConfig from './webpack.dev.config';
 import prodConfig from './webpack.prod.config';
@@ -23,6 +24,7 @@ const baseConfig = (isProd: boolean) => ({
   output: {
     path: _resolve(__dirname, 'dist'),
     filename: '[name].[contenthash:6].js',
+    publicPath: '/',
     clean: true,
     assetModuleFilename: 'assets/[name].[contenthash:8][ext]',
   },
@@ -31,6 +33,7 @@ const baseConfig = (isProd: boolean) => ({
     new HtmlWebpackPlugin({
       template: _resolve(__dirname, 'src', 'index.html'),
       filename: 'index.html',
+      favicon: _resolve(__dirname, './src/assets/icons/favicon.svg'),
     }),
     new EslintPlugin({ extensions: ['ts'] }),
     new MiniCssExtractPlugin({
@@ -38,6 +41,9 @@ const baseConfig = (isProd: boolean) => ({
       chunkFilename: '[id].[contenthash:6].css',
     }),
     new Dotenv(),
+    new CopyPlugin({
+      patterns: [{ from: 'static', to: '' }],
+    }),
   ],
   module: {
     rules: [

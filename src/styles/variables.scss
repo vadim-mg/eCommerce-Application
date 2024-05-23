@@ -7,5 +7,21 @@ $main-font: Montserrat;
 // global css variables
 
 :root {
+  --font-main: 'Poppins', sans-serif;
+
   --main-alarm-color: red;
+  --color-white: #fefefe;
+  --color-black: #1b1b26;
+  --color-red-main: #f73939;
+  --color-orange-main: #f78401;
+  --color-orange-light: #f5a73f;
+  --color-orange-extra-light: #f4c672;
+  --color-green: #37d386;
+  --color-blue: #98b9f0;
+  --color-grey-dark: #828282;
+  --color-grey: #bdbdbd;
+  --color-grey-light: #e0e0e0;
+  --color-grey-extra-light: #f8f8f8;
+
+  --transition-time: 0.4s ease-in-out;
 }

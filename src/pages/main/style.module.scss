@@ -1,0 +1,30 @@
+@import '@Src/styles/variables.scss';
+
+.main {
+}
+
+.list-item {
+  padding: 5px;
+}
+
+.is-logged-in {
+  margin: 1rem 2rem;
+}
+
+.links-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.2rem;
+  padding: 2rem;
+
+  font-size: 1.1rem;
+
+  .list-item {
+    color: var(--color-black);
+  }
+
+  .list-item_secret {
+    color: red;
+  }
+}

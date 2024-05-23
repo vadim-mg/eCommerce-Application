@@ -1,0 +1,77 @@
+.form-page {
+  padding: 1rem;
+  min-height: calc(100dvh - 2rem);
+  width: calc(100% - 2rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background-color: #fff;
+  border-radius: 1.5rem;
+  border: 0.375rem solid var(--color-black);
+  padding: 1rem 3rem 2rem;
+  // min-width: 22.5rem;
+}
+
+@media (max-width: 480px) {
+  .modal-container {
+    width: calc(100% - 6rem);
+  }
+}
+
+.error-component {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-red-main);
+  line-height: 112%;
+  &[hidden] {
+    display: none;
+  }
+  p {
+    margin: 0;
+  }
+}
+
+.error-icon {
+  width: 1.458rem;
+  height: 1.458rem;
+  margin: 0.313rem;
+}
+
+.logo-link {
+  margin: auto;
+  display: block;
+
+  .logo-img {
+    max-width: 100%;
+    height: auto;
+    @media (max-height: 800px) {
+      height: 3rem;
+    }
+  }
+}
+
+.signup-prompt-wrapper {
+  text-align: center;
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: var(--color-grey-dark);
+
+  p {
+    margin-bottom: 0.375rem;
+    margin-top: 0.37rem;
+  }
+
+  .signup-link {
+    text-decoration: underline;
+    color: #000000;
+    font-weight: 500;
+    font-size: 1rem;
+  }
+}

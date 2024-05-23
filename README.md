@@ -109,3 +109,19 @@ npm run prepare
 ```
 
 Runs Husky's prepare script.
+
+---
+
+## Deploy on netlify:
+
+[https://codejuggling-dice-and-meeple.netlify.app](https://codejuggling-dice-and-meeple.netlify.app)
+
+manual deploy:
+
+- npm run build:prod
+- [Deploys on netlify](https://app.netlify.com/sites/codejuggling-dice-and-meeple/deploys) - upload dist directory
+- check work by link
+
+CD in future:
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/489389d7-6a02-403b-8688-b3c6f939e898/deploy-status)](https://app.netlify.com/sites/codejuggling-dice-and-meeple/deploys)

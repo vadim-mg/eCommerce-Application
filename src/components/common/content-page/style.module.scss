@@ -1,0 +1,21 @@
+.content-page {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 100svh;
+}
+
+.header {
+  background-color: red;
+  padding: 2rem;
+}
+
+.content {
+  width: 100%;
+  flex-grow: 1;
+}
+
+.footer {
+  background-color: greenyellow;
+  padding: 2rem;
+}

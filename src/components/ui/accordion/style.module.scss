@@ -1,0 +1,48 @@
+@import '@Src/styles/variables.scss';
+
+.accordion {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+}
+
+.container {
+  display: block;
+  border: none;
+  overflow: hidden;
+  transition: max-height 0.6s;
+  max-height: 0;
+}
+
+.wrapper {
+  display: block;
+  border: none;
+}
+
+.header {
+  display: block;
+  font-size: 1.125rem;
+  color: var(--color-black);
+  padding: 0.75rem 0;
+  cursor: pointer;
+}
+
+.title {
+  display: block;
+}
+
+.open .container {
+  max-height: 1000px;
+}
+
+.closed .container {
+  max-height: 0;
+}
+
+.open .header {
+  background: url('/src/assets/icons/arrow-top.svg') no-repeat right 1rem center;
+}
+
+.closed .header {
+  background: url('/src/assets/icons/arrow-down.svg') no-repeat right 1rem center;
+}

@@ -7,6 +7,7 @@ const config = {
     open: false,
     host: 'localhost',
     static: resolve(__dirname, './dist'),
+    historyApiFallback: true,
   },
 };
 

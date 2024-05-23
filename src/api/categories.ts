@@ -1,12 +1,5 @@
-import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
-import ctpClient from './build-client';
+import apiRoot from './api-root';
 
-const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-  projectKey: process.env.CTP_PROJECT_KEY,
-});
-
-const getCategories = () => {
-  return apiRoot.categories().get().execute();
-};
+const getCategories = () => apiRoot.apiBuilder.categories().get().execute();
 
 export default { getCategories };

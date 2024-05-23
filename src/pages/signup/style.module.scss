@@ -1,0 +1,91 @@
+@import '@Src/styles/variables.scss';
+.registration {
+}
+
+.form {
+  max-width: 22.5rem;
+}
+
+@media (min-width: 912px) {
+  .form-big {
+    display: grid;
+    grid-template-areas:
+      'title title'
+      'accordion-delivery accordion-billing'
+      '. button';
+    align-items: start;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 45rem;
+  }
+}
+
+.formTitle {
+  grid-area: title;
+  max-width: 100%;
+  text-align: left;
+  font-size: 1.125rem;
+  color: var(--color-grey-dark);
+  min-height: 2rem;
+  &::before {
+    content: 'Registration: ';
+    color: var(--color-black);
+  }
+}
+
+.button-next {
+  grid-area: button;
+}
+
+.accordion:last-child {
+  grid-area: accordion-delivery;
+}
+.accordion:first-child {
+  grid-area: accordion-billing;
+}
+
+.accordion > div:nth-child(2) > div:nth-child(1) {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  @media (max-height: 800px) {
+    gap: 0.5rem;
+  }
+}
+
+.password-info {
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  color: var(--color-grey-dark);
+}
+
+.accordion_hidden {
+  display: none;
+}
+
+.hidden-billing-block {
+  background-color: var(--color-white);
+  width: 90%;
+  height: 90%;
+  font-size: 1.125rem;
+  color: var(--color-black);
+  padding: 1rem;
+  text-align: center;
+  vertical-align: middle;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+
+  &::after {
+    content: 'The billing address the same as delivery address';
+  }
+
+  &[hidden] {
+    display: none;
+  }
+
+  &_hidden {
+    display: none;
+  }
+}
