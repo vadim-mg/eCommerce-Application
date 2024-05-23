@@ -86,7 +86,7 @@ export default class Router {
       }
     }
 
-    if (needChangeHistory) {
+    if (needChangeHistory && this.#currentRoutePath !== AppRoutes.NOT_FOUND) {
       window.history.pushState(this.#currentRoutePath, '', `${this.#currentRoutePath}`);
     }
   };
