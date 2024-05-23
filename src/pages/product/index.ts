@@ -6,10 +6,11 @@ import classes from './style.module.scss';
 export default class ProductPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
-  constructor() {
+  constructor(productKey: string[]) {
     super({ containerTag: 'main', title: 'product page' });
     this.#createContent();
     this.#showContent();
+    console.log(productKey);
   }
 
   #createContent = () => {

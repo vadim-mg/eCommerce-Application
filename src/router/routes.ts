@@ -12,34 +12,32 @@ import ProfilePage from '@Src/pages/profile';
 import SignupPage from '@Src/pages/signup';
 
 export enum AppRoutes {
-  LOGIN = 'login',
-  LOGOUT = 'logout',
-  SIGNUP = 'signup',
-  MAIN = 'main',
-  CATALOGUE = 'catalogue',
-  ABOUT = 'about',
-  PROFILE = 'profile',
-  CART = 'cart',
-  PRODUCT = 'product',
-  NOT_FOUND = '404',
+  LOGIN = '/login',
+  LOGOUT = '/logout',
+  SIGNUP = '/signup',
+  MAIN = '/main',
+  CATALOGUE = '/catalogue',
+  ABOUT = '/about',
+  PROFILE = '/profile',
+  CART = '/cart',
+  PRODUCT = '/product',
+  NOT_FOUND = '/404',
 
   // hidden routes
-  HIDDEN_EXAMPLE = 'hiddenExample',
-  HIDDEN_API = 'hiddenApi',
+  HIDDEN_EXAMPLE = '/hiddenExample',
+  HIDDEN_API = '/hiddenApi',
 }
 
-// todo: i think about it :)
+type Route = {
+  name: string;
+  pageConstructor?: (args?: string[]) => unknown | (() => unknown);
+  redirect?: AppRoutes;
+  visibility: RouteVisibility;
+};
 
-// type Route = {
-//   name: string,
-//   pageConstructor?: LoginPage | RegistrationPage | null,
-//   redirect?: AppRoutes,
-//   protected: boolean,
-// };
-
-// type Routes = {
-//   [key in AppRoutes]: Route;
-// };;
+type Routes = {
+  [key in AppRoutes]: Route;
+};
 
 export enum RouteVisibility {
   everyOne,
@@ -47,58 +45,58 @@ export enum RouteVisibility {
   onlyNotAuth,
 }
 
-const ROUTES = {
+const ROUTES: Routes = {
   [AppRoutes.LOGIN]: {
     name: 'Login',
-    pageConstructor: LoginPage,
+    pageConstructor: () => new LoginPage(),
     visibility: RouteVisibility.onlyNotAuth,
   },
   [AppRoutes.LOGOUT]: {
     name: 'Logout',
-    pageConstructor: null,
+    pageConstructor: () => null,
     redirect: AppRoutes.MAIN,
     visibility: RouteVisibility.onlyAuth,
   },
   [AppRoutes.SIGNUP]: {
     name: 'Sign Up',
-    pageConstructor: SignupPage,
+    pageConstructor: () => new SignupPage(),
     visibility: RouteVisibility.onlyNotAuth,
   },
   [AppRoutes.MAIN]: {
     name: 'Main',
-    pageConstructor: MainPage,
+    pageConstructor: () => new MainPage(),
     visibility: RouteVisibility.everyOne,
   },
 
   [AppRoutes.CATALOGUE]: {
     name: 'Catalogue',
-    pageConstructor: CataloguePage,
+    pageConstructor: () => new CataloguePage(),
     visibility: RouteVisibility.everyOne,
   },
   [AppRoutes.ABOUT]: {
     name: 'About',
-    pageConstructor: AboutPage,
+    pageConstructor: () => new AboutPage(),
     visibility: RouteVisibility.everyOne,
   },
   [AppRoutes.PROFILE]: {
     name: 'Profile',
-    pageConstructor: ProfilePage,
+    pageConstructor: () => new ProfilePage(),
     visibility: RouteVisibility.onlyAuth,
   },
   [AppRoutes.CART]: {
     name: 'Cart',
-    pageConstructor: CartPage,
+    pageConstructor: () => new CartPage(),
     visibility: RouteVisibility.everyOne,
   },
   [AppRoutes.PRODUCT]: {
     name: 'product',
-    pageConstructor: ProductPage,
+    pageConstructor: (args?: string[]) => new ProductPage(args ?? []),
     visibility: RouteVisibility.everyOne,
   },
 
   [AppRoutes.NOT_FOUND]: {
     name: '404',
-    pageConstructor: NotFound,
+    pageConstructor: () => new NotFound(),
     visibility: RouteVisibility.everyOne,
   },
 
@@ -106,25 +104,25 @@ const ROUTES = {
   // todo: remove it in prod
   [AppRoutes.HIDDEN_EXAMPLE]: {
     name: 'HiddenExample',
-    pageConstructor: BasePage,
+    pageConstructor: () => new BasePage(),
     visibility: RouteVisibility.everyOne,
   },
   [AppRoutes.HIDDEN_API]: {
     name: 'HiddenApi',
-    pageConstructor: BasePage,
+    pageConstructor: () => new BasePage(),
     visibility: RouteVisibility.everyOne,
   },
 };
 
 if (process.env.NODE_ENV === 'development') {
-  ROUTES.hiddenExample = {
+  ROUTES['/hiddenExample'] = {
     name: 'HiddenExample',
-    pageConstructor: HiddenExamplePage,
+    pageConstructor: () => new HiddenExamplePage(),
     visibility: RouteVisibility.everyOne,
   };
-  ROUTES.hiddenApi = {
+  ROUTES['/hiddenApi'] = {
     name: 'HiddenApi',
-    pageConstructor: HiddenApiPage,
+    pageConstructor: () => new HiddenApiPage(),
     visibility: RouteVisibility.everyOne,
   };
 }
