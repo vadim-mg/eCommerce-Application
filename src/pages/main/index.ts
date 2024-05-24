@@ -51,6 +51,11 @@ export default class MainPage extends ContentPage {
         new Link({ text: 'main', href: AppRoutes.MAIN, class: classes.listItem }),
         new Link({ text: 'catalogue', href: AppRoutes.CATALOGUE, class: classes.listItem }),
         new Link({ text: 'product', href: AppRoutes.PRODUCT, class: classes.listItem }),
+        new Link({
+          text: 'product/test',
+          href: `${AppRoutes.PRODUCT}/test`,
+          class: classes.listItem,
+        }),
         new Link({ text: 'cart', href: AppRoutes.CART, class: classes.listItem }),
         new Link({ text: 'login', href: AppRoutes.LOGIN, class: classes.listItem }),
         new Link({ text: 'signup', href: AppRoutes.SIGNUP, class: classes.listItem }),

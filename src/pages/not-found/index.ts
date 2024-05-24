@@ -8,7 +8,7 @@ export default class NotFound extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
   constructor() {
-    super({ containerTag: 'div', title: 'Main page' });
+    super({ containerTag: 'div', title: '404 page' });
     this.#createContent();
     this.#showContent();
   }

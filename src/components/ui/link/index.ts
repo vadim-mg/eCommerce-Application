@@ -18,9 +18,7 @@ export default class Link extends BaseElement<HTMLElement> {
     if (Router.isOwnUrl(href)) {
       this.node.addEventListener('click', (event) => {
         event.preventDefault();
-        if (Router.isRouteExist(href)) {
-          Router.getInstance().route(href as AppRoutes);
-        }
+        Router.getInstance().route(`${href}` as AppRoutes);
       });
     }
   }

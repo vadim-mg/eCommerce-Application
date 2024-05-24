@@ -13,10 +13,10 @@ export default class Router {
   static #instance: Router | null;
 
   private constructor() {
-    this.#currentRoutePath = window.location.pathname.slice(1) as AppRoutes;
+    this.#currentRoutePath = window.location.pathname as AppRoutes;
     this.#list = ROUTES;
     this.addPopStateEventListener();
-    window.history.replaceState(this.#currentRoutePath, '', document.location.href);
+    window.history.replaceState({}, '', document.location.href);
   }
 
   // Router can be used in any part of App as a singleton
@@ -32,20 +32,25 @@ export default class Router {
   addPopStateEventListener = () => {
     window.addEventListener('popstate', (event) => {
       if (event.state) {
-        this.route(window.location.pathname.slice(1) as AppRoutes, false);
+        this.route(window.location.pathname as AppRoutes, false);
       }
     });
   };
 
-  route = (routePath = this.#currentRoutePath, needChangeHistory = true) => {
+  route = (routePathParam = this.#currentRoutePath, needChangeHistory = true) => {
+    const routePath = routePathParam.slice(1);
     // route without path redirect to main
     if (routePath.length === 0) {
       this.route(AppRoutes.MAIN);
       return;
     }
+    const parsedRoutePath = routePath.split('/');
 
-    this.#currentRoutePath = this.list().some((val) => val.routePath === routePath)
-      ? routePath
+    const masterRoute = `/${parsedRoutePath[0]}` as AppRoutes;
+    const routeParameters = parsedRoutePath.slice(1);
+
+    this.#currentRoutePath = this.list().some((val) => val.routePath === masterRoute)
+      ? masterRoute
       : AppRoutes.NOT_FOUND;
 
     const appRoute = this.#list[this.#currentRoutePath];
@@ -78,16 +83,25 @@ export default class Router {
 
     if ('redirect' in appRoute) {
       this.route(appRoute.redirect);
-    } else {
-      const PageConstructor = this.#list[this.#currentRoutePath]?.pageConstructor;
-      if (PageConstructor) {
-        this.#page = new PageConstructor();
-        this.#page.render();
+      return;
+    }
+    const page = this.#list[this.#currentRoutePath]?.page;
+    if (page) {
+      const isComplexRoute = routeParameters.length && page.length;
+      const isBrokenComplexRoute =
+        (routeParameters.length && !page.length) || (!routeParameters.length && page.length);
+      if (isComplexRoute) {
+        this.#page = page(routeParameters) as BasePage;
+      } else if (isBrokenComplexRoute && this.#list[AppRoutes.NOT_FOUND].page) {
+        this.#page = this.#list[AppRoutes.NOT_FOUND].page() as BasePage;
+      } else {
+        this.#page = page() as BasePage;
       }
+      this.#page.render();
     }
 
-    if (needChangeHistory && this.#currentRoutePath !== AppRoutes.NOT_FOUND) {
-      window.history.pushState(this.#currentRoutePath, '', `${this.#currentRoutePath}`);
+    if (needChangeHistory) {
+      window.history.pushState({}, '', `${routePathParam as AppRoutes}`);
     }
   };
 
