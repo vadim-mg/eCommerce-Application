@@ -1,16 +1,43 @@
 @import '@Src/styles/variables.scss';
 
 .profile {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
   border-radius: 1.5rem;
   padding: 1.5rem 2rem;
   background: var(--color-white);
 }
 
-.titleWrapper{
+.title-wrapper {
   display: flex;
+  align-items: center;
   gap: 1.5rem;
 }
 
 .title {
   font-weight: 400;
+  margin: 0;
+}
+
+.user-data-wrapper {
+  display: flex;
+  gap: 3rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin: 0;
+}
+
+.user-data-details-wrapper {
+}
+
+.userPasswordWrapper {
+}
+
+.editDeleteBtnWrapper {
+  display: flex;
+  gap: 2rem;
 }
