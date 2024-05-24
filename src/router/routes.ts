@@ -28,9 +28,24 @@ export enum AppRoutes {
   HIDDEN_API = '/hiddenApi',
 }
 
+type AvailablePage =
+  | BasePage
+  | AboutPage
+  | CartPage
+  | CataloguePage
+  | HiddenApiPage
+  | HiddenExamplePage
+  | LoginPage
+  | MainPage
+  | NotFound
+  | ProductPage
+  | ProfilePage
+  | SignupPage
+  | null;
+
 type Route = {
   name: string;
-  pageConstructor?: (args?: string[]) => unknown | (() => unknown);
+  page?: (args?: string[]) => AvailablePage | (() => AvailablePage);
   redirect?: AppRoutes;
   visibility: RouteVisibility;
 };
@@ -48,55 +63,55 @@ export enum RouteVisibility {
 const ROUTES: Routes = {
   [AppRoutes.LOGIN]: {
     name: 'Login',
-    pageConstructor: () => new LoginPage(),
+    page: () => new LoginPage(),
     visibility: RouteVisibility.onlyNotAuth,
   },
   [AppRoutes.LOGOUT]: {
     name: 'Logout',
-    pageConstructor: () => null,
+    page: () => null,
     redirect: AppRoutes.MAIN,
     visibility: RouteVisibility.onlyAuth,
   },
   [AppRoutes.SIGNUP]: {
     name: 'Sign Up',
-    pageConstructor: () => new SignupPage(),
+    page: () => new SignupPage(),
     visibility: RouteVisibility.onlyNotAuth,
   },
   [AppRoutes.MAIN]: {
     name: 'Main',
-    pageConstructor: () => new MainPage(),
+    page: () => new MainPage(),
     visibility: RouteVisibility.everyOne,
   },
 
   [AppRoutes.CATALOGUE]: {
     name: 'Catalogue',
-    pageConstructor: () => new CataloguePage(),
+    page: () => new CataloguePage(),
     visibility: RouteVisibility.everyOne,
   },
   [AppRoutes.ABOUT]: {
     name: 'About',
-    pageConstructor: () => new AboutPage(),
+    page: () => new AboutPage(),
     visibility: RouteVisibility.everyOne,
   },
   [AppRoutes.PROFILE]: {
     name: 'Profile',
-    pageConstructor: () => new ProfilePage(),
+    page: () => new ProfilePage(),
     visibility: RouteVisibility.onlyAuth,
   },
   [AppRoutes.CART]: {
     name: 'Cart',
-    pageConstructor: () => new CartPage(),
+    page: () => new CartPage(),
     visibility: RouteVisibility.everyOne,
   },
   [AppRoutes.PRODUCT]: {
     name: 'product',
-    pageConstructor: (args?: string[]) => new ProductPage(args ?? []),
+    page: (args?: string[]) => new ProductPage(args ?? []),
     visibility: RouteVisibility.everyOne,
   },
 
   [AppRoutes.NOT_FOUND]: {
     name: '404',
-    pageConstructor: () => new NotFound(),
+    page: () => new NotFound(),
     visibility: RouteVisibility.everyOne,
   },
 
@@ -104,12 +119,12 @@ const ROUTES: Routes = {
   // todo: remove it in prod
   [AppRoutes.HIDDEN_EXAMPLE]: {
     name: 'HiddenExample',
-    pageConstructor: () => new BasePage(),
+    page: () => new BasePage(),
     visibility: RouteVisibility.everyOne,
   },
   [AppRoutes.HIDDEN_API]: {
     name: 'HiddenApi',
-    pageConstructor: () => new BasePage(),
+    page: () => new BasePage(),
     visibility: RouteVisibility.everyOne,
   },
 };
@@ -117,12 +132,12 @@ const ROUTES: Routes = {
 if (process.env.NODE_ENV === 'development') {
   ROUTES['/hiddenExample'] = {
     name: 'HiddenExample',
-    pageConstructor: () => new HiddenExamplePage(),
+    page: () => new HiddenExamplePage(),
     visibility: RouteVisibility.everyOne,
   };
   ROUTES['/hiddenApi'] = {
     name: 'HiddenApi',
-    pageConstructor: () => new HiddenApiPage(),
+    page: () => new HiddenApiPage(),
     visibility: RouteVisibility.everyOne,
   };
 }

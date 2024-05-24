@@ -85,18 +85,17 @@ export default class Router {
       this.route(appRoute.redirect);
       return;
     }
-    const PageConstructor = this.#list[this.#currentRoutePath]?.pageConstructor;
-    if (PageConstructor) {
-      const isComplexRoute = routeParameters.length && PageConstructor.length;
+    const page = this.#list[this.#currentRoutePath]?.page;
+    if (page) {
+      const isComplexRoute = routeParameters.length && page.length;
       const isBrokenComplexRoute =
-        (routeParameters.length && !PageConstructor.length) ||
-        (!routeParameters.length && PageConstructor.length);
+        (routeParameters.length && !page.length) || (!routeParameters.length && page.length);
       if (isComplexRoute) {
-        this.#page = PageConstructor(routeParameters) as BasePage;
-      } else if (isBrokenComplexRoute && this.#list[AppRoutes.NOT_FOUND].pageConstructor) {
-        this.#page = this.#list[AppRoutes.NOT_FOUND].pageConstructor() as BasePage;
+        this.#page = page(routeParameters) as BasePage;
+      } else if (isBrokenComplexRoute && this.#list[AppRoutes.NOT_FOUND].page) {
+        this.#page = this.#list[AppRoutes.NOT_FOUND].page() as BasePage;
       } else {
-        this.#page = PageConstructor() as BasePage;
+        this.#page = page() as BasePage;
       }
       this.#page.render();
     }
