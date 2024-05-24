@@ -84,21 +84,30 @@ export default class ProfilePage extends ContentPage {
       userDataDetailsTitle,
     );
 
-    this.userPasswordWrapper = new BaseElement<HTMLDivElement>({
-      tag: 'div',
-      class: classes.userPasswordWrapper,
-    },
+    this.userPasswordWrapper = new BaseElement<HTMLDivElement>(
+      {
+        tag: 'div',
+        class: classes.userPasswordWrapper,
+      },
       new BaseElement<HTMLHeadingElement>({ tag: 'h2', text: 'Change password' }),
-      this.passwordInput = new InputText(
-        { name: 'password', maxLength: 20, minLength: 8 }, 'New password',
-      ),
-      this.passwordInputRepeat = new InputText(
-        { name: 'password', maxLength: 20, minLength: 8 }, 'Repeat password',
-      ),
-      new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.passwordRule, text: '! The password must be at least 8 characters long. It must contain Latin letters, at least one digit and at least one capital letter.' }),
-      this.savePasswordButton = new Button({ text: 'Save password', class: classes.button }, ButtonClasses.NORMAL, () =>
-        console.log('Save password'),
-      )
+      (this.passwordInput = new InputText(
+        { name: 'password', maxLength: 20, minLength: 8 },
+        'New password',
+      )),
+      (this.passwordInputRepeat = new InputText(
+        { name: 'password', maxLength: 20, minLength: 8 },
+        'Repeat password',
+      )),
+      new BaseElement<HTMLDivElement>({
+        tag: 'div',
+        class: classes.passwordRule,
+        text: '! The password must be at least 8 characters long. It must contain Latin letters, at least one digit and at least one capital letter.',
+      }),
+      (this.savePasswordButton = new Button(
+        { text: 'Save password', class: classes.button },
+        ButtonClasses.NORMAL,
+        () => console.log('Save password'),
+      )),
     );
     this.passwordInput.node.classList.add(classes.inputMargin);
     this.passwordInputRepeat.node.classList.add(classes.inputMargin);

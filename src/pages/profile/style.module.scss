@@ -32,11 +32,11 @@ h2 {
   line-height: 117%;
   color: var(--color-black);
 
-  &:has(+button) {
+  &:has(+ button) {
     margin-bottom: 1.5rem;
   }
 
-  &:has(+div) {
+  &:has(+ div) {
     margin-bottom: 2rem;
   }
 }
