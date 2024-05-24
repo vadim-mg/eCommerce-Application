@@ -138,7 +138,7 @@ export default class SignupPage extends FormPage {
   }
 
   renderForm(): BaseForm {
-    this.form = this.createFormUserDetails();
+    this.form = this.#createFormUserDetails();
     return this.form;
   }
 
@@ -158,7 +158,7 @@ export default class SignupPage extends FormPage {
     });
   };
 
-  createFormUserDetails = (): BaseForm => {
+  #createFormUserDetails = (): BaseForm => {
     this.#inputsUserDetail = {
       mail: new InputText(
         {

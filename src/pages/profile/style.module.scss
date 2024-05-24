@@ -29,15 +29,47 @@ h2 {
   font-size: 1.5rem;
   font-weight: 400;
   margin: 0;
+  line-height: 117%;
+  color: var(--color-black);
+
+  &:has(+button) {
+    margin-bottom: 1.5rem;
+  }
+
+  &:has(+div) {
+    margin-bottom: 2rem;
+  }
 }
 
-.user-data-details-wrapper {
+.user-data-details-wrapper,
+.user-password-wrapper {
+  max-width: 360px;
 }
 
-.userPasswordWrapper {
+.user-password-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  font-size: 12px;
+  line-height: 150%;
+  letter-spacing: 0.02em;
+  color: var(--color-grey-dark);
 }
 
-.editDeleteBtnWrapper {
+.edit-delete-btn-wrapper {
   display: flex;
   gap: 2rem;
+}
+
+.password-rule {
+  margin-bottom: 3rem;
+}
+
+.input-margin {
+  margin-bottom: 1.5rem;
+}
+
+.save-password-button {
+  line-height: 100%;
 }

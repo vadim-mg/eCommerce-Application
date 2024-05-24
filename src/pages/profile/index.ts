@@ -3,6 +3,7 @@ import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import userProfileLogo from '@Assets/icons/profile-icon-dark.svg';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
+import InputText from '@Src/components/ui/input-text';
 import classes from './style.module.scss';
 // import SignupPage from '../signup';
 
@@ -19,6 +20,12 @@ export default class ProfilePage extends ContentPage {
 
   editDeleteBtnWrapper!: BaseElement<HTMLDivElement>;
 
+  passwordInput!: InputText;
+
+  passwordInputRepeat!: InputText;
+
+  savePasswordButton!: Button;
+
   constructor() {
     super({ containerTag: 'main', title: 'profile page' });
     this.#createContent();
@@ -33,7 +40,6 @@ export default class ProfilePage extends ContentPage {
       },
       this.createTitleComponent(),
       this.createUserDataComponent(),
-      this.createEditDeleteBtnComponent(),
     );
   };
 
@@ -55,12 +61,17 @@ export default class ProfilePage extends ContentPage {
   };
 
   createEditDeleteBtnComponent = () => {
-    this.editDeleteBtnWrapper = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.editDeleteBtnWrapper },
-      new Button({ text: 'Edit', class: classes.button }, ButtonClasses.NORMAL, () => console.log('Edit')),
-      new Button({ text: 'Delete', class: classes.button }, ButtonClasses.NORMAL, () => console.log('Delete')),
+    this.editDeleteBtnWrapper = new BaseElement<HTMLDivElement>(
+      { tag: 'div', class: classes.editDeleteBtnWrapper },
+      new Button({ text: 'Edit', class: classes.button }, ButtonClasses.NORMAL, () =>
+        console.log('Edit'),
+      ),
+      new Button({ text: 'Delete', class: classes.button }, ButtonClasses.NORMAL, () =>
+        console.log('Delete'),
+      ),
     );
     return this.editDeleteBtnWrapper;
-  }
+  };
 
   createUserDataComponent = () => {
     const userDataDetailsTitle = new BaseElement<HTMLHeadingElement>({
@@ -76,7 +87,22 @@ export default class ProfilePage extends ContentPage {
     this.userPasswordWrapper = new BaseElement<HTMLDivElement>({
       tag: 'div',
       class: classes.userPasswordWrapper,
-    });
+    },
+      new BaseElement<HTMLHeadingElement>({ tag: 'h2', text: 'Change password' }),
+      this.passwordInput = new InputText(
+        { name: 'password', maxLength: 20, minLength: 8 }, 'New password',
+      ),
+      this.passwordInputRepeat = new InputText(
+        { name: 'password', maxLength: 20, minLength: 8 }, 'Repeat password',
+      ),
+      new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.passwordRule, text: '! The password must be at least 8 characters long. It must contain Latin letters, at least one digit and at least one capital letter.' }),
+      this.savePasswordButton = new Button({ text: 'Save password', class: classes.button }, ButtonClasses.NORMAL, () =>
+        console.log('Save password'),
+      )
+    );
+    this.passwordInput.node.classList.add(classes.inputMargin);
+    this.passwordInputRepeat.node.classList.add(classes.inputMargin);
+    this.savePasswordButton.node.classList.add(classes.savePasswordButton);
 
     this.userDataWrapper = new BaseElement<HTMLDivElement>({
       tag: 'div',
