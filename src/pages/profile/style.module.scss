@@ -1,2 +1,16 @@
+@import '@Src/styles/variables.scss';
+
 .profile {
+  border-radius: 1.5rem;
+  padding: 1.5rem 2rem;
+  background: var(--color-white);
+}
+
+.titleWrapper{
+  display: flex;
+  gap: 1.5rem;
+}
+
+.title {
+  font-weight: 400;
 }
