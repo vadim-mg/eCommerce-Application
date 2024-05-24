@@ -3,6 +3,8 @@ import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import ProductCard from '@Src/components/logic/product-card';
+import Router from '@Src/router';
+import { AppRoutes } from '@Src/router/routes';
 import classes from './style.module.scss';
 
 export default class ProductPage extends ContentPage {
@@ -21,7 +23,12 @@ export default class ProductPage extends ContentPage {
         // But you can see how get all need params And Also you can use static properties and classes from here '@Src/controllers/products' for pictures for example
         this.#content.node.append(new ProductCard({}, product.body).node);
       })
-      .catch(console.error);
+      .catch((error) => {
+        console.log(error);
+        if (error.code === 404) {
+          Router.getInstance().route(AppRoutes.NOT_FOUND, false);
+        }
+      });
   }
 
   #createContent = () => {
