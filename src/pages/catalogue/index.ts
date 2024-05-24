@@ -28,7 +28,7 @@ export default class CataloguePage extends ContentPage {
       },
 
       // category list
-      (this.#categorySection = new CategoryList({})),
+      (this.#categorySection = new CategoryList({ class: classes.categories })),
       // header
       tag({ tag: 'h1', text: 'All games', class: classes.header }),
 
@@ -42,7 +42,7 @@ export default class CataloguePage extends ContentPage {
           class: classes.filters,
         })),
         // products
-        (this.#productList = new ProductList({})),
+        (this.#productList = new ProductList({ class: classes.products })),
       ),
     );
   };
