@@ -1,2 +1,11 @@
 .catalogue {
 }
+
+.content-section {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+}
+
+.filters {
+  background-color: gray;
+}
