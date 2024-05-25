@@ -54,20 +54,32 @@ export default class ProductPage extends ContentPage {
         if (product.body.masterVariant.prices) {
           this.#productPrice = product.body.masterVariant.prices[0].value.centAmount;
           if (product.body.masterVariant.prices[0].discounted) {
-            this.#productDiscount = product.body.masterVariant.prices[0].discounted.value.centAmount;
+            this.#productDiscount =
+              product.body.masterVariant.prices[0].discounted.value.centAmount;
           }
 
           this.#productCurrency = product.body.masterVariant.prices[0].value.currencyCode;
         }
 
-        this.#productDescription = product.body.masterVariant.attributes?.find((item) => item.name === 'description')?.value;
-        this.#productBrand = product.body.masterVariant.attributes?.find((item) => item.name === 'brand')?.value;
-        this.#productMinPlayers = product.body.masterVariant.attributes?.find((item) => item.name === 'min-number-of-players')?.value;
-        this.#productMaxPlayers = product.body.masterVariant.attributes?.find((item) => item.name === 'max-number-of-players')?.value;
-        this.#productAgeFrom = product.body.masterVariant.attributes?.find((item) => item.name === 'age-from')?.value;
-        this.#productTypeOfGame = product.body.masterVariant.attributes?.find((item) => item.name === 'type-of-game')?.value;
+        this.#productDescription = product.body.masterVariant.attributes?.find(
+          (item) => item.name === 'description',
+        )?.value;
+        this.#productBrand = product.body.masterVariant.attributes?.find(
+          (item) => item.name === 'brand',
+        )?.value;
+        this.#productMinPlayers = product.body.masterVariant.attributes?.find(
+          (item) => item.name === 'min-number-of-players',
+        )?.value;
+        this.#productMaxPlayers = product.body.masterVariant.attributes?.find(
+          (item) => item.name === 'max-number-of-players',
+        )?.value;
+        this.#productAgeFrom = product.body.masterVariant.attributes?.find(
+          (item) => item.name === 'age-from',
+        )?.value;
+        this.#productTypeOfGame = product.body.masterVariant.attributes?.find(
+          (item) => item.name === 'type-of-game',
+        )?.value;
         this.#productImages = product.body.masterVariant.images as Image[];
-
 
         this.#createContent();
         this.#showContent();
@@ -86,33 +98,52 @@ export default class ProductPage extends ContentPage {
         tag: 'main',
         class: classes.product,
       },
+
+      // testing the output of product data
       tag<HTMLHeadingElement>({ tag: 'h1', text: this.#productName }),
-      new BaseElement<HTMLOListElement>({ tag: 'ul' },
+      new BaseElement<HTMLOListElement>(
+        { tag: 'ul' },
         tag<HTMLHeadingElement>({ tag: 'li', text: `Title: ${this.#productName}` }),
         this.#showImages(ImageSize.thumb),
         tag<HTMLHeadingElement>({ tag: 'li', text: `Price: ${String(this.#productPrice)}` }),
-        tag<HTMLHeadingElement>({ tag: 'li', text: `Sale price: ${String(this.#productDiscount)}` }),
+        tag<HTMLHeadingElement>({
+          tag: 'li',
+          text: `Sale price: ${String(this.#productDiscount)}`,
+        }),
         tag<HTMLHeadingElement>({ tag: 'li', text: `Currency: ${String(this.#productCurrency)}` }),
-        tag<HTMLHeadingElement>({ tag: 'li', text: `TypeOfGame: ${String(this.#productTypeOfGame)}` }),
-        tag<HTMLHeadingElement>({ tag: 'li', text: `MinPlayers: ${String(this.#productMinPlayers)}` }),
-        tag<HTMLHeadingElement>({ tag: 'li', text: `MaxPlayers: ${String(this.#productMaxPlayers)}` }),
+        tag<HTMLHeadingElement>({
+          tag: 'li',
+          text: `TypeOfGame: ${String(this.#productTypeOfGame)}`,
+        }),
+        tag<HTMLHeadingElement>({
+          tag: 'li',
+          text: `MinPlayers: ${String(this.#productMinPlayers)}`,
+        }),
+        tag<HTMLHeadingElement>({
+          tag: 'li',
+          text: `MaxPlayers: ${String(this.#productMaxPlayers)}`,
+        }),
         tag<HTMLHeadingElement>({ tag: 'li', text: `AgeFrom: ${String(this.#productAgeFrom)}` }),
-        tag<HTMLHeadingElement>({ tag: 'li', text: `Description: ${String(this.#productDescription)}` }),
-
+        tag<HTMLHeadingElement>({
+          tag: 'li',
+          text: `Description: ${String(this.#productDescription)}`,
+        }),
       ),
     );
   };
 
   #showImages = (size: ImageSize): BaseElement<HTMLOListElement> => {
     console.log(this.#productImages);
-    const imagesEl = new BaseElement<HTMLOListElement>({ tag: 'ul' },);
+    const imagesEl = new BaseElement<HTMLOListElement>({ tag: 'ul' });
     this.#productImages.forEach((image) => {
       const url = Products.getImageUrl(image.url, size);
-      const li = new BaseElement<HTMLHeadingElement>({ tag: 'li' }, new BaseElement<HTMLImageElement>({ tag: 'img', src: url, alt: image.label },));
+      const li = new BaseElement<HTMLHeadingElement>(
+        { tag: 'li' },
+        new BaseElement<HTMLImageElement>({ tag: 'img', src: url, alt: image.label }),
+      );
       imagesEl.node.append(li.node);
     });
     return imagesEl;
-
   };
 
   #showContent = () => {
