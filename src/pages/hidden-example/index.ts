@@ -19,9 +19,9 @@ import Select from '@Src/components/ui/select';
 import { AppRoutes } from '@Src/router/routes';
 import {
   validateDateOfBirth,
-  validatePostalCode,
   validateEmail,
   validatePassword,
+  validatePostalCode,
 } from '@Src/utils/helpers';
 import classes from './style.module.scss';
 
@@ -59,7 +59,7 @@ export default class HiddenExamplePage extends ContentPage {
         },
         tag<HTMLHeadingElement>({ tag: 'h1', text: 'Exapmle page' }),
         new Link({ text: 'error404', href: AppRoutes.NOT_FOUND, class: classes.listItem }),
-        new Link({ text: 'product', href: AppRoutes.PRODUCT, class: classes.listItem }),
+        new Link({ text: 'product', href: AppRoutes.CATALOGUE, class: classes.listItem }),
         new Link({
           text: 'rs.school',
           href: 'https://rs.school',
