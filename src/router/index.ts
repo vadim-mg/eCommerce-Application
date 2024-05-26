@@ -6,6 +6,8 @@ import ROUTES, { AppRoutes, PageRoute, RouteVisibility } from './routes';
 export default class Router {
   #currentRoutePath: AppRoutes;
 
+  #currentFullRoutePath!: AppRoutes; // with parameters
+
   #page!: BasePage;
 
   #list: PageRoute;
@@ -15,7 +17,7 @@ export default class Router {
   private constructor() {
     this.#currentRoutePath = window.location.pathname as AppRoutes;
     this.#list = ROUTES;
-    this.addPopStateEventListener();
+    this.#addPopStateEventListener();
     window.history.replaceState({}, '', document.location.href);
   }
 
@@ -29,7 +31,7 @@ export default class Router {
 
   static isCurrentPath = (path: AppRoutes) => Router.getInstance().#currentRoutePath === path;
 
-  addPopStateEventListener = () => {
+  #addPopStateEventListener = () => {
     window.addEventListener('popstate', (event) => {
       if (event.state) {
         this.route(window.location.pathname as AppRoutes, false);
@@ -38,6 +40,7 @@ export default class Router {
   };
 
   route = (routePathParam = this.#currentRoutePath, needChangeHistory = true) => {
+    this.#currentFullRoutePath = routePathParam;
     const routePath = routePathParam.slice(1);
     // route without path redirect to main
     if (routePath.length === 0) {
@@ -88,8 +91,7 @@ export default class Router {
     const page = this.#list[this.#currentRoutePath]?.page;
     if (page) {
       const isComplexRoute = routeParameters.length && page.length;
-      const isBrokenComplexRoute =
-        (routeParameters.length && !page.length) || (!routeParameters.length && page.length);
+      const isBrokenComplexRoute = routeParameters.length && !page.length;
       if (isComplexRoute) {
         this.#page = page(routeParameters) as BasePage;
       } else if (isBrokenComplexRoute && this.#list[AppRoutes.NOT_FOUND].page) {
@@ -120,4 +122,8 @@ export default class Router {
   refresh = () => {
     this.route(this.#currentRoutePath, false);
   };
+
+  get currentRoutePath() {
+    return this.#currentFullRoutePath ?? this.#currentRoutePath;
+  }
 }
