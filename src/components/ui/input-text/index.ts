@@ -155,12 +155,12 @@ export default class InputText extends BaseElement<HTMLInputElement> {
   addDateInputType = () => {
     this.inputElement.node.type = 'date';
     this.clearButtonElement.node.hidden = true;
-  }
+  };
 
   addTextInputType = () => {
     this.inputElement.node.type = 'text';
     this.clearButtonElement.node.hidden = false;
-  }
+  };
 
   get value() {
     return this.inputElement.node.value;

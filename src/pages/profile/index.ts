@@ -4,6 +4,7 @@ import tag from '@Src/components/common/tag';
 import userProfileLogo from '@Assets/icons/profile-icon-dark.svg';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
+import CheckBox from '@Src/components/ui/checkbox';
 import classes from './style.module.scss';
 
 export default class ProfilePage extends ContentPage {
@@ -39,6 +40,22 @@ export default class ProfilePage extends ContentPage {
 
   saveDetailsBtn!: Button;
 
+  addressWrapper!: BaseElement<HTMLDivElement>;
+
+  addAddressBtn!: Button;
+
+  editButton!: Button;
+
+  deleteButton!: Button;
+
+  countryInput!: InputText;
+
+  cityInput!: InputText;
+
+  postalCodeInput!: InputText;
+
+  streetInput!: InputText;
+
   constructor() {
     super({ containerTag: 'main', title: 'profile page' });
     this.#createContent();
@@ -53,6 +70,7 @@ export default class ProfilePage extends ContentPage {
       },
       this.createTitleComponent(),
       this.createUserDataComponent(),
+      this.createAddressComponent(),
     );
   };
 
@@ -76,13 +94,19 @@ export default class ProfilePage extends ContentPage {
   createEditDeleteBtnComponent = () => {
     this.editDeleteBtnWrapper = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.editDeleteBtnWrapper },
-      new Button({ text: 'Edit', class: classes.button }, ButtonClasses.NORMAL, () =>
-        console.log('Edit'),
-      ),
-      new Button({ text: 'Delete', class: classes.button }, ButtonClasses.NORMAL, () =>
-        console.log('Delete'),
-      ),
+      (this.editButton = new Button(
+        { text: 'Edit', class: classes.button },
+        ButtonClasses.NORMAL,
+        () => console.log('Edit'),
+      )),
+      (this.deleteButton = new Button(
+        { text: 'Delete', class: classes.button },
+        ButtonClasses.NORMAL,
+        () => console.log('Delete'),
+      )),
     );
+    this.editButton.node.classList.add(classes.editButton);
+    this.deleteButton.node.classList.add(classes.deleteButton);
     return this.editDeleteBtnWrapper;
   };
 
@@ -98,15 +122,22 @@ export default class ProfilePage extends ContentPage {
     return this.userDataWrapper;
   };
 
-  toggleInputState = (state: boolean) => {
+  toggleUserDetailsInputsState = (state: boolean) => {
     this.emailInput.setDisabled(state);
     this.firstNameInput.setDisabled(state);
     this.lastNameInput.setDisabled(state);
     this.birthDateInput.setDisabled(state);
   };
 
+  toggleUserAddressInputsState = (state: boolean) => {
+    this.countryInput.setDisabled(state);
+    this.cityInput.setDisabled(state);
+    this.postalCodeInput.setDisabled(state);
+    this.streetInput.setDisabled(state);
+  };
+
   setEditMode = () => {
-    this.toggleInputState(false);
+    this.toggleUserDetailsInputsState(false);
 
     this.birthDateInput.addDateInputType();
 
@@ -115,7 +146,7 @@ export default class ProfilePage extends ContentPage {
   };
 
   setSavedMode = () => {
-    this.toggleInputState(true);
+    this.toggleUserDetailsInputsState(true);
 
     this.birthDateInput.addTextInputType();
 
@@ -146,7 +177,8 @@ export default class ProfilePage extends ContentPage {
       )),
     );
     this.birthDateInput.node.classList.add(classes.birthDateInput);
-    this.toggleInputState(true);
+
+    this.toggleUserDetailsInputsState(true);
     this.saveDetailsBtn.hide();
 
     return this.userDataDetailsWrapper;
@@ -182,6 +214,31 @@ export default class ProfilePage extends ContentPage {
     this.passwordInputRepeat.node.classList.add(classes.inputMargin);
     this.savePasswordButton.node.classList.add(classes.savePasswordButton);
     return this.userPasswordWrapper;
+  };
+
+  createAddressComponent = () => {
+    this.addressWrapper = new BaseElement<HTMLDivElement>(
+      { tag: 'div', class: classes.addressWrapper },
+      (this.countryInput = new InputText({ name: 'country' }, 'Country')),
+      (this.cityInput = new InputText({ name: 'city' }, 'City')),
+      (this.postalCodeInput = new InputText({ name: 'postal code' }, 'Postal code')),
+      (this.streetInput = new InputText({ name: 'street' }, 'Street')),
+      // todo: change 3rd argument later
+      new CheckBox({ class: classes.checkbox }, 'Use us default shipping address', true),
+      this.createEditDeleteBtnComponent(),
+    );
+    this.toggleUserAddressInputsState(true);
+    return this.addressWrapper;
+  };
+
+  createAddAddressBtn = () => {
+    this.addAddressBtn = new Button(
+      { text: '+Add address', class: classes.button },
+      ButtonClasses.NORMAL,
+      () => console.log('Add address'),
+    );
+    this.addAddressBtn.node.classList.add(classes.addAddressBtn);
+    return this.addAddressBtn;
   };
 
   #showContent = () => {

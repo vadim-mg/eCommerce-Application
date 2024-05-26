@@ -73,10 +73,21 @@ h2 {
 
 .save-password-button,
 .edit-details-btn,
-.save-details-btn {
+.save-details-btn,
+.add-address-btn,
+.edit-button,
+.delete-button {
   line-height: 100%;
 }
 
 .birth-date-input {
   margin-bottom: 1rem;
+}
+
+.address-wrapper {
+  max-width: 360px;
+}
+
+.checkbox {
+  margin-bottom: 3rem;
 }
