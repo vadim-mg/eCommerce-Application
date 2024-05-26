@@ -9,11 +9,13 @@ import classes from './style.module.scss';
 export default class MainPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
+  #banner: Banner;
+
   constructor() {
     super({ containerTag: 'div', title: 'Main page' });
-    this.banner = new Banner({});
+    this.#banner = new Banner({});
     this.#createContent();
-    this.placeForBanner.node.append(this.#content.node, this.banner.node);
+    this.placeForBanner.node.append(this.#content.node, this.#banner.node);
     // this.#showContent();
   }
 
@@ -50,10 +52,10 @@ export default class MainPage extends ContentPage {
         { tag: 'div', class: classes.linksContainer },
         new Link({ text: 'main', href: AppRoutes.MAIN, class: classes.listItem }),
         new Link({ text: 'catalogue', href: AppRoutes.CATALOGUE, class: classes.listItem }),
-        new Link({ text: 'product', href: AppRoutes.PRODUCT, class: classes.listItem }),
+        new Link({ text: 'product', href: AppRoutes.CATALOGUE, class: classes.listItem }),
         new Link({
           text: 'product/test',
-          href: `${AppRoutes.PRODUCT}/test`,
+          href: `${AppRoutes.CATALOGUE}/test`,
           class: classes.listItem,
         }),
         new Link({ text: 'cart', href: AppRoutes.CART, class: classes.listItem }),

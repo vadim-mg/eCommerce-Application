@@ -20,7 +20,6 @@ export enum AppRoutes {
   ABOUT = '/about',
   PROFILE = '/profile',
   CART = '/cart',
-  PRODUCT = '/product',
   NOT_FOUND = '/404',
 
   // hidden routes
@@ -78,16 +77,11 @@ const ROUTES: Routes = {
     visibility: RouteVisibility.onlyNotAuth,
   },
   [AppRoutes.MAIN]: {
-    name: 'Main',
+    name: 'Home',
     page: () => new MainPage(),
     visibility: RouteVisibility.everyOne,
   },
 
-  [AppRoutes.CATALOGUE]: {
-    name: 'Catalogue',
-    page: () => new CataloguePage(),
-    visibility: RouteVisibility.everyOne,
-  },
   [AppRoutes.ABOUT]: {
     name: 'About',
     page: () => new AboutPage(),
@@ -103,9 +97,10 @@ const ROUTES: Routes = {
     page: () => new CartPage(),
     visibility: RouteVisibility.everyOne,
   },
-  [AppRoutes.PRODUCT]: {
-    name: 'product',
-    page: (args?: string[]) => new ProductPage(args ?? []),
+  [AppRoutes.CATALOGUE]: {
+    name: 'Catalogue',
+    page: (args?: string[]) =>
+      (args?.length ?? 0) > 0 ? new ProductPage(args ?? []) : new CataloguePage(),
     visibility: RouteVisibility.everyOne,
   },
 

@@ -15,7 +15,7 @@ export default class CataloguePage extends ContentPage {
   #categorySection!: BaseElement<HTMLDivElement>;
 
   constructor() {
-    super({ containerTag: 'main', title: 'catalogue page' });
+    super({ containerTag: 'main', title: 'catalogue page', showBreadCrumbs: true });
     this.#createContent();
     this.container.node.append(this.#content.node);
   }

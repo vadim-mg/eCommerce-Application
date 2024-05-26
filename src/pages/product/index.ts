@@ -42,7 +42,9 @@ export default class ProductPage extends ContentPage {
   #productImagesSmall!: Image[];
 
   constructor(props: string[]) {
-    super({ containerTag: 'main', title: 'product page' });
+    super({ containerTag: 'main', title: 'product page', showBreadCrumbs: true });
+    this.#createContent();
+    this.#showContent();
     console.log(props);
     const productKey = props[0];
     getProductByKey(productKey)
