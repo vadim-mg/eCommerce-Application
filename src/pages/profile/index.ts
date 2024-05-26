@@ -5,7 +5,6 @@ import userProfileLogo from '@Assets/icons/profile-icon-dark.svg';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
 import classes from './style.module.scss';
-// import SignupPage from '../signup';
 
 export default class ProfilePage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
@@ -78,12 +77,23 @@ export default class ProfilePage extends ContentPage {
       tag: 'h2',
       text: 'Personal details',
     });
-    // const userDataDetailsForm = new SignupPage().createFormUserDetails();
     this.userDataDetailsWrapper = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.userDataDetailsWrapper },
       userDataDetailsTitle,
     );
 
+    this.userDataWrapper = new BaseElement<HTMLDivElement>(
+      {
+        tag: 'div',
+        class: classes.userDataWrapper,
+      },
+      this.userDataDetailsWrapper,
+      this.createUserPasswordComponent(),
+    );
+    return this.userDataWrapper;
+  };
+
+  createUserPasswordComponent = () => {
     this.userPasswordWrapper = new BaseElement<HTMLDivElement>(
       {
         tag: 'div',
@@ -112,14 +122,7 @@ export default class ProfilePage extends ContentPage {
     this.passwordInput.node.classList.add(classes.inputMargin);
     this.passwordInputRepeat.node.classList.add(classes.inputMargin);
     this.savePasswordButton.node.classList.add(classes.savePasswordButton);
-
-    this.userDataWrapper = new BaseElement<HTMLDivElement>({
-      tag: 'div',
-      class: classes.userDataWrapper,
-    });
-    this.userDataWrapper.node.append(this.userDataDetailsWrapper.node);
-    this.userDataWrapper.node.append(this.userPasswordWrapper.node);
-    return this.userDataWrapper;
+    return this.userPasswordWrapper;
   };
 
   #showContent = () => {
