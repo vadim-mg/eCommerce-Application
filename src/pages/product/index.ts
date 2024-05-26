@@ -11,7 +11,7 @@ export default class ProductPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
   constructor(props: string[]) {
-    super({ containerTag: 'main', title: 'product page' });
+    super({ containerTag: 'main', title: 'product page', showBreadCrumbs: true });
     this.#createContent();
     this.#showContent();
     console.log(props);

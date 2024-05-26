@@ -7,7 +7,7 @@ export default class AboutPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
   constructor() {
-    super({ containerTag: 'main', title: 'about page' });
+    super({ containerTag: 'main', title: 'about page', showBreadCrumbs: true });
     this.#createContent();
     this.#showContent();
   }

@@ -22,7 +22,7 @@ export default class ProductCard extends BaseElement<HTMLElement> {
     return tag<HTMLDivElement>(
       { tag: 'div', class: classes.productCard },
       new Link({
-        href: `${AppRoutes.PRODUCT}/${key}`,
+        href: `${AppRoutes.CATALOGUE}/${key}`,
         text: `link(key): ${key}`,
         class: classes.productLink,
       }),
