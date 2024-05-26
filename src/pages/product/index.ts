@@ -3,6 +3,7 @@ import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 // import ProductCard from '@Src/components/logic/product-card';
+import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Products, { ImageSize } from '@Src/controllers/products';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
@@ -16,7 +17,7 @@ export default class ProductPage extends ContentPage {
 
   #productKey!: string | undefined;
 
-  #productPrice!: number | undefined;
+  #productPrice!: number;
 
   #productDiscount!: number | undefined;
 
@@ -95,45 +96,59 @@ export default class ProductPage extends ContentPage {
   #createContent = () => {
     this.#content = tag<HTMLDivElement>(
       {
-        tag: 'main',
+        tag: 'div',
         class: classes.product,
       },
-
-      // testing the output of product data
-      tag<HTMLHeadingElement>({ tag: 'h1', text: this.#productName }),
-      new BaseElement<HTMLOListElement>(
-        { tag: 'ul' },
-        tag<HTMLHeadingElement>({ tag: 'li', text: `Title: ${this.#productName}` }),
-        this.#showImages(ImageSize.thumb),
-        tag<HTMLHeadingElement>({ tag: 'li', text: `Price: ${String(this.#productPrice)}` }),
-        tag<HTMLHeadingElement>({
-          tag: 'li',
-          text: `Sale price: ${String(this.#productDiscount)}`,
-        }),
-        tag<HTMLHeadingElement>({ tag: 'li', text: `Currency: ${String(this.#productCurrency)}` }),
-        tag<HTMLHeadingElement>({
-          tag: 'li',
-          text: `TypeOfGame: ${String(this.#productTypeOfGame)}`,
-        }),
-        tag<HTMLHeadingElement>({
-          tag: 'li',
-          text: `MinPlayers: ${String(this.#productMinPlayers)}`,
-        }),
-        tag<HTMLHeadingElement>({
-          tag: 'li',
-          text: `MaxPlayers: ${String(this.#productMaxPlayers)}`,
-        }),
-        tag<HTMLHeadingElement>({ tag: 'li', text: `AgeFrom: ${String(this.#productAgeFrom)}` }),
-        tag<HTMLHeadingElement>({
-          tag: 'li',
-          text: `Description: ${String(this.#productDescription)}`,
-        }),
-      ),
+      this.#createProductData(),
     );
   };
 
-  #showImages = (size: ImageSize): BaseElement<HTMLOListElement> => {
-    console.log(this.#productImages);
+  #createProductData = () => {
+    const wrapper = new BaseElement<HTMLElement>({ tag: 'div', class: classes.productInfo });
+    const h1 = new BaseElement<HTMLHeadingElement>({ tag: 'h1', class: classes.productName, text: this.#productName });
+    const priceRow = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.productPriceRow },);
+    const priceEl = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.price, text: `€${String(this.#productPrice)}` });
+    const button = new Button({ text: 'Add to Cart', class: classes.button }, ButtonClasses.NORMAL, () => { console.log('Product added to the cart'); });
+    const priceWrapper = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.productPriceWrapper },
+      new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.priceTitle, text: 'Price:' }),
+      priceEl,
+    );
+    if (this.#productDiscount) {
+      const discountPrice = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.price, text: `€${String(this.#productDiscount)}` });
+      priceWrapper.node.append(discountPrice.node);
+      priceEl.node.classList.add(classes.priceOld);
+      h1.node.classList.add(classes.productNameSale);
+    }
+    priceRow.node.append(priceWrapper.node);
+    priceRow.node.append(button.node);
+
+    const brandRow = new BaseElement<HTMLDivElement>({ tag: 'li', class: classes.attributeRow },
+      new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.attributeTitle, text: 'Brand:' }),
+      new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.attribute, text: this.#productBrand }));
+    const typeRow = new BaseElement<HTMLDivElement>({ tag: 'li', class: classes.attributeRow },
+      new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.attributeTitle, text: 'Type of game:' }),
+      new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.attribute, text: this.#productTypeOfGame }));
+    const numberRow = new BaseElement<HTMLDivElement>({ tag: 'li', class: classes.attributeRow },
+      new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.attributeTitle, text: 'Number of players:' }),
+      new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.attribute, text: `${this.#productMinPlayers} - ${this.#productMaxPlayers} ` }));
+    const ageRow = new BaseElement<HTMLDivElement>({ tag: 'li', class: classes.attributeRow },
+      new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.attributeTitle, text: 'Recommended age from:' }),
+      new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.attribute, text: `${this.#productAgeFrom} years` }));
+    const attributesList = new BaseElement<HTMLOListElement>({ tag: 'ul', class: classes.attributeList }, brandRow, typeRow, numberRow, ageRow);
+    const desc = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.desc },
+      new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.descTitle, text: 'Description:' }),
+      new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.descText, text: this.#productDescription }));
+    wrapper.node.append(h1.node);
+    wrapper.node.append(priceRow.node);
+    wrapper.node.append(attributesList.node);
+    wrapper.node.append(desc.node);
+
+    return wrapper;
+  };
+
+  #showSlider = (size: ImageSize): BaseElement<HTMLOListElement> => {
+
+    // testing the display of product images, the slider component will be implemented in another branch
     const imagesEl = new BaseElement<HTMLOListElement>({ tag: 'ul' });
     this.#productImages.forEach((image) => {
       const url = Products.getImageUrl(image.url, size);
