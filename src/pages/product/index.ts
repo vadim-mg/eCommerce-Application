@@ -10,6 +10,14 @@ import { AppRoutes } from '@Src/router/routes';
 import { Image, ProductProjection } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
 
+interface Attribute {
+  name: string;
+  value: string | number;
+}
+interface ProductAttributes {
+  [key: string]: string | number;
+}
+
 export default class ProductPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
@@ -43,8 +51,6 @@ export default class ProductPage extends ContentPage {
 
   constructor(props: string[]) {
     super({ containerTag: 'main', title: 'product page', showBreadCrumbs: true });
-    this.#createContent();
-    this.#showContent();
     console.log(props);
     const productKey = props[0];
     getProductByKey(productKey)
@@ -54,34 +60,30 @@ export default class ProductPage extends ContentPage {
         this.#productKey = product.body.key;
         this.#productName = product.body.name['en-GB'];
         console.log(this.#product);
+
         if (product.body.masterVariant.prices) {
           this.#productPrice = product.body.masterVariant.prices[0].value.centAmount;
           if (product.body.masterVariant.prices[0].discounted) {
             this.#productDiscount =
               product.body.masterVariant.prices[0].discounted.value.centAmount;
           }
-
           this.#productCurrency = product.body.masterVariant.prices[0].value.currencyCode;
         }
+        const attributes = product.body.masterVariant.attributes || [];
+        const attributeMap = attributes.reduce((acc: ProductAttributes, item: Attribute) => {
+          if (item.name) {
+            const key = item.name.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+            acc[key as keyof ProductAttributes] = item.value;
+          }
+          return acc;
+        }, {} as ProductAttributes);
 
-        this.#productDescription = product.body.masterVariant.attributes?.find(
-          (item) => item.name === 'description',
-        )?.value;
-        this.#productBrand = product.body.masterVariant.attributes?.find(
-          (item) => item.name === 'brand',
-        )?.value;
-        this.#productMinPlayers = product.body.masterVariant.attributes?.find(
-          (item) => item.name === 'min-number-of-players',
-        )?.value;
-        this.#productMaxPlayers = product.body.masterVariant.attributes?.find(
-          (item) => item.name === 'max-number-of-players',
-        )?.value;
-        this.#productAgeFrom = product.body.masterVariant.attributes?.find(
-          (item) => item.name === 'age-from',
-        )?.value;
-        this.#productTypeOfGame = product.body.masterVariant.attributes?.find(
-          (item) => item.name === 'type-of-game',
-        )?.value;
+        this.#productDescription = attributeMap.description as string;
+        this.#productBrand = attributeMap.brand as string;
+        this.#productMinPlayers = attributeMap.minNumberOfPlayers as number;
+        this.#productMaxPlayers = attributeMap.maxNumberOfPlayers as number;
+        this.#productAgeFrom = attributeMap.ageFrom as number;
+        this.#productTypeOfGame = attributeMap.typeOfGame as string;
         this.#productImages = product.body.masterVariant.images as Image[];
 
         this.#createContent();
