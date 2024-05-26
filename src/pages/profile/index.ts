@@ -37,6 +37,8 @@ export default class ProfilePage extends ContentPage {
 
   editDetailsBtn!: Button;
 
+  saveDetailsBtn!: Button;
+
   constructor() {
     super({ containerTag: 'main', title: 'profile page' });
     this.#createContent();
@@ -96,18 +98,48 @@ export default class ProfilePage extends ContentPage {
     return this.userDataWrapper;
   };
 
+  toggleInputState = (state: boolean) => {
+    this.emailInput.setDisabled(state);
+    this.firstNameInput.setDisabled(state);
+    this.lastNameInput.setDisabled(state);
+    this.birthDateInput.setDisabled(state);
+  }
+
+  setEditMode = () => {
+    this.toggleInputState(false);
+
+    this.editDetailsBtn.hide();
+    this.saveDetailsBtn.show();
+  }
+
+  setSavedMode = () => {
+    this.toggleInputState(true);
+
+    this.editDetailsBtn.show();
+    this.saveDetailsBtn.hide();
+  }
+
   createUserDataDetailsComponent = () => {
     this.userDataDetailsWrapper = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.userDataDetailsWrapper },
-      this.userDataDetailsTitle = new BaseElement<HTMLHeadingElement>({
+      (this.userDataDetailsTitle = new BaseElement<HTMLHeadingElement>({
         tag: 'h2',
         text: 'Personal details',
-      }),
-      this.emailInput = new InputText({ name: 'email', type: 'email' }, 'E-mail'),
-      this.firstNameInput = new InputText({ name: 'firstName' }, 'Fist name'),
-      this.lastNameInput = new InputText({ name: 'lastName' }, 'Last name'),
-      this.birthDateInput = new InputText({ name: 'date-of-birth' }, 'Birth date'),
-      this.editDetailsBtn = new Button({ text: 'Edit details', class: classes.editDetailsBtn }, ButtonClasses.NORMAL, () => console.log('edit details')),
+      })),
+      (this.emailInput = new InputText({ name: 'email', type: 'email' }, 'E-mail')),
+      (this.firstNameInput = new InputText({ name: 'firstName' }, 'Fist name')),
+      (this.lastNameInput = new InputText({ name: 'lastName' }, 'Last name')),
+      (this.birthDateInput = new InputText({ name: 'date-of-birth' }, 'Birth date')),
+      (this.editDetailsBtn = new Button(
+        { text: 'Edit details', class: classes.editDetailsBtn },
+        ButtonClasses.NORMAL,
+        this.setEditMode,
+      )),
+      (this.saveDetailsBtn = new Button(
+        { text: 'Save', class: classes.saveDetailsBtn },
+        ButtonClasses.NORMAL,
+        this.setSavedMode,
+      )),
     );
     this.birthDateInput.node.classList.add(classes.birthDateInput);
     // set disabled state for inputs
@@ -115,9 +147,10 @@ export default class ProfilePage extends ContentPage {
     this.firstNameInput.setDisabled(true);
     this.lastNameInput.setDisabled(true);
     this.birthDateInput.setDisabled(true);
+    this.saveDetailsBtn.hide();
 
     return this.userDataDetailsWrapper;
-  }
+  };
 
   createUserPasswordComponent = () => {
     this.userPasswordWrapper = new BaseElement<HTMLDivElement>(
