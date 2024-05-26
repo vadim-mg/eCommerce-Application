@@ -9,11 +9,13 @@ import classes from './style.module.scss';
 export default class MainPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
+  #banner: Banner;
+
   constructor() {
     super({ containerTag: 'div', title: 'Main page' });
-    this.banner = new Banner({});
+    this.#banner = new Banner({});
     this.#createContent();
-    this.placeForBanner.node.append(this.#content.node, this.banner.node);
+    this.placeForBanner.node.append(this.#content.node, this.#banner.node);
     // this.#showContent();
   }
 
