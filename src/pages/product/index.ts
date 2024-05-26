@@ -7,7 +7,7 @@ import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Products, { ImageSize } from '@Src/controllers/products';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
-import { Image, ProductProjection } from '@commercetools/platform-sdk';
+import { Image, Price, ProductProjection } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
 
 interface Attribute {
@@ -60,32 +60,9 @@ export default class ProductPage extends ContentPage {
         this.#productKey = product.body.key;
         this.#productName = product.body.name['en-GB'];
         console.log(this.#product);
-
-        if (product.body.masterVariant.prices) {
-          this.#productPrice = product.body.masterVariant.prices[0].value.centAmount;
-          if (product.body.masterVariant.prices[0].discounted) {
-            this.#productDiscount =
-              product.body.masterVariant.prices[0].discounted.value.centAmount;
-          }
-          this.#productCurrency = product.body.masterVariant.prices[0].value.currencyCode;
-        }
-        const attributes = product.body.masterVariant.attributes || [];
-        const attributeMap = attributes.reduce((acc: ProductAttributes, item: Attribute) => {
-          if (item.name) {
-            const key = item.name.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-            acc[key as keyof ProductAttributes] = item.value;
-          }
-          return acc;
-        }, {} as ProductAttributes);
-
-        this.#productDescription = attributeMap.description as string;
-        this.#productBrand = attributeMap.brand as string;
-        this.#productMinPlayers = attributeMap.minNumberOfPlayers as number;
-        this.#productMaxPlayers = attributeMap.maxNumberOfPlayers as number;
-        this.#productAgeFrom = attributeMap.ageFrom as number;
-        this.#productTypeOfGame = attributeMap.typeOfGame as string;
+        this.#createPrice(product.body.masterVariant.prices as Price[]);
+        this.#createAttributes(product.body.masterVariant.attributes as Attribute[]);
         this.#productImages = product.body.masterVariant.images as Image[];
-
         this.#createContent();
         this.#showContent();
       })
@@ -96,6 +73,34 @@ export default class ProductPage extends ContentPage {
         }
       });
   }
+
+  #createAttributes = (attributes: Attribute[]) => {
+    const attributeMap = attributes.reduce((acc: ProductAttributes, item: Attribute) => {
+      if (item.name) {
+        const key = item.name.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+        acc[key as keyof ProductAttributes] = item.value;
+      }
+      return acc;
+    }, {} as ProductAttributes);
+
+    this.#productDescription = attributeMap.description as string;
+    this.#productBrand = attributeMap.brand as string;
+    this.#productMinPlayers = attributeMap.minNumberOfPlayers as number;
+    this.#productMaxPlayers = attributeMap.maxNumberOfPlayers as number;
+    this.#productAgeFrom = attributeMap.ageFrom as number;
+    this.#productTypeOfGame = attributeMap.typeOfGame as string;
+  };
+
+  #createPrice = (prices: Price[]) => {
+    if (prices) {
+      this.#productPrice = prices[0].value.centAmount;
+      if (prices[0].discounted) {
+        this.#productDiscount =
+          prices[0].discounted.value.centAmount;
+      }
+      this.#productCurrency = prices[0].value.currencyCode;
+    }
+  };
 
   #createContent = () => {
     this.#content = tag<HTMLDivElement>(
