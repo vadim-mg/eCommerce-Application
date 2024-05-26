@@ -103,21 +103,25 @@ export default class ProfilePage extends ContentPage {
     this.firstNameInput.setDisabled(state);
     this.lastNameInput.setDisabled(state);
     this.birthDateInput.setDisabled(state);
-  }
+  };
 
   setEditMode = () => {
     this.toggleInputState(false);
 
+    this.birthDateInput.addDateInputType();
+
     this.editDetailsBtn.hide();
     this.saveDetailsBtn.show();
-  }
+  };
 
   setSavedMode = () => {
     this.toggleInputState(true);
 
+    this.birthDateInput.addTextInputType();
+
     this.editDetailsBtn.show();
     this.saveDetailsBtn.hide();
-  }
+  };
 
   createUserDataDetailsComponent = () => {
     this.userDataDetailsWrapper = new BaseElement<HTMLDivElement>(
@@ -142,11 +146,7 @@ export default class ProfilePage extends ContentPage {
       )),
     );
     this.birthDateInput.node.classList.add(classes.birthDateInput);
-    // set disabled state for inputs
-    this.emailInput.setDisabled(true);
-    this.firstNameInput.setDisabled(true);
-    this.lastNameInput.setDisabled(true);
-    this.birthDateInput.setDisabled(true);
+    this.toggleInputState(true);
     this.saveDetailsBtn.hide();
 
     return this.userDataDetailsWrapper;
