@@ -35,5 +35,5 @@ export default class Products {
   // get url for different size of original image
   // https://docs.commercetools.com/api/projects/products#image
   static getImageUrl = (originalUrl: string, imageSize = ImageSize.origin) =>
-    originalUrl.replace('.jpg', `${imageSize}.jpg`);
+    originalUrl.replace(/(\.jpg|\.png)/i, `${imageSize}$1`);
 }
