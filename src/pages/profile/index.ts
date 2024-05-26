@@ -25,6 +25,18 @@ export default class ProfilePage extends ContentPage {
 
   savePasswordButton!: Button;
 
+  userDataDetailsTitle!: BaseElement<HTMLHeadingElement>;
+
+  emailInput!: InputText;
+
+  firstNameInput!: InputText;
+
+  lastNameInput!: InputText;
+
+  birthDateInput!: InputText;
+
+  editDetailsBtn!: Button;
+
   constructor() {
     super({ containerTag: 'main', title: 'profile page' });
     this.#createContent();
@@ -73,25 +85,39 @@ export default class ProfilePage extends ContentPage {
   };
 
   createUserDataComponent = () => {
-    const userDataDetailsTitle = new BaseElement<HTMLHeadingElement>({
-      tag: 'h2',
-      text: 'Personal details',
-    });
-    this.userDataDetailsWrapper = new BaseElement<HTMLDivElement>(
-      { tag: 'div', class: classes.userDataDetailsWrapper },
-      userDataDetailsTitle,
-    );
-
     this.userDataWrapper = new BaseElement<HTMLDivElement>(
       {
         tag: 'div',
         class: classes.userDataWrapper,
       },
-      this.userDataDetailsWrapper,
+      this.createUserDataDetailsComponent(),
       this.createUserPasswordComponent(),
     );
     return this.userDataWrapper;
   };
+
+  createUserDataDetailsComponent = () => {
+    this.userDataDetailsWrapper = new BaseElement<HTMLDivElement>(
+      { tag: 'div', class: classes.userDataDetailsWrapper },
+      this.userDataDetailsTitle = new BaseElement<HTMLHeadingElement>({
+        tag: 'h2',
+        text: 'Personal details',
+      }),
+      this.emailInput = new InputText({ name: 'email', type: 'email' }, 'E-mail'),
+      this.firstNameInput = new InputText({ name: 'firstName' }, 'Fist name'),
+      this.lastNameInput = new InputText({ name: 'lastName' }, 'Last name'),
+      this.birthDateInput = new InputText({ name: 'date-of-birth' }, 'Birth date'),
+      this.editDetailsBtn = new Button({ text: 'Edit details', class: classes.editDetailsBtn }, ButtonClasses.NORMAL, () => console.log('edit details')),
+    );
+    this.birthDateInput.node.classList.add(classes.birthDateInput);
+    // set disabled state for inputs
+    this.emailInput.setDisabled(true);
+    this.firstNameInput.setDisabled(true);
+    this.lastNameInput.setDisabled(true);
+    this.birthDateInput.setDisabled(true);
+
+    return this.userDataDetailsWrapper;
+  }
 
   createUserPasswordComponent = () => {
     this.userPasswordWrapper = new BaseElement<HTMLDivElement>(
@@ -101,11 +127,11 @@ export default class ProfilePage extends ContentPage {
       },
       new BaseElement<HTMLHeadingElement>({ tag: 'h2', text: 'Change password' }),
       (this.passwordInput = new InputText(
-        { name: 'password', maxLength: 20, minLength: 8 },
+        { name: 'password', maxLength: 20, minLength: 8, type: 'password' },
         'New password',
       )),
       (this.passwordInputRepeat = new InputText(
-        { name: 'password', maxLength: 20, minLength: 8 },
+        { name: 'password', maxLength: 20, minLength: 8, type: 'password' },
         'Repeat password',
       )),
       new BaseElement<HTMLDivElement>({

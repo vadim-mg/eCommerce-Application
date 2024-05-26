@@ -44,6 +44,7 @@ h2 {
 .user-data-details-wrapper,
 .user-password-wrapper {
   max-width: 360px;
+  width: 100%;
 }
 
 .user-password-wrapper {
@@ -70,6 +71,11 @@ h2 {
   margin-bottom: 1.5rem;
 }
 
-.save-password-button {
+.save-password-button,
+.edit-details-btn {
   line-height: 100%;
+}
+
+.birth-date-input {
+  margin-bottom: 1rem;
 }
