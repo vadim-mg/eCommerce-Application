@@ -100,7 +100,9 @@ const ROUTES: Routes = {
   [AppRoutes.CATALOGUE]: {
     name: 'Catalogue',
     page: (args?: string[]) =>
-      (args?.length ?? 0) > 0 ? new ProductPage(args ?? []) : new CataloguePage(),
+      (args?.length ?? 0) > 1
+        ? new ProductPage(args ?? []) // for paths: catalogue/category-name/product-name
+        : new CataloguePage(args ?? []), // for paths: catalogue/category-name
     visibility: RouteVisibility.everyOne,
   },
 
