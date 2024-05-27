@@ -20,6 +20,11 @@ export default class CataloguePage extends ContentPage {
     this.container.node.append(this.#content.node);
   }
 
+  #onCategorySelectHandler = (id: string) => {
+    console.log(`Clicked category with id: ${id}`);
+    this.#productList.showProducts(id);
+  };
+
   #createContent = () => {
     this.#content = tag<HTMLDivElement>(
       {
@@ -28,7 +33,10 @@ export default class CataloguePage extends ContentPage {
       },
 
       // category list
-      (this.#categorySection = new CategoryList({ class: classes.categories })),
+      (this.#categorySection = new CategoryList(
+        { class: classes.categories },
+        this.#onCategorySelectHandler,
+      )),
       // header
       tag({ tag: 'h1', text: 'All games', class: classes.header }),
 

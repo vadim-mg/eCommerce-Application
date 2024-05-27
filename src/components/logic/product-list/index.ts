@@ -1,8 +1,6 @@
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 
-import { ProductProjectionPagedQueryResponse } from '@commercetools/platform-sdk';
 import Products from '@Src/controllers/products';
-import testData from '@Src/pages/catalogue/test-data';
 import ProductCard from '../product-card';
 import classes from './style.module.scss';
 
@@ -15,14 +13,16 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
     super({ tag: 'div', ...props });
     this.#products = new Products();
     this.node.classList.add(classes.productList);
-    this.#showProducts();
+    this.showProducts();
   }
 
-  #showProducts = async () => {
+  showProducts = async (categoryId?: string) => {
     try {
-      const respBody: ProductProjectionPagedQueryResponse =
-        testData as ProductProjectionPagedQueryResponse;
-      // const respBody = await this.#products.all; // todo return it on his place
+      // const respBody: ProductProjectionPagedQueryResponse =
+      //   testData as ProductProjectionPagedQueryResponse;
+
+      const respBody = await this.#products.getProducts(categoryId);
+
       this.node.innerHTML = '';
       console.log(respBody);
       respBody.results.forEach((product) => {
