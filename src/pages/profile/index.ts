@@ -78,43 +78,52 @@ export default class ProfilePage extends ContentPage {
         this.#birthDateInput.value = info.body.dateOfBirth?.split('-').join('.') ?? '';
 
         info.body.addresses.forEach((address) => {
-          if (info.body.billingAddressIds?.includes(address.id ?? '') && info.body.shippingAddressIds?.includes(address.id ?? '')) {
-            const isDefaultBillingAddress = info.body.defaultBillingAddressId?.includes(address.id  ?? '');
-            const isDefaultShippingAddress = info.body.defaultShippingAddressId?.includes(address.id  ?? '');
+          const isDefaultBillingAddress = info.body.defaultBillingAddressId?.includes(
+            address.id ?? '',
+          );
+          const isDefaultShippingAddress = info.body.defaultShippingAddressId?.includes(
+            address.id ?? '',
+          );
+          const userCountry = address.country;
+          const userCity = address.city ?? '';
+          const userPostalCode = address.postalCode ?? '';
+          const userStreet = address.streetName ?? '';
+          if (
+            info.body.billingAddressIds?.includes(address.id ?? '') &&
+            info.body.shippingAddressIds?.includes(address.id ?? '')
+          ) {
             this.createAddressComponent(
               'shipping',
-              address.country,
-              address.city ?? '',
-              address.postalCode ?? '',
-              address.streetName ?? '',
+              userCountry,
+              userCity,
+              userPostalCode,
+              userStreet,
               isDefaultShippingAddress as boolean,
             );
             this.createAddressComponent(
               'billing',
-              address.country,
-              address.city ?? '',
-              address.postalCode ?? '',
-              address.streetName ?? '',
+              userCountry,
+              userCity,
+              userPostalCode,
+              userStreet,
               isDefaultBillingAddress as boolean,
             );
           } else if (info.body.billingAddressIds?.includes(address.id ?? '')) {
-            const isDefaultBillingAddress = info.body.defaultBillingAddressId?.includes(address.id  ?? '');
             this.createAddressComponent(
               'billing',
-              address.country,
-              address.city ?? '',
-              address.postalCode ?? '',
-              address.streetName ?? '',
+              userCountry,
+              userCity,
+              userPostalCode,
+              userStreet,
               isDefaultBillingAddress as boolean,
             );
           } else {
-            const isDefaultShippingAddress = info.body.defaultShippingAddressId?.includes(address.id  ?? '');
             this.createAddressComponent(
               'shipping',
-              address.country,
-              address.city ?? '',
-              address.postalCode ?? '',
-              address.streetName ?? '',
+              userCountry,
+              userCity,
+              userPostalCode,
+              userStreet,
               isDefaultShippingAddress as boolean,
             );
           }
@@ -295,8 +304,11 @@ export default class ProfilePage extends ContentPage {
       (this.#cityInput = new InputText({ name: 'city' }, 'City')),
       (this.#postalCodeInput = new InputText({ name: 'postal code' }, 'Postal code')),
       (this.#streetInput = new InputText({ name: 'street' }, 'Street')),
-      // todo: change 3rd argument later
-      new CheckBox({ class: classes.checkbox }, `Use us default ${addressType} address`, isDefaultAddress),
+      new CheckBox(
+        { class: classes.checkbox },
+        `Use us default ${addressType} address`,
+        isDefaultAddress,
+      ),
       this.createEditDeleteBtnComponent(),
     );
     this.#countryInput.value = country;
