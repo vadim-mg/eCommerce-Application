@@ -88,11 +88,23 @@ export default class ProfilePage extends ContentPage {
 
         info.body.addresses.forEach((address) => {
           if (info.body.billingAddressIds?.includes(address.id ?? '')) {
-            this.createAddressComponent('billing', address.country, address.city ?? '', address.postalCode ?? '', address.streetName ?? '')
+            this.createAddressComponent(
+              'billing',
+              address.country,
+              address.city ?? '',
+              address.postalCode ?? '',
+              address.streetName ?? '',
+            );
           } else {
-            this.createAddressComponent('shipping', address.country, address.city ?? '', address.postalCode ?? '', address.streetName ?? '')
+            this.createAddressComponent(
+              'shipping',
+              address.country,
+              address.city ?? '',
+              address.postalCode ?? '',
+              address.streetName ?? '',
+            );
           }
-        })
+        });
         console.log(info.body);
       })
       .catch((error: HttpErrorType) => {
@@ -255,7 +267,13 @@ export default class ProfilePage extends ContentPage {
     return this.userPasswordWrapper;
   };
 
-  createAddressComponent = (addressType: string, country: string, city: string, postalCode: string, street: string) => {
+  createAddressComponent = (
+    addressType: string,
+    country: string,
+    city: string,
+    postalCode: string,
+    street: string,
+  ) => {
     const addressComponent = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.addressWrapper },
       (this.countryInput = new InputText({ name: 'country' }, 'Country')),
@@ -282,22 +300,28 @@ export default class ProfilePage extends ContentPage {
   };
 
   createDeliveryAddressBasicStructure = () => {
-    const deliveryAddressTitle = new BaseElement<HTMLHeadingElement>({ tag: 'h2', text: 'Delivery address' });
+    const deliveryAddressTitle = new BaseElement<HTMLHeadingElement>({
+      tag: 'h2',
+      text: 'Delivery address',
+    });
     this.addAddressBtn = this.createAddAddressBtn();
     this.deliveryAddressesContainer = new BaseElement<HTMLDivElement>({ tag: 'div' });
     this.deliveryAddressesContainer.node.append(deliveryAddressTitle.node);
     this.deliveryAddressesContainer.node.append(this.addAddressBtn.node);
     return this.deliveryAddressesContainer;
-  }
+  };
 
   createBillingAddressBasicStructure = () => {
-    const billingAddressTitle = new BaseElement<HTMLHeadingElement>({ tag: 'h2', text: 'Billing address' });
+    const billingAddressTitle = new BaseElement<HTMLHeadingElement>({
+      tag: 'h2',
+      text: 'Billing address',
+    });
     this.addAddressBtn = this.createAddAddressBtn();
     this.billingAddressesContainer = new BaseElement<HTMLDivElement>({ tag: 'div' });
     this.billingAddressesContainer.node.append(billingAddressTitle.node);
     this.billingAddressesContainer.node.append(this.addAddressBtn.node);
     return this.billingAddressesContainer;
-  }
+  };
 
   createAddAddressBtn = () => {
     this.addAddressBtn = new Button(
