@@ -1,22 +1,20 @@
 import BaseElement from '@Src/components/common/base-element';
 import tag from '@Src/components/common/tag';
+import Link from '@Src/components/ui/link';
 import Router from '@Src/router';
 import ROUTES, { AppRoutes } from '@Src/router/routes';
 import classes from './style.module.scss';
 
 export default class BreadCrumbs extends BaseElement<HTMLUListElement> {
   constructor() {
-    console.log(Router.getInstance().currentRoutePath);
-    console.log(window.location.pathname);
-    super(
-      { tag: 'ul', class: classes.breadCrumbs },
-      // tag<HTMLLinkElement>({
-      //   tag: 'a',
-      //   class: classes.link,
-      //   href: AppRoutes.MAIN,
-      //   text: ROUTES[AppRoutes.MAIN].name
-      // }),
+    super({ tag: 'ul', class: classes.breadCrumbs });
+    this.#draw();
+    Router.getInstance().setOnChangeCurrentRouteHandler(this.#draw);
+  }
 
+  #draw = () => {
+    this.node.innerHTML = '';
+    this.node.append(
       ...Router.getInstance()
         .currentRoutePath.split('/')
         .map((path, index, array) =>
@@ -25,14 +23,13 @@ export default class BreadCrumbs extends BaseElement<HTMLUListElement> {
                 tag: 'span',
                 text: path,
                 class: classes.current,
-              })
-            : tag<HTMLLinkElement>({
-                tag: 'a',
+              }).node
+            : new Link({
                 text: index > 0 ? path : ROUTES[AppRoutes.MAIN].name,
                 class: classes.link,
                 href: array.filter((val, i) => i <= index).join('/'),
-              }),
+              }).node,
         ),
     );
-  }
+  };
 }
