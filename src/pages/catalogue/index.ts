@@ -3,6 +3,9 @@ import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import CategoryList from '@Src/components/logic/category-list';
 import ProductList from '@Src/components/logic/product-list';
+import productCategories from '@Src/controllers/categories';
+import Router from '@Src/router';
+import { AppRoutes } from '@Src/router/routes';
 import classes from './style.module.scss';
 
 export default class CataloguePage extends ContentPage {
@@ -14,18 +17,26 @@ export default class CataloguePage extends ContentPage {
 
   #categorySection!: BaseElement<HTMLDivElement>;
 
-  constructor() {
+  constructor(categoryPathPart: string[]) {
     super({ containerTag: 'main', title: 'catalogue page', showBreadCrumbs: true });
-    this.#createContent();
-    this.container.node.append(this.#content.node);
+    productCategories.getCategories().then(() => {
+      const currentCategoryId = productCategories.routeExist(categoryPathPart[0]);
+      if (categoryPathPart.length && !currentCategoryId) {
+        Router.getInstance().route(AppRoutes.NOT_FOUND, false);
+      }
+      const backendCategoryId =
+        currentCategoryId === productCategories.CATEGORY_ALL.id ? '' : currentCategoryId;
+      this.#createContent(backendCategoryId);
+      this.container.node.append(this.#content.node);
+    });
   }
 
   #onCategorySelectHandler = (id: string) => {
-    console.log(`Clicked category with id: ${id}`);
+    Router.getInstance().changeCurrentRoute(productCategories.getById(id)?.key ?? '');
     this.#productList.showProducts(id);
   };
 
-  #createContent = () => {
+  #createContent = (currentCategoryId?: string) => {
     this.#content = tag<HTMLDivElement>(
       {
         tag: 'main',
@@ -36,6 +47,7 @@ export default class CataloguePage extends ContentPage {
       (this.#categorySection = new CategoryList(
         { class: classes.categories },
         this.#onCategorySelectHandler,
+        currentCategoryId,
       )),
       // header
       tag({ tag: 'h1', text: 'All games', class: classes.header }),
@@ -50,7 +62,7 @@ export default class CataloguePage extends ContentPage {
           class: classes.filters,
         })),
         // products
-        (this.#productList = new ProductList({ class: classes.products })),
+        (this.#productList = new ProductList({ class: classes.products }, currentCategoryId)),
       ),
     );
   };

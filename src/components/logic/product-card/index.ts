@@ -11,19 +11,20 @@ type ProductCardProps = Omit<ElementProps<HTMLLinkElement>, 'tag'>;
 export default class ProductCard extends BaseElement<HTMLElement> {
   #product: ProductProjection;
 
-  constructor(props: ProductCardProps, product: ProductProjection) {
+  constructor(props: ProductCardProps, product: ProductProjection, selectedCategoryKey?: string) {
     super({ tag: 'div', ...props });
     this.#product = product;
-    this.node.append(this.#createElement().node);
+    this.node.append(this.#createElement(selectedCategoryKey).node);
     this.node.classList.add(classes.productCard);
   }
 
-  #createElement = () => {
+  #createElement = (selectedCategory?: string) => {
     const { key, name, description, masterVariant, categories } = this.#product;
+    const categoryPath = selectedCategory?.length ? `${selectedCategory}/` : '';
     return tag<HTMLDivElement>(
       { tag: 'div', class: classes.productCard },
       new Link({
-        href: `${AppRoutes.CATALOGUE}/${key}`,
+        href: `${AppRoutes.CATALOGUE}/${categoryPath}${key}`,
         text: `link(key): ${key}`,
         class: classes.productLink,
       }),
