@@ -14,7 +14,12 @@
 }
 
 .header {
-  color: blue;
+  color: var(--color-orange-main);
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 112%;
+  text-align: center;
 }
 
 .products {

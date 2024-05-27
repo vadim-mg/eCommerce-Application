@@ -59,7 +59,7 @@ export default class ProductCard extends BaseElement<HTMLElement> {
       ...(categories ?? []).map((category, index) =>
         tag<HTMLParagraphElement>({
           tag: 'p',
-          text: `Category ${index + 1}: ${productCategories.getById(category.id)?.name[process.env.LOCALE]}`,
+          text: `Category ${index + 1}: ${productCategories.getById(category.id)?.name?.[process.env.LOCALE]}`,
         }),
       ),
     );

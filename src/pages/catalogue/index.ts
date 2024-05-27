@@ -17,15 +17,19 @@ export default class CataloguePage extends ContentPage {
 
   #categorySection!: BaseElement<HTMLDivElement>;
 
+  #header!: BaseElement<HTMLHeadingElement>;
+
   constructor(categoryPathPart: string[]) {
     super({ containerTag: 'main', title: 'catalogue page', showBreadCrumbs: true });
     productCategories.getCategories().then(() => {
-      const currentCategoryId = productCategories.routeExist(categoryPathPart[0]);
+      const currentCategoryId = productCategories.routeExist(categoryPathPart[0]) ?? '';
       if (categoryPathPart.length && !currentCategoryId) {
         Router.getInstance().route(AppRoutes.NOT_FOUND, false);
       }
       const backendCategoryId =
-        currentCategoryId === productCategories.CATEGORY_ALL.id ? '' : currentCategoryId;
+        currentCategoryId === productCategories.CATEGORY_ALL.id
+          ? productCategories.CATEGORY_ALL.id
+          : currentCategoryId;
       this.#createContent(backendCategoryId);
       this.container.node.append(this.#content.node);
     });
@@ -34,9 +38,11 @@ export default class CataloguePage extends ContentPage {
   #onCategorySelectHandler = (id: string) => {
     Router.getInstance().changeCurrentRoute(productCategories.getById(id)?.key ?? '');
     this.#productList.showProducts(id);
+    this.#header.node.textContent =
+      productCategories.getById(id)?.name?.[process.env.LOCALE] ?? '';
   };
 
-  #createContent = (currentCategoryId?: string) => {
+  #createContent = (currentCategoryId: string) => {
     this.#content = tag<HTMLDivElement>(
       {
         tag: 'main',
@@ -50,8 +56,11 @@ export default class CataloguePage extends ContentPage {
         currentCategoryId,
       )),
       // header
-      tag({ tag: 'h1', text: 'All games', class: classes.header }),
-
+      (this.#header = tag({
+        tag: 'h1',
+        text: productCategories.getById(currentCategoryId)?.name?.[process.env.LOCALE],
+        class: classes.header,
+      })),
       // main block
       tag(
         { tag: 'div', class: classes.contentSection },
