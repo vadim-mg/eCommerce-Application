@@ -7,7 +7,7 @@ import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Products, { ImageSize } from '@Src/controllers/products';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
-import { Image, Price, ProductProjection } from '@commercetools/platform-sdk';
+import { Image, Price } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
 
 interface Attribute {
@@ -18,51 +18,55 @@ interface ProductAttributes {
   [key: string]: string | number;
 }
 
+interface ProductFromPage {
+  price?: number;
+  discount?: number;
+  name?: string;
+  currency?: string;
+  description?: string;
+  minPlayers?: number;
+  maxPlayers?: number;
+  typeOfGame?: string;
+  ageFrom?: number;
+  brand?: string;
+  images?: Image[];
+  imagesSmall?: Image[];
+}
+function createAttributeRow(title: string, attribute: string): BaseElement<HTMLDivElement> {
+  const row = new BaseElement<HTMLDivElement>(
+    { tag: 'li', class: classes.attributeRow },
+    new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.attributeTitle,
+      text: title,
+    }),
+    new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.attribute,
+      text: attribute,
+    }),
+  );
+  return row;
+};
+
 export default class ProductPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
-  #product!: ProductProjection;
-
-  #productKey!: string | undefined;
-
-  #productPrice!: number;
-
-  #productDiscount!: number | undefined;
-
-  #productName!: string;
-
-  #productCurrency!: string;
-
-  #productDescription!: string;
-
-  #productMinPlayers!: number;
-
-  #productMaxPlayers!: number;
-
-  #productTypeOfGame!: string;
-
-  #productAgeFrom!: number;
-
-  #productBrand!: string;
-
-  #productImages!: Image[];
-
-  #productImagesSmall!: Image[];
+  #product!: ProductFromPage;
 
   constructor(props: string[]) {
     super({ containerTag: 'main', title: 'product page', showBreadCrumbs: true });
     console.log(props);
+    this.#product = {};
     const productKey = props[0];
     getProductByKey(productKey)
       .then((product) => {
         // You can use static properties and classes from here '@Src/controllers/products' for pictures for example
-        this.#product = product.body;
-        this.#productKey = product.body.key;
-        this.#productName = product.body.name['en-GB'];
+        this.#product.name = product.body.name['en-GB'];
         console.log(this.#product);
         this.#createPrice(product.body.masterVariant.prices as Price[]);
         this.#createAttributes(product.body.masterVariant.attributes as Attribute[]);
-        this.#productImages = product.body.masterVariant.images as Image[];
+        this.#product.images = product.body.masterVariant.images as Image[];
         this.#createContent();
         this.#showContent();
       })
@@ -75,30 +79,22 @@ export default class ProductPage extends ContentPage {
   }
 
   #createAttributes = (attributes: Attribute[]) => {
-    const attributeMap = attributes.reduce((acc: ProductAttributes, item: Attribute) => {
+    attributes.reduce((acc: ProductAttributes, item: Attribute) => {
       if (item.name) {
         const key = item.name.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
         acc[key as keyof ProductAttributes] = item.value;
       }
       return acc;
-    }, {} as ProductAttributes);
-
-    this.#productDescription = attributeMap.description as string;
-    this.#productBrand = attributeMap.brand as string;
-    this.#productMinPlayers = attributeMap.minNumberOfPlayers as number;
-    this.#productMaxPlayers = attributeMap.maxNumberOfPlayers as number;
-    this.#productAgeFrom = attributeMap.ageFrom as number;
-    this.#productTypeOfGame = attributeMap.typeOfGame as string;
+    }, this.#product as ProductAttributes);
   };
 
   #createPrice = (prices: Price[]) => {
     if (prices) {
-      this.#productPrice = prices[0].value.centAmount;
+      this.#product.price = prices[0].value.centAmount;
       if (prices[0].discounted) {
-        this.#productDiscount =
-          prices[0].discounted.value.centAmount;
+        this.#product.discount = prices[0].discounted.value.centAmount;
       }
-      this.#productCurrency = prices[0].value.currencyCode;
+      this.#product.currency = prices[0].value.currencyCode;
     }
   };
 
@@ -117,8 +113,9 @@ export default class ProductPage extends ContentPage {
     const h1 = new BaseElement<HTMLHeadingElement>({
       tag: 'h1',
       class: classes.productName,
-      text: this.#productName,
+      text: this.#product.name,
     });
+
     const priceRow = new BaseElement<HTMLDivElement>({
       tag: 'div',
       class: classes.productPriceRow,
@@ -126,7 +123,7 @@ export default class ProductPage extends ContentPage {
     const priceEl = new BaseElement<HTMLDivElement>({
       tag: 'div',
       class: classes.price,
-      text: `€${String(this.#productPrice)}`,
+      text: `€${String(this.#product.price)}`,
     });
     const button = new Button(
       { text: 'Add to Cart', class: classes.button },
@@ -140,11 +137,11 @@ export default class ProductPage extends ContentPage {
       new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.priceTitle, text: 'Price:' }),
       priceEl,
     );
-    if (this.#productDiscount) {
+    if (this.#product.discount) {
       const discountPrice = new BaseElement<HTMLDivElement>({
         tag: 'div',
         class: classes.price,
-        text: `€${String(this.#productDiscount)}`,
+        text: `€${String(this.#product.discount)}`,
       });
       priceWrapper.node.append(discountPrice.node);
       priceEl.node.classList.add(classes.priceOld);
@@ -153,58 +150,11 @@ export default class ProductPage extends ContentPage {
     priceRow.node.append(priceWrapper.node);
     priceRow.node.append(button.node);
 
-    const brandRow = new BaseElement<HTMLDivElement>(
-      { tag: 'li', class: classes.attributeRow },
-      new BaseElement<HTMLDivElement>({
-        tag: 'div',
-        class: classes.attributeTitle,
-        text: 'Brand:',
-      }),
-      new BaseElement<HTMLDivElement>({
-        tag: 'div',
-        class: classes.attribute,
-        text: this.#productBrand,
-      }),
-    );
-    const typeRow = new BaseElement<HTMLDivElement>(
-      { tag: 'li', class: classes.attributeRow },
-      new BaseElement<HTMLDivElement>({
-        tag: 'div',
-        class: classes.attributeTitle,
-        text: 'Type of game:',
-      }),
-      new BaseElement<HTMLDivElement>({
-        tag: 'div',
-        class: classes.attribute,
-        text: this.#productTypeOfGame,
-      }),
-    );
-    const numberRow = new BaseElement<HTMLDivElement>(
-      { tag: 'li', class: classes.attributeRow },
-      new BaseElement<HTMLDivElement>({
-        tag: 'div',
-        class: classes.attributeTitle,
-        text: 'Number of players:',
-      }),
-      new BaseElement<HTMLDivElement>({
-        tag: 'div',
-        class: classes.attribute,
-        text: `${this.#productMinPlayers} - ${this.#productMaxPlayers} `,
-      }),
-    );
-    const ageRow = new BaseElement<HTMLDivElement>(
-      { tag: 'li', class: classes.attributeRow },
-      new BaseElement<HTMLDivElement>({
-        tag: 'div',
-        class: classes.attributeTitle,
-        text: 'Recommended age from:',
-      }),
-      new BaseElement<HTMLDivElement>({
-        tag: 'div',
-        class: classes.attribute,
-        text: `${this.#productAgeFrom} years`,
-      }),
-    );
+    const brandRow = createAttributeRow('Brand:', this.#product.brand!);
+    const typeRow = createAttributeRow('Type of game:', this.#product.typeOfGame!);
+    const numberRow = createAttributeRow('Number of players:', `${this.#product.minPlayers} - ${this.#product.maxPlayers} `);
+    const ageRow = createAttributeRow('Recommended age from:', `${this.#product.ageFrom} years`);
+
     const attributesList = new BaseElement<HTMLOListElement>(
       { tag: 'ul', class: classes.attributeList },
       brandRow,
@@ -212,6 +162,7 @@ export default class ProductPage extends ContentPage {
       numberRow,
       ageRow,
     );
+
     const desc = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.desc },
       new BaseElement<HTMLDivElement>({
@@ -222,9 +173,10 @@ export default class ProductPage extends ContentPage {
       new BaseElement<HTMLDivElement>({
         tag: 'div',
         class: classes.descText,
-        text: this.#productDescription,
+        text: this.#product.description,
       }),
     );
+
     wrapper.node.append(h1.node);
     wrapper.node.append(priceRow.node);
     wrapper.node.append(attributesList.node);
@@ -236,14 +188,16 @@ export default class ProductPage extends ContentPage {
   #showSlider = (size: ImageSize): BaseElement<HTMLOListElement> => {
     // testing the display of product images, the slider component will be implemented in another branch
     const imagesEl = new BaseElement<HTMLOListElement>({ tag: 'ul' });
-    this.#productImages.forEach((image) => {
-      const url = Products.getImageUrl(image.url, size);
-      const li = new BaseElement<HTMLHeadingElement>(
-        { tag: 'li' },
-        new BaseElement<HTMLImageElement>({ tag: 'img', src: url, alt: image.label }),
-      );
-      imagesEl.node.append(li.node);
-    });
+    if (this.#product.images) {
+      this.#product.images.forEach((image) => {
+        const url = Products.getImageUrl(image.url, size);
+        const li = new BaseElement<HTMLHeadingElement>(
+          { tag: 'li' },
+          new BaseElement<HTMLImageElement>({ tag: 'img', src: url, alt: image.label }),
+        );
+        imagesEl.node.append(li.node);
+      });
+    }
     return imagesEl;
   };
 
