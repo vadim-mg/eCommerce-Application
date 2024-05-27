@@ -1,6 +1,7 @@
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 import tag from '@Src/components/common/tag';
 import Link from '@Src/components/ui/link';
+import productCategories from '@Src/controllers/categories';
 import Products, { ImageSize } from '@Src/controllers/products';
 import { AppRoutes } from '@Src/router/routes';
 import { ProductProjection } from '@commercetools/platform-sdk';
@@ -18,7 +19,7 @@ export default class ProductCard extends BaseElement<HTMLElement> {
   }
 
   #createElement = () => {
-    const { key, name, description, masterVariant } = this.#product;
+    const { key, name, description, masterVariant, categories } = this.#product;
     return tag<HTMLDivElement>(
       { tag: 'div', class: classes.productCard },
       new Link({
@@ -52,6 +53,12 @@ export default class ProductCard extends BaseElement<HTMLElement> {
         tag<HTMLParagraphElement>({
           tag: 'p',
           text: `${price.value.centAmount} ${price.value.currencyCode} ${price.discounted ? 'discounted' : ''}`,
+        }),
+      ),
+      ...(categories ?? []).map((category, index) =>
+        tag<HTMLParagraphElement>({
+          tag: 'p',
+          text: `Category ${index + 1}: ${productCategories.getById(category.id)?.name[process.env.LOCALE]}`,
         }),
       ),
     );
