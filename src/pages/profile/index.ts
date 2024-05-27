@@ -78,21 +78,44 @@ export default class ProfilePage extends ContentPage {
         this.#birthDateInput.value = info.body.dateOfBirth?.split('-').join('.') ?? '';
 
         info.body.addresses.forEach((address) => {
-          if (info.body.billingAddressIds?.includes(address.id ?? '')) {
-            this.createAddressComponent(
-              'billing',
-              address.country,
-              address.city ?? '',
-              address.postalCode ?? '',
-              address.streetName ?? '',
-            );
-          } else {
+          if (info.body.billingAddressIds?.includes(address.id ?? '') && info.body.shippingAddressIds?.includes(address.id ?? '')) {
+            const isDefaultBillingAddress = info.body.defaultBillingAddressId?.includes(address.id  ?? '');
+            const isDefaultShippingAddress = info.body.defaultShippingAddressId?.includes(address.id  ?? '');
             this.createAddressComponent(
               'shipping',
               address.country,
               address.city ?? '',
               address.postalCode ?? '',
               address.streetName ?? '',
+              isDefaultShippingAddress as boolean,
+            );
+            this.createAddressComponent(
+              'billing',
+              address.country,
+              address.city ?? '',
+              address.postalCode ?? '',
+              address.streetName ?? '',
+              isDefaultBillingAddress as boolean,
+            );
+          } else if (info.body.billingAddressIds?.includes(address.id ?? '')) {
+            const isDefaultBillingAddress = info.body.defaultBillingAddressId?.includes(address.id  ?? '');
+            this.createAddressComponent(
+              'billing',
+              address.country,
+              address.city ?? '',
+              address.postalCode ?? '',
+              address.streetName ?? '',
+              isDefaultBillingAddress as boolean,
+            );
+          } else {
+            const isDefaultShippingAddress = info.body.defaultShippingAddressId?.includes(address.id  ?? '');
+            this.createAddressComponent(
+              'shipping',
+              address.country,
+              address.city ?? '',
+              address.postalCode ?? '',
+              address.streetName ?? '',
+              isDefaultShippingAddress as boolean,
             );
           }
         });
@@ -264,6 +287,7 @@ export default class ProfilePage extends ContentPage {
     city: string,
     postalCode: string,
     street: string,
+    isDefaultAddress: boolean,
   ) => {
     const addressComponent = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.addressWrapper },
@@ -272,7 +296,7 @@ export default class ProfilePage extends ContentPage {
       (this.#postalCodeInput = new InputText({ name: 'postal code' }, 'Postal code')),
       (this.#streetInput = new InputText({ name: 'street' }, 'Street')),
       // todo: change 3rd argument later
-      new CheckBox({ class: classes.checkbox }, `Use us default ${addressType} address`, true),
+      new CheckBox({ class: classes.checkbox }, `Use us default ${addressType} address`, isDefaultAddress),
       this.createEditDeleteBtnComponent(),
     );
     this.#countryInput.value = country;
