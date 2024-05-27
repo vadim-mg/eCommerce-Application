@@ -5,6 +5,8 @@ import userProfileLogo from '@Assets/icons/profile-icon-dark.svg';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
 import CheckBox from '@Src/components/ui/checkbox';
+import auth from '@Src/controllers/auth';
+import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import classes from './style.module.scss';
 
 export default class ProfilePage extends ContentPage {
@@ -60,7 +62,25 @@ export default class ProfilePage extends ContentPage {
     super({ containerTag: 'main', title: 'profile page' });
     this.#createContent();
     this.#showContent();
+
+    this.#me();
   }
+
+  #me = () => {
+    auth
+      .me()
+      .then((info) => {
+        this.emailInput.value = info.body.email ?? '';
+        this.firstNameInput.value = info.body.firstName ?? '';
+        this.lastNameInput.value = info.body.lastName ?? '';
+        this.birthDateInput.value = info.body.dateOfBirth?.split('-').join('.') ?? '';
+        
+        console.log(info.body);
+      })
+      .catch((error: HttpErrorType) => {
+        console.log(error.message);
+      });
+  };
 
   #createContent = () => {
     this.#content = tag<HTMLDivElement>(
@@ -180,6 +200,7 @@ export default class ProfilePage extends ContentPage {
 
     this.toggleUserDetailsInputsState(true);
     this.saveDetailsBtn.hide();
+    // this.emailInput.value = 'testemail@gmail.com';
 
     return this.userDataDetailsWrapper;
   };
