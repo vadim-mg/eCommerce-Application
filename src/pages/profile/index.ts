@@ -156,8 +156,8 @@ export default class ProfilePage extends ContentPage {
         () => console.log('Delete'),
       )),
     );
-    this.editButton.node.classList.add(classes.editButton);
-    this.deleteButton.node.classList.add(classes.deleteButton);
+    this.editButton.node.classList.add(classes.btnLineHeight);
+    this.deleteButton.node.classList.add(classes.btnLineHeight);
     return this.editDeleteBtnWrapper;
   };
 
@@ -217,12 +217,12 @@ export default class ProfilePage extends ContentPage {
       (this.lastNameInput = new InputText({ name: 'lastName' }, 'Last name')),
       (this.birthDateInput = new InputText({ name: 'date-of-birth' }, 'Birth date')),
       (this.editDetailsBtn = new Button(
-        { text: 'Edit details', class: classes.editDetailsBtn },
+        { text: 'Edit details', class: classes.btnLineHeight },
         ButtonClasses.NORMAL,
         this.setEditMode,
       )),
       (this.saveDetailsBtn = new Button(
-        { text: 'Save', class: classes.saveDetailsBtn },
+        { text: 'Save', class: classes.btnLineHeight },
         ButtonClasses.NORMAL,
         this.setSavedMode,
       )),
@@ -263,7 +263,7 @@ export default class ProfilePage extends ContentPage {
     );
     this.passwordInput.node.classList.add(classes.inputMargin);
     this.passwordInputRepeat.node.classList.add(classes.inputMargin);
-    this.savePasswordButton.node.classList.add(classes.savePasswordButton);
+    this.savePasswordButton.node.classList.add(classes.btnLineHeight);
     return this.userPasswordWrapper;
   };
 

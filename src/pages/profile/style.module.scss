@@ -71,12 +71,12 @@ h2 {
   margin-bottom: 1.5rem;
 }
 
-.save-password-button,
-.edit-details-btn,
-.save-details-btn,
-.add-address-btn,
-.edit-button,
-.delete-button {
+.btn-line-height {
+  line-height: 100%;
+}
+
+.add-address-btn {
+  margin-bottom: 3rem;
   line-height: 100%;
 }
 
