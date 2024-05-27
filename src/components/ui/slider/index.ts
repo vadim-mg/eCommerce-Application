@@ -16,17 +16,21 @@ export enum SliderPositionControlsPanel {
 }
 
 export default class Slider extends BaseElement<HTMLElement> {
-  #images: Image[];
+  #imagesURL: string[];
 
-  #size: ImageSize;
+  #imageListEl!: BaseElement<HTMLElement>;
 
-  #imageList!: BaseElement<HTMLUListElement>;
+  #imageList!: BaseElement<HTMLElement>[];
 
   #indicators!: BaseElement<HTMLElement>[];
 
   #index: number;
 
   #currentIndicator!: BaseElement<HTMLElement>;
+
+  #touchStartX = 0;
+
+  #touchEndX = 0;
 
   constructor(
     className: string | string[],
@@ -36,8 +40,7 @@ export default class Slider extends BaseElement<HTMLElement> {
   ) {
     super({ tag: 'div', class: className });
     this.node.classList.add(classes.slider);
-    this.#images = images;
-    this.#size = size;
+    this.#imagesURL = images.map((image) => Products.getImageUrl(image.url, size));
     this.#index = 0;
     const classPositionControl =
       positionControlsPanel === SliderPositionControlsPanel.INSIDE
@@ -46,16 +49,15 @@ export default class Slider extends BaseElement<HTMLElement> {
     this.node.classList.add(classPositionControl);
     this.#createSlider();
     this.#createControlsPanel();
+    this.#addSwipeSupport();
   }
 
   #createSlider = () => {
-    const wrapper = new BaseElement<HTMLElement>({ tag: 'div', class: classes.wrapper });
-
-    this.#imageList = new BaseElement<HTMLUListElement>({ tag: 'ul', class: classes.imageList });
-    this.#images.forEach((image) => {
-      const url = Products.getImageUrl(image.url, this.#size);
+    this.#imageListEl = new BaseElement<HTMLElement>({ tag: 'div', class: classes.wrapper });
+    this.#imageList = [];
+    this.#imagesURL.forEach((url) => {
       const imageLi = new BaseElement<HTMLLIElement>(
-        { tag: 'li', class: classes.imageLi },
+        { tag: 'div', class: classes.imageLi },
         new BaseElement<HTMLImageElement>({
           tag: 'img',
           class: classes.image,
@@ -64,10 +66,11 @@ export default class Slider extends BaseElement<HTMLElement> {
         }),
       );
       imageLi.node.addEventListener('click', () => console.log('show a modal window with slider'));
-      this.#imageList.node.append(imageLi.node);
+      this.#imageListEl.node.append(imageLi.node);
+      this.#imageList.push(imageLi);
     });
-    wrapper.node.append(this.#imageList.node);
-    this.node.append(wrapper.node);
+    this.#imageList[0].node.classList.add(classes.active);
+    this.node.append(this.#imageListEl.node);
   };
 
   #createControlsPanel = () => {
@@ -88,7 +91,7 @@ export default class Slider extends BaseElement<HTMLElement> {
       class: classes.indicators,
     });
     this.#indicators = [];
-    for (let i = 0; i < this.#images.length; i += 1) {
+    for (let i = 0; i < this.#imagesURL.length; i += 1) {
       const li = new BaseElement<HTMLElement>({ tag: 'div', class: classes.indicator });
       this.#indicators.push(li);
       indicatorsWrapper.node.append(li.node);
@@ -100,19 +103,60 @@ export default class Slider extends BaseElement<HTMLElement> {
     controlsPanel.node.append(indicatorsWrapper.node);
     controlsPanel.node.append(arrowRight.node);
 
-    this.node.append(controlsPanel.node);
+    this.#imageListEl.node.append(controlsPanel.node);
   };
 
   #rotation = (direction: Direction) => {
-    if (direction === Direction.LEFT && this.#index > 0) this.#index -= 1;
-    if (direction === Direction.RIGHT && this.#index < this.#indicators.length - 1) this.#index += 1;
+    if (direction === Direction.LEFT && this.#index > 0) {
+      this.#hideItem();
+      this.#index -= 1;
+      this.#showItem();
+    }
+    if (direction === Direction.RIGHT && this.#index < this.#indicators.length - 1) {
+      this.#hideItem();
+      this.#index += 1;
+      this.#showItem();
+    }
 
     this.#changeIndicators();
   };
+
+  #hideItem() {
+    console.log('hide');
+    this.#imageList[this.#index].node.classList.remove(classes.active);
+  }
+
+  #showItem() {
+    console.log('show');
+    this.#imageList[this.#index].node.classList.add(classes.active);
+  }
 
   #changeIndicators = () => {
     this.#currentIndicator.node.classList.remove(classes.indicatorCurrent);
     this.#currentIndicator = this.#indicators[this.#index];
     this.#currentIndicator.node.classList.add(classes.indicatorCurrent);
+  };
+
+  #addSwipeSupport = () => {
+    this.#imageListEl.node.addEventListener('touchstart', this.#handleTouchStart);
+    this.#imageListEl.node.addEventListener('touchmove', this.#handleTouchMove);
+    this.#imageListEl.node.addEventListener('touchend', this.#handleTouchEnd);
+  };
+
+  #handleTouchStart = (event: TouchEvent) => {
+    this.#touchStartX = event.touches[0].clientX;
+  };
+
+  #handleTouchMove = (event: TouchEvent) => {
+    this.#touchEndX = event.touches[0].clientX;
+  };
+
+  #handleTouchEnd = () => {
+    const difference = this.#touchStartX - this.#touchEndX;
+    if (difference > 30) {
+      this.#rotation(Direction.RIGHT);
+    } else if (difference < -30) {
+      this.#rotation(Direction.LEFT);
+    }
   };
 }

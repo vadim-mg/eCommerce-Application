@@ -2,54 +2,114 @@
 .slider {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 .controlsInside {
-  .controls-panel{
+  .wrapper {
+    padding-bottom: 0.25rem;
+  }
+  .indicator{
+    background-color: var(--color-black);
+  }
+  .controls-panel {
     position: absolute;
+    width: 100%;
+    bottom: 1rem;
+    padding: 0 1rem;
   }
-}
-.controlsOutside {
-  position: static;
-}
-.wrapper {
-  overflow: hidden;
-  .image-list {
-    display: flex;
-    gap: 1rem;
-    .image-li {
-      height: 100%;
-      list-style: none;
-      .image {
-        display: block;
-        height: 100%;
-        width: auto;
-        object-fit: cover;
-      }
-    }
-  }
-}
-.controls-panel {
-  display: flex;
-  justify-content: space-between;
-}
-.arrow{
+  .arrow {
     width: 2.75rem;
     height: 2.75rem;
     cursor: pointer;
-    svg{
-      height:1.5rem;
+    display: flex;
+    align-items: center;
+    svg {
+      height: 1.5rem;
       width: auto;
-      path{
-        fill:var(--color-grey-dark);
+      path {
+        fill: var(--color-black);
         transition: fill var(--transition-time);
       }
-      &:hover{
-      path{
-        fill: var(--color-orange-light);
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          path {
+            fill: var(--color-orange-light);
+          }
+        }
       }
     }
   }
 }
+.controlsOutside {
+  .wrapper {
+    padding-bottom: 4.5rem;
+  }
+  .controls-panel {
+    position: absolute;
+    width: 100%;
+    bottom: 1rem;
+    padding: 0 1rem;
+  }
+
+  .indicator{
+    background-color: var(--color-grey-light);
+  }
+  .arrow {
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    svg {
+      height: 1.5rem;
+      width: auto;
+      path {
+        fill: var(--color-grey-dark);
+        transition: fill var(--transition-time);
+      }
+      @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        path {
+          fill: var(--color-orange-light);
+        }
+      }
+    }
+    }
+  }
+}
+.wrapper {
+  overflow: hidden;
+  width: 100%;
+  max-width: 700px;
+  max-height: 525px;
+  position: relative;
+
+  .image-li {
+    display: none;
+    width: 100%;
+    height: auto;
+
+    &.active, &.next{
+      display: block;
+    }
+      .image {
+        display: block;
+        height: auto;
+        width: calc(100% - 4px);
+        object-fit: cover;
+        box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+        border-radius: 2rem;
+      }
+    }
+}
+
+
+.controls-panel {
+  display: flex;
+  justify-content: space-between;
+    align-items: center;
+}
+
 
 .indicators {
   display: flex;
@@ -58,7 +118,6 @@
     width: 0.75rem;
     height: 0.75rem;
     border-radius: 0.75rem;
-    background-color: var(--color-grey-light);
     transition: background-color var(--transition-time);
     &.indicator-current {
       background-color: var(--color-orange-light);

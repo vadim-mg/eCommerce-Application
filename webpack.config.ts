@@ -59,10 +59,10 @@ const baseConfig = (isProd: boolean) => ({
             loader: 'svg-inline-loader',
             options: {
               removeSVGTagAttrs: false,
-            }
-          }
+            },
+          },
         ],
-        issuer: /\.[jt]sx?$/
+        issuer: /\.[jt]sx?$/,
       },
       // Правило для обработки SVG в CSS
       {
@@ -72,11 +72,11 @@ const baseConfig = (isProd: boolean) => ({
             loader: 'file-loader',
             options: {
               name: '[name].[hash].[ext]',
-              outputPath: 'assets/icons/'
-            }
-          }
+              outputPath: 'assets/icons/',
+            },
+          },
         ],
-        issuer: /\.s?css$/
+        issuer: /\.s?css$/,
       },
       {
         test: /\.module\.s?css$/i,

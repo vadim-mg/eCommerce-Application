@@ -1,8 +1,10 @@
 @import '@Src/styles/variables.scss';
 
 .product {
+  margin: 2rem 0;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  gap:3rem
 }
 .product-info {
   display: flex;
@@ -49,6 +51,7 @@
 .price-old {
   color: var(--color-orange-light);
   font-weight: 400;
+  text-decoration:line-through;
 }
 .button {
 }
@@ -96,4 +99,7 @@
 .desc-text {
   font-size: 1rem;
   line-height: 1.5rem;
+}
+.slider{
+  min-width: 576px;
 }
