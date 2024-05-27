@@ -2,9 +2,9 @@ import { getProductByKey } from '@Src/api/products';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
-// import ProductCard from '@Src/components/logic/product-card';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
-import Products, { ImageSize } from '@Src/controllers/products';
+import Slider, { SliderPositionControlsPanel } from '@Src/components/ui/slider';
+import { ImageSize } from '@Src/controllers/products';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
 import { Image, Price } from '@commercetools/platform-sdk';
@@ -30,7 +30,6 @@ interface ProductFromPage {
   ageFrom?: number;
   brand?: string;
   images?: Image[];
-  imagesSmall?: Image[];
 }
 function createAttributeRow(title: string, attribute: string): BaseElement<HTMLDivElement> {
   const row = new BaseElement<HTMLDivElement>(
@@ -47,7 +46,7 @@ function createAttributeRow(title: string, attribute: string): BaseElement<HTMLD
     }),
   );
   return row;
-};
+}
 
 export default class ProductPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
@@ -78,6 +77,18 @@ export default class ProductPage extends ContentPage {
       });
   }
 
+
+  #createContent = () => {
+    this.#content = tag<HTMLDivElement>(
+      {
+        tag: 'div',
+        class: classes.product,
+      },
+      new Slider(classes.slider, ImageSize.large, this.#product.images!, SliderPositionControlsPanel.OUTSIDE),
+      this.#createProductData(),
+    );
+  };
+
   #createAttributes = (attributes: Attribute[]) => {
     attributes.reduce((acc: ProductAttributes, item: Attribute) => {
       if (item.name) {
@@ -96,16 +107,6 @@ export default class ProductPage extends ContentPage {
       }
       this.#product.currency = prices[0].value.currencyCode;
     }
-  };
-
-  #createContent = () => {
-    this.#content = tag<HTMLDivElement>(
-      {
-        tag: 'div',
-        class: classes.product,
-      },
-      this.#createProductData(),
-    );
   };
 
   #createProductData = () => {
@@ -152,7 +153,10 @@ export default class ProductPage extends ContentPage {
 
     const brandRow = createAttributeRow('Brand:', this.#product.brand!);
     const typeRow = createAttributeRow('Type of game:', this.#product.typeOfGame!);
-    const numberRow = createAttributeRow('Number of players:', `${this.#product.minPlayers} - ${this.#product.maxPlayers} `);
+    const numberRow = createAttributeRow(
+      'Number of players:',
+      `${this.#product.minPlayers} - ${this.#product.maxPlayers} `,
+    );
     const ageRow = createAttributeRow('Recommended age from:', `${this.#product.ageFrom} years`);
 
     const attributesList = new BaseElement<HTMLOListElement>(
@@ -183,22 +187,6 @@ export default class ProductPage extends ContentPage {
     wrapper.node.append(desc.node);
 
     return wrapper;
-  };
-
-  #showSlider = (size: ImageSize): BaseElement<HTMLOListElement> => {
-    // testing the display of product images, the slider component will be implemented in another branch
-    const imagesEl = new BaseElement<HTMLOListElement>({ tag: 'ul' });
-    if (this.#product.images) {
-      this.#product.images.forEach((image) => {
-        const url = Products.getImageUrl(image.url, size);
-        const li = new BaseElement<HTMLHeadingElement>(
-          { tag: 'li' },
-          new BaseElement<HTMLImageElement>({ tag: 'img', src: url, alt: image.label }),
-        );
-        imagesEl.node.append(li.node);
-      });
-    }
-    return imagesEl;
   };
 
   #showContent = () => {

@@ -1,0 +1,50 @@
+@import '@Src/styles/variables.scss';
+.slider{
+
+}
+.controlsInside{
+
+}
+.controlsOutside{
+
+}
+.wrapper{
+  .image-list{
+    .image-li{
+      .image{
+
+      }
+    }
+  }
+
+}
+.controls-panel{
+  display: flex;
+  justify-content: space-between;
+  .arrow-left{
+    width: 2.75rem;
+    height: 2.75rem;
+    cursor: pointer;
+  }
+  .arrow-right{
+    width: 2.75rem;
+    height: 2.75rem;
+    cursor: pointer;
+
+  }
+
+}
+
+.indicators{
+  display: flex;
+  gap:0.75rem;
+  .indicator{
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 0.75rem;
+    background-color: var(--color-grey-light);
+    &.indicator-current{
+      background-color: var(--color-orange-light);
+    }
+  }
+}
