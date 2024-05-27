@@ -52,9 +52,9 @@ export default class Header extends BaseElement<HTMLElement> {
     new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.logoNavigationWrapper },
       new BaseElement<HTMLImageElement>({
-        tag: 'img',
+        tag: 'div',
         class: classes.logoIcon,
-        src: logoSvg,
+        innerHTML: logoSvg,
       }),
       new BaseElement<HTMLElement>(
         {
@@ -110,10 +110,10 @@ export default class Header extends BaseElement<HTMLElement> {
             tag: 'div',
             class: classes.basket,
           },
-          new BaseElement<HTMLImageElement>({
-            tag: 'img',
+          new BaseElement<HTMLElement>({
+            tag: 'div',
             class: classes.basketIcon,
-            src: basketSvg,
+            innerHTML: basketSvg,
           }),
         ),
       ),
@@ -142,10 +142,10 @@ export default class Header extends BaseElement<HTMLElement> {
           href: AppRoutes.PROFILE,
           class: classes.linkUserIcon,
         },
-        new BaseElement<HTMLImageElement>({
-          tag: 'img',
+        new BaseElement<HTMLElement>({
+          tag: 'div',
           class: classes.userIcon,
-          src: userSvg,
+          innerHTML: userSvg,
           hidden: !State.getInstance().isLoggedIn,
         }),
       ),

@@ -77,14 +77,18 @@ export default class ProductPage extends ContentPage {
       });
   }
 
-
   #createContent = () => {
     this.#content = tag<HTMLDivElement>(
       {
         tag: 'div',
         class: classes.product,
       },
-      new Slider(classes.slider, ImageSize.large, this.#product.images!, SliderPositionControlsPanel.OUTSIDE),
+      new Slider(
+        classes.slider,
+        ImageSize.large,
+        this.#product.images!,
+        SliderPositionControlsPanel.OUTSIDE,
+      ),
       this.#createProductData(),
     );
   };

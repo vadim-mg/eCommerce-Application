@@ -1,49 +1,66 @@
 @import '@Src/styles/variables.scss';
-.slider{
-
+.slider {
+  display: flex;
+  flex-direction: column;
 }
-.controlsInside{
-
+.controlsInside {
+  .controls-panel{
+    position: absolute;
+  }
 }
-.controlsOutside{
-
+.controlsOutside {
+  position: static;
 }
-.wrapper{
-  .image-list{
-    .image-li{
-      .image{
-
+.wrapper {
+  overflow: hidden;
+  .image-list {
+    display: flex;
+    gap: 1rem;
+    .image-li {
+      height: 100%;
+      list-style: none;
+      .image {
+        display: block;
+        height: 100%;
+        width: auto;
+        object-fit: cover;
       }
     }
   }
-
 }
-.controls-panel{
+.controls-panel {
   display: flex;
   justify-content: space-between;
-  .arrow-left{
+}
+.arrow{
     width: 2.75rem;
     height: 2.75rem;
     cursor: pointer;
+    svg{
+      height:1.5rem;
+      width: auto;
+      path{
+        fill:var(--color-grey-dark);
+        transition: fill var(--transition-time);
+      }
+      &:hover{
+      path{
+        fill: var(--color-orange-light);
+      }
+    }
   }
-  .arrow-right{
-    width: 2.75rem;
-    height: 2.75rem;
-    cursor: pointer;
-
-  }
-
 }
 
-.indicators{
+.indicators {
   display: flex;
-  gap:0.75rem;
-  .indicator{
+  gap: 0.75rem;
+  .indicator {
     width: 0.75rem;
     height: 0.75rem;
     border-radius: 0.75rem;
     background-color: var(--color-grey-light);
-    &.indicator-current{
+    transition: background-color var(--transition-time);
+    &.indicator-current {
       background-color: var(--color-orange-light);
     }
   }
