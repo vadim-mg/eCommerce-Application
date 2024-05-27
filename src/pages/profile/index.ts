@@ -9,6 +9,15 @@ import auth from '@Src/controllers/auth';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import classes from './style.module.scss';
 
+// interface Address {
+//   additionalAddressInfo: string,
+//   city: string,
+//   country: string,
+//   id: string,
+//   postalCode: string,
+//   streetName: string,
+// }
+
 export default class ProfilePage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
@@ -42,7 +51,9 @@ export default class ProfilePage extends ContentPage {
 
   saveDetailsBtn!: Button;
 
-  addressWrapper!: BaseElement<HTMLDivElement>;
+  deliveryAddressesContainer!: BaseElement<HTMLDivElement>;
+
+  billingAddressesContainer!: BaseElement<HTMLDivElement>;
 
   addAddressBtn!: Button;
 
@@ -74,7 +85,14 @@ export default class ProfilePage extends ContentPage {
         this.firstNameInput.value = info.body.firstName ?? '';
         this.lastNameInput.value = info.body.lastName ?? '';
         this.birthDateInput.value = info.body.dateOfBirth?.split('-').join('.') ?? '';
-        
+
+        info.body.addresses.forEach((address) => {
+          if (info.body.billingAddressIds?.includes(address.id ?? '')) {
+            this.createAddressComponent('billing', address.country, address.city ?? '', address.postalCode ?? '', address.streetName ?? '')
+          } else {
+            this.createAddressComponent('shipping', address.country, address.city ?? '', address.postalCode ?? '', address.streetName ?? '')
+          }
+        })
         console.log(info.body);
       })
       .catch((error: HttpErrorType) => {
@@ -90,7 +108,8 @@ export default class ProfilePage extends ContentPage {
       },
       this.createTitleComponent(),
       this.createUserDataComponent(),
-      this.createAddressComponent(),
+      this.createDeliveryAddressBasicStructure(),
+      this.createBillingAddressBasicStructure(),
     );
   };
 
@@ -200,7 +219,6 @@ export default class ProfilePage extends ContentPage {
 
     this.toggleUserDetailsInputsState(true);
     this.saveDetailsBtn.hide();
-    // this.emailInput.value = 'testemail@gmail.com';
 
     return this.userDataDetailsWrapper;
   };
@@ -237,20 +255,49 @@ export default class ProfilePage extends ContentPage {
     return this.userPasswordWrapper;
   };
 
-  createAddressComponent = () => {
-    this.addressWrapper = new BaseElement<HTMLDivElement>(
+  createAddressComponent = (addressType: string, country: string, city: string, postalCode: string, street: string) => {
+    const addressComponent = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.addressWrapper },
       (this.countryInput = new InputText({ name: 'country' }, 'Country')),
       (this.cityInput = new InputText({ name: 'city' }, 'City')),
       (this.postalCodeInput = new InputText({ name: 'postal code' }, 'Postal code')),
       (this.streetInput = new InputText({ name: 'street' }, 'Street')),
       // todo: change 3rd argument later
-      new CheckBox({ class: classes.checkbox }, 'Use us default shipping address', true),
+      new CheckBox({ class: classes.checkbox }, `Use us default ${addressType} address`, true),
       this.createEditDeleteBtnComponent(),
     );
+    this.countryInput.value = country;
+    this.cityInput.value = city;
+    this.postalCodeInput.value = postalCode;
+    this.streetInput.value = street;
+
     this.toggleUserAddressInputsState(true);
-    return this.addressWrapper;
+
+    if (addressType === 'billing') {
+      this.billingAddressesContainer.node.append(addressComponent.node);
+    } else {
+      this.deliveryAddressesContainer.node.append(addressComponent.node);
+    }
+    return addressComponent;
   };
+
+  createDeliveryAddressBasicStructure = () => {
+    const deliveryAddressTitle = new BaseElement<HTMLHeadingElement>({ tag: 'h2', text: 'Delivery address' });
+    this.addAddressBtn = this.createAddAddressBtn();
+    this.deliveryAddressesContainer = new BaseElement<HTMLDivElement>({ tag: 'div' });
+    this.deliveryAddressesContainer.node.append(deliveryAddressTitle.node);
+    this.deliveryAddressesContainer.node.append(this.addAddressBtn.node);
+    return this.deliveryAddressesContainer;
+  }
+
+  createBillingAddressBasicStructure = () => {
+    const billingAddressTitle = new BaseElement<HTMLHeadingElement>({ tag: 'h2', text: 'Billing address' });
+    this.addAddressBtn = this.createAddAddressBtn();
+    this.billingAddressesContainer = new BaseElement<HTMLDivElement>({ tag: 'div' });
+    this.billingAddressesContainer.node.append(billingAddressTitle.node);
+    this.billingAddressesContainer.node.append(this.addAddressBtn.node);
+    return this.billingAddressesContainer;
+  }
 
   createAddAddressBtn = () => {
     this.addAddressBtn = new Button(
