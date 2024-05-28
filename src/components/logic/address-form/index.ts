@@ -22,12 +22,13 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
   #editAddressButton!: Button;
 
-  constructor(props: FormProps, ...children: BaseElement<HTMLElement>[]) {
-    super({ tag: 'form', ...props }, ...children);
+  constructor(props: FormProps, addressType: string, address: Address, isDefaultAddress: boolean) {
+    super({ tag: 'form', ...props });
     this.node.classList.add(classes.baseForm);
+    this.createAddressFormComponent(addressType, address, isDefaultAddress);
   }
 
-  #createAddressFormComponent = (
+  createAddressFormComponent = (
     addressType: string,
     address: Address,
     isDefaultAddress: boolean,
@@ -51,13 +52,9 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.#postalCodeInput.value = address.postalCode ?? '';
     this.#streetInput.value = address.streetName ?? '';
 
-    // this.toggleUserAddressInputsState(true);
+    this.toggleUserAddressInputsState(true);
 
-    // if (addressType === 'billing') {
-    //   this.#billingAddressesContainer.node.append(addressComponent.node);
-    // } else {
-    //   this.#deliveryAddressesContainer.node.append(addressComponent.node);
-    // }
+    this.node.append(addressComponent.node);
     return addressComponent;
   };
 
@@ -78,5 +75,12 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.#editAddressButton.node.classList.add(classes.btnLineHeight);
     this.#deleteAddressButton.node.classList.add(classes.btnLineHeight);
     return this.#editDeleteBtnWrapper;
+  };
+
+  toggleUserAddressInputsState = (state: boolean) => {
+    this.#countryInput.setDisabled(state);
+    this.#cityInput.setDisabled(state);
+    this.#postalCodeInput.setDisabled(state);
+    this.#streetInput.setDisabled(state);
   };
 }

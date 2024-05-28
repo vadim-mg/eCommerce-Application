@@ -33,11 +33,11 @@ h2 {
   color: var(--color-black);
 
   &:has(+ button) {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
   }
 
   &:has(+ div) {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
 }
 
@@ -56,11 +56,6 @@ h2 {
   line-height: 150%;
   letter-spacing: 0.02em;
   color: var(--color-grey-dark);
-}
-
-.edit-delete-btn-wrapper {
-  display: flex;
-  gap: 2rem;
 }
 
 .password-rule {
@@ -86,8 +81,4 @@ h2 {
 
 .address-wrapper {
   max-width: 360px;
-}
-
-.checkbox {
-  margin-bottom: 3rem;
 }
