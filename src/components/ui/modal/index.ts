@@ -1,12 +1,11 @@
 import crossSVG from '@Assets/icons/cross.svg';
-import BaseElement from "@Src/components/common/base-element";
+import BaseElement from '@Src/components/common/base-element';
 import classes from './style.module.scss';
 
 export default class ModalWindow extends BaseElement<HTMLElement> {
   #modal!: BaseElement<HTMLElement>;
 
   #cross!: BaseElement<HTMLElement>;
-
 
   constructor(className: string | string[], ...children: BaseElement<HTMLElement>[]) {
     super({ tag: 'div', class: className });
@@ -25,7 +24,11 @@ export default class ModalWindow extends BaseElement<HTMLElement> {
   };
 
   #createCloseCross = () => {
-    this.#cross = new BaseElement<HTMLElement>({ tag: 'div', class: classes.cross, innerHTML: crossSVG });
+    this.#cross = new BaseElement<HTMLElement>({
+      tag: 'div',
+      class: classes.cross,
+      innerHTML: crossSVG,
+    });
 
     this.#modal.node.append(this.#cross.node);
   };

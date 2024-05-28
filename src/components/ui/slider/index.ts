@@ -11,11 +11,6 @@ enum Direction {
   RIGHT,
 }
 
-export enum SliderPositionControlsPanel {
-  INSIDE,
-  OUTSIDE,
-}
-
 export enum SliderIsZoom {
   TRUE,
   FALSE,
@@ -48,19 +43,14 @@ export default class Slider extends BaseElement<HTMLElement> {
     className: string | string[],
     size: ImageSize,
     images: Image[],
-    positionControlsPanel: SliderPositionControlsPanel,
     withZoom: SliderIsZoom,
+    start: number,
   ) {
     super({ tag: 'div', class: className });
     this.node.classList.add(classes.slider);
     this.#image = images;
     this.#imagesURL = images.map((image) => Products.getImageUrl(image.url, size));
-    this.#index = 0;
-    const classPositionControl =
-      positionControlsPanel === SliderPositionControlsPanel.INSIDE
-        ? classes.controlsInside
-        : classes.controlsOutside;
-    this.node.classList.add(classPositionControl);
+    this.#index = start;
     this.#createSlider(withZoom);
     this.#createControlsPanel();
     this.#addSwipeSupport();
@@ -69,7 +59,7 @@ export default class Slider extends BaseElement<HTMLElement> {
   #createSlider = (isZoom: SliderIsZoom) => {
     this.#imageListEl = new BaseElement<HTMLElement>({ tag: 'div', class: classes.wrapper });
     this.#imageList = [];
-    this.#imagesURL.forEach((url) => {
+    this.#imagesURL.forEach((url, index) => {
       const imageLi = new BaseElement<HTMLLIElement>(
         { tag: 'div', class: classes.imageLi },
         new BaseElement<HTMLImageElement>({
@@ -80,11 +70,19 @@ export default class Slider extends BaseElement<HTMLElement> {
         }),
       );
 
+      if (index === this.#index) {
+        imageLi.node.classList.add(classes.active);
+      }
+
       if (isZoom === SliderIsZoom.TRUE) {
         imageLi.node.addEventListener('click', () => {
-          console.log('open');
-          // new Slider(classes.sliderInModal, ImageSize.large, this.#image, SliderPositionControlsPanel.INSIDE)
-          const slider = new Slider(classes.sliderInModal, ImageSize.large, this.#image, SliderPositionControlsPanel.OUTSIDE, SliderIsZoom.FALSE);
+          const slider = new Slider(
+            classes.sliderInModal,
+            ImageSize.large,
+            this.#image,
+            SliderIsZoom.FALSE,
+            index,
+          );
           const modal = new ModalWindow(classes.modal, slider);
           modal.show();
         });
@@ -92,7 +90,6 @@ export default class Slider extends BaseElement<HTMLElement> {
       this.#imageListEl.node.append(imageLi.node);
       this.#imageList.push(imageLi);
     });
-    this.#imageList[0].node.classList.add(classes.active);
     this.node.append(this.#imageListEl.node);
   };
 
@@ -103,8 +100,8 @@ export default class Slider extends BaseElement<HTMLElement> {
     });
 
     this.#arrowLeft = this.#createArrow(Direction.LEFT, arrowLeftSVG);
-    this.#arrowLeft.node.classList.add(classes.arrowDisabled);
     this.#arrowRight = this.#createArrow(Direction.RIGHT, arrowRightSVG);
+    this.#changeArrowAvailability();
 
     const indicatorsWrapper = new BaseElement<HTMLElement>({
       tag: 'div',
@@ -115,9 +112,11 @@ export default class Slider extends BaseElement<HTMLElement> {
       const li = new BaseElement<HTMLElement>({ tag: 'div', class: classes.indicator });
       this.#indicators.push(li);
       indicatorsWrapper.node.append(li.node);
+      if (i === this.#index) {
+        this.#currentIndicator = li;
+        this.#currentIndicator.node.classList.add(classes.indicatorCurrent);
+      }
     }
-    [this.#currentIndicator] = this.#indicators;
-    this.#currentIndicator.node.classList.add(classes.indicatorCurrent);
 
     controlsPanel.node.append(this.#arrowLeft.node);
     controlsPanel.node.append(indicatorsWrapper.node);

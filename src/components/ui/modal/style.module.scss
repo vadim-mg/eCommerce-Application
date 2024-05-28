@@ -1,6 +1,6 @@
 @import '@Src/styles/variables.scss';
 
-.modal-wrapper{
+.modal-wrapper {
   width: 100%;
   min-height: 100svh;
   position: fixed;
@@ -8,32 +8,30 @@
   backdrop-filter: blur(2px);
   display: flex;
   justify-content: center;
-    align-items: center;
+  align-items: center;
 }
-.modal{
+.modal {
   border: 6px solid var(--color-black);
   border-radius: 2rem;
   padding: 0.5rem;
   overflow: hidden;
-  background-color: var( --color-grey-extra-light);
+  background-color: var(--color-grey-extra-light);
   width: fit-content;
   height: fit-content;
   position: relative;
-
 }
-.cross{
+.cross {
   position: absolute;
   top: 0.75rem;
   right: 0.25rem;
   width: 1.5rem;
   height: 1.5rem;
   cursor: pointer;
-  svg{
+  svg {
     width: 1rem;
-  height: 1rem;
-    path{
+    height: 1rem;
+    path {
       fill: var(--color-black);
     }
   }
-
 }

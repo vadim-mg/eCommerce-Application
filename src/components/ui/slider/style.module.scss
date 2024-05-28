@@ -6,43 +6,6 @@
   align-items: center;
   position: relative;
 }
-.controlsInside {
-  .wrapper {
-    padding-bottom: 0.25rem;
-  }
-  .indicator {
-    background-color: var(--color-black);
-  }
-  .controls-panel {
-    position: absolute;
-    width: 100%;
-    bottom: 1rem;
-    padding: 0 1rem;
-  }
-  .arrow {
-    width: 2.75rem;
-    height: 2.75rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-
-    svg {
-      height: 1.5rem;
-      width: auto;
-      path {
-        fill: var(--color-black);
-        transition: all var(--transition-time);
-      }
-      @media (hover: hover) and (pointer: fine) {
-        &:hover {
-          path {
-            fill: var(--color-orange-light);
-          }
-        }
-      }
-    }
-  }
-}
 
 .arrow-disabled {
   pointer-events: none;
@@ -52,44 +15,43 @@
   }
 }
 
-.controlsOutside {
-  .wrapper {
-    padding-bottom: 2.5rem;
-  }
-  .controls-panel {
-    position: absolute;
-    width: 100%;
-    bottom: 0rem;
-    padding: 0 1rem;
-  }
+.wrapper {
+  padding-bottom: 2.5rem;
+}
+.controls-panel {
+  position: absolute;
+  width: 100%;
+  bottom: 0rem;
+  padding: 0 1rem;
+}
 
-  .indicator {
-    background-color: var(--color-grey-light);
-  }
-  .arrow {
-    width: 2.75rem;
-    height: 1rem;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    svg {
-      height: 1.5rem;
-      width: auto;
-      path {
-        fill: var(--color-grey-dark);
-        transition: fill var(--transition-time);
-      }
-      @media (hover: hover) and (pointer: fine) {
-        &:hover {
-          path {
-            fill: var(--color-orange-light);
-          }
+.indicator {
+  background-color: var(--color-grey-light);
+}
+.arrow {
+  width: 2.75rem;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  svg {
+    height: 1.5rem;
+    width: auto;
+    path {
+      fill: var(--color-grey-dark);
+      transition: fill var(--transition-time);
+    }
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        path {
+          fill: var(--color-orange-light);
         }
       }
     }
   }
 }
-.slider-in-modal{
+
+.slider-in-modal {
   .wrapper {
     padding-bottom: 2.5rem;
   }
