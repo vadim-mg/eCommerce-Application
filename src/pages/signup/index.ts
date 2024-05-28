@@ -451,7 +451,10 @@ export default class SignupPage extends FormPage {
       title,
       state,
       [classes.accordion, classes.accordionHidden],
-      this.#inputsBillingAddress.country,
+      new BaseElement<HTMLDivElement>(
+        { tag: 'div', class: classes.selectField },
+        this.#inputsBillingAddress.country,
+      ),
       this.#inputsBillingAddress.city,
       this.#inputsBillingAddress.postalCode,
       this.#inputsBillingAddress.street,
@@ -466,7 +469,10 @@ export default class SignupPage extends FormPage {
       title,
       state,
       classes.accordion,
-      this.#inputsDeliveryAddress.country,
+      new BaseElement<HTMLDivElement>(
+        { tag: 'div', class: classes.selectField },
+        this.#inputsDeliveryAddress.country,
+      ),
       this.#inputsDeliveryAddress.city,
       this.#inputsDeliveryAddress.postalCode,
       this.#inputsDeliveryAddress.street,
