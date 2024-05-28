@@ -2,6 +2,7 @@
 .slider {
   display: flex;
   flex-direction: column;
+  align-items: center;
   position: relative;
 }
 .controlsInside {
@@ -17,7 +18,7 @@
     bottom: 1rem;
     padding: 0 1rem;
   }
-  .arrow{
+  .arrow {
     width: 2.75rem;
     height: 2.75rem;
     cursor: pointer;
@@ -42,9 +43,9 @@
   }
 }
 
-.arrow-disabled{
+.arrow-disabled {
   pointer-events: none;
-  cursor:auto;
+  cursor: auto;
   svg {
     opacity: 0;
   }

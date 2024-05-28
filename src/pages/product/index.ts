@@ -24,8 +24,8 @@ interface ProductFromPage {
   name?: string;
   currency?: string;
   description?: string;
-  minPlayers?: number;
-  maxPlayers?: number;
+  minNumberOfPlayers?: number;
+  maxNumberOfPlayers?: number;
   typeOfGame?: string;
   ageFrom?: number;
   brand?: string;
@@ -97,6 +97,7 @@ export default class ProductPage extends ContentPage {
     attributes.reduce((acc: ProductAttributes, item: Attribute) => {
       if (item.name) {
         const key = item.name.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+        console.log(`${key}: ${item.value}`);
         acc[key as keyof ProductAttributes] = item.value;
       }
       return acc;
@@ -159,7 +160,7 @@ export default class ProductPage extends ContentPage {
     const typeRow = createAttributeRow('Type of game:', this.#product.typeOfGame!);
     const numberRow = createAttributeRow(
       'Number of players:',
-      `${this.#product.minPlayers} - ${this.#product.maxPlayers} `,
+      `${this.#product.minNumberOfPlayers} - ${this.#product.maxNumberOfPlayers} `,
     );
     const ageRow = createAttributeRow('Recommended age from:', `${this.#product.ageFrom} years`);
 

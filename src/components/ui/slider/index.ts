@@ -123,7 +123,10 @@ export default class Slider extends BaseElement<HTMLElement> {
     if (this.#index > 0 && this.#arrowLeft.node.classList.contains(classes.arrowDisabled)) {
       this.#arrowLeft.node.classList.remove(classes.arrowDisabled);
     }
-    if (this.#index < this.#imageList.length - 1 && this.#arrowRight.node.classList.contains(classes.arrowDisabled)) {
+    if (
+      this.#index < this.#imageList.length - 1 &&
+      this.#arrowRight.node.classList.contains(classes.arrowDisabled)
+    ) {
       this.#arrowRight.node.classList.remove(classes.arrowDisabled);
     }
   };
