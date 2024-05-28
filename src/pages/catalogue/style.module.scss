@@ -3,11 +3,12 @@
 
 .content-section {
   display: grid;
-  grid-template-columns: 1fr 4fr;
+  grid-template-columns: 340px 1fr;
+  gap: 2.25rem;
 }
 
 .filters {
-  background-color: gray;
+  background-color: rgb(214, 209, 209);
 }
 
 .categories {
