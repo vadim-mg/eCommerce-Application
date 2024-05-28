@@ -2,7 +2,11 @@
   display: flex;
   gap: 0.5rem;
   margin: 0;
-  padding: 3rem 0.75rem 0.5rem;
+  padding: 3.25rem 0px 0.5rem;
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 143%;
 }
 
 .link {
@@ -11,7 +15,7 @@
   color: var(--color-grey-dark);
   &::after {
     content: '/';
-    padding-left: 0.5rem;
+    padding-left: 0.25rem;
   }
 }
 
