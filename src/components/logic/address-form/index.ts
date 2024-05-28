@@ -44,7 +44,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
         `Use us default ${addressType} address`,
         isDefaultAddress,
       ),
-      this.createEditDeleteBtnComponent(),
+      this.#createEditDeleteBtnComponent(),
     );
 
     this.#countryInput.value = address.country;
@@ -58,7 +58,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     return addressComponent;
   };
 
-  createEditDeleteBtnComponent = () => {
+  #createEditDeleteBtnComponent = () => {
     this.#editDeleteBtnWrapper = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.editDeleteBtnWrapper },
       (this.#editAddressButton = new Button(

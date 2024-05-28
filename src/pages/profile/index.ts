@@ -33,10 +33,6 @@ export default class ProfilePage extends ContentPage {
 
   #userDataDetailsWrapper!: BaseElement<HTMLDivElement>;
 
-  #userPasswordWrapper!: BaseElement<HTMLDivElement>;
-
-  #editDeleteBtnWrapper!: BaseElement<HTMLDivElement>;
-
   #passwordInput!: InputText;
 
   #passwordInputRepeat!: InputText;
@@ -192,7 +188,7 @@ export default class ProfilePage extends ContentPage {
   };
 
   createUserPasswordComponent = () => {
-    this.#userPasswordWrapper = new BaseElement<HTMLDivElement>(
+    const userPasswordWrapper = new BaseElement<HTMLDivElement>(
       {
         tag: 'div',
         class: classes.userPasswordWrapper,
@@ -220,7 +216,7 @@ export default class ProfilePage extends ContentPage {
     this.#passwordInput.node.classList.add(classes.inputMargin);
     this.#passwordInputRepeat.node.classList.add(classes.inputMargin);
     this.#savePasswordButton.node.classList.add(classes.btnLineHeight);
-    return this.#userPasswordWrapper;
+    return userPasswordWrapper;
   };
 
   createDeliveryAddressBasicStructure = () => {
