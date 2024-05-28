@@ -7,6 +7,7 @@ import InputText from '@Src/components/ui/input-text';
 import CheckBox from '@Src/components/ui/checkbox';
 import auth from '@Src/controllers/auth';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
+import { Address } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
 
 export default class ProfilePage extends ContentPage {
@@ -48,9 +49,9 @@ export default class ProfilePage extends ContentPage {
 
   #addAddressBtn!: Button;
 
-  #editButton!: Button;
+  #editAddressButton!: Button;
 
-  #deleteButton!: Button;
+  #deleteAddressButton!: Button;
 
   #countryInput!: InputText;
 
@@ -72,62 +73,39 @@ export default class ProfilePage extends ContentPage {
     auth
       .me()
       .then((info) => {
-        this.#emailInput.value = info.body.email ?? '';
-        this.#firstNameInput.value = info.body.firstName ?? '';
-        this.#lastNameInput.value = info.body.lastName ?? '';
-        this.#birthDateInput.value = info.body.dateOfBirth?.split('-').join('.') ?? '';
+        const customer = info.body;
+        this.#emailInput.value = customer.email ?? '';
+        this.#firstNameInput.value = customer.firstName ?? '';
+        this.#lastNameInput.value = customer.lastName ?? '';
+        this.#birthDateInput.value = customer.dateOfBirth?.split('-').join('.') ?? '';
 
-        info.body.addresses.forEach((address) => {
-          const isDefaultBillingAddress = info.body.defaultBillingAddressId?.includes(
-            address.id ?? '',
+        customer.shippingAddressIds?.forEach((addressId: string) => {
+          const isDefaultShippingAddress = customer.defaultShippingAddressId?.includes(
+            addressId ?? '',
           );
-          const isDefaultShippingAddress = info.body.defaultShippingAddressId?.includes(
-            address.id ?? '',
-          );
-          const userCountry = address.country;
-          const userCity = address.city ?? '';
-          const userPostalCode = address.postalCode ?? '';
-          const userStreet = address.streetName ?? '';
-          if (
-            info.body.billingAddressIds?.includes(address.id ?? '') &&
-            info.body.shippingAddressIds?.includes(address.id ?? '')
-          ) {
+          const shippingAddress = customer.addresses.find((value) => value.id === addressId);
+          if (shippingAddress) {
             this.createAddressComponent(
               'shipping',
-              userCountry,
-              userCity,
-              userPostalCode,
-              userStreet,
-              isDefaultShippingAddress as boolean,
-            );
-            this.createAddressComponent(
-              'billing',
-              userCountry,
-              userCity,
-              userPostalCode,
-              userStreet,
-              isDefaultBillingAddress as boolean,
-            );
-          } else if (info.body.billingAddressIds?.includes(address.id ?? '')) {
-            this.createAddressComponent(
-              'billing',
-              userCountry,
-              userCity,
-              userPostalCode,
-              userStreet,
-              isDefaultBillingAddress as boolean,
-            );
-          } else {
-            this.createAddressComponent(
-              'shipping',
-              userCountry,
-              userCity,
-              userPostalCode,
-              userStreet,
+              shippingAddress,
               isDefaultShippingAddress as boolean,
             );
           }
         });
+
+        customer.billingAddressIds?.forEach((addressId: string) => {
+          const isDefaultBillingAddress = info.body.defaultBillingAddressId?.includes(
+            addressId ?? '',
+          );
+          const billingAddress = customer.addresses.find((value) => value.id === addressId);
+          if (billingAddress) {
+            this.createAddressComponent(
+              'billing',
+              billingAddress,
+              isDefaultBillingAddress as boolean,
+            );
+          }
+        })
         console.log(info.body);
       })
       .catch((error: HttpErrorType) => {
@@ -168,19 +146,19 @@ export default class ProfilePage extends ContentPage {
   createEditDeleteBtnComponent = () => {
     this.#editDeleteBtnWrapper = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.editDeleteBtnWrapper },
-      (this.#editButton = new Button(
+      (this.#editAddressButton = new Button(
         { text: 'Edit', class: classes.button },
         ButtonClasses.NORMAL,
         () => console.log('Edit'),
       )),
-      (this.#deleteButton = new Button(
+      (this.#deleteAddressButton = new Button(
         { text: 'Delete', class: classes.button },
         ButtonClasses.NORMAL,
         () => console.log('Delete'),
       )),
     );
-    this.#editButton.node.classList.add(classes.btnLineHeight);
-    this.#deleteButton.node.classList.add(classes.btnLineHeight);
+    this.#editAddressButton.node.classList.add(classes.btnLineHeight);
+    this.#deleteAddressButton.node.classList.add(classes.btnLineHeight);
     return this.#editDeleteBtnWrapper;
   };
 
@@ -292,10 +270,7 @@ export default class ProfilePage extends ContentPage {
 
   createAddressComponent = (
     addressType: string,
-    country: string,
-    city: string,
-    postalCode: string,
-    street: string,
+    address: Address,
     isDefaultAddress: boolean,
   ) => {
     const addressComponent = new BaseElement<HTMLDivElement>(
@@ -311,10 +286,10 @@ export default class ProfilePage extends ContentPage {
       ),
       this.createEditDeleteBtnComponent(),
     );
-    this.#countryInput.value = country;
-    this.#cityInput.value = city;
-    this.#postalCodeInput.value = postalCode;
-    this.#streetInput.value = street;
+    this.#countryInput.value = address.country;
+    this.#cityInput.value = address.city ?? '';
+    this.#postalCodeInput.value = address.postalCode ?? '';
+    this.#streetInput.value = address.streetName ?? '';
 
     this.toggleUserAddressInputsState(true);
 
