@@ -3,6 +3,8 @@ import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import CategoryList from '@Src/components/logic/category-list';
 import ProductList from '@Src/components/logic/product-list';
+import SearchInput from '@Src/components/ui/search-input';
+import Select from '@Src/components/ui/select';
 import productCategories from '@Src/controllers/categories';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
@@ -61,6 +63,15 @@ export default class CataloguePage extends ContentPage {
         text: productCategories.getById(currentCategoryId)?.name?.[process.env.LOCALE],
         class: classes.header,
       })),
+      // Search...  sort
+      tag(
+        { tag: 'div', class: classes.topFieldsBlock },
+        new SearchInput({}),
+        new BaseElement<HTMLDivElement>(
+          { tag: 'div', class: classes.filterField },
+          new Select('', ['Date', 'Price'], () => {}),
+        ),
+      ),
       // main block
       tag(
         { tag: 'div', class: classes.contentSection },
