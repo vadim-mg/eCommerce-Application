@@ -28,6 +28,10 @@ export default class Slider extends BaseElement<HTMLElement> {
 
   #currentIndicator!: BaseElement<HTMLElement>;
 
+  #arrowLeft!: BaseElement<HTMLElement>;
+
+  #arrowRight!: BaseElement<HTMLElement>;
+
   #touchStartX = 0;
 
   #touchEndX = 0;
@@ -79,12 +83,9 @@ export default class Slider extends BaseElement<HTMLElement> {
       class: classes.controlsPanel,
     });
 
-    const arrowLeft = new BaseElement<HTMLElement>({ tag: 'div', class: classes.arrow });
-    arrowLeft.node.addEventListener('click', () => this.#rotation(Direction.LEFT));
-    arrowLeft.node.innerHTML = arrowLeftSVG;
-    const arrowRight = new BaseElement<HTMLElement>({ tag: 'div', class: classes.arrow });
-    arrowRight.node.addEventListener('click', () => this.#rotation(Direction.RIGHT));
-    arrowRight.node.innerHTML = arrowRightSVG;
+    this.#arrowLeft = this.#createArrow(Direction.LEFT, arrowLeftSVG);
+    this.#arrowLeft.node.classList.add(classes.arrowDisabled);
+    this.#arrowRight = this.#createArrow(Direction.RIGHT, arrowRightSVG);
 
     const indicatorsWrapper = new BaseElement<HTMLElement>({
       tag: 'div',
@@ -99,11 +100,32 @@ export default class Slider extends BaseElement<HTMLElement> {
     [this.#currentIndicator] = this.#indicators;
     this.#currentIndicator.node.classList.add(classes.indicatorCurrent);
 
-    controlsPanel.node.append(arrowLeft.node);
+    controlsPanel.node.append(this.#arrowLeft.node);
     controlsPanel.node.append(indicatorsWrapper.node);
-    controlsPanel.node.append(arrowRight.node);
-
+    controlsPanel.node.append(this.#arrowRight.node);
     this.#imageListEl.node.append(controlsPanel.node);
+  };
+
+  #createArrow = (direction: Direction, svg: string): BaseElement<HTMLElement> => {
+    const arrow = new BaseElement<HTMLElement>({ tag: 'div', class: classes.arrow });
+    arrow.node.addEventListener('click', () => this.#rotation(direction));
+    arrow.node.innerHTML = svg;
+    return arrow;
+  };
+
+  #changeArrowAvailability = () => {
+    if (this.#index === 0) {
+      this.#arrowLeft.node.classList.add(classes.arrowDisabled);
+    }
+    if (this.#index === this.#imageList.length - 1) {
+      this.#arrowRight.node.classList.add(classes.arrowDisabled);
+    }
+    if (this.#index > 0 && this.#arrowLeft.node.classList.contains(classes.arrowDisabled)) {
+      this.#arrowLeft.node.classList.remove(classes.arrowDisabled);
+    }
+    if (this.#index < this.#imageList.length - 1 && this.#arrowRight.node.classList.contains(classes.arrowDisabled)) {
+      this.#arrowRight.node.classList.remove(classes.arrowDisabled);
+    }
   };
 
   #rotation = (direction: Direction) => {
@@ -111,23 +133,23 @@ export default class Slider extends BaseElement<HTMLElement> {
       this.#hideItem();
       this.#index -= 1;
       this.#showItem();
+      this.#changeArrowAvailability();
     }
     if (direction === Direction.RIGHT && this.#index < this.#indicators.length - 1) {
       this.#hideItem();
       this.#index += 1;
       this.#showItem();
+      this.#changeArrowAvailability();
     }
 
     this.#changeIndicators();
   };
 
   #hideItem() {
-    console.log('hide');
     this.#imageList[this.#index].node.classList.remove(classes.active);
   }
 
   #showItem() {
-    console.log('show');
     this.#imageList[this.#index].node.classList.add(classes.active);
   }
 
