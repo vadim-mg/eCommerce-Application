@@ -17,9 +17,7 @@ export enum SliderIsZoom {
 }
 
 export default class Slider extends BaseElement<HTMLElement> {
-  #image: Image[];
-
-  #imagesURL: string[];
+  #images: Image[];
 
   #imageListEl!: BaseElement<HTMLElement>;
 
@@ -48,25 +46,24 @@ export default class Slider extends BaseElement<HTMLElement> {
   ) {
     super({ tag: 'div', class: className });
     this.node.classList.add(classes.slider);
-    this.#image = images;
-    this.#imagesURL = images.map((image) => Products.getImageUrl(image.url, size));
+    this.#images = images;
     this.#index = start;
-    this.#createSlider(withZoom);
+    this.#createSlider(withZoom, size);
     this.#createControlsPanel();
     this.#addSwipeSupport();
   }
 
-  #createSlider = (isZoom: SliderIsZoom) => {
+  #createSlider = (isZoom: SliderIsZoom, size: ImageSize) => {
     this.#imageListEl = new BaseElement<HTMLElement>({ tag: 'div', class: classes.wrapper });
     this.#imageList = [];
-    this.#imagesURL.forEach((url, index) => {
+    this.#images.forEach((image, index) => {
       const imageLi = new BaseElement<HTMLLIElement>(
         { tag: 'div', class: classes.imageLi },
         new BaseElement<HTMLImageElement>({
           tag: 'img',
           class: classes.image,
-          src: url,
-          alt: 'slider image',
+          src: Products.getImageUrl(image.url, size),
+          alt: image.label !== undefined ? image.label : 'product image',
         }),
       );
 
@@ -79,7 +76,7 @@ export default class Slider extends BaseElement<HTMLElement> {
           const slider = new Slider(
             classes.sliderInModal,
             ImageSize.large,
-            this.#image,
+            this.#images,
             SliderIsZoom.FALSE,
             index,
           );
@@ -108,7 +105,7 @@ export default class Slider extends BaseElement<HTMLElement> {
       class: classes.indicators,
     });
     this.#indicators = [];
-    for (let i = 0; i < this.#imagesURL.length; i += 1) {
+    for (let i = 0; i < this.#images.length; i += 1) {
       const li = new BaseElement<HTMLElement>({ tag: 'div', class: classes.indicator });
       this.#indicators.push(li);
       indicatorsWrapper.node.append(li.node);
