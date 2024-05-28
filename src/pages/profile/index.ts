@@ -105,7 +105,7 @@ export default class ProfilePage extends ContentPage {
               isDefaultBillingAddress as boolean,
             );
           }
-        })
+        });
         console.log(info.body);
       })
       .catch((error: HttpErrorType) => {
@@ -268,11 +268,7 @@ export default class ProfilePage extends ContentPage {
     return this.#userPasswordWrapper;
   };
 
-  createAddressComponent = (
-    addressType: string,
-    address: Address,
-    isDefaultAddress: boolean,
-  ) => {
+  createAddressComponent = (addressType: string, address: Address, isDefaultAddress: boolean) => {
     const addressComponent = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.addressWrapper },
       (this.#countryInput = new InputText({ name: 'country' }, 'Country')),
