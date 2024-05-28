@@ -27,7 +27,7 @@ export default class CataloguePage extends ContentPage {
         Router.getInstance().route(AppRoutes.NOT_FOUND, false);
       }
       const backendCategoryId =
-        currentCategoryId === productCategories.CATEGORY_ALL.id
+        !currentCategoryId || currentCategoryId === productCategories.CATEGORY_ALL.id
           ? productCategories.CATEGORY_ALL.id
           : currentCategoryId;
       this.#createContent(backendCategoryId);
