@@ -1,14 +1,27 @@
 .catalogue {
+  margin-bottom: 2rem;
 }
 
 .content-section {
   display: grid;
-  grid-template-columns: 340px 1fr;
+  // grid-template-columns: 340px 1fr;
+  justify-content: center;
   gap: 2.25rem;
+  grid-template-columns: 340px minmax(300px, 1fr);
+  @media screen and (max-width: 1448px) {
+    grid-template-columns: 340px minmax(300px, 720px);
+  }
+  @media screen and (max-width: 1089px) {
+    grid-template-columns: 720px;
+  }
+  @media screen and (max-width: 720px) {
+    grid-template-columns: 340px;
+  }
 }
 
 .filters {
   background-color: rgb(214, 209, 209);
+  min-height: 4rem;
 }
 
 .categories {
@@ -29,7 +42,16 @@
 .top-fields-block {
   display: flex;
   justify-content: space-between;
-  padding: 26px 0;
+  margin: 56px auto;
+  @media screen and (max-width: 1448px) {
+    width: 1060px;
+  }
+  @media screen and (max-width: 1089px) {
+    width: 720px;
+  }
+  @media screen and (max-width: 720px) {
+    width: 340px;
+  }
 }
 
 .filter-field {

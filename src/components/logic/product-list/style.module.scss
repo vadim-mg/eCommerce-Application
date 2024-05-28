@@ -1,6 +1,7 @@
 .product-list {
   display: flex;
   flex-direction: row;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 2.25rem 1.5rem;
 }

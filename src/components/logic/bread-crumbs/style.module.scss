@@ -7,6 +7,9 @@
   font-weight: 400;
   font-size: 14px;
   line-height: 143%;
+  @media screen and (max-width: 1440px) {
+    padding: 3.25rem 0.5rem 0.5rem;
+  }
 }
 
 .link {
