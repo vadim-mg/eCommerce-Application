@@ -33,6 +33,7 @@ const anonymousAuthMiddlewareOptions: AnonymousAuthMiddlewareOptions = {
     `create_anonymous_token:${projectKey}`,
     `view_customers:${projectKey}`,
     `view_published_products:${projectKey}`,
+    `view_categories:${projectKey}`,
   ],
   tokenCache: anonymousTokenCache,
 };

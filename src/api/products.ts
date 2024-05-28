@@ -8,6 +8,16 @@ const getProductByKey = (key: string) =>
 const getProductById = (id: string) =>
   apiRoot.apiBuilder.productProjections().withId({ ID: id }).get().execute();
 
-const getProducts = () => apiRoot.apiBuilder.productProjections().get().execute();
+const getProducts = (categoryId?: string) =>
+  apiRoot.apiBuilder
+    .productProjections()
+    .search()
+    .get({
+      queryArgs: {
+        limit: 10,
+        ...(categoryId ? { 'filter.query': `categories.id:"${categoryId}"` } : {}),
+      },
+    })
+    .execute();
 
 export { getProductById, getProductByKey, getProducts };

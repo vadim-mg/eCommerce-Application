@@ -19,21 +19,17 @@ export default class Products {
     console.log('Products constructor');
   }
 
-  #fetchProducts = async () => {
+  getProducts = async (categoryId?: string) => {
     try {
-      this.#products = (await getProducts()).body;
+      this.#products = (await getProducts(categoryId)).body;
     } catch (error) {
       console.error(error);
     }
     return this.#products;
   };
 
-  get all() {
-    return this.#fetchProducts();
-  }
-
   // get url for different size of original image
   // https://docs.commercetools.com/api/projects/products#image
   static getImageUrl = (originalUrl: string, imageSize = ImageSize.origin) =>
-    originalUrl.replace('.jpg', `${imageSize}.jpg`);
+    originalUrl.replace(/(\.jpg|\.png)/i, `${imageSize}$1`);
 }

@@ -14,10 +14,13 @@ export default class Router {
 
   static #instance: Router | null;
 
+  #onChangeCurrentRouteHandler: (() => void) | null;
+
   private constructor() {
     this.#currentRoutePath = window.location.pathname as AppRoutes;
     this.#list = ROUTES;
     this.#addPopStateEventListener();
+    this.#onChangeCurrentRouteHandler = null;
     window.history.replaceState({}, '', document.location.href);
   }
 
@@ -105,6 +108,19 @@ export default class Router {
     if (needChangeHistory) {
       window.history.pushState({}, '', `${routePathParam as AppRoutes}`);
     }
+  };
+
+  // if we need change state without rendering all page we can only change url
+  // and call this.#onChangeCurrentRouteHandler with setted callback
+  changeCurrentRoute = (path: string) => {
+    const newPath = `${this.#currentRoutePath}${path.length ? '/' : ''}${path}`;
+    window.history.pushState({}, '', `${newPath as AppRoutes}`);
+    this.#currentFullRoutePath = newPath as AppRoutes;
+    this.#onChangeCurrentRouteHandler?.();
+  };
+
+  setOnChangeCurrentRouteHandler = (cbHandler: () => void) => {
+    this.#onChangeCurrentRouteHandler = cbHandler;
   };
 
   static isRouteExist = (route: string) => !!ROUTES[route as AppRoutes];

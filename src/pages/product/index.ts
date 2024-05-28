@@ -53,11 +53,41 @@ export default class ProductPage extends ContentPage {
 
   #product!: ProductFromPage;
 
+  #productKey!: string | undefined;
+
+  #productPrice!: number;
+
+  #productDiscount!: number | undefined;
+
+  #productName!: string;
+
+  #productCurrency!: string;
+
+  #productDescription!: string;
+
+  #productMinPlayers!: number;
+
+  #productMaxPlayers!: number;
+
+  #productTypeOfGame!: string;
+
+  #productAgeFrom!: number;
+
+  #productBrand!: string;
+
+  #productImages!: Image[];
+
+  #productImagesSmall!: Image[];
+
+  /**
+   *
+   * @param props // props[0] - category key, props[1] - product key
+   */
   constructor(props: string[]) {
     super({ containerTag: 'main', title: 'product page', showBreadCrumbs: true });
     console.log(props);
     this.#product = {};
-    const productKey = props[0];
+    const productKey = props[1];
     getProductByKey(productKey)
       .then((product) => {
         // You can use static properties and classes from here '@Src/controllers/products' for pictures for example

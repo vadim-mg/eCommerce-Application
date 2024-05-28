@@ -66,4 +66,10 @@ export default class Button extends BaseElement<HTMLButtonElement> {
   enable = () => {
     this.node.disabled = false;
   };
+
+  set currentStatus(isCurrentCategory: boolean) {
+    this.node.classList[isCurrentCategory ? 'add' : 'remove'](
+      classes[ButtonClasses.CURRENT_CATEGORY],
+    );
+  }
 }
