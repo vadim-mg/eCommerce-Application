@@ -205,10 +205,10 @@ export default class ProfilePage extends ContentPage {
   createUserDataDetailsComponent = () => {
     this.#userDataDetailsWrapper = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.userDataDetailsWrapper },
-      (new BaseElement<HTMLHeadingElement>({
+      new BaseElement<HTMLHeadingElement>({
         tag: 'h2',
         text: 'Personal details',
-      })),
+      }),
       (this.#emailInput = new InputText({ name: 'email', type: 'email' }, 'E-mail')),
       (this.#firstNameInput = new InputText({ name: 'firstName' }, 'Fist name')),
       (this.#lastNameInput = new InputText({ name: 'lastName' }, 'Last name')),
