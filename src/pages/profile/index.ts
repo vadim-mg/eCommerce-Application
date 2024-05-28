@@ -10,10 +10,25 @@ import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import { Address } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
 
+const createTitleComponent = () => {
+  const titleWrapper = new BaseElement<HTMLDivElement>(
+    { tag: 'div', class: classes.titleWrapper },
+    new BaseElement<HTMLImageElement>({
+      tag: 'img',
+      src: userProfileLogo,
+      alt: 'User profile logo',
+    }),
+    new BaseElement<HTMLHeadingElement>({
+      tag: 'h1',
+      class: classes.title,
+      text: 'Your profile',
+    }),
+  );
+  return titleWrapper;
+};
+
 export default class ProfilePage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
-
-  #titleWrapper!: BaseElement<HTMLDivElement>;
 
   #userDataWrapper!: BaseElement<HTMLDivElement>;
 
@@ -28,8 +43,6 @@ export default class ProfilePage extends ContentPage {
   #passwordInputRepeat!: InputText;
 
   #savePasswordButton!: Button;
-
-  #userDataDetailsTitle!: BaseElement<HTMLHeadingElement>;
 
   #emailInput!: InputText;
 
@@ -119,28 +132,11 @@ export default class ProfilePage extends ContentPage {
         tag: 'main',
         class: classes.profile,
       },
-      this.createTitleComponent(),
+      createTitleComponent(),
       this.createUserDataComponent(),
       this.createDeliveryAddressBasicStructure(),
       this.createBillingAddressBasicStructure(),
     );
-  };
-
-  createTitleComponent = () => {
-    this.#titleWrapper = new BaseElement<HTMLDivElement>(
-      { tag: 'div', class: classes.titleWrapper },
-      new BaseElement<HTMLImageElement>({
-        tag: 'img',
-        src: userProfileLogo,
-        alt: 'User profile logo',
-      }),
-      new BaseElement<HTMLHeadingElement>({
-        tag: 'h1',
-        class: classes.title,
-        text: 'Your profile',
-      }),
-    );
-    return this.#titleWrapper;
   };
 
   createEditDeleteBtnComponent = () => {
@@ -209,7 +205,7 @@ export default class ProfilePage extends ContentPage {
   createUserDataDetailsComponent = () => {
     this.#userDataDetailsWrapper = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.userDataDetailsWrapper },
-      (this.#userDataDetailsTitle = new BaseElement<HTMLHeadingElement>({
+      (new BaseElement<HTMLHeadingElement>({
         tag: 'h2',
         text: 'Personal details',
       })),
