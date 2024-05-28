@@ -1,4 +1,5 @@
 @import '@Src/styles/variables.scss';
+
 .slider {
   display: flex;
   flex-direction: column;
@@ -53,12 +54,12 @@
 
 .controlsOutside {
   .wrapper {
-    padding-bottom: 4.5rem;
+    padding-bottom: 2.5rem;
   }
   .controls-panel {
     position: absolute;
     width: 100%;
-    bottom: 1rem;
+    bottom: 0rem;
     padding: 0 1rem;
   }
 
@@ -67,7 +68,7 @@
   }
   .arrow {
     width: 2.75rem;
-    height: 2.75rem;
+    height: 1rem;
     display: flex;
     align-items: center;
     cursor: pointer;
@@ -77,6 +78,43 @@
       path {
         fill: var(--color-grey-dark);
         transition: fill var(--transition-time);
+      }
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          path {
+            fill: var(--color-orange-light);
+          }
+        }
+      }
+    }
+  }
+}
+.slider-in-modal{
+  .wrapper {
+    padding-bottom: 2.5rem;
+  }
+  .controls-panel {
+    position: absolute;
+    width: 100%;
+    bottom: 0.5rem;
+    padding: 0 1rem;
+  }
+  .indicator {
+    background-color: var(--color-black);
+  }
+  .arrow {
+    width: 2.75rem;
+    height: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    svg {
+      height: 1.5rem;
+      width: auto;
+      path {
+        fill: var(--color-black);
+        transition: all var(--transition-time);
       }
       @media (hover: hover) and (pointer: fine) {
         &:hover {
@@ -99,6 +137,7 @@
     display: none;
     width: 100%;
     height: auto;
+    cursor: pointer;
 
     &.active,
     &.next {

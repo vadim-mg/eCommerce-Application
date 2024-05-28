@@ -3,6 +3,7 @@ import arrowRightSVG from '@Assets/icons/arrow-right.svg';
 import BaseElement from '@Src/components/common/base-element';
 import Products, { ImageSize } from '@Src/controllers/products';
 import { Image } from '@commercetools/platform-sdk';
+import ModalWindow from '../modal';
 import classes from './style.module.scss';
 
 enum Direction {
@@ -15,7 +16,14 @@ export enum SliderPositionControlsPanel {
   OUTSIDE,
 }
 
+export enum SliderIsZoom {
+  TRUE,
+  FALSE,
+}
+
 export default class Slider extends BaseElement<HTMLElement> {
+  #image: Image[];
+
   #imagesURL: string[];
 
   #imageListEl!: BaseElement<HTMLElement>;
@@ -41,9 +49,11 @@ export default class Slider extends BaseElement<HTMLElement> {
     size: ImageSize,
     images: Image[],
     positionControlsPanel: SliderPositionControlsPanel,
+    withZoom: SliderIsZoom,
   ) {
     super({ tag: 'div', class: className });
     this.node.classList.add(classes.slider);
+    this.#image = images;
     this.#imagesURL = images.map((image) => Products.getImageUrl(image.url, size));
     this.#index = 0;
     const classPositionControl =
@@ -51,12 +61,12 @@ export default class Slider extends BaseElement<HTMLElement> {
         ? classes.controlsInside
         : classes.controlsOutside;
     this.node.classList.add(classPositionControl);
-    this.#createSlider();
+    this.#createSlider(withZoom);
     this.#createControlsPanel();
     this.#addSwipeSupport();
   }
 
-  #createSlider = () => {
+  #createSlider = (isZoom: SliderIsZoom) => {
     this.#imageListEl = new BaseElement<HTMLElement>({ tag: 'div', class: classes.wrapper });
     this.#imageList = [];
     this.#imagesURL.forEach((url) => {
@@ -69,7 +79,16 @@ export default class Slider extends BaseElement<HTMLElement> {
           alt: 'slider image',
         }),
       );
-      imageLi.node.addEventListener('click', () => console.log('show a modal window with slider'));
+
+      if (isZoom === SliderIsZoom.TRUE) {
+        imageLi.node.addEventListener('click', () => {
+          console.log('open');
+          // new Slider(classes.sliderInModal, ImageSize.large, this.#image, SliderPositionControlsPanel.INSIDE)
+          const slider = new Slider(classes.sliderInModal, ImageSize.large, this.#image, SliderPositionControlsPanel.OUTSIDE, SliderIsZoom.FALSE);
+          const modal = new ModalWindow(classes.modal, slider);
+          modal.show();
+        });
+      }
       this.#imageListEl.node.append(imageLi.node);
       this.#imageList.push(imageLi);
     });
