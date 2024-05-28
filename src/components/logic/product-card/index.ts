@@ -1,5 +1,7 @@
+import basketIconPath from '@Assets/icons/basket.svg';
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 import tag from '@Src/components/common/tag';
+import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Link from '@Src/components/ui/link';
 import Products, { ImageSize } from '@Src/controllers/products';
 import { AppRoutes } from '@Src/router/routes';
@@ -28,9 +30,14 @@ export default class ProductCard extends BaseElement<HTMLElement> {
     return new Link(
       {
         href: `${AppRoutes.CATALOGUE}/${categoryPath}${key}`,
-        // text: `link(key): ${key}`,
-        class: classes.productLink,
+        class: [classes.productLink],
       },
+      // sale label
+      prices.discounted
+        ? tag<HTMLDivElement>({ tag: 'div', text: 'SALE', class: classes.discounted })
+        : tag<HTMLSpanElement>({ tag: 'span' }),
+
+      // cart caption
       tag<HTMLDivElement>(
         { tag: 'div', class: classes.productCardContainer },
         tag<HTMLHeadingElement>({
@@ -38,11 +45,15 @@ export default class ProductCard extends BaseElement<HTMLElement> {
           text: name[Products.locale],
           class: classes.productName,
         }),
+
+        // image
         tag<HTMLImageElement>({
           tag: 'img',
           class: classes.productImage,
           src: Products.getImageUrl(image?.url ?? '', ImageSize.medium),
         }),
+
+        // description
         tag<HTMLDivElement>(
           { tag: 'div', class: classes.descriptionBox },
           tag<HTMLParagraphElement>({
@@ -51,6 +62,8 @@ export default class ProductCard extends BaseElement<HTMLElement> {
             class: classes.productDescription,
           }),
         ),
+
+        // prices
         tag<HTMLParagraphElement>(
           {
             tag: 'p',
@@ -65,6 +78,17 @@ export default class ProductCard extends BaseElement<HTMLElement> {
             tag: 'span',
             text: prices.discounted ? getPrice(prices.discounted.value) : '',
           }),
+        ),
+
+        // button cart
+        new Button(
+          { text: 'Add to Cart', class: classes.cartButton },
+          ButtonClasses.NORMAL,
+          (event: Event) => {
+            event.stopPropagation();
+            console.log(`Product ${this.#product.key} will added to cart in next sprint!`);
+          },
+          basketIconPath,
         ),
       ),
     );
