@@ -151,6 +151,17 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     this.inputElement.node.disabled = state;
   };
 
+  // I added this methods to change birth date input type (from text to date)
+  addDateInputType = () => {
+    this.inputElement.node.type = 'date';
+    this.clearButtonElement.node.hidden = true;
+  };
+
+  addTextInputType = () => {
+    this.inputElement.node.type = 'text';
+    this.clearButtonElement.node.hidden = false;
+  };
+
   get value() {
     return this.inputElement.node.value;
   }
