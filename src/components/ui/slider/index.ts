@@ -16,6 +16,18 @@ export enum SliderIsZoom {
   FALSE,
 }
 
+const selectImageSize = (size: ImageSize): ImageSize => {
+  let newSize: ImageSize;
+  if (window.screen.width < 1080 && window.screen.width > 480) {
+    newSize = ImageSize.large;
+  } else if (window.screen.width < 480) {
+    newSize = ImageSize.medium;
+  } else {
+    newSize = size;
+  }
+  return newSize;
+};
+
 export default class Slider extends BaseElement<HTMLElement> {
   #images: Image[];
 
@@ -48,7 +60,7 @@ export default class Slider extends BaseElement<HTMLElement> {
     this.node.classList.add(classes.slider);
     this.#images = images;
     this.#index = start;
-    this.#createSlider(withZoom, size);
+    this.#createSlider(withZoom, selectImageSize(size));
     this.#createControlsPanel();
     this.#addSwipeSupport();
   }
@@ -73,13 +85,15 @@ export default class Slider extends BaseElement<HTMLElement> {
 
       if (isZoom === SliderIsZoom.TRUE) {
         imageLi.node.addEventListener('click', () => {
+          const imageSize = selectImageSize(ImageSize.zoom);
           const slider = new Slider(
             classes.sliderInModal,
-            ImageSize.large,
+            imageSize,
             this.#images,
             SliderIsZoom.FALSE,
             index,
           );
+
           const modal = new ModalWindow(classes.modal, slider);
           modal.show();
         });

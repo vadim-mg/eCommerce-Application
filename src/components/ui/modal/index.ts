@@ -16,21 +16,15 @@ export default class ModalWindow extends BaseElement<HTMLElement> {
   }
 
   #createContent = (children: BaseElement<HTMLElement>[]) => {
-    this.#modal = new BaseElement<HTMLElement>({ tag: 'div', class: classes.modal });
-    children.forEach((element) => {
-      this.#modal.node.append(element.node);
-    });
-    this.#createCloseCross();
-  };
-
-  #createCloseCross = () => {
-    this.#cross = new BaseElement<HTMLElement>({
-      tag: 'div',
-      class: classes.cross,
-      innerHTML: crossSVG,
-    });
-
-    this.#modal.node.append(this.#cross.node);
+    this.#modal = new BaseElement<HTMLElement>(
+      { tag: 'div', class: classes.modal },
+      ...children,
+      new BaseElement<HTMLElement>({
+        tag: 'div',
+        class: classes.cross,
+        innerHTML: crossSVG,
+      }),
+    );
   };
 
   #close = (event: Event) => {
