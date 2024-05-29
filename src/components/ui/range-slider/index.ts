@@ -114,8 +114,12 @@ export default class RangeSlider extends BaseElement<HTMLElement> {
   #createScale = (): BaseElement<HTMLUListElement> => {
     const scale = new BaseElement<HTMLUListElement>({ tag: 'ul', class: classes.scale });
     let start = this.#start;
-    for (let i = 0; i < (this.#end - this.#start) + 1; i += 1) {
-      const li = new BaseElement<HTMLLIElement>({ tag: 'li', class: classes.scaleItem, text: String(start) });
+    for (let i = 0; i < this.#end - this.#start + 1; i += 1) {
+      const li = new BaseElement<HTMLLIElement>({
+        tag: 'li',
+        class: classes.scaleItem,
+        text: String(start),
+      });
       scale.node.append(li.node);
       start += 1;
     }

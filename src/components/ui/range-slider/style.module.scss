@@ -113,17 +113,17 @@
     -webkit-appearance: none;
   }
 
-  .scale{
+  .scale {
     display: flex;
     justify-content: space-between;
     width: 100%;
     margin-top: 1rem;
     padding: 0;
 
-    .scale-item{
+    .scale-item {
       list-style: none;
       user-select: none;
-      color:var(--color-grey-light)
+      color: var(--color-grey-light);
     }
   }
 }
