@@ -1,8 +1,8 @@
 @import '@Src/styles/variables.scss';
 
 .wrapper-range-slider {
-  max-width: clamp(200px, 50vw, 500px);
-  margin: 25vh auto 0;
+  max-width: 100%;
+  padding: 1rem 0;
 }
 
 .range-slider {
@@ -29,7 +29,7 @@
       top: 0;
       bottom: 0;
       border-radius: 5px;
-      background-color: var(--color-grey);
+      background-color: var(--color-grey-light);
     }
 
     .range-between {
@@ -54,34 +54,29 @@
       width: 1.5rem;
       height: 1.5rem;
       text-align: center;
-      background-color: var(--color-orange-light);
+
       border-radius: 50%;
       transition: box-shadow 0.3s ease-in-out;
       cursor: pointer;
 
-      .thumb-text{
+      .thumb-text {
         color: var(--color-white);
         font-size: 1rem;
         line-height: 125%;
+        user-select: none;
         pointer-events: none;
       }
 
       &.left {
+        background-color: var(--color-orange-extra-light);
         left: 0%;
         transform: translate(calc(2rem / -2), 0px);
       }
 
       &.right {
+        background-color: var(--color-orange-light);
         right: 0%;
         transform: translate(calc(1rem / 2), 0px);
-      }
-
-      &.hover {
-        background-color: var(--color-orange-main);
-      }
-
-      &.active {
-        background-color: var(--color-orange-main);
       }
     }
   }
@@ -116,5 +111,19 @@
     border: 0 none;
     background-color: var(--color-orange-light);
     -webkit-appearance: none;
+  }
+
+  .scale{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0;
+
+    .scale-item{
+      list-style: none;
+      user-select: none;
+      color:var(--color-grey-light)
+    }
   }
 }

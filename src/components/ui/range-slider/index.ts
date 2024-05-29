@@ -2,10 +2,6 @@ import BaseElement from '@Src/components/common/base-element';
 import classes from './style.module.scss';
 
 export default class RangeSlider extends BaseElement<HTMLElement> {
-  minValue: number;
-
-  maxValue: number;
-
   #start: number;
 
   #end: number;
@@ -30,13 +26,19 @@ export default class RangeSlider extends BaseElement<HTMLElement> {
 
     this.#start = start;
     this.#end = end;
-    this.minValue = start;
-    this.maxValue = end;
 
     this.#create();
     this.#setStartValue();
     this.#setEndValue();
     this.#setEvents();
+  }
+
+  get minValue(): number {
+    return parseInt(this.#minInput.node.value, 10);
+  }
+
+  get maxValue(): number {
+    return parseInt(this.#maxInput.node.value, 10);
   }
 
   #create = () => {
@@ -60,8 +62,6 @@ export default class RangeSlider extends BaseElement<HTMLElement> {
       value: String(this.#end),
       class: classes.inputMax,
     });
-    this.minValue = parseInt(this.#minInput.node.value, 10);
-    this.maxValue = parseInt(this.#maxInput.node.value, 10);
 
     const trackWrapper = new BaseElement<HTMLElement>(
       {
@@ -76,23 +76,27 @@ export default class RangeSlider extends BaseElement<HTMLElement> {
         tag: 'div',
         class: classes.rangeBetween,
       })),
-      (this.#thumbLeft = new BaseElement<HTMLElement>({
-        tag: 'div',
-        class: [classes.thumb, classes.left],
-      },
-        this.#thumbLeftText = new BaseElement<HTMLElement>({
+      (this.#thumbLeft = new BaseElement<HTMLElement>(
+        {
+          tag: 'div',
+          class: [classes.thumb, classes.left],
+        },
+        (this.#thumbLeftText = new BaseElement<HTMLElement>({
           tag: 'div',
           class: [classes.thumb, classes.thumbText],
-        }))),
-      (this.#thumbRight = new BaseElement<HTMLElement>({
-        tag: 'div',
-        class: [classes.thumb, classes.right],
-      },
-        this.#thumbRightText = new BaseElement<HTMLElement>({
-          tag: 'div',
-          class: [classes.thumb, classes.thumbText],
-        })
+        })),
       )),
+      (this.#thumbRight = new BaseElement<HTMLElement>(
+        {
+          tag: 'div',
+          class: [classes.thumb, classes.right],
+        },
+        (this.#thumbRightText = new BaseElement<HTMLElement>({
+          tag: 'div',
+          class: [classes.thumb, classes.thumbText],
+        })),
+      )),
+      this.#createScale(),
     );
 
     const wrapper = new BaseElement<HTMLElement>(
@@ -107,6 +111,17 @@ export default class RangeSlider extends BaseElement<HTMLElement> {
     this.node.append(wrapper.node);
   };
 
+  #createScale = (): BaseElement<HTMLUListElement> => {
+    const scale = new BaseElement<HTMLUListElement>({ tag: 'ul', class: classes.scale });
+    let start = this.#start;
+    for (let i = 0; i < (this.#end - this.#start) + 1; i += 1) {
+      const li = new BaseElement<HTMLLIElement>({ tag: 'li', class: classes.scaleItem, text: String(start) });
+      scale.node.append(li.node);
+      start += 1;
+    }
+    return scale;
+  };
+
   #setStartValue = () => {
     const maximum = Math.min(
       parseInt(this.#minInput.node.value, 10),
@@ -119,9 +134,10 @@ export default class RangeSlider extends BaseElement<HTMLElement> {
     this.#thumbLeft.node.style.left = `${percent}%`;
     this.#rangeBetween.node.style.left = `${percent}%`;
 
-    /* if (Number(this.#minInput.node.value) >= Number(this.#maxInput.node.value) - 1) {
+    if (Number(this.#minInput.node.value) >= Number(this.#maxInput.node.value) - 1) {
       this.#minInput.node.value = String(+this.#maxInput.node.value - 1);
-    } */
+    }
+
     this.#thumbLeftText.node.innerHTML = this.#minInput.node.value;
   };
 
@@ -136,52 +152,16 @@ export default class RangeSlider extends BaseElement<HTMLElement> {
       100;
     this.#thumbRight.node.style.right = `${100 - percent}%`;
     this.#rangeBetween.node.style.right = `${100 - percent}%`;
+
+    if (Number(this.#maxInput.node.value) <= Number(this.#minInput.node.value) + 1) {
+      this.#maxInput.node.value = String(+this.#minInput.node.value + 1);
+    }
+
     this.#thumbRightText.node.innerHTML = this.#maxInput.node.value;
   };
 
   #setEvents = () => {
     this.#minInput.node.addEventListener('input', () => this.#setStartValue());
     this.#maxInput.node.addEventListener('input', () => this.#setEndValue());
-
-    // add css classes on hover and drag
-    this.#minInput.node.addEventListener('mouseover', () =>
-      this.#thumbLeft.node.classList.add(classes.hover),
-    );
-    this.#minInput.node.addEventListener('mouseout', () =>
-      this.#thumbLeft.node.classList.remove(classes.hover),
-    );
-    this.#minInput.node.addEventListener('mousedown', () =>
-      this.#thumbLeft.node.classList.add(classes.active),
-    );
-    this.#minInput.node.addEventListener('pointerup', () =>
-      this.#thumbLeft.node.classList.remove(classes.active),
-    );
-
-    this.#maxInput.node.addEventListener('mouseover', () =>
-      this.#thumbRight.node.classList.add(classes.hover),
-    );
-    this.#maxInput.node.addEventListener('mouseout', () =>
-      this.#thumbRight.node.classList.remove(classes.hover),
-    );
-    this.#maxInput.node.addEventListener('mousedown', () =>
-      this.#thumbRight.node.classList.add(classes.active),
-    );
-    this.#maxInput.node.addEventListener('pointerup', () =>
-      this.#thumbRight.node.classList.remove(classes.active),
-    );
-
-    // Mobile
-    this.#minInput.node.addEventListener('touchstart', () =>
-      this.#thumbLeft.node.classList.add(classes.active),
-    );
-    this.#minInput.node.addEventListener('touchend', () =>
-      this.#thumbLeft.node.classList.remove(classes.active),
-    );
-    this.#maxInput.node.addEventListener('touchstart', () =>
-      this.#thumbRight.node.classList.add(classes.active),
-    );
-    this.#maxInput.node.addEventListener('touchend', () =>
-      this.#thumbRight.node.classList.remove(classes.active),
-    );
   };
 }

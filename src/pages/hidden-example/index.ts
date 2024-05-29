@@ -81,7 +81,7 @@ export default class HiddenExamplePage extends ContentPage {
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'two' }),
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'three', title: 'dfdfd' }),
       ),
-      new RangeSlider(0, 10, classes.rangeSlider),
+      new RangeSlider(1, 8, classes.rangeSlider),
       new BaseElement<HTMLElement>(
         { tag: 'div', class: classes.elements },
         new Button({ text: 'Buy' }, ButtonClasses.NORMAL, () => console.log('Click!'), basketSvg),
