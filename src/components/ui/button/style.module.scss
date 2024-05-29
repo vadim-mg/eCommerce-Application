@@ -5,6 +5,8 @@
   border-radius: 0.5rem;
   border: none;
   transition: background-color var(--transition-time);
+  display: flex;
+  align-items: center;
   cursor: pointer;
   &:disabled {
     background-color: var(--color-grey-light);
@@ -32,6 +34,9 @@
   .icon {
     height: 1.25rem;
     margin-right: 0.5rem;
+    svg {
+      height: 100%;
+    }
   }
 
   &:has(> .icon) {
@@ -49,6 +54,9 @@
   .icon {
     height: 1.5rem;
     margin-right: 0.625rem;
+    svg {
+      height: 100%;
+    }
   }
 
   &:has(> .icon) {
