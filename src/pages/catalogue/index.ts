@@ -47,7 +47,7 @@ export default class CataloguePage extends ContentPage {
   #createContent = (currentCategoryId: string) => {
     this.#content = tag<HTMLDivElement>(
       {
-        tag: 'main',
+        tag: 'div',
         class: classes.catalogue,
       },
 
