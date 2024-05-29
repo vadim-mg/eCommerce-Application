@@ -22,7 +22,7 @@ export default class CataloguePage extends ContentPage {
   #header!: BaseElement<HTMLHeadingElement>;
 
   constructor(categoryPathPart: string[]) {
-    super({ containerTag: 'main', title: 'catalogue page', showBreadCrumbs: true });
+    super({ containerTag: 'div', title: 'catalogue page', showBreadCrumbs: true });
     productCategories.getCategories().then(() => {
       const currentCategoryId = productCategories.routeExist(categoryPathPart[0]) ?? '';
       if (categoryPathPart.length && !currentCategoryId) {
@@ -74,7 +74,7 @@ export default class CataloguePage extends ContentPage {
       ),
       // main block
       tag(
-        { tag: 'div', class: classes.contentSection },
+        { tag: 'main', class: classes.contentSection },
         // filters
         (this.#filters = tag<HTMLDivElement>({
           tag: 'div',
