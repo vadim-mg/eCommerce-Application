@@ -1,7 +1,6 @@
-
 @import '@Src/styles/variables.scss';
 
-.wrapper-range-slider{
+.wrapper-range-slider {
   max-width: clamp(200px, 50vw, 500px);
   margin: 25vh auto 0;
 }
@@ -43,7 +42,7 @@
       bottom: 0;
       border-radius: 5px;
       transform: translateY(-0.35rem);
-      background: linear-gradient(90deg, #f4c672 0%, #f5a73f 100%);;
+      background: linear-gradient(90deg, #f4c672 0%, #f5a73f 100%);
     }
 
     .thumb {
@@ -54,14 +53,18 @@
       z-index: 3;
       width: 1.5rem;
       height: 1.5rem;
-      color:var(--color-white);
-      font-size: 1rem;
-      line-height: 125%;
       text-align: center;
       background-color: var(--color-orange-light);
       border-radius: 50%;
       transition: box-shadow 0.3s ease-in-out;
       cursor: pointer;
+
+      .thumb-text{
+        color: var(--color-white);
+        font-size: 1rem;
+        line-height: 125%;
+        pointer-events: none;
+      }
 
       &.left {
         left: 0%;
