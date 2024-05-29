@@ -82,7 +82,7 @@ export default class ProductCard extends BaseElement<HTMLElement> {
 
         // button cart
         new Button(
-          { text: 'Add to Cart', class: classes.cartButton },
+          { text: 'Add to Cart', class: classes.cardButton },
           ButtonClasses.NORMAL,
           (event: Event) => {
             event.stopPropagation();
