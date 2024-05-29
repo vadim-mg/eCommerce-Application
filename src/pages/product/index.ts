@@ -3,7 +3,7 @@ import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
-import Slider, { SliderPositionControlsPanel } from '@Src/components/ui/slider';
+import Slider, { SliderIsZoom } from '@Src/components/ui/slider';
 import { ImageSize } from '@Src/controllers/products';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
@@ -113,12 +113,7 @@ export default class ProductPage extends ContentPage {
         tag: 'div',
         class: classes.product,
       },
-      new Slider(
-        classes.slider,
-        ImageSize.large,
-        this.#product.images!,
-        SliderPositionControlsPanel.OUTSIDE,
-      ),
+      new Slider(classes.slider, ImageSize.large, this.#product.images!, SliderIsZoom.TRUE, 0),
       this.#createProductData(),
     );
   };
