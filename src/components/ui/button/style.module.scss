@@ -4,6 +4,9 @@
   color: var(--color-white);
   border-radius: 0.5rem;
   border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   transition: background-color var(--transition-time);
   cursor: pointer;
   &:disabled {

@@ -19,10 +19,9 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
 
   showProducts = async (categoryId?: string) => {
     try {
-      // const respBody: ProductProjectionPagedQueryResponse =
-      //   testData as ProductProjectionPagedQueryResponse;
+      const realCategoryId = categoryId === productCategories.CATEGORY_ALL.id ? '' : categoryId;
 
-      const respBody = await this.#products.getProducts(categoryId);
+      const respBody = await this.#products.getProducts(realCategoryId);
 
       const selectedCategoryKey = categoryId
         ? productCategories.getById(categoryId)?.key

@@ -29,12 +29,10 @@ export default class CategoryList extends BaseElement<HTMLDivElement> {
 
   #showCategories = async () => {
     try {
-      const allCategories = {
-        name: { [process.env.LOCALE]: 'All games' },
-        id: '', // for all games id = undefined or ''
-      };
-
-      this.#categories = [allCategories, ...(await productCategories.getCategories())];
+      this.#categories = [
+        productCategories.CATEGORY_ALL,
+        ...(await productCategories.getCategories()),
+      ];
       console.log('this.#categories');
       console.log(this.#categories);
 

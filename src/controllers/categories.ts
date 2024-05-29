@@ -4,13 +4,14 @@ import { Category } from '@commercetools/platform-sdk';
 class ProductCategories {
   #cache: Category[];
 
-  #map: Map<string, Category>;
+  #map: Map<string, Partial<Category>>;
 
   #categoryRoutes: Map<string, string>;
 
   CATEGORY_ALL = {
     key: 'all',
     id: 'all-categories-id',
+    name: { [process.env.LOCALE]: 'All games' },
   };
 
   constructor() {
@@ -28,7 +29,9 @@ class ProductCategories {
       this.#cache = (await categoriesApi.getCategories()).body.results.filter(
         (category) => category.key,
       ); // leave only category with key, it will be need for routes
-      this.#map = new Map(this.#cache.map((category) => [category.id, category]));
+      this.#map = new Map(
+        [...this.#cache, this.CATEGORY_ALL].map((category) => [category.id, category]),
+      );
       this.#categoryRoutes = new Map(
         this.#cache.map((category) => (category.key ? [category.key, category.id] : ['', ''])),
       );

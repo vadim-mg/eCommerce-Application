@@ -13,7 +13,7 @@ export enum ImageSize {
 export default class Products {
   #products!: ProductProjectionPagedQueryResponse;
 
-  static locale = 'en-GB';
+  static locale = process.env.LOCALE;
 
   constructor() {
     console.log('Products constructor');

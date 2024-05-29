@@ -3,6 +3,8 @@ import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import CategoryList from '@Src/components/logic/category-list';
 import ProductList from '@Src/components/logic/product-list';
+import SearchInput from '@Src/components/ui/search-input';
+import Select from '@Src/components/ui/select';
 import productCategories from '@Src/controllers/categories';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
@@ -17,15 +19,19 @@ export default class CataloguePage extends ContentPage {
 
   #categorySection!: BaseElement<HTMLDivElement>;
 
+  #header!: BaseElement<HTMLHeadingElement>;
+
   constructor(categoryPathPart: string[]) {
     super({ containerTag: 'main', title: 'catalogue page', showBreadCrumbs: true });
     productCategories.getCategories().then(() => {
-      const currentCategoryId = productCategories.routeExist(categoryPathPart[0]);
+      const currentCategoryId = productCategories.routeExist(categoryPathPart[0]) ?? '';
       if (categoryPathPart.length && !currentCategoryId) {
         Router.getInstance().route(AppRoutes.NOT_FOUND, false);
       }
       const backendCategoryId =
-        currentCategoryId === productCategories.CATEGORY_ALL.id ? '' : currentCategoryId;
+        !currentCategoryId || currentCategoryId === productCategories.CATEGORY_ALL.id
+          ? productCategories.CATEGORY_ALL.id
+          : currentCategoryId;
       this.#createContent(backendCategoryId);
       this.container.node.append(this.#content.node);
     });
@@ -34,12 +40,14 @@ export default class CataloguePage extends ContentPage {
   #onCategorySelectHandler = (id: string) => {
     Router.getInstance().changeCurrentRoute(productCategories.getById(id)?.key ?? '');
     this.#productList.showProducts(id);
+    this.#header.node.textContent =
+      productCategories.getById(id)?.name?.[process.env.LOCALE] ?? '';
   };
 
-  #createContent = (currentCategoryId?: string) => {
+  #createContent = (currentCategoryId: string) => {
     this.#content = tag<HTMLDivElement>(
       {
-        tag: 'main',
+        tag: 'div',
         class: classes.catalogue,
       },
 
@@ -50,8 +58,20 @@ export default class CataloguePage extends ContentPage {
         currentCategoryId,
       )),
       // header
-      tag({ tag: 'h1', text: 'All games', class: classes.header }),
-
+      (this.#header = tag({
+        tag: 'h1',
+        text: productCategories.getById(currentCategoryId)?.name?.[process.env.LOCALE],
+        class: classes.header,
+      })),
+      // Search...  sort
+      tag(
+        { tag: 'div', class: classes.topFieldsBlock },
+        new SearchInput({}),
+        new BaseElement<HTMLDivElement>(
+          { tag: 'div', class: classes.filterField },
+          new Select('', ['Date', 'Price'], () => {}),
+        ),
+      ),
       // main block
       tag(
         { tag: 'div', class: classes.contentSection },
