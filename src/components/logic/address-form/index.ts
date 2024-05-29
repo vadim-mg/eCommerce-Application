@@ -18,9 +18,11 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
   #editDeleteBtnWrapper!: BaseElement<HTMLDivElement>;
 
-  #deleteAddressButton!: Button;
+  #cancelAddressButton!: Button;
 
   #editAddressButton!: Button;
+
+  #saveAddressButton!: Button;
 
   constructor(props: FormProps, addressType: string, address: Address, isDefaultAddress: boolean) {
     super({ tag: 'form', ...props });
@@ -52,7 +54,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.#postalCodeInput.value = address.postalCode ?? '';
     this.#streetInput.value = address.streetName ?? '';
 
-    this.toggleUserAddressInputsState(true);
+    this.setUserAddressInputsState(true);
 
     this.node.append(addressComponent.node);
     return addressComponent;
@@ -66,18 +68,26 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
         ButtonClasses.NORMAL,
         () => console.log('Edit'),
       )),
-      (this.#deleteAddressButton = new Button(
-        { text: 'Delete', class: classes.button },
+      (this.#saveAddressButton = new Button(
+        { text: 'Save', class: classes.button },
         ButtonClasses.NORMAL,
-        () => console.log('Delete'),
+        () => console.log('Save'),
+      )),
+      (this.#cancelAddressButton = new Button(
+        { text: 'Cancel', class: classes.button },
+        ButtonClasses.NORMAL,
+        () => console.log('Cancel'),
       )),
     );
+    this.#saveAddressButton.hide();
+
     this.#editAddressButton.node.classList.add(classes.btnLineHeight);
-    this.#deleteAddressButton.node.classList.add(classes.btnLineHeight);
+    this.#saveAddressButton.node.classList.add(classes.btnLineHeight);
+    this.#cancelAddressButton.node.classList.add(classes.btnLineHeight);
     return this.#editDeleteBtnWrapper;
   };
 
-  toggleUserAddressInputsState = (state: boolean) => {
+  setUserAddressInputsState = (state: boolean) => {
     this.#countryInput.setDisabled(state);
     this.#cityInput.setDisabled(state);
     this.#postalCodeInput.setDisabled(state);
