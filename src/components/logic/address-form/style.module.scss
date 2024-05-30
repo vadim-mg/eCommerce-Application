@@ -1,3 +1,5 @@
+@import '@Src/styles/variables.scss';
+
 .address-wrapper {
   max-width: 360px;
 }
@@ -13,4 +15,12 @@
 
 .btn-line-height {
   line-height: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+.select-country {
+  margin-bottom: 1.25rem;
 }

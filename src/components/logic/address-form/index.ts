@@ -56,7 +56,8 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       ),
       this.#createEditDeleteBtnComponent(),
     );
-    this.#countrySelect.node.innerHTML = '';
+    this.#countrySelect.node.classList.add(classes.selectCountry);
+    this.#countrySelect.node.classList.add(classes.hidden);
 
     this.#countryInput.value = address.country;
     this.#cityInput.value = address.city ?? '';
@@ -111,8 +112,8 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
   setEditMode = () => {
     this.setUserAddressInputsState(false);
-    this.#countrySelect = new Select('Country', countiesList, () => console.log('country'));
-    this.node.prepend(this.#countrySelect.node);
+    this.#countrySelect.node.classList.remove(classes.hidden);
+    this.#countryInput.node.classList.add(classes.hidden);
 
     this.#saveAddressButton.show();
     this.#editAddressButton.hide();
@@ -120,19 +121,20 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
   setSavedMode = () => {
     this.setUserAddressInputsState(true);
-    this.#countrySelect.node.innerHTML = '';
+
+    this.#countrySelect.node.classList.add(classes.hidden);
+    this.#countryInput.node.classList.remove(classes.hidden);
 
     this.#saveAddressButton.hide();
     this.#editAddressButton.show();
-  }
+  };
 
   setCanceledMode = () => {
     this.setUserAddressInputsState(true);
-    this.#countrySelect.node.innerHTML = '';
 
     this.#saveAddressButton.hide();
     this.#cancelAddressButton.hide();
     this.#editAddressButton.show();
     this.#deleteAddressButton.show();
-  }
+  };
 }
