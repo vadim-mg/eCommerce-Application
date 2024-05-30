@@ -13,7 +13,6 @@ import checkMarkSvg from '@Assets/icons/checkmark-white.svg';
 import { MyCustomerUpdateAction } from '@commercetools/platform-sdk';
 import { validateDateOfBirth, validateEmail, validateUserData } from '@Src/utils/helpers';
 import classes from './style.module.scss';
-// import { validateForm } from '../signup';
 
 const createTitleComponent = () => {
   const titleWrapper = new BaseElement<HTMLDivElement>(
@@ -29,31 +28,6 @@ const createTitleComponent = () => {
     }),
   );
   return titleWrapper;
-};
-
-export const showUpdateNotification = (isSuccessful: boolean) => {
-  const notificationTextElement = new BaseElement<HTMLParagraphElement>({
-    tag: 'p',
-    class: classes.notificationTextElement,
-  });
-  const notificationTextWrapper = new BaseElement<HTMLDivElement>({
-    tag: 'div',
-    class: classes.notificationTextWrapper,
-  });
-  const notificationBlockWrapper = new BaseElement<HTMLDivElement>(
-    { tag: 'div', class: classes.notificationBlockWrapper },
-    notificationTextWrapper,
-  );
-  if (isSuccessful) {
-    notificationTextElement.node.textContent = `Data successfully updated.`;
-    notificationTextWrapper.node.innerHTML = checkMarkSvg;
-    notificationBlockWrapper.node.classList.add(classes.success);
-  } else {
-    notificationTextElement.node.textContent = `Sorry, failed to update the data.`;
-    notificationTextWrapper.node.innerHTML = crossSvg;
-  }
-  notificationTextWrapper.node.append(notificationTextElement.node);
-  return notificationBlockWrapper;
 };
 
 export default class ProfilePage extends ContentPage {
@@ -88,6 +62,10 @@ export default class ProfilePage extends ContentPage {
   #addAddressBtn!: Button;
 
   #currentVersion!: number;
+
+  #notificationSuccessBlockWrapper!: BaseElement<HTMLDivElement>;
+
+  #notificationErrorBlockWrapper!: BaseElement<HTMLDivElement>;
 
   constructor() {
     super({ containerTag: 'main', title: 'profile page' });
@@ -140,6 +118,48 @@ export default class ProfilePage extends ContentPage {
       });
   };
 
+  createSuccessNotification = () => {
+    const notificationTextElement = new BaseElement<HTMLParagraphElement>({
+      tag: 'p',
+      class: classes.notificationTextElement,
+      text: 'Data successfully updated.',
+    });
+    const notificationTextWrapper = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.notificationTextWrapper,
+      innerHTML: checkMarkSvg,
+    });
+    notificationTextWrapper.node.append(notificationTextElement.node);
+    this.#notificationSuccessBlockWrapper = new BaseElement<HTMLDivElement>(
+      { tag: 'div', class: classes.notificationSuccessBlockWrapper },
+      notificationTextWrapper,
+    );
+    return this.#notificationSuccessBlockWrapper;
+  }
+
+  createErrorNotification = () => {
+    const notificationTextElement = new BaseElement<HTMLParagraphElement>({
+      tag: 'p',
+      class: classes.notificationTextElement,
+      text: 'Sorry, failed to update the data.',
+    });
+    const notificationTextWrapper = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.notificationTextWrapper,
+      innerHTML: crossSvg,
+    });
+    notificationTextWrapper.node.append(notificationTextElement.node);
+    this.#notificationErrorBlockWrapper = new BaseElement<HTMLDivElement>(
+      { tag: 'div', class: classes.notificationErrorBlockWrapper },
+      notificationTextWrapper,
+    );
+    return this.#notificationErrorBlockWrapper;
+  }
+
+  hideUpdateNotification = () => {
+    this.#notificationSuccessBlockWrapper.node.innerHTML = '';
+  }
+
   #createContent = () => {
     this.#content = tag<HTMLDivElement>(
       {
@@ -186,12 +206,17 @@ export default class ProfilePage extends ContentPage {
     this.#firstNameInput.validate();
     this.#lastNameInput.validate();
     this.#birthDateInput.validate();
-    if (this.#emailInput.isValid && this.#firstNameInput.isValid && this.#lastNameInput.isValid && this.#birthDateInput.isValid) {
+    if (
+      this.#emailInput.isValid &&
+      this.#firstNameInput.isValid &&
+      this.#lastNameInput.isValid &&
+      this.#birthDateInput.isValid
+    ) {
       this.setSavedMode();
     } else {
       console.log('invalid');
     }
-  }
+  };
 
   setSavedMode = () => {
     const customerUpdatedPersonalData: MyCustomerUpdateAction[] = [
@@ -216,6 +241,7 @@ export default class ProfilePage extends ContentPage {
       this.#currentVersion,
       customerUpdatedPersonalData,
     );
+    
     console.log(response);
 
     this.toggleUserDetailsInputsState(true);
@@ -233,10 +259,20 @@ export default class ProfilePage extends ContentPage {
         tag: 'h2',
         text: 'Personal details',
       }),
-      (this.#emailInput = new InputText({ name: 'email', type: 'email' }, 'E-mail', () => validateEmail(this.#emailInput.value))),
-      (this.#firstNameInput = new InputText({ name: 'firstName' }, 'Fist name', () => validateUserData(this.#firstNameInput.value))),
-      (this.#lastNameInput = new InputText({ name: 'lastName' }, 'Last name', () => validateUserData(this.#lastNameInput.value))),
-      (this.#birthDateInput = new InputText({ name: 'date-of-birth' }, 'Birth date', () => validateDateOfBirth(this.#birthDateInput.value))),
+      (this.#emailInput = new InputText({ name: 'email', type: 'email' }, 'E-mail', () =>
+        validateEmail(this.#emailInput.value),
+      )),
+      (this.#firstNameInput = new InputText({ name: 'firstName' }, 'Fist name', () =>
+        validateUserData(this.#firstNameInput.value),
+      )),
+      (this.#lastNameInput = new InputText({ name: 'lastName' }, 'Last name', () =>
+        validateUserData(this.#lastNameInput.value),
+      )),
+      (this.#birthDateInput = new InputText({ name: 'date-of-birth' }, 'Birth date', () =>
+        validateDateOfBirth(this.#birthDateInput.value),
+      )),
+      this.createSuccessNotification(),
+      this.createErrorNotification(),
       (this.#editDetailsBtn = new Button(
         { text: 'Edit details', class: classes.btnLineHeight },
         ButtonClasses.NORMAL,
@@ -248,6 +284,9 @@ export default class ProfilePage extends ContentPage {
         this.handlerOnClickBtnUserDetails,
       )),
     );
+    this.#notificationErrorBlockWrapper.node.hidden = true;
+    this.#notificationSuccessBlockWrapper.node.hidden = true;
+
     this.#birthDateInput.node.classList.add(classes.birthDateInput);
 
     this.toggleUserDetailsInputsState(true);

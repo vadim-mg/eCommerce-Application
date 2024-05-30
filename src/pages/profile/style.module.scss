@@ -82,3 +82,41 @@ h2 {
 .address-wrapper {
   max-width: 360px;
 }
+
+.hidden {
+  display: none;
+}
+
+.notification-error-block-wrapper,
+.notification-success-block-wrapper {
+  position: absolute;
+  border-radius: 1.5rem;
+  padding: 1.5rem 1rem;
+  max-width: 360px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.notification-error-block-wrapper {
+  background-color: rgba(247, 57, 57, 0.9);
+  
+}
+
+.notification-success-block-wrapper {
+  background-color: rgba(55, 211, 134, 0.9);
+}
+
+.notification-text-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  line-height: 156%;
+  font-weight: 500;
+  font-size: 1.125rem;
+  color: var(--color-white);
+}
+
+.notification-text-element {
+  margin: 0;
+}
