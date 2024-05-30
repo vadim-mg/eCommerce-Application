@@ -1,5 +1,5 @@
 import { ProductProjectionPagedQueryResponse } from '@commercetools/platform-sdk';
-import { getProducts } from '@Src/api/products';
+import { getProducts, SortingType } from '@Src/api/products';
 
 export enum ImageSize {
   origin = '',
@@ -19,9 +19,9 @@ export default class Products {
     console.log('Products constructor');
   }
 
-  getProducts = async (categoryId?: string) => {
+  getProducts = async (categoryId?: string, sortingType?: SortingType) => {
     try {
-      this.#products = (await getProducts(categoryId)).body;
+      this.#products = (await getProducts(categoryId, sortingType)).body;
     } catch (error) {
       console.error(error);
     }

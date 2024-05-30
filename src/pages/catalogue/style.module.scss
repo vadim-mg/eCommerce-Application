@@ -4,7 +4,6 @@
 
 .content-section {
   display: grid;
-  // grid-template-columns: 340px 1fr;
   justify-content: center;
   gap: 2.25rem;
   grid-template-columns: 340px minmax(300px, 1fr);
@@ -42,6 +41,7 @@
 .top-fields-block {
   display: flex;
   justify-content: space-between;
+  gap: 1rem;
   margin: 56px auto;
   @media screen and (max-width: 1448px) {
     width: 1060px;
@@ -50,11 +50,12 @@
     width: 720px;
   }
   @media screen and (max-width: 720px) {
+    flex-wrap: wrap;
+    justify-content: right;
     width: 340px;
   }
 }
 
 .filter-field {
-  width: 240px;
   height: 44px;
 }

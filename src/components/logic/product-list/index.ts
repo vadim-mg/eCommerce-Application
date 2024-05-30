@@ -1,5 +1,6 @@
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 
+import { SortingType } from '@Src/api/products';
 import productCategories from '@Src/controllers/categories';
 import Products from '@Src/controllers/products';
 import ProductCard from '../product-card';
@@ -10,18 +11,17 @@ type ProductListProps = Omit<ElementProps<HTMLLinkElement>, 'tag'>;
 export default class ProductList extends BaseElement<HTMLDivElement> {
   #products: Products;
 
-  constructor(props: ProductListProps, categoryId?: string) {
+  constructor(props: ProductListProps) {
     super({ tag: 'div', ...props });
     this.#products = new Products();
     this.node.classList.add(classes.productList);
-    this.showProducts(categoryId);
   }
 
-  showProducts = async (categoryId?: string) => {
+  showProducts = async (categoryId?: string, sortingType?: SortingType) => {
     try {
       const realCategoryId = categoryId === productCategories.CATEGORY_ALL.id ? '' : categoryId;
 
-      const respBody = await this.#products.getProducts(realCategoryId);
+      const respBody = await this.#products.getProducts(realCategoryId, sortingType);
 
       const selectedCategoryKey = categoryId
         ? productCategories.getById(categoryId)?.key
