@@ -8,8 +8,12 @@ import AddressForm from '@Src/components/logic/address-form';
 import auth from '@Src/controllers/auth';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import Customer from '@Src/controllers/customers';
+import crossSvg from '@Assets/icons/cross-white.svg';
+import checkMarkSvg from '@Assets/icons/checkmark-white.svg';
 import { MyCustomerUpdateAction } from '@commercetools/platform-sdk';
+import { validateDateOfBirth, validateEmail, validateUserData } from '@Src/utils/helpers';
 import classes from './style.module.scss';
+// import { validateForm } from '../signup';
 
 const createTitleComponent = () => {
   const titleWrapper = new BaseElement<HTMLDivElement>(
@@ -25,6 +29,31 @@ const createTitleComponent = () => {
     }),
   );
   return titleWrapper;
+};
+
+export const showUpdateNotification = (isSuccessful: boolean) => {
+  const notificationTextElement = new BaseElement<HTMLParagraphElement>({
+    tag: 'p',
+    class: classes.notificationTextElement,
+  });
+  const notificationTextWrapper = new BaseElement<HTMLDivElement>({
+    tag: 'div',
+    class: classes.notificationTextWrapper,
+  });
+  const notificationBlockWrapper = new BaseElement<HTMLDivElement>(
+    { tag: 'div', class: classes.notificationBlockWrapper },
+    notificationTextWrapper,
+  );
+  if (isSuccessful) {
+    notificationTextElement.node.textContent = `Data successfully updated.`;
+    notificationTextWrapper.node.innerHTML = checkMarkSvg;
+    notificationBlockWrapper.node.classList.add(classes.success);
+  } else {
+    notificationTextElement.node.textContent = `Sorry, failed to update the data.`;
+    notificationTextWrapper.node.innerHTML = crossSvg;
+  }
+  notificationTextWrapper.node.append(notificationTextElement.node);
+  return notificationBlockWrapper;
 };
 
 export default class ProfilePage extends ContentPage {
@@ -143,6 +172,39 @@ export default class ProfilePage extends ContentPage {
     this.#birthDateInput.setDisabled(state);
   };
 
+  // #handlerOnClickButtonUserDetail = (event: Event) => {
+  //   const button = event.target as HTMLButtonElement;
+  //   if (validateForm(this.#inputsUserDetail)) {
+  //     button.disabled = true;
+  //     ProfilePage.isEmailFree(
+  //       this.#inputsUserDetail.mail.value,
+  //       () => {
+  //         this.#saveDataFromUserDetail();
+  //         this.#changeForm(this.#createFormAddresses(), FormTitle.ADDRESS);
+  //       },
+  //       this.#inputsUserDetail.mail.showError,
+  //     ).finally(() => {
+  //       button.disabled = false;
+  //     });
+  //   }
+  // };
+
+  // static isEmailFree = (
+  //   email: string,
+  //   onFreeCb: () => void,
+  //   onErrorCb: (errMessage: string) => void,
+  // ) =>
+  //   auth
+  //     .isEmailExist(email)
+  //     .then((exist) => {
+  //       if (exist) {
+  //         onErrorCb(`Email ${email} is already exist!`);
+  //       } else {
+  //         onFreeCb();
+  //       }
+  //     })
+  //     .catch(onErrorCb);
+
   setEditMode = () => {
     this.toggleUserDetailsInputsState(false);
 
@@ -192,10 +254,10 @@ export default class ProfilePage extends ContentPage {
         tag: 'h2',
         text: 'Personal details',
       }),
-      (this.#emailInput = new InputText({ name: 'email', type: 'email' }, 'E-mail')),
-      (this.#firstNameInput = new InputText({ name: 'firstName' }, 'Fist name')),
-      (this.#lastNameInput = new InputText({ name: 'lastName' }, 'Last name')),
-      (this.#birthDateInput = new InputText({ name: 'date-of-birth' }, 'Birth date')),
+      (this.#emailInput = new InputText({ name: 'email', type: 'email' }, 'E-mail', () => validateEmail(this.#emailInput.value))),
+      (this.#firstNameInput = new InputText({ name: 'firstName' }, 'Fist name', () => validateUserData(this.#firstNameInput.value))),
+      (this.#lastNameInput = new InputText({ name: 'lastName' }, 'Last name', () => validateUserData(this.#lastNameInput.value))),
+      (this.#birthDateInput = new InputText({ name: 'date-of-birth' }, 'Birth date', () => validateDateOfBirth(this.#birthDateInput.value))),
       (this.#editDetailsBtn = new Button(
         { text: 'Edit details', class: classes.btnLineHeight },
         ButtonClasses.NORMAL,
