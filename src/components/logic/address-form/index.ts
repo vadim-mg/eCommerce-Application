@@ -4,7 +4,34 @@ import InputText from '@Src/components/ui/input-text';
 import CheckBox from '@Src/components/ui/checkbox';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Select from '@Src/components/ui/select';
+import crossSvg from '@Assets/icons/cross-white.svg';
+import checkMarkSvg from '@Assets/icons/checkmark-white.svg';
 import classes from './style.module.scss';
+
+export const showUpdateNotification = (isSuccessful: boolean) => {
+  const notificationTextElement = new BaseElement<HTMLParagraphElement>({
+    tag: 'p',
+    class: classes.notificationTextElement,
+  });
+  const notificationTextWrapper = new BaseElement<HTMLDivElement>({
+    tag: 'div',
+    class: classes.notificationTextWrapper,
+  });
+  const notificationBlockWrapper = new BaseElement<HTMLDivElement>(
+    { tag: 'div', class: classes.notificationBlockWrapper },
+    notificationTextWrapper,
+  );
+  if (isSuccessful) {
+    notificationTextElement.node.textContent = `Data successfully updated.`;
+    notificationTextWrapper.node.innerHTML = checkMarkSvg;
+    notificationBlockWrapper.node.classList.add(classes.success);
+  } else {
+    notificationTextElement.node.textContent = `Sorry, failed to update the data.`;
+    notificationTextWrapper.node.innerHTML = crossSvg;
+  }
+  notificationTextWrapper.node.append(notificationTextElement.node);
+  return notificationBlockWrapper;
+};
 
 type FormProps = Omit<ElementProps<HTMLButtonElement>, 'tag'>;
 
@@ -54,6 +81,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
         `Use us default ${addressType} address`,
         isDefaultAddress,
       ),
+      showUpdateNotification(true),
       this.#createEditDeleteBtnComponent(),
     );
     this.#countrySelect.node.classList.add(classes.selectCountry);
