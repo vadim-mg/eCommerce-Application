@@ -197,6 +197,22 @@ export default class ProfilePage extends ContentPage {
     this.#saveDetailsBtn.show();
   };
 
+  static isEmailFree = (
+    email: string,
+    onFreeCb: () => void,
+    onErrorCb: (errMessage: string) => void,
+  ) =>
+    auth
+      .isEmailExist(email)
+      .then((exist) => {
+        if (exist) {
+          onErrorCb(`Email ${email} is already exist!`);
+        } else {
+          onFreeCb();
+        }
+      })
+      .catch(onErrorCb);
+
   handlerOnClickBtnUserDetails = () => {
     this.#emailInput.validate();
     this.#firstNameInput.validate();
@@ -208,12 +224,8 @@ export default class ProfilePage extends ContentPage {
       this.#lastNameInput.isValid &&
       this.#birthDateInput.isValid
     ) {
-      this.setSavedMode();
-      // todo: move this code to another place
-      this.#notificationSuccessBlockWrapper.node.hidden = false;
-      setTimeout(() => {
-        this.#notificationSuccessBlockWrapper.node.hidden = true;
-      }, 3000);
+      // todo: add a check to see if the email input value matches current user email
+      ProfilePage.isEmailFree(this.#emailInput.value, this.setSavedMode, this.#emailInput.showError);
     } else {
       console.log('invalid');
     }
@@ -251,6 +263,11 @@ export default class ProfilePage extends ContentPage {
 
     this.#editDetailsBtn.show();
     this.#saveDetailsBtn.hide();
+
+    this.#notificationSuccessBlockWrapper.node.hidden = false;
+      setTimeout(() => {
+        this.#notificationSuccessBlockWrapper.node.hidden = true;
+    }, 3000);
   };
 
   createUserDataDetailsComponent = () => {
