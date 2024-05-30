@@ -45,6 +45,8 @@ h2 {
 .user-password-wrapper {
   max-width: 360px;
   width: 100%;
+
+  position: relative;
 }
 
 .user-password-wrapper {
@@ -90,20 +92,28 @@ h2 {
 .notification-error-block-wrapper,
 .notification-success-block-wrapper {
   position: absolute;
+  bottom: 3.313rem;
+  
   border-radius: 1.5rem;
   padding: 1.5rem 1rem;
   max-width: 360px;
   box-sizing: border-box;
   width: 100%;
+  opacity: 0.9;
+  transition: opacity 0.5s;
 }
 
 .notification-error-block-wrapper {
-  background-color: rgba(247, 57, 57, 0.9);
-  
+  background-color: rgba(247, 57, 57);
 }
 
 .notification-success-block-wrapper {
-  background-color: rgba(55, 211, 134, 0.9);
+  background-color: rgba(55, 211, 134);
+}
+
+.notification-success-block-wrapper.hidden,
+.notification-error-block-wrapper.hidden {
+  opacity: 0;
 }
 
 .notification-text-wrapper {

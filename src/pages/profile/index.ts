@@ -135,7 +135,7 @@ export default class ProfilePage extends ContentPage {
       notificationTextWrapper,
     );
     return this.#notificationSuccessBlockWrapper;
-  }
+  };
 
   createErrorNotification = () => {
     const notificationTextElement = new BaseElement<HTMLParagraphElement>({
@@ -154,11 +154,7 @@ export default class ProfilePage extends ContentPage {
       notificationTextWrapper,
     );
     return this.#notificationErrorBlockWrapper;
-  }
-
-  hideUpdateNotification = () => {
-    this.#notificationSuccessBlockWrapper.node.innerHTML = '';
-  }
+  };
 
   #createContent = () => {
     this.#content = tag<HTMLDivElement>(
@@ -213,6 +209,11 @@ export default class ProfilePage extends ContentPage {
       this.#birthDateInput.isValid
     ) {
       this.setSavedMode();
+      // todo: move this code to another place
+      this.#notificationSuccessBlockWrapper.node.hidden = false;
+      setTimeout(() => {
+        this.#notificationSuccessBlockWrapper.node.hidden = true;
+      }, 3000);
     } else {
       console.log('invalid');
     }
@@ -241,7 +242,7 @@ export default class ProfilePage extends ContentPage {
       this.#currentVersion,
       customerUpdatedPersonalData,
     );
-    
+
     console.log(response);
 
     this.toggleUserDetailsInputsState(true);
