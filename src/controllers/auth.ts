@@ -40,7 +40,12 @@ const signOut = () => {
 };
 
 const isEmailExist = (email: string) =>
-  customerApi.returnCustomerByEmail(email).then(({ body }) => body.results.length === 1);
+  customerApi.returnCustomerByEmail(email).then((result) => {
+    if (result?.body.results.length === 1) {
+      return true;
+    }
+    return false;
+  });
 
 const me = () => customerApi.me();
 
