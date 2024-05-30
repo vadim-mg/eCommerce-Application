@@ -225,7 +225,11 @@ export default class ProfilePage extends ContentPage {
       this.#birthDateInput.isValid
     ) {
       // todo: add a check to see if the email input value matches current user email
-      ProfilePage.isEmailFree(this.#emailInput.value, this.setSavedMode, this.#emailInput.showError);
+      ProfilePage.isEmailFree(
+        this.#emailInput.value,
+        this.setSavedMode,
+        this.#emailInput.showError,
+      );
     } else {
       console.log('invalid');
     }
@@ -265,8 +269,8 @@ export default class ProfilePage extends ContentPage {
     this.#saveDetailsBtn.hide();
 
     this.#notificationSuccessBlockWrapper.node.hidden = false;
-      setTimeout(() => {
-        this.#notificationSuccessBlockWrapper.node.hidden = true;
+    setTimeout(() => {
+      this.#notificationSuccessBlockWrapper.node.hidden = true;
     }, 3000);
   };
 
