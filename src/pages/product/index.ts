@@ -1,3 +1,4 @@
+import cartIcon from '@Assets/icons/basket.svg';
 import { getProductByKey } from '@Src/api/products';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
@@ -162,6 +163,7 @@ export default class ProductPage extends ContentPage {
       () => {
         console.log('Product added to the cart');
       },
+      cartIcon,
     );
     const priceWrapper = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.productPriceWrapper },

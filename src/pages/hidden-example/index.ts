@@ -15,6 +15,7 @@ import categoriesApi from '@Src/api/categories';
 
 import ContentPage from '@Src/components/common/content-page';
 import Link from '@Src/components/ui/link';
+import RangeSlider from '@Src/components/ui/range-slider';
 import Select from '@Src/components/ui/select';
 import { AppRoutes } from '@Src/router/routes';
 import {
@@ -80,6 +81,7 @@ export default class HiddenExamplePage extends ContentPage {
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'two' }),
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'three', title: 'dfdfd' }),
       ),
+      new RangeSlider(1, 8, classes.rangeSlider),
       new BaseElement<HTMLElement>(
         { tag: 'div', class: classes.elements },
         new Button({ text: 'Buy' }, ButtonClasses.NORMAL, () => console.log('Click!'), basketSvg),
