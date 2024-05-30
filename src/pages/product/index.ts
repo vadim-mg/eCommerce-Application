@@ -57,7 +57,7 @@ export default class ProductPage extends ContentPage {
 
   #productPrice!: number;
 
-  #productDiscount!: number | undefined;
+  #productDiscount!: number;
 
   #productName!: string;
 
@@ -154,7 +154,7 @@ export default class ProductPage extends ContentPage {
     const priceEl = new BaseElement<HTMLDivElement>({
       tag: 'div',
       class: classes.price,
-      text: `€${String(this.#product.price)}`,
+      text: `€${String((this.#product.price! / 100).toFixed(2))}`,
     });
     const button = new Button(
       { text: 'Add to Cart', class: classes.button },
@@ -172,7 +172,7 @@ export default class ProductPage extends ContentPage {
       const discountPrice = new BaseElement<HTMLDivElement>({
         tag: 'div',
         class: classes.price,
-        text: `€${String(this.#product.discount)}`,
+        text: `€${String((this.#product.discount / 100).toFixed(2))}`,
       });
       priceWrapper.node.append(discountPrice.node);
       priceEl.node.classList.add(classes.priceOld);
