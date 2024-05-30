@@ -172,39 +172,6 @@ export default class ProfilePage extends ContentPage {
     this.#birthDateInput.setDisabled(state);
   };
 
-  // #handlerOnClickButtonUserDetail = (event: Event) => {
-  //   const button = event.target as HTMLButtonElement;
-  //   if (validateForm(this.#inputsUserDetail)) {
-  //     button.disabled = true;
-  //     ProfilePage.isEmailFree(
-  //       this.#inputsUserDetail.mail.value,
-  //       () => {
-  //         this.#saveDataFromUserDetail();
-  //         this.#changeForm(this.#createFormAddresses(), FormTitle.ADDRESS);
-  //       },
-  //       this.#inputsUserDetail.mail.showError,
-  //     ).finally(() => {
-  //       button.disabled = false;
-  //     });
-  //   }
-  // };
-
-  // static isEmailFree = (
-  //   email: string,
-  //   onFreeCb: () => void,
-  //   onErrorCb: (errMessage: string) => void,
-  // ) =>
-  //   auth
-  //     .isEmailExist(email)
-  //     .then((exist) => {
-  //       if (exist) {
-  //         onErrorCb(`Email ${email} is already exist!`);
-  //       } else {
-  //         onFreeCb();
-  //       }
-  //     })
-  //     .catch(onErrorCb);
-
   setEditMode = () => {
     this.toggleUserDetailsInputsState(false);
 
@@ -213,6 +180,18 @@ export default class ProfilePage extends ContentPage {
     this.#editDetailsBtn.hide();
     this.#saveDetailsBtn.show();
   };
+
+  handlerOnClickBtnUserDetails = () => {
+    this.#emailInput.validate();
+    this.#firstNameInput.validate();
+    this.#lastNameInput.validate();
+    this.#birthDateInput.validate();
+    if (this.#emailInput.isValid && this.#firstNameInput.isValid && this.#lastNameInput.isValid && this.#birthDateInput.isValid) {
+      this.setSavedMode();
+    } else {
+      console.log('invalid');
+    }
+  }
 
   setSavedMode = () => {
     const customerUpdatedPersonalData: MyCustomerUpdateAction[] = [
@@ -266,7 +245,7 @@ export default class ProfilePage extends ContentPage {
       (this.#saveDetailsBtn = new Button(
         { text: 'Save', class: classes.btnLineHeight },
         ButtonClasses.NORMAL,
-        this.setSavedMode,
+        this.handlerOnClickBtnUserDetails,
       )),
     );
     this.#birthDateInput.node.classList.add(classes.birthDateInput);
