@@ -262,23 +262,35 @@ export default class ProfilePage extends ContentPage {
       },
     ];
     const response = new Customer()
-      .updateCustomerData(this.#currentVersion, customerUpdatedPersonalData)
+      .updateCustomerData(
+        this.#currentVersion,
+        customerUpdatedPersonalData,
+        this.showSuccessNotification,
+        this.showErrorNotification,
+      )
       .then((result) => {
         this.#currentVersion = result.version;
       });
 
     console.log(response);
-
     this.toggleUserDetailsInputsState(true);
-
     this.#birthDateInput.addTextInputType();
 
     this.#editDetailsBtn.node.classList.remove(classes.hidden);
     this.#saveDetailsBtn.node.classList.add(classes.hidden);
+  };
 
+  showSuccessNotification = () => {
     this.#notificationSuccessBlockWrapper.node.hidden = false;
     setTimeout(() => {
       this.#notificationSuccessBlockWrapper.node.hidden = true;
+    }, 3000);
+  };
+
+  showErrorNotification = () => {
+    this.#notificationErrorBlockWrapper.node.hidden = false;
+    setTimeout(() => {
+      this.#notificationErrorBlockWrapper.node.hidden = true;
     }, 3000);
   };
 
