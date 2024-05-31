@@ -1,6 +1,6 @@
 import { Customer } from '@commercetools/platform-sdk';
 import Router from '@Src/router';
-import { passwordTokenCache } from '@Src/utils/token-cache';
+import { anonymousTokenCache, passwordTokenCache } from '@Src/utils/token-cache';
 
 export default class State {
   #isLoggedIn: boolean;
@@ -28,7 +28,7 @@ export default class State {
 
   set isLoggedIn(value: boolean) {
     this.#isLoggedIn = value;
-    // console.log(`Current state is: Is loggedIn: ${this.isLoggedIn}`);
+    anonymousTokenCache.remove();
     Router.getInstance().refresh();
   }
 

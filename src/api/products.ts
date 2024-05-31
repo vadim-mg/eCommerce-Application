@@ -27,4 +27,5 @@ const getProducts = (categoryId?: string, sortingType?: SortingType) =>
       },
     })
     .execute();
-export { getProductById, getProductByKey, getProducts };
+
+export default { getProductById, getProductByKey, getProducts };
