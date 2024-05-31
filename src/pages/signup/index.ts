@@ -75,7 +75,7 @@ interface InputsUserDetail {
   dateOfBirth: InputText;
 }
 
-function validateForm(form: InputsUserDetail | InputsAddress | InputsAddress[]): boolean {
+export function validateForm(form: InputsUserDetail | InputsAddress | InputsAddress[]): boolean {
   const validatedForms = Array.isArray(form) ? form : [form];
 
   const inputs = validatedForms.reduce(

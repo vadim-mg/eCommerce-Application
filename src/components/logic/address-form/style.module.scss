@@ -1,3 +1,5 @@
+@import '@Src/styles/variables.scss';
+
 .address-wrapper {
   max-width: 360px;
 }
@@ -13,4 +15,42 @@
 
 .btn-line-height {
   line-height: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+.select-country {
+  margin-bottom: 1.25rem;
+}
+
+.notification-block-wrapper {
+  position: absolute;
+
+  background-color: rgba(247, 57, 57, 0.9);
+  border-radius: 1.5rem;
+  padding: 1.5rem 1rem;
+  max-width: 360px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.notification-text-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  line-height: 156%;
+  font-weight: 500;
+  font-size: 1.125rem;
+  color: var(--color-white);
+}
+
+.notification-text-element {
+  margin: 0;
+}
+
+.success {
+  background-color: rgba(55, 211, 134, 0.9);
 }

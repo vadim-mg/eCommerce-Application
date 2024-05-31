@@ -1,9 +1,8 @@
 .component {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  height: 44px;
-}
+  gap: 0.313rem;
+
 
 .label {
   font-weight: 400;
@@ -47,8 +46,9 @@
   width: 100%;
   cursor: inherit;
 
-  border: 0.5px solid var(--color-grey-light);
+  border: 0.5px solid var(--color-grey);
   border-radius: 8px;
+  background-color: #fafafa;
   max-width: calc(100vw - 4rem);
   height: 44px;
   padding: 0.5rem 0.75rem 0.375rem;

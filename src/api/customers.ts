@@ -1,4 +1,8 @@
-import { CustomerSignin, MyCustomerDraft } from '@commercetools/platform-sdk';
+import {
+  CustomerSignin,
+  MyCustomerDraft,
+  MyCustomerUpdateAction,
+} from '@commercetools/platform-sdk';
 import apiRoot from './api-root';
 
 // https://docs.commercetools.com/sdk/sdk-example-code
@@ -39,4 +43,16 @@ const returnCustomerByEmail = (email: string) =>
 
 const me = () => apiRoot.apiBuilder.me().get().execute();
 
-export default { signIn, signUp, returnCustomerByEmail, me };
+const updateCustomerData = (currentVersion: number, updateActions: MyCustomerUpdateAction[]) =>
+  apiRoot.apiBuilder
+    .me()
+    .post({
+      body: {
+        version: currentVersion,
+        actions: updateActions,
+      },
+    })
+    .execute();
+
+export default { signIn, signUp, returnCustomerByEmail, me, updateCustomerData };
+

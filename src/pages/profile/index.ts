@@ -7,15 +7,19 @@ import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
 import auth from '@Src/controllers/auth';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
+import Customer from '@Src/controllers/customers';
+import crossSvg from '@Assets/icons/cross-white.svg';
+import checkMarkSvg from '@Assets/icons/checkmark-white.svg';
+import { MyCustomerUpdateAction } from '@commercetools/platform-sdk';
+import { validateDateOfBirth, validateEmail, validateUserData } from '@Src/utils/helpers';
 import classes from './style.module.scss';
 
 const createTitleComponent = () => {
   const titleWrapper = new BaseElement<HTMLDivElement>(
     { tag: 'div', class: classes.titleWrapper },
-    new BaseElement<HTMLImageElement>({
-      tag: 'img',
-      src: userProfileLogo,
-      alt: 'User profile logo',
+    new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      innerHTML: userProfileLogo,
     }),
     new BaseElement<HTMLHeadingElement>({
       tag: 'h1',
@@ -57,6 +61,12 @@ export default class ProfilePage extends ContentPage {
 
   #addAddressBtn!: Button;
 
+  #currentVersion!: number;
+
+  #notificationSuccessBlockWrapper!: BaseElement<HTMLDivElement>;
+
+  #notificationErrorBlockWrapper!: BaseElement<HTMLDivElement>;
+
   constructor() {
     super({ containerTag: 'main', title: 'profile page' });
     this.#createContent();
@@ -70,10 +80,11 @@ export default class ProfilePage extends ContentPage {
       .me()
       .then((info) => {
         const customer = info.body;
+        this.#currentVersion = customer.version;
         this.#emailInput.value = customer.email ?? '';
         this.#firstNameInput.value = customer.firstName ?? '';
         this.#lastNameInput.value = customer.lastName ?? '';
-        this.#birthDateInput.value = customer.dateOfBirth?.split('-').join('.') ?? '';
+        this.#birthDateInput.value = customer.dateOfBirth ?? '';
 
         customer.shippingAddressIds?.forEach((addressId: string) => {
           const shippingAddress = customer.addresses.find((value) => value.id === addressId);
@@ -105,6 +116,44 @@ export default class ProfilePage extends ContentPage {
       .catch((error: HttpErrorType) => {
         console.log(error.message);
       });
+  };
+
+  createSuccessNotification = () => {
+    const notificationTextElement = new BaseElement<HTMLParagraphElement>({
+      tag: 'p',
+      class: classes.notificationTextElement,
+      text: 'Data successfully updated.',
+    });
+    const notificationTextWrapper = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.notificationTextWrapper,
+      innerHTML: checkMarkSvg,
+    });
+    notificationTextWrapper.node.append(notificationTextElement.node);
+    this.#notificationSuccessBlockWrapper = new BaseElement<HTMLDivElement>(
+      { tag: 'div', class: classes.notificationSuccessBlockWrapper },
+      notificationTextWrapper,
+    );
+    return this.#notificationSuccessBlockWrapper;
+  };
+
+  createErrorNotification = () => {
+    const notificationTextElement = new BaseElement<HTMLParagraphElement>({
+      tag: 'p',
+      class: classes.notificationTextElement,
+      text: 'Sorry, failed to update the data.',
+    });
+    const notificationTextWrapper = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.notificationTextWrapper,
+      innerHTML: crossSvg,
+    });
+    notificationTextWrapper.node.append(notificationTextElement.node);
+    this.#notificationErrorBlockWrapper = new BaseElement<HTMLDivElement>(
+      { tag: 'div', class: classes.notificationErrorBlockWrapper },
+      notificationTextWrapper,
+    );
+    return this.#notificationErrorBlockWrapper;
   };
 
   #createContent = () => {
@@ -148,13 +197,81 @@ export default class ProfilePage extends ContentPage {
     this.#saveDetailsBtn.show();
   };
 
+  static isEmailFree = (
+    email: string,
+    onFreeCb: () => void,
+    onErrorCb: (errMessage: string) => void,
+  ) =>
+    auth
+      .isEmailExist(email)
+      .then((exist) => {
+        if (exist) {
+          onErrorCb(`Email ${email} is already exist!`);
+        } else {
+          onFreeCb();
+        }
+      })
+      .catch(onErrorCb);
+
+  handlerOnClickBtnUserDetails = () => {
+    this.#emailInput.validate();
+    this.#firstNameInput.validate();
+    this.#lastNameInput.validate();
+    this.#birthDateInput.validate();
+    if (
+      this.#emailInput.isValid &&
+      this.#firstNameInput.isValid &&
+      this.#lastNameInput.isValid &&
+      this.#birthDateInput.isValid
+    ) {
+      // todo: add a check to see if the email input value matches current user email
+      ProfilePage.isEmailFree(
+        this.#emailInput.value,
+        this.setSavedMode,
+        this.#emailInput.showError,
+      );
+    } else {
+      console.log('invalid');
+    }
+  };
+
   setSavedMode = () => {
+    const customerUpdatedPersonalData: MyCustomerUpdateAction[] = [
+      {
+        action: 'changeEmail',
+        email: this.#emailInput.value,
+      },
+      {
+        action: 'setFirstName',
+        firstName: this.#firstNameInput.value,
+      },
+      {
+        action: 'setLastName',
+        lastName: this.#lastNameInput.value,
+      },
+      {
+        action: 'setDateOfBirth',
+        dateOfBirth: this.#birthDateInput.value,
+      },
+    ];
+    const response = new Customer().updateCustomerData(
+      this.#currentVersion,
+      customerUpdatedPersonalData,
+    );
+
+    console.log(response);
+
     this.toggleUserDetailsInputsState(true);
 
     this.#birthDateInput.addTextInputType();
 
     this.#editDetailsBtn.show();
     this.#saveDetailsBtn.hide();
+
+    this.#notificationSuccessBlockWrapper.node.hidden = false;
+    setTimeout(() => {
+      this.#notificationSuccessBlockWrapper.node.hidden = true;
+    }, 3000);
   };
 
   createUserDataDetailsComponent = () => {
@@ -164,10 +281,20 @@ export default class ProfilePage extends ContentPage {
         tag: 'h2',
         text: 'Personal details',
       }),
-      (this.#emailInput = new InputText({ name: 'email', type: 'email' }, 'E-mail')),
-      (this.#firstNameInput = new InputText({ name: 'firstName' }, 'Fist name')),
-      (this.#lastNameInput = new InputText({ name: 'lastName' }, 'Last name')),
-      (this.#birthDateInput = new InputText({ name: 'date-of-birth' }, 'Birth date')),
+      (this.#emailInput = new InputText({ name: 'email', type: 'email' }, 'E-mail', () =>
+        validateEmail(this.#emailInput.value),
+      )),
+      (this.#firstNameInput = new InputText({ name: 'firstName' }, 'Fist name', () =>
+        validateUserData(this.#firstNameInput.value),
+      )),
+      (this.#lastNameInput = new InputText({ name: 'lastName' }, 'Last name', () =>
+        validateUserData(this.#lastNameInput.value),
+      )),
+      (this.#birthDateInput = new InputText({ name: 'date-of-birth' }, 'Birth date', () =>
+        validateDateOfBirth(this.#birthDateInput.value),
+      )),
+      this.createSuccessNotification(),
+      this.createErrorNotification(),
       (this.#editDetailsBtn = new Button(
         { text: 'Edit details', class: classes.btnLineHeight },
         ButtonClasses.NORMAL,
@@ -176,9 +303,12 @@ export default class ProfilePage extends ContentPage {
       (this.#saveDetailsBtn = new Button(
         { text: 'Save', class: classes.btnLineHeight },
         ButtonClasses.NORMAL,
-        this.setSavedMode,
+        this.handlerOnClickBtnUserDetails,
       )),
     );
+    this.#notificationErrorBlockWrapper.node.hidden = true;
+    this.#notificationSuccessBlockWrapper.node.hidden = true;
+
     this.#birthDateInput.node.classList.add(classes.birthDateInput);
 
     this.toggleUserDetailsInputsState(true);
