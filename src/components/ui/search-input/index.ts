@@ -9,9 +9,12 @@ export default class SearchInput extends BaseElement<HTMLElement> {
 
   #clearButton!: BaseElement<HTMLButtonElement>;
 
-  constructor(props: SearchInputProps) {
+  #onChangeCb: () => void;
+
+  constructor(props: SearchInputProps, onChangeCb: () => void) {
     super({ tag: 'div', class: props.class });
     this.node.classList.add(classes.searchInput);
+    this.#onChangeCb = onChangeCb;
 
     this.#showContent(props as SearchInputFieldProps);
     this.#addEventListeners();
@@ -19,11 +22,16 @@ export default class SearchInput extends BaseElement<HTMLElement> {
 
   #addEventListeners = () => {
     this.#clearButton.node.addEventListener('click', this.#clearInputField);
+    this.#inputField.node.addEventListener('change', this.#onChangeCb);
   };
 
   #clearInputField = () => {
     this.#inputField.node.value = '';
   };
+
+  get value() {
+    return this.#inputField.node.value;
+  }
 
   #showContent = (props: SearchInputFieldProps) => {
     this.node.append(

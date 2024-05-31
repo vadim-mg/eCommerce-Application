@@ -8,24 +8,40 @@ export enum SortingType {
   'price desc' = 'price desc',
 }
 
+export type ProductGetOptions = {
+  categoryId?: string;
+  sortingType?: SortingType;
+  search?: string;
+};
+
 const getProductByKey = (key: string) =>
   apiRoot.apiBuilder.productProjections().withKey({ key }).get().execute();
 
 const getProductById = (id: string) =>
   apiRoot.apiBuilder.productProjections().withId({ ID: id }).get().execute();
 
-const getProducts = (categoryId?: string, sortingType?: SortingType) =>
-  apiRoot.apiBuilder
+const getProducts = (options: ProductGetOptions) => {
+  const { categoryId, sortingType, search } = options;
+  return apiRoot.apiBuilder
     .productProjections()
     .search()
     .get({
       queryArgs: {
         limit: 10,
+
+        ...(search ? { 'text.en-GB': `"${search}"` } : {}),
+        // fuzzy: true,
+        // fuzzyLevel: 2,
+        // markMatchingVariants: true, //   https://docs.commercetools.com/api/projects/products-search#query-result-and-marked-matching-variants
+
         ...(categoryId ? { 'filter.query': `categories.id:"${categoryId}"` } : {}),
+
         sort: sortingType,
+
         offset: 0,
       },
     })
     .execute();
+};
 
 export default { getProductById, getProductByKey, getProducts };

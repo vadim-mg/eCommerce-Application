@@ -74,8 +74,8 @@ export default class CategoryList extends BaseElement<HTMLDivElement> {
 
   #onSelectCategory = (event: Event) => {
     const eventTarget = event.target as HTMLButtonElement;
-    this.#onSelectCb(eventTarget.id);
     this.#currentCategoryId = eventTarget.id;
+    this.#onSelectCb(eventTarget.id);
     this.#allButtons.forEach((button) => {
       const btn = button as Button;
       (btn as Button).currentStatus = btn.node.id === this.#currentCategoryId;
