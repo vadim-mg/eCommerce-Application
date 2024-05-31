@@ -17,6 +17,10 @@
   }
 }
 
+.hidden {
+  display: none;
+}
+
 .normal {
   @include button;
   background-color: var(--color-orange-main);
