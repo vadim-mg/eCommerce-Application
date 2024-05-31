@@ -8,9 +8,20 @@ export default class Customer {
     console.log('Customer constructor');
   }
 
-  updateCustomerData = async (currentVersion: number, updateActions: MyCustomerUpdateAction[]) => {
+  updateCustomerData = async (
+    currentVersion: number,
+    updateActions: MyCustomerUpdateAction[],
+    showSuccessNotification: () => void,
+    showErrorNotification: () => void,
+  ) => {
     try {
-      this.#response = (await customerApi.updateCustomerData(currentVersion, updateActions)).body;
+      const result = await customerApi.updateCustomerData(currentVersion, updateActions);
+      this.#response = result.body;
+      if (result.statusCode === 200) {
+        showSuccessNotification();
+      } else {
+        showErrorNotification();
+      }
     } catch (error) {
       console.error(error);
     }

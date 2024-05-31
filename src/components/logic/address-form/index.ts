@@ -95,8 +95,8 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
         () => console.log('delete'),
       )),
     );
-    this.#saveAddressButton.hide();
-    this.#cancelAddressButton.hide();
+    this.#saveAddressButton.node.classList.add(classes.hidden);
+    this.#cancelAddressButton.node.classList.add(classes.hidden);
 
     this.#editAddressButton.node.classList.add(classes.btnLineHeight);
     this.#saveAddressButton.node.classList.add(classes.btnLineHeight);
@@ -116,8 +116,8 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.#countrySelect.node.classList.remove(classes.hidden);
     this.#countryInput.node.classList.add(classes.hidden);
 
-    this.#saveAddressButton.show();
-    this.#editAddressButton.hide();
+    this.#saveAddressButton.node.classList.remove(classes.hidden);
+    this.#editAddressButton.node.classList.add(classes.hidden);
   };
 
   setSavedMode = () => {
@@ -126,16 +126,16 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.#countrySelect.node.classList.add(classes.hidden);
     this.#countryInput.node.classList.remove(classes.hidden);
 
-    this.#saveAddressButton.hide();
-    this.#editAddressButton.show();
+    this.#saveAddressButton.node.classList.add(classes.hidden);
+    this.#editAddressButton.node.classList.remove(classes.hidden);
   };
 
   setCanceledMode = () => {
     this.setUserAddressInputsState(true);
 
-    this.#saveAddressButton.hide();
-    this.#cancelAddressButton.hide();
-    this.#editAddressButton.show();
-    this.#deleteAddressButton.show();
+    this.#saveAddressButton.node.classList.add(classes.hidden);
+    this.#cancelAddressButton.node.classList.add(classes.hidden);
+    this.#editAddressButton.node.classList.remove(classes.hidden);
+    this.#deleteAddressButton.node.classList.remove(classes.hidden);
   };
 }

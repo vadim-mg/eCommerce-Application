@@ -63,6 +63,8 @@ export default class ProfilePage extends ContentPage {
 
   #currentVersion!: number;
 
+  #currentEmail!: string;
+
   #notificationSuccessBlockWrapper!: BaseElement<HTMLDivElement>;
 
   #notificationErrorBlockWrapper!: BaseElement<HTMLDivElement>;
@@ -112,6 +114,8 @@ export default class ProfilePage extends ContentPage {
           }
         });
         console.log(info.body);
+
+        this.#currentEmail = customer.email;
       })
       .catch((error: HttpErrorType) => {
         console.log(error.message);
@@ -193,8 +197,8 @@ export default class ProfilePage extends ContentPage {
 
     this.#birthDateInput.addDateInputType();
 
-    this.#editDetailsBtn.hide();
-    this.#saveDetailsBtn.show();
+    this.#editDetailsBtn.node.classList.add(classes.hidden);
+    this.#saveDetailsBtn.node.classList.remove(classes.hidden);
   };
 
   static isEmailFree = (
@@ -224,12 +228,15 @@ export default class ProfilePage extends ContentPage {
       this.#lastNameInput.isValid &&
       this.#birthDateInput.isValid
     ) {
-      // todo: add a check to see if the email input value matches current user email
-      ProfilePage.isEmailFree(
-        this.#emailInput.value,
-        this.setSavedMode,
-        this.#emailInput.showError,
-      );
+      if (this.#currentEmail !== this.#emailInput.value) {
+        ProfilePage.isEmailFree(
+          this.#emailInput.value,
+          this.setSavedMode,
+          this.#emailInput.showError,
+        );
+      } else {
+        this.setSavedMode();
+      }
     } else {
       console.log('invalid');
     }
@@ -254,23 +261,36 @@ export default class ProfilePage extends ContentPage {
         dateOfBirth: this.#birthDateInput.value,
       },
     ];
-    const response = new Customer().updateCustomerData(
-      this.#currentVersion,
-      customerUpdatedPersonalData,
-    );
+    const response = new Customer()
+      .updateCustomerData(
+        this.#currentVersion,
+        customerUpdatedPersonalData,
+        this.showSuccessNotification,
+        this.showErrorNotification,
+      )
+      .then((result) => {
+        this.#currentVersion = result.version;
+      });
 
     console.log(response);
-
     this.toggleUserDetailsInputsState(true);
-
     this.#birthDateInput.addTextInputType();
 
-    this.#editDetailsBtn.show();
-    this.#saveDetailsBtn.hide();
+    this.#editDetailsBtn.node.classList.remove(classes.hidden);
+    this.#saveDetailsBtn.node.classList.add(classes.hidden);
+  };
 
+  showSuccessNotification = () => {
     this.#notificationSuccessBlockWrapper.node.hidden = false;
     setTimeout(() => {
       this.#notificationSuccessBlockWrapper.node.hidden = true;
+    }, 3000);
+  };
+
+  showErrorNotification = () => {
+    this.#notificationErrorBlockWrapper.node.hidden = false;
+    setTimeout(() => {
+      this.#notificationErrorBlockWrapper.node.hidden = true;
     }, 3000);
   };
 
@@ -312,7 +332,7 @@ export default class ProfilePage extends ContentPage {
     this.#birthDateInput.node.classList.add(classes.birthDateInput);
 
     this.toggleUserDetailsInputsState(true);
-    this.#saveDetailsBtn.hide();
+    this.#saveDetailsBtn.node.classList.add(classes.hidden);
 
     return this.#userDataDetailsWrapper;
   };
