@@ -1,5 +1,10 @@
-import { ProductProjectionPagedQueryResponse } from '@commercetools/platform-sdk';
-import { getProducts } from '@Src/api/products';
+import {
+  ProductProjection,
+  ProductProjectionPagedQueryResponse,
+} from '@commercetools/platform-sdk';
+import { HttpErrorType } from '@commercetools/sdk-client-v2';
+import productsApi, { SortingType } from '@Src/api/products';
+import errorHandler from './error-handler';
 
 export enum ImageSize {
   origin = '',
@@ -13,19 +18,27 @@ export enum ImageSize {
 export default class Products {
   #products!: ProductProjectionPagedQueryResponse;
 
-  static locale = 'en-GB';
+  static locale = process.env.LOCALE;
 
-  constructor() {
-    console.log('Products constructor');
-  }
-
-  getProducts = async (categoryId?: string) => {
+  getProducts = async (categoryId?: string, sortingType?: SortingType) => {
     try {
-      this.#products = (await getProducts(categoryId)).body;
+      this.#products = (await productsApi.getProducts(categoryId, sortingType)).body;
     } catch (error) {
-      console.error(error);
+      errorHandler(error as HttpErrorType);
+      throw error;
     }
     return this.#products;
+  };
+
+  static getProductByKey = async (productKey: string) => {
+    let product: ProductProjection;
+    try {
+      product = (await productsApi.getProductByKey(productKey)).body;
+    } catch (error) {
+      errorHandler(error as HttpErrorType);
+      throw error;
+    }
+    return product;
   };
 
   // get url for different size of original image

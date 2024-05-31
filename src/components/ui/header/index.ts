@@ -128,12 +128,12 @@ export default class Header extends BaseElement<HTMLElement> {
       },
 
       new Button(
-        { text: 'Log in', hidden: State.getInstance().isLoggedIn },
+        { text: 'Log in', class: State.getInstance().isLoggedIn ? classes.hidden : '' },
         ButtonClasses.NORMAL,
         routeToLogin,
       ),
       new Button(
-        { text: 'Sign up', hidden: State.getInstance().isLoggedIn },
+        { text: 'Sign up', class: State.getInstance().isLoggedIn ? classes.hidden : '' },
         ButtonClasses.NORMAL,
         routeToSignup,
       ),
@@ -151,7 +151,7 @@ export default class Header extends BaseElement<HTMLElement> {
       ),
 
       new Button(
-        { text: 'Log out', hidden: !State.getInstance().isLoggedIn },
+        { text: 'Log out', class: [...(!State.getInstance().isLoggedIn ? [classes.hidden] : [])] },
         ButtonClasses.NORMAL,
         auth.signOut,
       ),

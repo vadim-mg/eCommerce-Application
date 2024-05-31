@@ -1,9 +1,11 @@
+import basketIconPath from '@Assets/icons/basket.svg';
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 import tag from '@Src/components/common/tag';
+import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Link from '@Src/components/ui/link';
-import productCategories from '@Src/controllers/categories';
 import Products, { ImageSize } from '@Src/controllers/products';
 import { AppRoutes } from '@Src/router/routes';
+import { getPrice } from '@Src/utils/helpers';
 import { ProductProjection } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
 
@@ -19,49 +21,83 @@ export default class ProductCard extends BaseElement<HTMLElement> {
   }
 
   #createElement = (selectedCategory?: string) => {
-    const { key, name, description, masterVariant, categories } = this.#product;
+    const { key, name, description, masterVariant } = this.#product;
     const categoryPath = selectedCategory?.length ? `${selectedCategory}/` : '';
-    return tag<HTMLDivElement>(
-      { tag: 'div', class: classes.productCard },
-      new Link({
+
+    const image = masterVariant.images?.[0];
+    const prices = (masterVariant.prices ?? [])[0];
+
+    return new Link(
+      {
         href: `${AppRoutes.CATALOGUE}/${categoryPath}${key}`,
-        text: `link(key): ${key}`,
-        class: classes.productLink,
-      }),
-      tag<HTMLDivElement>({
-        tag: 'div',
-        text: `Name: ${name[Products.locale]}`,
-      }),
-      tag<HTMLParagraphElement>({
-        tag: 'p',
-        text: `Description: ${description?.[Products.locale]}`,
-      }),
-      ...(masterVariant.images ?? []).map((img, index) =>
+        class: [classes.productLink],
+      },
+      // sale label
+      prices.discounted
+        ? tag<HTMLDivElement>({ tag: 'div', text: 'SALE', class: classes.discounted })
+        : tag<HTMLSpanElement>({ tag: 'span' }),
+
+      // cart caption
+      tag<HTMLDivElement>(
+        { tag: 'div', class: classes.productCardContainer },
+        tag<HTMLHeadingElement>({
+          tag: 'h2',
+          text: name[Products.locale],
+          class: classes.productName,
+        }),
+
+        // image
         tag<HTMLImageElement>({
           tag: 'img',
           class: classes.productImage,
-          // one image medium, other small
-          src: Products.getImageUrl(img.url ?? '', index ? ImageSize.small : ImageSize.medium),
+          src: Products.getImageUrl(image?.url ?? '', ImageSize.medium),
         }),
-      ),
-      ...(masterVariant.attributes ?? []).map((attr) =>
-        tag<HTMLParagraphElement>({
-          tag: 'p',
-          text: `${attr.name}: ${attr.value}`,
-        }),
-      ),
-      ...(masterVariant.prices ?? []).map((price) =>
-        tag<HTMLParagraphElement>({
-          tag: 'p',
-          text: `${price.value.centAmount} ${price.value.currencyCode} ${price.discounted ? 'discounted' : ''}`,
-        }),
-      ),
-      ...(categories ?? []).map((category, index) =>
-        tag<HTMLParagraphElement>({
-          tag: 'p',
-          text: `Category ${index + 1}: ${productCategories.getById(category.id)?.name[process.env.LOCALE]}`,
-        }),
+
+        // description
+        tag<HTMLDivElement>(
+          { tag: 'div', class: classes.descriptionBox },
+          tag<HTMLParagraphElement>({
+            tag: 'p',
+            text: description?.[Products.locale].slice(0, 75),
+            class: classes.productDescription,
+          }),
+        ),
+
+        // prices
+        tag<HTMLParagraphElement>(
+          {
+            tag: 'p',
+            class: classes.productPrice,
+          },
+          tag<HTMLSpanElement>({
+            tag: 'span',
+            text: getPrice(prices.value),
+            class: prices.discounted ? classes.productPriceOld : '',
+          }),
+          tag<HTMLSpanElement>({
+            tag: 'span',
+            text: prices.discounted ? getPrice(prices.discounted.value) : '',
+          }),
+        ),
+
+        // button cart
+        new Button(
+          { text: 'Add to Cart', class: classes.cardButton },
+          ButtonClasses.NORMAL,
+          (event: Event) => {
+            event.stopPropagation();
+            console.log(`Product ${this.#product.key} will added to cart in next sprint!`);
+          },
+          basketIconPath,
+        ),
       ),
     );
+    // todo filters with attributes
+    // ...(masterVariant.attributes ?? []).map((attr) =>
+    //   tag<HTMLParagraphElement>({
+    //     tag: 'p',
+    //     text: `${attr.name}: ${attr.value}`,
+    //   }),
+    // ),
   };
 }

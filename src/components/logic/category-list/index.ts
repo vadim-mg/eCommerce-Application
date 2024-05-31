@@ -27,16 +27,16 @@ export default class CategoryList extends BaseElement<HTMLDivElement> {
     this.#showCategories();
   }
 
+  get currentCategoryId(): string {
+    return this.#currentCategoryId;
+  }
+
   #showCategories = async () => {
     try {
-      const allCategories = {
-        name: { [process.env.LOCALE]: 'All games' },
-        id: '', // for all games id = undefined or ''
-      };
-
-      this.#categories = [allCategories, ...(await productCategories.getCategories())];
-      console.log('this.#categories');
-      console.log(this.#categories);
+      this.#categories = [
+        productCategories.CATEGORY_ALL,
+        ...(await productCategories.getCategories()),
+      ];
 
       this.#allButtons = this.#categories.map(
         (category) =>
@@ -76,7 +76,6 @@ export default class CategoryList extends BaseElement<HTMLDivElement> {
     const eventTarget = event.target as HTMLButtonElement;
     this.#onSelectCb(eventTarget.id);
     this.#currentCategoryId = eventTarget.id;
-    console.log(`#onSelectCategory --- currentCategoryId=${this.#currentCategoryId}`);
     this.#allButtons.forEach((button) => {
       const btn = button as Button;
       (btn as Button).currentStatus = btn.node.id === this.#currentCategoryId;

@@ -1,8 +1,8 @@
 .category-container {
-  border: 1px solid yellow;
 }
 
 .category-list {
+  padding: 0;
   display: flex;
   list-style: none;
   flex-direction: row;
@@ -13,4 +13,7 @@
 
 .category-item {
   padding: 0;
+}
+
+.category-container {
 }

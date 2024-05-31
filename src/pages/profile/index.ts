@@ -1,10 +1,10 @@
+import userProfileLogo from '@Assets/icons/profile-icon-dark.svg';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
-import userProfileLogo from '@Assets/icons/profile-icon-dark.svg';
+import AddressForm from '@Src/components/logic/address-form';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
-import AddressForm from '@Src/components/logic/address-form';
 import auth from '@Src/controllers/auth';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import Customer from '@Src/controllers/customers';

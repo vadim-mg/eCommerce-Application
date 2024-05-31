@@ -3,6 +3,7 @@ import arrowRightSVG from '@Assets/icons/arrow-right.svg';
 import BaseElement from '@Src/components/common/base-element';
 import Products, { ImageSize } from '@Src/controllers/products';
 import { Image } from '@commercetools/platform-sdk';
+import ModalWindow from '../modal';
 import classes from './style.module.scss';
 
 enum Direction {
@@ -10,13 +11,25 @@ enum Direction {
   RIGHT,
 }
 
-export enum SliderPositionControlsPanel {
-  INSIDE,
-  OUTSIDE,
+export enum SliderIsZoom {
+  TRUE,
+  FALSE,
 }
 
+const selectImageSize = (size: ImageSize): ImageSize => {
+  let newSize: ImageSize;
+  if (window.screen.width < 1080 && window.screen.width > 480) {
+    newSize = ImageSize.large;
+  } else if (window.screen.width < 480) {
+    newSize = ImageSize.medium;
+  } else {
+    newSize = size;
+  }
+  return newSize;
+};
+
 export default class Slider extends BaseElement<HTMLElement> {
-  #imagesURL: string[];
+  #images: Image[];
 
   #imageListEl!: BaseElement<HTMLElement>;
 
@@ -40,40 +53,54 @@ export default class Slider extends BaseElement<HTMLElement> {
     className: string | string[],
     size: ImageSize,
     images: Image[],
-    positionControlsPanel: SliderPositionControlsPanel,
+    withZoom: SliderIsZoom,
+    start: number,
   ) {
     super({ tag: 'div', class: className });
     this.node.classList.add(classes.slider);
-    this.#imagesURL = images.map((image) => Products.getImageUrl(image.url, size));
-    this.#index = 0;
-    const classPositionControl =
-      positionControlsPanel === SliderPositionControlsPanel.INSIDE
-        ? classes.controlsInside
-        : classes.controlsOutside;
-    this.node.classList.add(classPositionControl);
-    this.#createSlider();
+    this.#images = images;
+    this.#index = start;
+    this.#createSlider(withZoom, selectImageSize(size));
     this.#createControlsPanel();
     this.#addSwipeSupport();
   }
 
-  #createSlider = () => {
+  #createSlider = (isZoom: SliderIsZoom, size: ImageSize) => {
     this.#imageListEl = new BaseElement<HTMLElement>({ tag: 'div', class: classes.wrapper });
     this.#imageList = [];
-    this.#imagesURL.forEach((url) => {
+    this.#images.forEach((image, index) => {
       const imageLi = new BaseElement<HTMLLIElement>(
         { tag: 'div', class: classes.imageLi },
         new BaseElement<HTMLImageElement>({
           tag: 'img',
           class: classes.image,
-          src: url,
-          alt: 'slider image',
+          src: Products.getImageUrl(image.url, size),
+          alt: image.label !== undefined ? image.label : 'product image',
         }),
       );
-      imageLi.node.addEventListener('click', () => console.log('show a modal window with slider'));
+
+      if (index === this.#index) {
+        imageLi.node.classList.add(classes.active);
+      }
+
+      if (isZoom === SliderIsZoom.TRUE) {
+        imageLi.node.addEventListener('click', () => {
+          const imageSize = selectImageSize(ImageSize.zoom);
+          const slider = new Slider(
+            classes.sliderInModal,
+            imageSize,
+            this.#images,
+            SliderIsZoom.FALSE,
+            index,
+          );
+
+          const modal = new ModalWindow(classes.modal, slider);
+          modal.show();
+        });
+      }
       this.#imageListEl.node.append(imageLi.node);
       this.#imageList.push(imageLi);
     });
-    this.#imageList[0].node.classList.add(classes.active);
     this.node.append(this.#imageListEl.node);
   };
 
@@ -84,21 +111,23 @@ export default class Slider extends BaseElement<HTMLElement> {
     });
 
     this.#arrowLeft = this.#createArrow(Direction.LEFT, arrowLeftSVG);
-    this.#arrowLeft.node.classList.add(classes.arrowDisabled);
     this.#arrowRight = this.#createArrow(Direction.RIGHT, arrowRightSVG);
+    this.#changeArrowAvailability();
 
     const indicatorsWrapper = new BaseElement<HTMLElement>({
       tag: 'div',
       class: classes.indicators,
     });
     this.#indicators = [];
-    for (let i = 0; i < this.#imagesURL.length; i += 1) {
+    for (let i = 0; i < this.#images.length; i += 1) {
       const li = new BaseElement<HTMLElement>({ tag: 'div', class: classes.indicator });
       this.#indicators.push(li);
       indicatorsWrapper.node.append(li.node);
+      if (i === this.#index) {
+        this.#currentIndicator = li;
+        this.#currentIndicator.node.classList.add(classes.indicatorCurrent);
+      }
     }
-    [this.#currentIndicator] = this.#indicators;
-    this.#currentIndicator.node.classList.add(classes.indicatorCurrent);
 
     controlsPanel.node.append(this.#arrowLeft.node);
     controlsPanel.node.append(indicatorsWrapper.node);

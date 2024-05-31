@@ -1,6 +1,12 @@
-function sum(a: number, b: number) {
-  return a + b;
-}
+import { TypedMoney } from '@commercetools/platform-sdk';
+
+export const getPrice = (value: TypedMoney) =>
+  new Intl.NumberFormat(process.env.LOCALE, {
+    style: 'currency',
+    currency: value.currencyCode,
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  }).format(value.centAmount / 10 ** value.fractionDigits);
 
 // Password must not contain leading or trailing whitespace.
 // Password must contain at least one uppercase letter (A-Z).
@@ -182,5 +188,3 @@ export const validatePostalCode = (inputValue: string, country: string) => {
 };
 
 // I didn't add validation for countries as they are selected from the drop-down list
-
-export default sum;

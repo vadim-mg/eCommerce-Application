@@ -18,7 +18,11 @@ const signUp = (customer: MyCustomerDraft) =>
     .execute();
 
 const signIn = (customer: CustomerSignin) =>
-  apiRoot.apiBuilder
+  apiRoot
+    .apiBuilderForLogin({
+      username: customer.email,
+      password: customer.password,
+    })
     .me()
     .login()
     .post({
@@ -50,12 +54,5 @@ const updateCustomerData = (currentVersion: number, updateActions: MyCustomerUpd
     })
     .execute();
 
-// const customRequest = () =>
-//   apiRoot.apiBuilder.get({
-//     headers: {
-//       Authorization: 'Bearer xxx',
-//     },
-//   })
-//     .execute();
-
 export default { signIn, signUp, returnCustomerByEmail, me, updateCustomerData };
+
