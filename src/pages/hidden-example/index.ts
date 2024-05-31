@@ -11,7 +11,6 @@ import imageSvg from '@Assets/icons/favicon.svg';
 import imageBoard from '@Img/board-game-example-image.webp';
 
 // import api for example
-import categoriesApi from '@Src/api/categories';
 
 import ContentPage from '@Src/components/common/content-page';
 import Link from '@Src/components/ui/link';
@@ -37,7 +36,6 @@ export default class HiddenExamplePage extends ContentPage {
     super({ containerTag: 'div', title: 'Hidden Example page' });
     this.#createContent();
     this.#showContent();
-    this.#showCategories();
   }
 
   checkPostalCodeValidation = (inputValue: string) => {
@@ -176,40 +174,6 @@ export default class HiddenExamplePage extends ContentPage {
       tag<HTMLImageElement>({ tag: 'img', src: imageSvg, class: classes.imageExample }),
       new CheckBox({}, 'example', true),
     );
-  };
-
-  // exapmle of using SDK for get categories by API
-  #showCategories = () => {
-    categoriesApi
-      .getCategories()
-      .then((resp) => {
-        const categoryList = resp.body.results.map((category) => category.name['en-GB']);
-
-        const selectCategory1 = new Select('Select category', categoryList, (selectedValue) => {
-          console.log(`selected value: ${selectedValue}`);
-        });
-        this.#content.node.append(selectCategory1.node);
-        const category1 = categoryList[0];
-        console.log(category1);
-        selectCategory1.selectedValue = category1;
-
-        const selectCategory2 = new Select('', categoryList, (selectedValue) => {
-          console.log(`selected value: ${selectedValue}`);
-        });
-        this.#content.node.append(selectCategory2.node);
-        const category2 = categoryList[2];
-        selectCategory2.selectedValue = category2;
-
-        console.log('resp.body.results');
-        console.log(resp.body.results);
-        this.#content.node.append(
-          tag({ tag: 'ul', text: `categories` }).node,
-          ...categoryList.map(
-            (categoryName: string) => tag({ tag: 'li', text: `${categoryName}` }).node,
-          ),
-        );
-      })
-      .catch(console.error);
   };
 
   #showContent = () => {

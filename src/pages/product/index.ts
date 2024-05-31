@@ -1,11 +1,10 @@
 import cartIcon from '@Assets/icons/basket.svg';
-import { getProductByKey } from '@Src/api/products';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Slider, { SliderIsZoom } from '@Src/components/ui/slider';
-import { ImageSize } from '@Src/controllers/products';
+import Products, { ImageSize } from '@Src/controllers/products';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
 import { Image, Price } from '@commercetools/platform-sdk';
@@ -86,22 +85,19 @@ export default class ProductPage extends ContentPage {
    */
   constructor(props: string[]) {
     super({ containerTag: 'main', title: 'product page', showBreadCrumbs: true });
-    console.log(props);
     this.#product = {};
     const productKey = props[1];
-    getProductByKey(productKey)
+    Products.getProductByKey(productKey)
       .then((product) => {
         // You can use static properties and classes from here '@Src/controllers/products' for pictures for example
-        this.#product.name = product.body.name['en-GB'];
-        console.log(this.#product);
-        this.#createPrice(product.body.masterVariant.prices as Price[]);
-        this.#createAttributes(product.body.masterVariant.attributes as Attribute[]);
-        this.#product.images = product.body.masterVariant.images as Image[];
+        this.#product.name = product.name['en-GB'];
+        this.#createPrice(product.masterVariant.prices as Price[]);
+        this.#createAttributes(product.masterVariant.attributes as Attribute[]);
+        this.#product.images = product.masterVariant.images as Image[];
         this.#createContent();
         this.#showContent();
       })
       .catch((error) => {
-        console.log(error);
         if (error.code === 404) {
           Router.getInstance().route(AppRoutes.NOT_FOUND, false);
         }

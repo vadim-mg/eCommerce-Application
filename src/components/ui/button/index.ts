@@ -52,11 +52,11 @@ export default class Button extends BaseElement<HTMLButtonElement> {
   };
 
   show = () => {
-    this.node.hidden = false;
+    this.node.classList.remove(classes.hidden);
   };
 
   hide = () => {
-    this.node.hidden = true;
+    this.node.classList.add(classes.hidden);
   };
 
   disable = () => {

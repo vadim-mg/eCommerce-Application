@@ -1,14 +1,31 @@
+import { SortingType } from '@Src/api/products';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import CategoryList from '@Src/components/logic/category-list';
 import ProductList from '@Src/components/logic/product-list';
 import SearchInput from '@Src/components/ui/search-input';
-import Select from '@Src/components/ui/select';
+import SelectWithKey from '@Src/components/ui/selectWithKeys';
 import productCategories from '@Src/controllers/categories';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
 import classes from './style.module.scss';
+
+const SORT_SETTINGS = [
+  {
+    key: SortingType['name-asc'],
+    value: 'Name (alphabet)',
+    default: true,
+  },
+  {
+    key: SortingType['price asc'],
+    value: 'Price (asc)',
+  },
+  {
+    key: SortingType['price desc'],
+    value: 'Price (desc)',
+  },
+];
 
 export default class CataloguePage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
@@ -17,12 +34,15 @@ export default class CataloguePage extends ContentPage {
 
   #filters!: BaseElement<HTMLDivElement>;
 
-  #categorySection!: BaseElement<HTMLDivElement>;
+  #categorySection!: CategoryList;
 
   #header!: BaseElement<HTMLHeadingElement>;
 
+  #selectedSort: SortingType;
+
   constructor(categoryPathPart: string[]) {
     super({ containerTag: 'div', title: 'catalogue page', showBreadCrumbs: true });
+    this.#selectedSort = SORT_SETTINGS.find((value) => value.default)?.key ?? SORT_SETTINGS[0].key;
     productCategories.getCategories().then(() => {
       const currentCategoryId = productCategories.routeExist(categoryPathPart[0]) ?? '';
       if (categoryPathPart.length && !currentCategoryId) {
@@ -34,12 +54,13 @@ export default class CataloguePage extends ContentPage {
           : currentCategoryId;
       this.#createContent(backendCategoryId);
       this.container.node.append(this.#content.node);
+      this.#productList.showProducts(this.#categorySection.currentCategoryId, this.#selectedSort);
     });
   }
 
   #onCategorySelectHandler = (id: string) => {
     Router.getInstance().changeCurrentRoute(productCategories.getById(id)?.key ?? '');
-    this.#productList.showProducts(id);
+    this.#productList.showProducts(id, this.#selectedSort);
     this.#header.node.textContent =
       productCategories.getById(id)?.name?.[process.env.LOCALE] ?? '';
   };
@@ -69,7 +90,7 @@ export default class CataloguePage extends ContentPage {
         new SearchInput({}),
         new BaseElement<HTMLDivElement>(
           { tag: 'div', class: classes.filterField },
-          new Select('', ['Date', 'Price'], () => {}),
+          new SelectWithKey('Sort by: ', SORT_SETTINGS, this.#sort),
         ),
       ),
       // main block
@@ -82,8 +103,14 @@ export default class CataloguePage extends ContentPage {
           class: classes.filters,
         })),
         // products
-        (this.#productList = new ProductList({ class: classes.products }, currentCategoryId)),
+        (this.#productList = new ProductList({ class: classes.products })),
       ),
     );
+  };
+
+  #sort = (val: string) => {
+    console.log(val);
+    this.#selectedSort = val as SortingType;
+    this.#productList.showProducts(this.#categorySection.currentCategoryId, this.#selectedSort);
   };
 }

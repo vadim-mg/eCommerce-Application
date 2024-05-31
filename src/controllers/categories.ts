@@ -1,5 +1,7 @@
 import categoriesApi from '@Src/api/categories';
 import { Category } from '@commercetools/platform-sdk';
+import { HttpErrorType } from '@commercetools/sdk-client-v2';
+import errorHandler from './error-handler';
 
 class ProductCategories {
   #cache: Category[];
@@ -37,7 +39,8 @@ class ProductCategories {
       );
       this.#categoryRoutes.set(this.CATEGORY_ALL.key, this.CATEGORY_ALL.id);
     } catch (error) {
-      console.log(error);
+      errorHandler(error as HttpErrorType);
+      throw error;
     }
     return this.#cache;
   };

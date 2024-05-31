@@ -16,7 +16,6 @@
     bottom: 0;
   }
 
-
   input[type='range']::-webkit-slider-thumb {
     pointer-events: all;
     width: 1.5rem;
@@ -37,10 +36,10 @@
     -webkit-appearance: none;
   }
   .input-min::-webkit-slider-thumb {
-    transform: translateX(-0.75rem);;
+    transform: translateX(-0.75rem);
   }
   .input-max::-webkit-slider-thumb {
-    transform: translateX(0.75rem);;
+    transform: translateX(0.75rem);
   }
 }
 
