@@ -193,8 +193,8 @@ export default class ProfilePage extends ContentPage {
 
     this.#birthDateInput.addDateInputType();
 
-    this.#editDetailsBtn.hide();
-    this.#saveDetailsBtn.show();
+    this.#editDetailsBtn.node.classList.add(classes.hidden);
+    this.#saveDetailsBtn.node.classList.remove(classes.hidden);
   };
 
   static isEmailFree = (
@@ -265,8 +265,8 @@ export default class ProfilePage extends ContentPage {
 
     this.#birthDateInput.addTextInputType();
 
-    this.#editDetailsBtn.show();
-    this.#saveDetailsBtn.hide();
+    this.#editDetailsBtn.node.classList.remove(classes.hidden);
+    this.#saveDetailsBtn.node.classList.add(classes.hidden);
 
     this.#notificationSuccessBlockWrapper.node.hidden = false;
     setTimeout(() => {
@@ -312,7 +312,7 @@ export default class ProfilePage extends ContentPage {
     this.#birthDateInput.node.classList.add(classes.birthDateInput);
 
     this.toggleUserDetailsInputsState(true);
-    this.#saveDetailsBtn.hide();
+    this.#saveDetailsBtn.node.classList.add(classes.hidden);
 
     return this.#userDataDetailsWrapper;
   };
