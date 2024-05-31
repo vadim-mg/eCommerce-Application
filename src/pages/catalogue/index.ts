@@ -3,6 +3,7 @@ import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import CategoryList from '@Src/components/logic/category-list';
+import FilterForm from '@Src/components/logic/filter-form';
 import ProductList from '@Src/components/logic/product-list';
 import SearchInput from '@Src/components/ui/search-input';
 import SelectWithKey from '@Src/components/ui/selectWithKeys';
@@ -32,7 +33,7 @@ export default class CataloguePage extends ContentPage {
 
   #productList!: ProductList;
 
-  #filters!: BaseElement<HTMLDivElement>;
+  #filters!: FilterForm;
 
   #categorySection!: CategoryList;
 
@@ -107,10 +108,12 @@ export default class CataloguePage extends ContentPage {
       tag(
         { tag: 'main', class: classes.contentSection },
         // filters
-        (this.#filters = tag<HTMLDivElement>({
-          tag: 'div',
-          text: 'filters',
-          class: classes.filters,
+        (this.#filters = new FilterForm({
+          brands: ['sdfsdf', 'sfsdf', 'dfsdf'],
+          maxNumberOfPlayers: 5,
+          minNumberOfPlayers: 1,
+          age: [7, 9, 12],
+          onViewBtnClick: this.#renderProductList,
         })),
         // products
         (this.#productList = new ProductList({ class: classes.products })),
