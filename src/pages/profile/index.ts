@@ -63,6 +63,8 @@ export default class ProfilePage extends ContentPage {
 
   #currentVersion!: number;
 
+  #currentEmail!: string;
+
   #notificationSuccessBlockWrapper!: BaseElement<HTMLDivElement>;
 
   #notificationErrorBlockWrapper!: BaseElement<HTMLDivElement>;
@@ -112,6 +114,8 @@ export default class ProfilePage extends ContentPage {
           }
         });
         console.log(info.body);
+
+        this.#currentEmail = customer.email;
       })
       .catch((error: HttpErrorType) => {
         console.log(error.message);
@@ -224,12 +228,15 @@ export default class ProfilePage extends ContentPage {
       this.#lastNameInput.isValid &&
       this.#birthDateInput.isValid
     ) {
-      // todo: add a check to see if the email input value matches current user email
-      ProfilePage.isEmailFree(
-        this.#emailInput.value,
-        this.setSavedMode,
-        this.#emailInput.showError,
-      );
+      if (this.#currentEmail !== this.#emailInput.value) {
+        ProfilePage.isEmailFree(
+          this.#emailInput.value,
+          this.setSavedMode,
+          this.#emailInput.showError,
+        );
+      } else {
+        this.setSavedMode();
+      }
     } else {
       console.log('invalid');
     }
@@ -254,12 +261,11 @@ export default class ProfilePage extends ContentPage {
         dateOfBirth: this.#birthDateInput.value,
       },
     ];
-    const response = new Customer().updateCustomerData(
-      this.#currentVersion,
-      customerUpdatedPersonalData,
-    ).then((result) => {
-      this.#currentVersion = result.version
-    });
+    const response = new Customer()
+      .updateCustomerData(this.#currentVersion, customerUpdatedPersonalData)
+      .then((result) => {
+        this.#currentVersion = result.version;
+      });
 
     console.log(response);
 
