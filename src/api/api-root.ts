@@ -49,10 +49,18 @@ class ApiRoot {
     });
   }
 
+  // when user login we need use passwordCtpClient
+  apiBuilderForLogin = (user: UserAuthOptions) => {
+    this.#currentCtpClient = passwordCtpClient(user);
+    return createApiBuilderFromCtpClient(this.#currentCtpClient()).withProjectKey({
+      projectKey: process.env.CTP_PROJECT_KEY,
+    });
+  };
+
   loginUser = (user: UserAuthOptions) => {
     anonymousTokenCache.remove();
     this.#currentCtpClient = passwordCtpClient(user);
-    this.apiBuilder
+    this.apiBuilderForLogin(user)
       .me()
       .login()
       .post({

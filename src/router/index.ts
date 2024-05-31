@@ -136,7 +136,7 @@ export default class Router {
     }));
 
   refresh = () => {
-    this.route(this.#currentRoutePath, false);
+    this.route(window.location.pathname as AppRoutes, false);
   };
 
   get currentRoutePath() {
