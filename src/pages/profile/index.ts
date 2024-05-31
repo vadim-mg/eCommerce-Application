@@ -257,7 +257,9 @@ export default class ProfilePage extends ContentPage {
     const response = new Customer().updateCustomerData(
       this.#currentVersion,
       customerUpdatedPersonalData,
-    );
+    ).then((result) => {
+      this.#currentVersion = result.version
+    });
 
     console.log(response);
 
