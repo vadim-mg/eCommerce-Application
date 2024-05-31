@@ -40,6 +40,8 @@ export default class CataloguePage extends ContentPage {
 
   #selectedSort: SortingType;
 
+  #searchField!: SearchInput;
+
   constructor(categoryPathPart: string[]) {
     super({ containerTag: 'div', title: 'catalogue page', showBreadCrumbs: true });
     this.#selectedSort = SORT_SETTINGS.find((value) => value.default)?.key ?? SORT_SETTINGS[0].key;
@@ -54,13 +56,21 @@ export default class CataloguePage extends ContentPage {
           : currentCategoryId;
       this.#createContent(backendCategoryId);
       this.container.node.append(this.#content.node);
-      this.#productList.showProducts(this.#categorySection.currentCategoryId, this.#selectedSort);
+      this.#renderProductList();
     });
   }
 
+  #renderProductList = () => {
+    this.#productList.showProducts({
+      categoryId: this.#categorySection.currentCategoryId,
+      sortingType: this.#selectedSort,
+      search: this.#searchField.value,
+    });
+  };
+
   #onCategorySelectHandler = (id: string) => {
     Router.getInstance().changeCurrentRoute(productCategories.getById(id)?.key ?? '');
-    this.#productList.showProducts(id, this.#selectedSort);
+    this.#renderProductList();
     this.#header.node.textContent =
       productCategories.getById(id)?.name?.[process.env.LOCALE] ?? '';
   };
@@ -87,7 +97,7 @@ export default class CataloguePage extends ContentPage {
       // Search...  sort
       tag(
         { tag: 'div', class: classes.topFieldsBlock },
-        new SearchInput({}),
+        (this.#searchField = new SearchInput({}, this.#renderProductList)),
         new BaseElement<HTMLDivElement>(
           { tag: 'div', class: classes.filterField },
           new SelectWithKey('Sort by: ', SORT_SETTINGS, this.#sort),
@@ -111,6 +121,6 @@ export default class CataloguePage extends ContentPage {
   #sort = (val: string) => {
     console.log(val);
     this.#selectedSort = val as SortingType;
-    this.#productList.showProducts(this.#categorySection.currentCategoryId, this.#selectedSort);
+    this.#renderProductList();
   };
 }

@@ -3,7 +3,7 @@ import {
   ProductProjectionPagedQueryResponse,
 } from '@commercetools/platform-sdk';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
-import productsApi, { SortingType } from '@Src/api/products';
+import productsApi, { ProductGetOptions } from '@Src/api/products';
 import errorHandler from './error-handler';
 
 export enum ImageSize {
@@ -20,9 +20,9 @@ export default class Products {
 
   static locale = process.env.LOCALE;
 
-  getProducts = async (categoryId?: string, sortingType?: SortingType) => {
+  getProducts = async (options: ProductGetOptions) => {
     try {
-      this.#products = (await productsApi.getProducts(categoryId, sortingType)).body;
+      this.#products = (await productsApi.getProducts(options)).body;
     } catch (error) {
       errorHandler(error as HttpErrorType);
       throw error;
