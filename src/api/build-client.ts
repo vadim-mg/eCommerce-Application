@@ -80,7 +80,7 @@ const refreshAuthMiddlewareOptions = (tokenCache: TokenCache): RefreshAuthMiddle
     clientSecret: process.env.CTP_CLIENT_SECRET,
   },
   tokenCache,
-  refreshToken: tokenCache.get().refreshToken,
+  refreshToken: tokenCache.get().refreshToken ?? '',
 });
 
 // todo: in next sprints : not create anonymous token while user doesn't do something (put in cart for example)
