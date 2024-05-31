@@ -55,4 +55,3 @@ const updateCustomerData = (currentVersion: number, updateActions: MyCustomerUpd
     .execute();
 
 export default { signIn, signUp, returnCustomerByEmail, me, updateCustomerData };
-
