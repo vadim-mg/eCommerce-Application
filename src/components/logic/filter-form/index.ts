@@ -52,15 +52,16 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
               'Brands',
               AccordionState.OPEN,
               classes.brandAccordion,
-              ...(this.#brandsCheckBoxes = this.#filterOptions[AttrName.BRAND].map(
-                (brand) => new CheckBox({ class: classes.filterCheckbox }, brand, false),
-              )),
+              ...(this.#brandsCheckBoxes = this.#filterOptions[AttrName.BRAND]
+                .sort()
+                .map((brand) => new CheckBox({ class: classes.filterCheckbox }, brand, false))),
             )
           : tag({ tag: 'span' }),
 
         // Number of players
-        ...(this.#filterOptions[AttrName.MIN_PLAYER_COUNT]
-          ? [
+        this.#filterOptions[AttrName.MIN_PLAYER_COUNT]
+          ? tag(
+              { tag: 'div', class: classes.rangeSliderContainer },
               tag<HTMLParagraphElement>({
                 tag: 'p',
                 class: classes.rangeSliderCatption,
@@ -71,8 +72,8 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
                 this.#filterOptions[AttrName.MAX_PLAYER_COUNT],
                 classes.rangeSlider,
               ),
-            ]
-          : [tag({ tag: 'span' })]),
+            )
+          : tag({ tag: 'span' }),
 
         // age filter
         this.#filterOptions[AttrName.AGE_FROM].length
@@ -80,9 +81,11 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
               'Age from',
               AccordionState.OPEN,
               classes.brandAccordion,
-              ...(this.#ageCheckBoxes = this.#filterOptions[AttrName.AGE_FROM].map(
-                (age) => new CheckBox({ class: classes.filterCheckbox }, age.toString(), false),
-              )),
+              ...(this.#ageCheckBoxes = this.#filterOptions[AttrName.AGE_FROM]
+                .sort((a, b) => Number(a) - Number(b))
+                .map(
+                  (age) => new CheckBox({ class: classes.filterCheckbox }, age.toString(), false),
+                )),
             )
           : tag({ tag: 'span' }),
 

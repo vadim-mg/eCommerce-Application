@@ -119,10 +119,10 @@ export default class Products {
       const ageSet = availableAttributesSets[AttrName.AGE_FROM].values();
 
       this.#availableAttributes = {
-        [AttrName.BRAND]: Array.from(brandsSet).sort(),
+        [AttrName.BRAND]: Array.from(brandsSet),
         [AttrName.MIN_PLAYER_COUNT]: Math.min(...Array.from(minPlayersCountSet)),
         [AttrName.MAX_PLAYER_COUNT]: Math.max(...Array.from(maxPlayersCountSet)),
-        [AttrName.AGE_FROM]: Array.from(ageSet).sort(),
+        [AttrName.AGE_FROM]: Array.from(ageSet).filter((val) => val % 2 === 0),
       };
 
       this.setCacheForAttributes();
