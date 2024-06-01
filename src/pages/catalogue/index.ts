@@ -70,6 +70,7 @@ export default class CataloguePage extends ContentPage {
       categoryId: this.#categorySection.currentCategoryId,
       sortingType: this.#selectedSort,
       search: this.#searchField.value,
+      filter: this.#filters.getFilterSettings(),
     });
   };
 

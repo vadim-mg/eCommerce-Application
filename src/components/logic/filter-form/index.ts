@@ -17,6 +17,8 @@ const SHOWED_FILTER = [
 export default class FilterForm extends BaseElement<HTMLFormElement> {
   #brandsCheckBoxes!: CheckBox[];
 
+  #rangeSlider!: RangeSlider;
+
   #ageCheckBoxes!: CheckBox[];
 
   #filterOptions!: FilterAttributes;
@@ -67,11 +69,11 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
                 class: classes.rangeSliderCatption,
                 text: 'Number of players',
               }),
-              new RangeSlider(
+              (this.#rangeSlider = new RangeSlider(
                 this.#filterOptions[AttrName.MIN_PLAYER_COUNT],
                 this.#filterOptions[AttrName.MAX_PLAYER_COUNT],
                 classes.rangeSlider,
-              ),
+              )),
             )
           : tag({ tag: 'span' }),
 
@@ -107,6 +109,17 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
     console.log('Reset all filters by default');
     console.log(this.#filterOptions[AttrName.AGE_FROM]);
   };
+
+  getFilterSettings = (): FilterAttributes => ({
+    [AttrName.BRAND]: this.#brandsCheckBoxes
+      ?.filter((checkBox) => checkBox.checked)
+      .map((checkBox) => checkBox.labelElement.node.textContent ?? ''),
+    [AttrName.MIN_PLAYER_COUNT]: this.#rangeSlider?.minValue,
+    [AttrName.MAX_PLAYER_COUNT]: this.#rangeSlider?.maxValue,
+    [AttrName.AGE_FROM]: this.#ageCheckBoxes
+      ?.filter((checkBox) => checkBox.checked)
+      .map((checkBox) => Number(checkBox.labelElement.node.textContent) ?? Infinity),
+  });
 
   #viewButtonHandler = () => {
     this.#onViewBtnClick();

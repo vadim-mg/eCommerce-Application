@@ -1,3 +1,4 @@
+import { FilterAttributes } from '@Src/controllers/products';
 import apiRoot from './api-root';
 
 // docs.commercetools.com/api/projects/productProjections#get-productprojection-by-key
@@ -12,6 +13,7 @@ export type ProductGetOptions = {
   categoryId?: string;
   sortingType?: SortingType;
   search?: string;
+  filter?: FilterAttributes;
 };
 
 const getProductByKey = (key: string) =>
@@ -21,7 +23,9 @@ const getProductById = (id: string) =>
   apiRoot.apiBuilder.productProjections().withId({ ID: id }).get().execute();
 
 const getProducts = (options: ProductGetOptions) => {
-  const { categoryId, sortingType, search } = options;
+  const { categoryId, sortingType, search, filter } = options;
+  console.log('Filter: --------------');
+  console.log(filter); // todo: find how add filter parameters to request!!! important
   return apiRoot.apiBuilder
     .productProjections()
     .search()

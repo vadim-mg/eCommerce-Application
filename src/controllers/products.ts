@@ -60,7 +60,7 @@ export default class Products {
   #availableAttributes!: FilterAttributes | null;
 
   constructor() {
-    this.initAvailableAttributes();
+    this.#initAvailableAttributes();
   }
 
   static locale = process.env.LOCALE;
@@ -89,7 +89,7 @@ export default class Products {
   // if change isNeedAttr in calling function, you should wait until cach will experied or clear it in local storage
   getFilterAttributes = async (isNeedAttr: AttrName[] = []) => {
     try {
-      this.initAvailableAttributes();
+      this.#initAvailableAttributes();
       if (this.#availableAttributes) {
         return this.#availableAttributes; // from cache
       }
@@ -125,7 +125,7 @@ export default class Products {
         [AttrName.AGE_FROM]: Array.from(ageSet).filter((val) => val % 2 === 0),
       };
 
-      this.setCacheForAttributes();
+      this.#setCacheForAttributes();
     } catch (error) {
       errorHandler(error as HttpErrorType);
       throw error;
@@ -134,12 +134,12 @@ export default class Products {
     return this.#availableAttributes;
   };
 
-  setCacheForAttributes = () => {
+  #setCacheForAttributes = () => {
     localStorage.setItem(FILTER_ATTRIBUTES_CACHE_NAME, JSON.stringify(this.#availableAttributes));
     localStorage.setItem(`${FILTER_ATTRIBUTES_CACHE_NAME}_time`, Date.now().toString());
   };
 
-  initAvailableAttributes = () => {
+  #initAvailableAttributes = () => {
     const data = localStorage.getItem(FILTER_ATTRIBUTES_CACHE_NAME);
     const time = localStorage.getItem(`${FILTER_ATTRIBUTES_CACHE_NAME}_time`);
     const diff = time ? (Date.now() - Number(time)) / 1000 : Infinity;
