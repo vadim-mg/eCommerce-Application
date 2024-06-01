@@ -54,7 +54,6 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
         `Use us default ${addressType} address`,
         isDefaultAddress,
       ),
-      // showUpdateNotification(true),
       this.#createEditDeleteBtnComponent(),
     );
     this.#countrySelect.node.classList.add(classes.selectCountry);

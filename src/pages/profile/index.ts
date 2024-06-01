@@ -30,6 +30,13 @@ const createTitleComponent = () => {
   return titleWrapper;
 };
 
+const emptyAddress = {
+  country: '',
+  city: '',
+  postalCode: '',
+  streetName: '',
+}
+
 export default class ProfilePage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
@@ -54,6 +61,10 @@ export default class ProfilePage extends ContentPage {
   #editDetailsBtn!: Button;
 
   #saveDetailsBtn!: Button;
+
+  #deliveryWrapper!: BaseElement<HTMLDivElement>;
+
+  #billingWrapper!: BaseElement<HTMLDivElement>;
 
   #deliveryAddressesContainer!: BaseElement<HTMLDivElement>;
 
@@ -374,11 +385,13 @@ export default class ProfilePage extends ContentPage {
       tag: 'h2',
       text: 'Delivery address',
     });
-    this.#addAddressBtn = this.createAddAddressBtn();
-    this.#deliveryAddressesContainer = new BaseElement<HTMLDivElement>({ tag: 'div' });
-    this.#deliveryAddressesContainer.node.append(deliveryAddressTitle.node);
-    this.#deliveryAddressesContainer.node.append(this.#addAddressBtn.node);
-    return this.#deliveryAddressesContainer;
+    this.#addAddressBtn = this.createAddAddressBtn('shipping');
+    this.#deliveryWrapper = new BaseElement<HTMLDivElement>({ tag: 'div' });
+    this.#deliveryAddressesContainer = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.deliveryAddressesContainer });
+    this.#deliveryWrapper.node.append(deliveryAddressTitle.node);
+    this.#deliveryWrapper.node.append(this.#addAddressBtn.node);
+    this.#deliveryWrapper.node.append(this.#deliveryAddressesContainer.node);
+    return this.#deliveryWrapper;
   };
 
   createBillingAddressBasicStructure = () => {
@@ -386,18 +399,29 @@ export default class ProfilePage extends ContentPage {
       tag: 'h2',
       text: 'Billing address',
     });
-    this.#addAddressBtn = this.createAddAddressBtn();
-    this.#billingAddressesContainer = new BaseElement<HTMLDivElement>({ tag: 'div' });
-    this.#billingAddressesContainer.node.append(billingAddressTitle.node);
-    this.#billingAddressesContainer.node.append(this.#addAddressBtn.node);
-    return this.#billingAddressesContainer;
+    this.#addAddressBtn = this.createAddAddressBtn('billing');
+    this.#billingWrapper = new BaseElement<HTMLDivElement>({ tag: 'div' });
+    this.#billingAddressesContainer = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.billingAddressesContainer });
+    this.#billingWrapper.node.append(billingAddressTitle.node);
+    this.#billingWrapper.node.append(this.#addAddressBtn.node);
+    this.#billingWrapper.node.append(this.#billingAddressesContainer.node);
+    return this.#billingWrapper;
   };
 
-  createAddAddressBtn = () => {
+  addNewAddress = (addressType: string) => {
+    const newAddressForm = new AddressForm({}, addressType, emptyAddress, false);
+    if (addressType === 'billing') {
+      this.#billingAddressesContainer.node.append(newAddressForm.node);
+    } else {
+      this.#deliveryAddressesContainer.node.append(newAddressForm.node);
+    }
+  }
+
+  createAddAddressBtn = (addressType: string) => {
     this.#addAddressBtn = new Button(
       { text: '+Add address', class: classes.button },
       ButtonClasses.NORMAL,
-      () => console.log('Add address'),
+      () => this.addNewAddress(addressType),
     );
     this.#addAddressBtn.node.classList.add(classes.addAddressBtn);
     return this.#addAddressBtn;

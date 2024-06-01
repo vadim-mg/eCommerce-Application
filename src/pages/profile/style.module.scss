@@ -49,6 +49,13 @@ h2 {
   position: relative;
 }
 
+.deliveryAddressesContainer,
+.billingAddressesContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3rem;
+}
+
 .user-password-wrapper {
   display: flex;
   flex-direction: column;
