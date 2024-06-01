@@ -41,6 +41,7 @@ const getProducts = (options: ProductGetOptions) => {
         ...(categoryId ? { 'filter.query': `categories.id:"${categoryId}"` } : {}),
 
         sort: sortingType,
+        filter: ['variants.attributes.brand:"Days of Wonder"'], // todo: filter by all brands and many params
 
         offset: 0,
       },

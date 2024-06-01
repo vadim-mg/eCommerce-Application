@@ -102,12 +102,32 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
   };
 
   #addEventListeners = () => {
-    console.log(this.#brandsCheckBoxes);
+    this.#ageCheckBoxes.forEach((checkbox) =>
+      checkbox.node.addEventListener('change', (event: Event) => {
+        const eventTarget = event.target as HTMLInputElement;
+
+        if (eventTarget.checked) {
+          this.#ageCheckBoxes.forEach((cb: CheckBox) => {
+            const cbCopy = cb;
+            cbCopy.checked = false;
+          });
+          eventTarget.checked = true;
+        }
+      }),
+    );
   };
 
   #resetButtonHandler = () => {
-    console.log('Reset all filters by default');
-    console.log(this.#filterOptions[AttrName.AGE_FROM]);
+    this.#ageCheckBoxes.forEach((cb: CheckBox) => {
+      const cbCopy = cb;
+      cbCopy.checked = false;
+    });
+    this.#brandsCheckBoxes.forEach((cb: CheckBox) => {
+      const cbCopy = cb;
+      cbCopy.checked = false;
+    });
+    this.#rangeSlider.minValue = this.#filterOptions[AttrName.MIN_PLAYER_COUNT];
+    this.#rangeSlider.maxValue = this.#filterOptions[AttrName.MAX_PLAYER_COUNT];
   };
 
   getFilterSettings = (): FilterAttributes => ({
