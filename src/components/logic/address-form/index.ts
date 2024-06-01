@@ -127,6 +127,8 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
     this.#saveAddressButton.node.classList.add(classes.hidden);
     this.#editAddressButton.node.classList.remove(classes.hidden);
+    this.#deleteAddressButton.node.classList.remove(classes.hidden);
+    this.#cancelAddressButton.node.classList.add(classes.hidden);
   };
 
   setCanceledMode = () => {
@@ -137,4 +139,15 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.#editAddressButton.node.classList.remove(classes.hidden);
     this.#deleteAddressButton.node.classList.remove(classes.hidden);
   };
+
+  setAddedNewAddressMode = () => {
+    this.setUserAddressInputsState(false);
+    this.#countrySelect.node.classList.remove(classes.hidden);
+    this.#countryInput.node.classList.add(classes.hidden);
+
+    this.#saveAddressButton.node.classList.remove(classes.hidden);
+    this.#cancelAddressButton.node.classList.remove(classes.hidden);
+    this.#editAddressButton.node.classList.add(classes.hidden);
+    this.#deleteAddressButton.node.classList.add(classes.hidden);
+  }
 }

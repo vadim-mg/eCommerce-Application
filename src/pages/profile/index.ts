@@ -35,7 +35,7 @@ const emptyAddress = {
   city: '',
   postalCode: '',
   streetName: '',
-}
+};
 
 export default class ProfilePage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
@@ -387,7 +387,10 @@ export default class ProfilePage extends ContentPage {
     });
     this.#addAddressBtn = this.createAddAddressBtn('shipping');
     this.#deliveryWrapper = new BaseElement<HTMLDivElement>({ tag: 'div' });
-    this.#deliveryAddressesContainer = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.deliveryAddressesContainer });
+    this.#deliveryAddressesContainer = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.deliveryAddressesContainer,
+    });
     this.#deliveryWrapper.node.append(deliveryAddressTitle.node);
     this.#deliveryWrapper.node.append(this.#addAddressBtn.node);
     this.#deliveryWrapper.node.append(this.#deliveryAddressesContainer.node);
@@ -401,7 +404,10 @@ export default class ProfilePage extends ContentPage {
     });
     this.#addAddressBtn = this.createAddAddressBtn('billing');
     this.#billingWrapper = new BaseElement<HTMLDivElement>({ tag: 'div' });
-    this.#billingAddressesContainer = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.billingAddressesContainer });
+    this.#billingAddressesContainer = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.billingAddressesContainer,
+    });
     this.#billingWrapper.node.append(billingAddressTitle.node);
     this.#billingWrapper.node.append(this.#addAddressBtn.node);
     this.#billingWrapper.node.append(this.#billingAddressesContainer.node);
@@ -410,12 +416,13 @@ export default class ProfilePage extends ContentPage {
 
   addNewAddress = (addressType: string) => {
     const newAddressForm = new AddressForm({}, addressType, emptyAddress, false);
+    newAddressForm.setAddedNewAddressMode();
     if (addressType === 'billing') {
       this.#billingAddressesContainer.node.append(newAddressForm.node);
     } else {
       this.#deliveryAddressesContainer.node.append(newAddressForm.node);
     }
-  }
+  };
 
   createAddAddressBtn = (addressType: string) => {
     this.#addAddressBtn = new Button(
