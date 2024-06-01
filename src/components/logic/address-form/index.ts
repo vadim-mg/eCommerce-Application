@@ -15,7 +15,8 @@ import classes from './style.module.scss';
 
 type FormProps = Omit<ElementProps<HTMLButtonElement>, 'tag'>;
 
-const countiesList = ['Belarus', 'Poland', 'Russia'];
+const countriesList = ['Belarus', 'Poland', 'Russia'];
+const COUNTRY_CODES = ['BE', 'PL', 'RU'];
 
 export default class AddressForm extends BaseElement<HTMLFormElement> {
   #countryInput!: InputText;
@@ -60,13 +61,13 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
   ) => {
     const addressComponent = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.addressWrapper },
-      (this.#countrySelect = new Select('Country', countiesList, () => console.log('country'))),
+      (this.#countrySelect = new Select('Country', countriesList, () => console.log('country'))),
       (this.#countryInput = new InputText({ name: 'country' }, 'Country')),
       (this.#cityInput = new InputText({ name: 'city' }, 'City', () =>
         validateCity(this.#cityInput.value),
       )),
       (this.#postalCodeInput = new InputText({ name: 'postal code' }, 'Postal code', () =>
-        validatePostalCode(this.#postalCodeInput.value, this.#countryInput.value),
+        validatePostalCode(this.#postalCodeInput.value, this.#countrySelect.selectedValue),
       )),
       (this.#streetInput = new InputText({ name: 'street' }, 'Street', () =>
         validateStreet(this.#streetInput.value),
@@ -81,7 +82,9 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.#countrySelect.node.classList.add(classes.selectCountry);
     this.#countrySelect.node.classList.add(classes.hidden);
 
-    this.#countryInput.value = address.country;
+    const country = countriesList[COUNTRY_CODES.indexOf(address.country)];
+    this.#countrySelect.selectedValue = country;
+    this.#countryInput.value = country;
     this.#cityInput.value = address.city ?? '';
     this.#postalCodeInput.value = address.postalCode ?? '';
     this.#streetInput.value = address.streetName ?? '';
@@ -103,7 +106,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       (this.#saveAddressButton = new Button(
         { text: 'Save', class: classes.button },
         ButtonClasses.NORMAL,
-        this.setSavedMode,
+        this.checkAndSendAddressData,
       )),
       (this.#cancelAddressButton = new Button(
         { text: 'Cancel', class: classes.button },
@@ -149,13 +152,13 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     if (this.#addressId === null) {
       throw new Error('AddressId is null');
     }
+    const countryValue = COUNTRY_CODES[countriesList.indexOf(this.#countrySelect.selectedValue)];
     const obj: MyCustomerChangeAddressAction = {
       action: 'changeAddress',
       addressId: this.#addressId,
       address: {
         city: this.#cityInput.value,
-        // todo: change country code later!
-        country: 'PL',
+        country: countryValue,
         postalCode: this.#postalCodeInput.value,
         streetName: this.#streetInput.value,
       },
@@ -163,25 +166,28 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     const customerEditAddressData: MyCustomerUpdateAction[] = [obj];
 
     if (this.#cityInput.isValid && this.#streetInput.isValid && this.#postalCodeInput.isValid) {
-    const version = State.getInstance().currentCustomerVersion;
-    if (version === null) {
-      throw new Error('Version is null');
-    }
-      const response = new Customer().updateCustomerData(
-        version,
-        customerEditAddressData,
-        () => console.log('Success'),
-        () => console.log('error'),
-      ).then((result) => {
-        State.getInstance().currentCustomerVersion = result.version;
-      });
+      const version = State.getInstance().currentCustomerVersion;
+      if (version === null) {
+        throw new Error('Version is null');
+      }
+      const response = new Customer()
+        .updateCustomerData(
+          version,
+          customerEditAddressData,
+          () => console.log('Success'),
+          () => console.log('error'),
+        )
+        .then((result) => {
+          State.getInstance().currentCustomerVersion = result.version;
+          
+        });
       console.log(response);
+      this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
+      this.setSavedMode();
     }
   };
 
   setSavedMode = () => {
-    this.checkAndSendAddressData();
-
     this.setUserAddressInputsState(true);
 
     this.#countrySelect.node.classList.add(classes.hidden);

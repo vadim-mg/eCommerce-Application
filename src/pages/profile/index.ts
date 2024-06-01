@@ -421,13 +421,7 @@ export default class ProfilePage extends ContentPage {
   };
 
   addNewAddress = (addressType: string) => {
-    const newAddressForm = new AddressForm(
-      {},
-      addressType,
-      emptyAddress,
-      false,
-      null,
-    );
+    const newAddressForm = new AddressForm({}, addressType, emptyAddress, false, null);
     newAddressForm.setAddedNewAddressMode();
     if (addressType === 'billing') {
       this.#billingAddressesContainer.node.append(newAddressForm.node);
