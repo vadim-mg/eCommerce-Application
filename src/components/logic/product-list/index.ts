@@ -11,9 +11,9 @@ type ProductListProps = Omit<ElementProps<HTMLLinkElement>, 'tag'>;
 export default class ProductList extends BaseElement<HTMLDivElement> {
   #products: Products;
 
-  constructor(props: ProductListProps) {
+  constructor(props: ProductListProps, products: Products) {
     super({ tag: 'div', ...props });
-    this.#products = new Products();
+    this.#products = products;
     this.node.classList.add(classes.productList);
   }
 

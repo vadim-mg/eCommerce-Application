@@ -3,7 +3,8 @@
   border-radius: 1rem;
   padding: 0px 0px 2rem 0px;
   width: 340px;
-  height: 678px;
+  max-width: 100%;
+  height: max-content;
   display: flex;
   flex-direction: column;
   gap: 1rem;

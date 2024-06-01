@@ -8,6 +8,7 @@ import ProductList from '@Src/components/logic/product-list';
 import SearchInput from '@Src/components/ui/search-input';
 import SelectWithKey from '@Src/components/ui/selectWithKeys';
 import productCategories from '@Src/controllers/categories';
+import Products from '@Src/controllers/products';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
 import classes from './style.module.scss';
@@ -31,6 +32,8 @@ const SORT_SETTINGS = [
 export default class CataloguePage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
+  #products: Products;
+
   #productList!: ProductList;
 
   #filters!: FilterForm;
@@ -46,6 +49,7 @@ export default class CataloguePage extends ContentPage {
   constructor(categoryPathPart: string[]) {
     super({ containerTag: 'div', title: 'catalogue page', showBreadCrumbs: true });
     this.#selectedSort = SORT_SETTINGS.find((value) => value.default)?.key ?? SORT_SETTINGS[0].key;
+    this.#products = new Products();
     productCategories.getCategories().then(() => {
       const currentCategoryId = productCategories.routeExist(categoryPathPart[0]) ?? '';
       if (categoryPathPart.length && !currentCategoryId) {
@@ -108,15 +112,9 @@ export default class CataloguePage extends ContentPage {
       tag(
         { tag: 'main', class: classes.contentSection },
         // filters
-        (this.#filters = new FilterForm({
-          brands: ['sdfsdf', 'sfsdf', 'dfsdf'],
-          maxNumberOfPlayers: 5,
-          minNumberOfPlayers: 1,
-          age: [7, 9, 12],
-          onViewBtnClick: this.#renderProductList,
-        })),
+        (this.#filters = new FilterForm(this.#products, this.#renderProductList)),
         // products
-        (this.#productList = new ProductList({ class: classes.products })),
+        (this.#productList = new ProductList({ class: classes.products }, this.#products)),
       ),
     );
   };

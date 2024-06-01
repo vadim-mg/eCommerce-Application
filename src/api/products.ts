@@ -27,7 +27,7 @@ const getProducts = (options: ProductGetOptions) => {
     .search()
     .get({
       queryArgs: {
-        limit: 10,
+        limit: 9,
 
         ...(search ? { 'text.en-GB': `"${search}"` } : {}),
         // fuzzy: true,
@@ -44,4 +44,15 @@ const getProducts = (options: ProductGetOptions) => {
     .execute();
 };
 
-export default { getProductById, getProductByKey, getProducts };
+const getAllProducts = () =>
+  apiRoot.apiBuilder
+    .productProjections()
+    .search()
+    .get({
+      queryArgs: {
+        limit: 100,
+      },
+    })
+    .execute();
+
+export default { getProductById, getProductByKey, getProducts, getAllProducts };

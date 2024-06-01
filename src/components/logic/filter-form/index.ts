@@ -4,14 +4,14 @@ import Accordion, { AccordionState } from '@Src/components/ui/accordion';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import CheckBox from '@Src/components/ui/checkbox';
 import RangeSlider from '@Src/components/ui/range-slider';
+import Products, { AttrName } from '@Src/controllers/products';
 import classes from './style.module.scss';
 
 type FilterOptions = {
-  brands: string[];
-  minNumberOfPlayers: number;
-  maxNumberOfPlayers: number;
-  age: number[];
-  onViewBtnClick: () => void;
+  [AttrName.BRAND]: string[];
+  [AttrName.MIN_PLAYER_COUNT]: number;
+  [AttrName.MAX_PLAYER_COUNT]: number;
+  [AttrName.AGE_FROM]: number[];
 };
 
 export default class FilterForm extends BaseElement<HTMLFormElement> {
@@ -19,13 +19,30 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
 
   #ageCheckBoxes!: CheckBox[];
 
-  #filterOptions: FilterOptions;
+  #filterOptions!: FilterOptions;
 
-  constructor(filterOptions: FilterOptions) {
+  #onViewBtnClick: () => void;
+
+  constructor(products: Products, onViewBtnClick: () => void) {
     super({ tag: 'form', class: classes.filterForm });
-    this.#filterOptions = filterOptions;
-    this.#createComponent();
-    this.#addEventListeners();
+    this.#onViewBtnClick = onViewBtnClick;
+
+    products.getFilterAttributes().then((filterAttrs) => {
+      const brandsSet = filterAttrs[AttrName.BRAND].values();
+      const minPlayersCountSet = filterAttrs[AttrName.MIN_PLAYER_COUNT].values();
+      const maxPlayersCountSet = filterAttrs[AttrName.MAX_PLAYER_COUNT].values();
+      const ageSet = filterAttrs[AttrName.AGE_FROM].values();
+
+      this.#filterOptions = {
+        [AttrName.BRAND]: Array.from(brandsSet).sort(),
+        [AttrName.MIN_PLAYER_COUNT]: Math.min(...Array.from(minPlayersCountSet)),
+        [AttrName.MAX_PLAYER_COUNT]: Math.max(...Array.from(maxPlayersCountSet)),
+        [AttrName.AGE_FROM]: Array.from(ageSet).sort(),
+      };
+
+      this.#createComponent();
+      this.#addEventListeners();
+    });
   }
 
   #createComponent = () => {
@@ -44,7 +61,7 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
           'Brands',
           AccordionState.OPEN,
           classes.brandAccordion,
-          ...(this.#brandsCheckBoxes = this.#filterOptions.brands.map(
+          ...(this.#brandsCheckBoxes = this.#filterOptions[AttrName.BRAND].map(
             (brand) => new CheckBox({ class: classes.filterCheckbox }, brand, false),
           )),
         ),
@@ -56,8 +73,8 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
           text: 'Number of players',
         }),
         new RangeSlider(
-          this.#filterOptions.minNumberOfPlayers,
-          this.#filterOptions.maxNumberOfPlayers,
+          this.#filterOptions[AttrName.MIN_PLAYER_COUNT],
+          this.#filterOptions[AttrName.MAX_PLAYER_COUNT],
           classes.rangeSlider,
         ),
 
@@ -66,7 +83,7 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
           'Age from',
           AccordionState.OPEN,
           classes.brandAccordion,
-          ...(this.#ageCheckBoxes = this.#filterOptions.age.map(
+          ...(this.#ageCheckBoxes = this.#filterOptions[AttrName.AGE_FROM].map(
             (age) => new CheckBox({ class: classes.filterCheckbox }, age.toString(), false),
           )),
         ),
@@ -87,10 +104,10 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
 
   #resetButtonHandler = () => {
     console.log('Reset all filters by default');
-    console.log(this.#filterOptions.age);
+    console.log(this.#filterOptions[AttrName.AGE_FROM]);
   };
 
   #viewButtonHandler = () => {
-    this.#filterOptions.onViewBtnClick();
+    this.#onViewBtnClick();
   };
 }
