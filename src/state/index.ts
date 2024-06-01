@@ -7,11 +7,14 @@ export default class State {
 
   #currentUser: Customer | null;
 
+  #currentCustomerVersion: number | null;
+
   static #instance: State | null;
 
   private constructor() {
     this.#isLoggedIn = !!passwordTokenCache.get().token;
     this.#currentUser = null;
+    this.#currentCustomerVersion = null;
   }
 
   // State can be used in any part of App as a singleton
@@ -38,5 +41,13 @@ export default class State {
 
   get currentUser() {
     return this.#currentUser;
+  }
+
+  set currentCustomerVersion(version: number | null) {
+    this.#currentCustomerVersion = version;
+  }
+
+  get currentCustomerVersion() {
+    return this.#currentCustomerVersion;
   }
 }

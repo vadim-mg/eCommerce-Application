@@ -107,6 +107,8 @@ export default class ProfilePage extends ContentPage {
               'shipping',
               shippingAddress,
               customer.defaultShippingAddressId === addressId,
+              this.#currentVersion,
+              addressId,
             );
             this.#deliveryAddressesContainer.node.append(addressForm.node);
           }
@@ -120,6 +122,8 @@ export default class ProfilePage extends ContentPage {
               'shipping',
               billingAddress,
               customer.defaultBillingAddressId === addressId,
+              this.#currentVersion,
+              addressId,
             );
             this.#billingAddressesContainer.node.append(addressForm.node);
           }
@@ -415,7 +419,14 @@ export default class ProfilePage extends ContentPage {
   };
 
   addNewAddress = (addressType: string) => {
-    const newAddressForm = new AddressForm({}, addressType, emptyAddress, false);
+    const newAddressForm = new AddressForm(
+      {},
+      addressType,
+      emptyAddress,
+      false,
+      this.#currentVersion,
+      null,
+    );
     newAddressForm.setAddedNewAddressMode();
     if (addressType === 'billing') {
       this.#billingAddressesContainer.node.append(newAddressForm.node);

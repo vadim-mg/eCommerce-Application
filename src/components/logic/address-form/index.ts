@@ -1,9 +1,15 @@
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
-import { Address } from '@commercetools/platform-sdk';
+import {
+  Address,
+  MyCustomerChangeAddressAction,
+  MyCustomerUpdateAction,
+} from '@commercetools/platform-sdk';
 import InputText from '@Src/components/ui/input-text';
 import CheckBox from '@Src/components/ui/checkbox';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Select from '@Src/components/ui/select';
+import { validateCity, validatePostalCode, validateStreet } from '@Src/utils/helpers';
+import Customer from '@Src/controllers/customers';
 import classes from './style.module.scss';
 
 type FormProps = Omit<ElementProps<HTMLButtonElement>, 'tag'>;
@@ -31,10 +37,23 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
   #deleteAddressButton!: Button;
 
-  constructor(props: FormProps, addressType: string, address: Address, isDefaultAddress: boolean) {
+  #currentVersion!: number;
+
+  #addressId!: string | null;
+
+  constructor(
+    props: FormProps,
+    addressType: string,
+    address: Address,
+    isDefaultAddress: boolean,
+    version: number,
+    addressId: string | null,
+  ) {
     super({ tag: 'form', ...props });
     this.node.classList.add(classes.baseForm);
     this.createAddressFormComponent(addressType, address, isDefaultAddress);
+    this.#currentVersion = version;
+    this.#addressId = addressId;
   }
 
   createAddressFormComponent = (
@@ -46,9 +65,15 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       { tag: 'div', class: classes.addressWrapper },
       (this.#countrySelect = new Select('Country', countiesList, () => console.log('country'))),
       (this.#countryInput = new InputText({ name: 'country' }, 'Country')),
-      (this.#cityInput = new InputText({ name: 'city' }, 'City')),
-      (this.#postalCodeInput = new InputText({ name: 'postal code' }, 'Postal code')),
-      (this.#streetInput = new InputText({ name: 'street' }, 'Street')),
+      (this.#cityInput = new InputText({ name: 'city' }, 'City', () =>
+        validateCity(this.#cityInput.value),
+      )),
+      (this.#postalCodeInput = new InputText({ name: 'postal code' }, 'Postal code', () =>
+        validatePostalCode(this.#postalCodeInput.value, this.#countryInput.value),
+      )),
+      (this.#streetInput = new InputText({ name: 'street' }, 'Street', () =>
+        validateStreet(this.#streetInput.value),
+      )),
       new CheckBox(
         { class: classes.checkbox },
         `Use us default ${addressType} address`,
@@ -119,7 +144,41 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.#editAddressButton.node.classList.add(classes.hidden);
   };
 
+  checkAndSendAddressData = () => {
+    this.#cityInput.validate();
+    this.#streetInput.validate();
+    this.#postalCodeInput.validate();
+
+    if (this.#addressId === null) {
+      throw new Error('AddressId is null');
+    }
+    const obj: MyCustomerChangeAddressAction = {
+      action: 'changeAddress',
+      addressId: this.#addressId,
+      address: {
+        city: this.#cityInput.value,
+        // todo: change country code later!
+        country: 'PL',
+        postalCode: this.#postalCodeInput.value,
+        streetName: this.#streetInput.value,
+      },
+    };
+    const customerEditAddressData: MyCustomerUpdateAction[] = [obj];
+
+    if (this.#cityInput.isValid && this.#streetInput.isValid && this.#postalCodeInput.isValid) {
+      const response = new Customer().updateCustomerData(
+        this.#currentVersion,
+        customerEditAddressData,
+        () => console.log('Success'),
+        () => console.log('error'),
+      );
+      console.log(response);
+    }
+  };
+
   setSavedMode = () => {
+    this.checkAndSendAddressData();
+
     this.setUserAddressInputsState(true);
 
     this.#countrySelect.node.classList.add(classes.hidden);
@@ -132,6 +191,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
   };
 
   setCanceledMode = () => {
+    this.node.remove();
     this.setUserAddressInputsState(true);
 
     this.#saveAddressButton.node.classList.add(classes.hidden);
@@ -149,5 +209,5 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.#cancelAddressButton.node.classList.remove(classes.hidden);
     this.#editAddressButton.node.classList.add(classes.hidden);
     this.#deleteAddressButton.node.classList.add(classes.hidden);
-  }
+  };
 }
