@@ -12,6 +12,7 @@ import crossSvg from '@Assets/icons/cross-white.svg';
 import checkMarkSvg from '@Assets/icons/checkmark-white.svg';
 import { MyCustomerUpdateAction } from '@commercetools/platform-sdk';
 import { validateDateOfBirth, validateEmail, validateUserData } from '@Src/utils/helpers';
+import State from '@Src/state';
 import classes from './style.module.scss';
 
 const createTitleComponent = () => {
@@ -72,8 +73,6 @@ export default class ProfilePage extends ContentPage {
 
   #addAddressBtn!: Button;
 
-  #currentVersion!: number;
-
   #currentEmail!: string;
 
   #notificationSuccessBlockWrapper!: BaseElement<HTMLDivElement>;
@@ -93,7 +92,8 @@ export default class ProfilePage extends ContentPage {
       .me()
       .then((info) => {
         const customer = info.body;
-        this.#currentVersion = customer.version;
+
+        State.getInstance().currentCustomerVersion = customer.version;
         this.#emailInput.value = customer.email ?? '';
         this.#firstNameInput.value = customer.firstName ?? '';
         this.#lastNameInput.value = customer.lastName ?? '';
@@ -107,7 +107,6 @@ export default class ProfilePage extends ContentPage {
               'shipping',
               shippingAddress,
               customer.defaultShippingAddressId === addressId,
-              this.#currentVersion,
               addressId,
             );
             this.#deliveryAddressesContainer.node.append(addressForm.node);
@@ -122,7 +121,6 @@ export default class ProfilePage extends ContentPage {
               'shipping',
               billingAddress,
               customer.defaultBillingAddressId === addressId,
-              this.#currentVersion,
               addressId,
             );
             this.#billingAddressesContainer.node.append(addressForm.node);
@@ -276,15 +274,19 @@ export default class ProfilePage extends ContentPage {
         dateOfBirth: this.#birthDateInput.value,
       },
     ];
+    const version = State.getInstance().currentCustomerVersion;
+    if (version === null) {
+      throw new Error('Version is null');
+    }
     const response = new Customer()
       .updateCustomerData(
-        this.#currentVersion,
+        version,
         customerUpdatedPersonalData,
         this.showSuccessNotification,
         this.showErrorNotification,
       )
       .then((result) => {
-        this.#currentVersion = result.version;
+        State.getInstance().currentCustomerVersion = result.version;
       });
 
     console.log(response);
@@ -424,7 +426,6 @@ export default class ProfilePage extends ContentPage {
       addressType,
       emptyAddress,
       false,
-      this.#currentVersion,
       null,
     );
     newAddressForm.setAddedNewAddressMode();

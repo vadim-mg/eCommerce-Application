@@ -10,6 +10,7 @@ import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Select from '@Src/components/ui/select';
 import { validateCity, validatePostalCode, validateStreet } from '@Src/utils/helpers';
 import Customer from '@Src/controllers/customers';
+import State from '@Src/state';
 import classes from './style.module.scss';
 
 type FormProps = Omit<ElementProps<HTMLButtonElement>, 'tag'>;
@@ -37,8 +38,6 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
   #deleteAddressButton!: Button;
 
-  #currentVersion!: number;
-
   #addressId!: string | null;
 
   constructor(
@@ -46,13 +45,11 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     addressType: string,
     address: Address,
     isDefaultAddress: boolean,
-    version: number,
     addressId: string | null,
   ) {
     super({ tag: 'form', ...props });
     this.node.classList.add(classes.baseForm);
     this.createAddressFormComponent(addressType, address, isDefaultAddress);
-    this.#currentVersion = version;
     this.#addressId = addressId;
   }
 
@@ -166,12 +163,18 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     const customerEditAddressData: MyCustomerUpdateAction[] = [obj];
 
     if (this.#cityInput.isValid && this.#streetInput.isValid && this.#postalCodeInput.isValid) {
+    const version = State.getInstance().currentCustomerVersion;
+    if (version === null) {
+      throw new Error('Version is null');
+    }
       const response = new Customer().updateCustomerData(
-        this.#currentVersion,
+        version,
         customerEditAddressData,
         () => console.log('Success'),
         () => console.log('error'),
-      );
+      ).then((result) => {
+        State.getInstance().currentCustomerVersion = result.version;
+      });
       console.log(response);
     }
   };
