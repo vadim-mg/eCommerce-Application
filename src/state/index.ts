@@ -43,11 +43,17 @@ export default class State {
     return this.#currentUser;
   }
 
-  set currentCustomerVersion(version: number | null) {
+  set currentCustomerVersion(version: number) {
+    if ( this.#currentCustomerVersion !== null && version < this.#currentCustomerVersion) {
+      throw new Error('Current version is greater than provided version!');
+    }
     this.#currentCustomerVersion = version;
   }
 
-  get currentCustomerVersion() {
+  get currentCustomerVersion(): number {
+    if (this.#currentCustomerVersion === null) {
+      throw new Error('Version is null');
+    }
     return this.#currentCustomerVersion;
   }
 }

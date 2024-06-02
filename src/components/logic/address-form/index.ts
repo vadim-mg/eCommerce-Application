@@ -172,9 +172,6 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       const customerData: MyCustomerUpdateAction[] = [obj];
 
       const version = State.getInstance().currentCustomerVersion;
-      if (version === null) {
-        throw new Error('Version is null');
-      }
       const response = new Customer()
         .updateCustomerData(
           version,
@@ -206,9 +203,6 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
           if (this.#addressType === 'billing') {
             const newVersion = State.getInstance().currentCustomerVersion;
-            if (newVersion === null) {
-              throw new Error('Version is null');
-            }
             new Customer().updateCustomerData(
               newVersion,
               dataForBillingAddress,
@@ -217,9 +211,6 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
             );
           } else {
             const newVersion = State.getInstance().currentCustomerVersion;
-            if (newVersion === null) {
-              throw new Error('Version is null');
-            }
             new Customer().updateCustomerData(
               newVersion,
               dataForShippingAddress,
@@ -245,9 +236,6 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       const customerEditAddressData: MyCustomerUpdateAction[] = [obj];
 
       const version = State.getInstance().currentCustomerVersion;
-      if (version === null) {
-        throw new Error('Version is null');
-      }
       const response = new Customer()
         .updateCustomerData(
           version,
