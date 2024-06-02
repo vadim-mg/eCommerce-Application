@@ -122,7 +122,7 @@ export default class ProfilePage extends ContentPage {
         this.#billingAddressesContainer.node.append(addressForm.node);
       }
     });
-  }
+  };
 
   #me = () => {
     auth
@@ -419,7 +419,15 @@ export default class ProfilePage extends ContentPage {
   };
 
   addNewAddress = (addressType: string) => {
-    const newAddressForm = new AddressForm({}, addressType, emptyAddress, false, null, this.initializeAddresses, true);
+    const newAddressForm = new AddressForm(
+      {},
+      addressType,
+      emptyAddress,
+      false,
+      null,
+      this.initializeAddresses,
+      true,
+    );
     newAddressForm.setAddedNewAddressMode();
     if (addressType === 'billing') {
       this.#billingAddressesContainer.node.append(newAddressForm.node);

@@ -72,7 +72,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.#customerController = new CustomerController();
     this.#initializeAddresses = initializeAddresses;
 
-    if (openInEditMode){
+    if (openInEditMode) {
       this.setEditMode();
     }
   }
@@ -219,7 +219,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       );
       const action =
         this.#addressType === 'billing' ? 'addBillingAddressId' : 'addShippingAddressId';
-        const customer = await this.#customerController.updateSingleCustomerData({
+      const customer = await this.#customerController.updateSingleCustomerData({
         action,
         addressId: match?.id,
       });
@@ -245,7 +245,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
   closeModal = (customer: Customer) => {
     this.#formModal.node.remove();
     this.#initializeAddresses(customer);
-  }
+  };
 
   setSavedMode = () => {
     this.setUserAddressInputsState(true);
