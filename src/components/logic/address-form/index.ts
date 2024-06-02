@@ -169,14 +169,13 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       };
       const customerData: MyCustomerUpdateAction[] = [obj];
 
-      const response = new Customer()
+      new Customer()
         .updateCustomerData(
           customerData,
           () => console.log('Success'),
           () => console.log('error'),
         )
         .then((result) => {
-          console.log(result);
           const match = result.addresses.find(
             (address) =>
               address.city === this.#cityInput.value &&
@@ -210,7 +209,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
             );
           }
         });
-      console.log(response);
+      
       this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
       this.setSavedMode();
     } else {
@@ -225,13 +224,11 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
         },
       };
       const customerEditAddressData: MyCustomerUpdateAction[] = [obj];
-      const response = new Customer()
-        .updateCustomerData(
-          customerEditAddressData,
-          () => console.log('Success'),
-          () => console.log('error'),
-        );
-      console.log(response);
+      new Customer().updateCustomerData(
+        customerEditAddressData,
+        () => console.log('Success'),
+        () => console.log('error'),
+      );
       this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
       this.setSavedMode();
     }

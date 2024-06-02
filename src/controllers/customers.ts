@@ -21,6 +21,9 @@ export default class Customer {
       if (result.statusCode === 200) {
         showSuccessNotification();
         State.getInstance().currentCustomerVersion = result.body.version;
+        if (process.env.NODE_ENV === 'development') {
+          console.log(result);
+        }
       } else {
         showErrorNotification();
       }

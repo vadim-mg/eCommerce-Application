@@ -274,12 +274,11 @@ export default class ProfilePage extends ContentPage {
         dateOfBirth: this.#birthDateInput.value,
       },
     ];
-    const response = new Customer()
-      .updateCustomerData(
-        customerUpdatedPersonalData,
-        this.showSuccessNotification,
-        this.showErrorNotification,
-      );
+    const response = new Customer().updateCustomerData(
+      customerUpdatedPersonalData,
+      this.showSuccessNotification,
+      this.showErrorNotification,
+    );
 
     console.log(response);
     this.toggleUserDetailsInputsState(true);
