@@ -153,6 +153,10 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.#streetInput.validate();
     this.#postalCodeInput.validate();
 
+    if (!this.#cityInput.isValid && !this.#streetInput.isValid && !this.#postalCodeInput.isValid) {
+      return;
+    }
+
     const countryValue = COUNTRY_CODES[countriesList.indexOf(this.#countrySelect.selectedValue)];
 
     if (this.#addressId === null) {
@@ -167,68 +171,66 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       };
       const customerData: MyCustomerUpdateAction[] = [obj];
 
-      if (this.#cityInput.isValid && this.#streetInput.isValid && this.#postalCodeInput.isValid) {
-        const version = State.getInstance().currentCustomerVersion;
-        if (version === null) {
-          throw new Error('Version is null');
-        }
-        const response = new Customer()
-          .updateCustomerData(
-            version,
-            customerData,
-            () => console.log('Success'),
-            () => console.log('error'),
-          )
-          .then((result) => {
-            console.log(result);
-            State.getInstance().currentCustomerVersion = result.version;
-            const match = result.addresses.find(
-              (address) =>
-                address.city === this.#cityInput.value &&
-                address.postalCode === this.#postalCodeInput.value &&
-                address.streetName === this.#streetInput.value,
-            );
-            const dataForBillingAddress: MyCustomerUpdateAction[] = [
-              {
-                action: 'addBillingAddressId',
-                addressId: match?.id,
-              },
-            ];
-            const dataForShippingAddress: MyCustomerUpdateAction[] = [
-              {
-                action: 'addShippingAddressId',
-                addressId: match?.id,
-              }
-            ]
-
-            if (this.#addressType === 'billing') {
-              const newVersion = State.getInstance().currentCustomerVersion;
-              if (newVersion === null) {
-                throw new Error('Version is null');
-              }
-              new Customer().updateCustomerData(
-                newVersion,
-                dataForBillingAddress,
-                () => console.log('Success'),
-                () => console.log('error'),
-              );
-            } else {
-              const newVersion = State.getInstance().currentCustomerVersion;
-              if (newVersion === null) {
-                throw new Error('Version is null');
-              }
-              new Customer().updateCustomerData(
-                newVersion,
-                dataForShippingAddress,
-                () => console.log('Success'),
-                () => console.log('error'),
-              );
-            }
-          });
-        console.log(response);
-        this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
-        this.setSavedMode();
+      const version = State.getInstance().currentCustomerVersion;
+      if (version === null) {
+        throw new Error('Version is null');
       }
+      const response = new Customer()
+        .updateCustomerData(
+          version,
+          customerData,
+          () => console.log('Success'),
+          () => console.log('error'),
+        )
+        .then((result) => {
+          console.log(result);
+          State.getInstance().currentCustomerVersion = result.version;
+          const match = result.addresses.find(
+            (address) =>
+              address.city === this.#cityInput.value &&
+              address.postalCode === this.#postalCodeInput.value &&
+              address.streetName === this.#streetInput.value,
+          );
+          const dataForBillingAddress: MyCustomerUpdateAction[] = [
+            {
+              action: 'addBillingAddressId',
+              addressId: match?.id,
+            },
+          ];
+          const dataForShippingAddress: MyCustomerUpdateAction[] = [
+            {
+              action: 'addShippingAddressId',
+              addressId: match?.id,
+            },
+          ];
+
+          if (this.#addressType === 'billing') {
+            const newVersion = State.getInstance().currentCustomerVersion;
+            if (newVersion === null) {
+              throw new Error('Version is null');
+            }
+            new Customer().updateCustomerData(
+              newVersion,
+              dataForBillingAddress,
+              () => console.log('Success'),
+              () => console.log('error'),
+            );
+          } else {
+            const newVersion = State.getInstance().currentCustomerVersion;
+            if (newVersion === null) {
+              throw new Error('Version is null');
+            }
+            new Customer().updateCustomerData(
+              newVersion,
+              dataForShippingAddress,
+              () => console.log('Success'),
+              () => console.log('error'),
+            );
+          }
+        });
+      console.log(response);
+      this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
+      this.setSavedMode();
     } else {
       const obj: MyCustomerChangeAddressAction = {
         action: 'changeAddress',
@@ -242,25 +244,23 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       };
       const customerEditAddressData: MyCustomerUpdateAction[] = [obj];
 
-      if (this.#cityInput.isValid && this.#streetInput.isValid && this.#postalCodeInput.isValid) {
-        const version = State.getInstance().currentCustomerVersion;
-        if (version === null) {
-          throw new Error('Version is null');
-        }
-        const response = new Customer()
-          .updateCustomerData(
-            version,
-            customerEditAddressData,
-            () => console.log('Success'),
-            () => console.log('error'),
-          )
-          .then((result) => {
-            State.getInstance().currentCustomerVersion = result.version;
-          });
-        console.log(response);
-        this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
-        this.setSavedMode();
+      const version = State.getInstance().currentCustomerVersion;
+      if (version === null) {
+        throw new Error('Version is null');
       }
+      const response = new Customer()
+        .updateCustomerData(
+          version,
+          customerEditAddressData,
+          () => console.log('Success'),
+          () => console.log('error'),
+        )
+        .then((result) => {
+          State.getInstance().currentCustomerVersion = result.version;
+        });
+      console.log(response);
+      this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
+      this.setSavedMode();
     }
   };
 
