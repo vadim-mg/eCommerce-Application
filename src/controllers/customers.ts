@@ -28,4 +28,6 @@ export default class Customer {
     }
     return this.#response;
   };
+
+  updateSingleCustomerData = async (updateActions: MyCustomerUpdateAction) => this.updateCustomerData([updateActions]);
 }

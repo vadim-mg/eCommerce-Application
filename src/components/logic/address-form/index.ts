@@ -3,7 +3,6 @@ import {
   Address,
   MyCustomerAddAddressAction,
   MyCustomerChangeAddressAction,
-  MyCustomerUpdateAction,
 } from '@commercetools/platform-sdk';
 import InputText from '@Src/components/ui/input-text';
 import CheckBox from '@Src/components/ui/checkbox';
@@ -161,7 +160,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     const countryValue = COUNTRY_CODES[countriesList.indexOf(this.#countrySelect.selectedValue)];
 
     if (this.#addressId === null) {
-      const obj: MyCustomerAddAddressAction = {
+      const customerData: MyCustomerAddAddressAction = {
         action: 'addAddress',
         address: {
           city: this.#cityInput.value,
@@ -170,37 +169,29 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
           streetName: this.#streetInput.value,
         },
       };
-      const customerData: MyCustomerUpdateAction[] = [obj];
-
-      const result = await this.#customer.updateCustomerData(customerData);
+      const result = await this.#customer.updateSingleCustomerData(customerData);
       const match = result.addresses.find(
         (address) =>
           address.city === this.#cityInput.value &&
           address.postalCode === this.#postalCodeInput.value &&
           address.streetName === this.#streetInput.value,
       );
-      const dataForBillingAddress: MyCustomerUpdateAction[] = [
-        {
-          action: 'addBillingAddressId',
-          addressId: match?.id,
-        },
-      ];
-      const dataForShippingAddress: MyCustomerUpdateAction[] = [
-        {
-          action: 'addShippingAddressId',
-          addressId: match?.id,
-        },
-      ];
 
       if (this.#addressType === 'billing') {
-        await this.#customer.updateCustomerData(dataForBillingAddress);
+        await this.#customer.updateSingleCustomerData({
+          action: 'addBillingAddressId',
+          addressId: match?.id,
+        });
       } else {
-        await this.#customer.updateCustomerData(dataForShippingAddress);
+        await this.#customer.updateSingleCustomerData({
+          action: 'addShippingAddressId',
+          addressId: match?.id,
+        });
       }
       this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
       this.setSavedMode();
     } else {
-      const obj: MyCustomerChangeAddressAction = {
+      const customerData: MyCustomerChangeAddressAction = {
         action: 'changeAddress',
         addressId: this.#addressId,
         address: {
@@ -210,8 +201,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
           streetName: this.#streetInput.value,
         },
       };
-      const customerEditAddressData: MyCustomerUpdateAction[] = [obj];
-      await this.#customer.updateCustomerData(customerEditAddressData);
+      await this.#customer.updateSingleCustomerData(customerData);
       this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
       this.setSavedMode();
     }
