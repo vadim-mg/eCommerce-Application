@@ -39,9 +39,11 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
   #deleteAddressButton!: Button;
 
-  #addressId!: string | null;
+  #addressId: string | null;
 
   #addressType: string;
+
+  #customer: Customer;
 
   constructor(
     props: FormProps,
@@ -55,6 +57,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.createAddressFormComponent(addressType, address, isDefaultAddress);
     this.#addressId = addressId;
     this.#addressType = addressType;
+    this.#customer = new Customer();
   }
 
   createAddressFormComponent = (
@@ -147,7 +150,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.#editAddressButton.node.classList.add(classes.hidden);
   };
 
-  checkAndSendAddressData = () => {
+  checkAndSendAddressData = async () => {
     this.#cityInput.validate();
     this.#streetInput.validate();
     this.#postalCodeInput.validate();
@@ -169,39 +172,31 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       };
       const customerData: MyCustomerUpdateAction[] = [obj];
 
-      new Customer()
-        .updateCustomerData(
-          customerData,
-          // () => console.log('Success'),
-          // () => console.log('error'),
-        )
-        .then((result) => {
-          const match = result.addresses.find(
-            (address) =>
-              address.city === this.#cityInput.value &&
-              address.postalCode === this.#postalCodeInput.value &&
-              address.streetName === this.#streetInput.value,
-          );
-          const dataForBillingAddress: MyCustomerUpdateAction[] = [
-            {
-              action: 'addBillingAddressId',
-              addressId: match?.id,
-            },
-          ];
-          const dataForShippingAddress: MyCustomerUpdateAction[] = [
-            {
-              action: 'addShippingAddressId',
-              addressId: match?.id,
-            },
-          ];
+      const result = await this.#customer.updateCustomerData(customerData);
+      const match = result.addresses.find(
+        (address) =>
+          address.city === this.#cityInput.value &&
+          address.postalCode === this.#postalCodeInput.value &&
+          address.streetName === this.#streetInput.value,
+      );
+      const dataForBillingAddress: MyCustomerUpdateAction[] = [
+        {
+          action: 'addBillingAddressId',
+          addressId: match?.id,
+        },
+      ];
+      const dataForShippingAddress: MyCustomerUpdateAction[] = [
+        {
+          action: 'addShippingAddressId',
+          addressId: match?.id,
+        },
+      ];
 
-          if (this.#addressType === 'billing') {
-            new Customer().updateCustomerData(dataForBillingAddress);
-          } else {
-            new Customer().updateCustomerData(dataForShippingAddress);
-          }
-        });
-
+      if (this.#addressType === 'billing') {
+        await this.#customer.updateCustomerData(dataForBillingAddress);
+      } else {
+        await this.#customer.updateCustomerData(dataForShippingAddress);
+      }
       this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
       this.setSavedMode();
     } else {
@@ -216,7 +211,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
         },
       };
       const customerEditAddressData: MyCustomerUpdateAction[] = [obj];
-      new Customer().updateCustomerData(customerEditAddressData);
+      await this.#customer.updateCustomerData(customerEditAddressData);
       this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
       this.setSavedMode();
     }
