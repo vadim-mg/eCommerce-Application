@@ -2,7 +2,7 @@ import { Customer as CustomerType, MyCustomerUpdateAction } from '@commercetools
 import customerApi from '@Src/api/customers';
 import State from '@Src/state';
 
-export default class Customer {
+export default class CustomerController {
   #response!: CustomerType;
 
   constructor() {

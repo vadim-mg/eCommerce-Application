@@ -7,12 +7,13 @@ import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
 import auth from '@Src/controllers/auth';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
-import Customer from '@Src/controllers/customers';
+import CustomerController from '@Src/controllers/customers';
 import crossSvg from '@Assets/icons/cross-white.svg';
 import checkMarkSvg from '@Assets/icons/checkmark-white.svg';
-import { MyCustomerUpdateAction } from '@commercetools/platform-sdk';
+import { Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
 import { validateDateOfBirth, validateEmail, validateUserData } from '@Src/utils/helpers';
 import State from '@Src/state';
+import ModalWindow from '@Src/components/ui/modal';
 import classes from './style.module.scss';
 
 const createTitleComponent = () => {
@@ -79,12 +80,48 @@ export default class ProfilePage extends ContentPage {
 
   #notificationErrorBlockWrapper!: BaseElement<HTMLDivElement>;
 
+  #formModal!: ModalWindow;
+
   constructor() {
     super({ containerTag: 'main', title: 'profile page' });
     this.#createContent();
     this.#showContent();
 
     this.#me();
+  }
+
+  initializeAddresses = (customer: Customer) => {
+    this.#deliveryAddressesContainer.node.innerHTML = '';
+    this.#billingAddressesContainer.node.innerHTML = '';
+    customer.shippingAddressIds?.forEach((addressId: string) => {
+      const shippingAddress = customer.addresses.find((value) => value.id === addressId);
+      if (shippingAddress) {
+        const addressForm = new AddressForm(
+          {},
+          'shipping',
+          shippingAddress,
+          customer.defaultShippingAddressId === addressId,
+          addressId,
+          this.initializeAddresses,
+        );
+        this.#deliveryAddressesContainer.node.append(addressForm.node);
+      }
+    });
+
+    customer.billingAddressIds?.forEach((addressId: string) => {
+      const billingAddress = customer.addresses.find((value) => value.id === addressId);
+      if (billingAddress) {
+        const addressForm = new AddressForm(
+          {},
+          'billing',
+          billingAddress,
+          customer.defaultBillingAddressId === addressId,
+          addressId,
+          this.initializeAddresses,
+        );
+        this.#billingAddressesContainer.node.append(addressForm.node);
+      }
+    });
   }
 
   #me = () => {
@@ -99,33 +136,7 @@ export default class ProfilePage extends ContentPage {
         this.#lastNameInput.value = customer.lastName ?? '';
         this.#birthDateInput.value = customer.dateOfBirth ?? '';
 
-        customer.shippingAddressIds?.forEach((addressId: string) => {
-          const shippingAddress = customer.addresses.find((value) => value.id === addressId);
-          if (shippingAddress) {
-            const addressForm = new AddressForm(
-              {},
-              'shipping',
-              shippingAddress,
-              customer.defaultShippingAddressId === addressId,
-              addressId,
-            );
-            this.#deliveryAddressesContainer.node.append(addressForm.node);
-          }
-        });
-
-        customer.billingAddressIds?.forEach((addressId: string) => {
-          const billingAddress = customer.addresses.find((value) => value.id === addressId);
-          if (billingAddress) {
-            const addressForm = new AddressForm(
-              {},
-              'billing',
-              billingAddress,
-              customer.defaultBillingAddressId === addressId,
-              addressId,
-            );
-            this.#billingAddressesContainer.node.append(addressForm.node);
-          }
-        });
+        this.initializeAddresses(customer);
         console.log(info.body);
 
         this.#currentEmail = customer.email;
@@ -274,7 +285,7 @@ export default class ProfilePage extends ContentPage {
         dateOfBirth: this.#birthDateInput.value,
       },
     ];
-    const response = new Customer().updateCustomerData(customerUpdatedPersonalData);
+    const response = new CustomerController().updateCustomerData(customerUpdatedPersonalData);
 
     console.log(response);
     this.toggleUserDetailsInputsState(true);
@@ -408,7 +419,7 @@ export default class ProfilePage extends ContentPage {
   };
 
   addNewAddress = (addressType: string) => {
-    const newAddressForm = new AddressForm({}, addressType, emptyAddress, false, null);
+    const newAddressForm = new AddressForm({}, addressType, emptyAddress, false, null, this.initializeAddresses, true);
     newAddressForm.setAddedNewAddressMode();
     if (addressType === 'billing') {
       this.#billingAddressesContainer.node.append(newAddressForm.node);

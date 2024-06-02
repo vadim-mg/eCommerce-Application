@@ -1,16 +1,18 @@
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
+import Button, { ButtonClasses } from '@Src/components/ui/button';
+import CheckBox from '@Src/components/ui/checkbox';
+import InputText from '@Src/components/ui/input-text';
+import ModalWindow from '@Src/components/ui/modal';
+import Select from '@Src/components/ui/select';
+import CustomerController from '@Src/controllers/customers';
+import { validateCity, validatePostalCode, validateStreet } from '@Src/utils/helpers';
 import {
   Address,
+  Customer,
   MyCustomerAddAddressAction,
   MyCustomerChangeAddressAction,
   MyCustomerRemoveAddressAction,
 } from '@commercetools/platform-sdk';
-import InputText from '@Src/components/ui/input-text';
-import CheckBox from '@Src/components/ui/checkbox';
-import Button, { ButtonClasses } from '@Src/components/ui/button';
-import Select from '@Src/components/ui/select';
-import { validateCity, validatePostalCode, validateStreet } from '@Src/utils/helpers';
-import Customer from '@Src/controllers/customers';
 import classes from './style.module.scss';
 
 type FormProps = Omit<ElementProps<HTMLButtonElement>, 'tag'>;
@@ -19,6 +21,10 @@ const countriesList = ['Belarus', 'Poland', 'Russia'];
 const COUNTRY_CODES = ['BE', 'PL', 'RU'];
 
 export default class AddressForm extends BaseElement<HTMLFormElement> {
+  #addressComponent!: BaseElement<HTMLDivElement>;
+
+  #formModal!: ModalWindow;
+
   #countryInput!: InputText;
 
   #countrySelect!: Select;
@@ -45,7 +51,9 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
   #addressType: string;
 
-  #customer: Customer;
+  #customerController: CustomerController;
+
+  #initializeAddresses: (customer: Customer) => void;
 
   constructor(
     props: FormProps,
@@ -53,13 +61,20 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     address: Address,
     isDefaultAddress: boolean,
     addressId: string | null,
+    initializeAddresses: (customer: Customer) => void,
+    openInEditMode: boolean = false,
   ) {
     super({ tag: 'form', ...props });
     this.node.classList.add(classes.baseForm);
     this.createAddressFormComponent(addressType, address, isDefaultAddress);
     this.#addressId = addressId;
     this.#addressType = addressType;
-    this.#customer = new Customer();
+    this.#customerController = new CustomerController();
+    this.#initializeAddresses = initializeAddresses;
+
+    if (openInEditMode){
+      this.setEditMode();
+    }
   }
 
   createAddressFormComponent = (
@@ -67,7 +82,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     address: Address,
     isDefaultAddress: boolean,
   ) => {
-    const addressComponent = new BaseElement<HTMLDivElement>(
+    this.#addressComponent = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.addressWrapper },
       (this.#countrySelect = new Select('Country', countriesList, () => console.log('country'))),
       (this.#countryInput = new InputText({ name: 'country' }, 'Country')),
@@ -80,11 +95,11 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       (this.#streetInput = new InputText({ name: 'street' }, 'Street', () =>
         validateStreet(this.#streetInput.value),
       )),
-      this.#checkBox = new CheckBox(
+      (this.#checkBox = new CheckBox(
         { class: classes.checkbox },
         `Use us default ${addressType} address`,
         isDefaultAddress,
-      ),
+      )),
       this.#createEditDeleteBtnComponent(),
     );
     this.#checkBox.inputElement.node.addEventListener('change', this.setDefaultAddress);
@@ -101,8 +116,8 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
     this.setUserAddressInputsState(true);
 
-    this.node.append(addressComponent.node);
-    return addressComponent;
+    this.node.append(this.#addressComponent.node);
+    return this.#addressComponent;
   };
 
   #createEditDeleteBtnComponent = () => {
@@ -139,19 +154,20 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
   };
 
   setDefaultAddress = async () => {
-    const action = this.#addressType === 'billing' ? 'setDefaultBillingAddress' : 'setDefaultShippingAddress';
-    await this.#customer.updateSingleCustomerData({
+    const action =
+      this.#addressType === 'billing' ? 'setDefaultBillingAddress' : 'setDefaultShippingAddress';
+    await this.#customerController.updateSingleCustomerData({
       action,
       addressId: this.#addressId ?? '',
-    })
-  }
+    });
+  };
 
   setDeletedMode = async () => {
     const customerData: MyCustomerRemoveAddressAction = {
       action: 'removeAddress',
       addressId: this.#addressId ?? '',
     };
-    await this.#customer.updateSingleCustomerData(customerData);
+    await this.#customerController.updateSingleCustomerData(customerData);
   };
 
   setUserAddressInputsState = (state: boolean) => {
@@ -162,6 +178,10 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
   };
 
   setEditMode = () => {
+    // create modal window
+    this.#formModal = new ModalWindow([classes.modal], this.#addressComponent);
+    this.#formModal.show();
+
     this.setUserAddressInputsState(false);
     this.#countrySelect.node.classList.remove(classes.hidden);
     this.#countryInput.node.classList.add(classes.hidden);
@@ -190,7 +210,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
           streetName: this.#streetInput.value,
         },
       };
-      const result = await this.#customer.updateSingleCustomerData(customerData);
+      const result = await this.#customerController.updateSingleCustomerData(customerData);
       const match = result.addresses.find(
         (address) =>
           address.city === this.#cityInput.value &&
@@ -199,10 +219,11 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       );
       const action =
         this.#addressType === 'billing' ? 'addBillingAddressId' : 'addShippingAddressId';
-      await this.#customer.updateSingleCustomerData({
+        const customer = await this.#customerController.updateSingleCustomerData({
         action,
         addressId: match?.id,
       });
+      this.closeModal(customer);
     } else {
       const customerData: MyCustomerChangeAddressAction = {
         action: 'changeAddress',
@@ -214,11 +235,17 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
           streetName: this.#streetInput.value,
         },
       };
-      await this.#customer.updateSingleCustomerData(customerData);
+      const customer = await this.#customerController.updateSingleCustomerData(customerData);
+      this.closeModal(customer);
     }
     this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
     this.setSavedMode();
   };
+
+  closeModal = (customer: Customer) => {
+    this.#formModal.node.remove();
+    this.#initializeAddresses(customer);
+  }
 
   setSavedMode = () => {
     this.setUserAddressInputsState(true);
