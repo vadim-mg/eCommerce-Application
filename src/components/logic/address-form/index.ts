@@ -51,7 +51,11 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
   #addressType: string;
 
+  #address: Address;
+
   #customerController: CustomerController;
+
+  #isDefaultAddress: boolean;
 
   #initializeAddresses: (customer: Customer) => void;
 
@@ -69,6 +73,9 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.createAddressFormComponent(addressType, address, isDefaultAddress);
     this.#addressId = addressId;
     this.#addressType = addressType;
+    this.#address = address;
+    this.#isDefaultAddress = isDefaultAddress;
+    
     this.#customerController = new CustomerController();
     this.#initializeAddresses = initializeAddresses;
 
@@ -120,13 +127,19 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     return this.#addressComponent;
   };
 
+  methodForEditBtn = () => {
+    const newAddress = new AddressForm({}, this.#addressType, this.#address, this.#isDefaultAddress, this.#addressId, this.#initializeAddresses, true);
+    console.log(newAddress);
+  }
+
   #createEditDeleteBtnComponent = () => {
     this.#editDeleteBtnWrapper = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.editDeleteBtnWrapper },
       (this.#editAddressButton = new Button(
         { text: 'Edit', class: classes.button },
         ButtonClasses.NORMAL,
-        this.setEditMode,
+        // this.setEditMode,
+        this.methodForEditBtn,
       )),
       (this.#saveAddressButton = new Button(
         { text: 'Save', class: classes.button },
