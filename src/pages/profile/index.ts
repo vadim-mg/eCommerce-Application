@@ -118,7 +118,7 @@ export default class ProfilePage extends ContentPage {
           if (billingAddress) {
             const addressForm = new AddressForm(
               {},
-              'shipping',
+              'billing',
               billingAddress,
               customer.defaultBillingAddressId === addressId,
               addressId,
