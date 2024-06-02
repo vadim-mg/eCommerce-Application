@@ -274,20 +274,12 @@ export default class ProfilePage extends ContentPage {
         dateOfBirth: this.#birthDateInput.value,
       },
     ];
-    const version = State.getInstance().currentCustomerVersion;
-    if (version === null) {
-      throw new Error('Version is null');
-    }
     const response = new Customer()
       .updateCustomerData(
-        version,
         customerUpdatedPersonalData,
         this.showSuccessNotification,
         this.showErrorNotification,
-      )
-      .then((result) => {
-        State.getInstance().currentCustomerVersion = result.version;
-      });
+      );
 
     console.log(response);
     this.toggleUserDetailsInputsState(true);

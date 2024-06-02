@@ -11,7 +11,6 @@ import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Select from '@Src/components/ui/select';
 import { validateCity, validatePostalCode, validateStreet } from '@Src/utils/helpers';
 import Customer from '@Src/controllers/customers';
-import State from '@Src/state';
 import classes from './style.module.scss';
 
 type FormProps = Omit<ElementProps<HTMLButtonElement>, 'tag'>;
@@ -156,7 +155,6 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     if (!this.#cityInput.isValid && !this.#streetInput.isValid && !this.#postalCodeInput.isValid) {
       return;
     }
-
     const countryValue = COUNTRY_CODES[countriesList.indexOf(this.#countrySelect.selectedValue)];
 
     if (this.#addressId === null) {
@@ -171,17 +169,14 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       };
       const customerData: MyCustomerUpdateAction[] = [obj];
 
-      const version = State.getInstance().currentCustomerVersion;
       const response = new Customer()
         .updateCustomerData(
-          version,
           customerData,
           () => console.log('Success'),
           () => console.log('error'),
         )
         .then((result) => {
           console.log(result);
-          State.getInstance().currentCustomerVersion = result.version;
           const match = result.addresses.find(
             (address) =>
               address.city === this.#cityInput.value &&
@@ -202,17 +197,13 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
           ];
 
           if (this.#addressType === 'billing') {
-            const newVersion = State.getInstance().currentCustomerVersion;
             new Customer().updateCustomerData(
-              newVersion,
               dataForBillingAddress,
               () => console.log('Success'),
               () => console.log('error'),
             );
           } else {
-            const newVersion = State.getInstance().currentCustomerVersion;
             new Customer().updateCustomerData(
-              newVersion,
               dataForShippingAddress,
               () => console.log('Success'),
               () => console.log('error'),
@@ -234,18 +225,12 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
         },
       };
       const customerEditAddressData: MyCustomerUpdateAction[] = [obj];
-
-      const version = State.getInstance().currentCustomerVersion;
       const response = new Customer()
         .updateCustomerData(
-          version,
           customerEditAddressData,
           () => console.log('Success'),
           () => console.log('error'),
-        )
-        .then((result) => {
-          State.getInstance().currentCustomerVersion = result.version;
-        });
+        );
       console.log(response);
       this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
       this.setSavedMode();

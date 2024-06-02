@@ -44,7 +44,7 @@ export default class State {
   }
 
   set currentCustomerVersion(version: number) {
-    if ( this.#currentCustomerVersion !== null && version < this.#currentCustomerVersion) {
+    if (this.#currentCustomerVersion !== null && version < this.#currentCustomerVersion) {
       throw new Error('Current version is greater than provided version!');
     }
     this.#currentCustomerVersion = version;

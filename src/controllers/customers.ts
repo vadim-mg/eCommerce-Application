@@ -1,5 +1,6 @@
 import { Customer as CustomerType, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
 import customerApi from '@Src/api/customers';
+import State from '@Src/state';
 
 export default class Customer {
   #response!: CustomerType;
@@ -9,16 +10,17 @@ export default class Customer {
   }
 
   updateCustomerData = async (
-    currentVersion: number,
     updateActions: MyCustomerUpdateAction[],
     showSuccessNotification: () => void,
     showErrorNotification: () => void,
   ) => {
     try {
-      const result = await customerApi.updateCustomerData(currentVersion, updateActions);
+      const newVersion = State.getInstance().currentCustomerVersion;
+      const result = await customerApi.updateCustomerData(newVersion, updateActions);
       this.#response = result.body;
       if (result.statusCode === 200) {
         showSuccessNotification();
+        State.getInstance().currentCustomerVersion = result.body.version;
       } else {
         showErrorNotification();
       }
