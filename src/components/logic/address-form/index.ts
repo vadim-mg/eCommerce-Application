@@ -176,20 +176,12 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
           address.postalCode === this.#postalCodeInput.value &&
           address.streetName === this.#streetInput.value,
       );
-
-      if (this.#addressType === 'billing') {
-        await this.#customer.updateSingleCustomerData({
-          action: 'addBillingAddressId',
-          addressId: match?.id,
-        });
-      } else {
-        await this.#customer.updateSingleCustomerData({
-          action: 'addShippingAddressId',
-          addressId: match?.id,
-        });
-      }
-      this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
-      this.setSavedMode();
+      const action =
+        this.#addressType === 'billing' ? 'addBillingAddressId' : 'addShippingAddressId';
+      await this.#customer.updateSingleCustomerData({
+        action,
+        addressId: match?.id,
+      });
     } else {
       const customerData: MyCustomerChangeAddressAction = {
         action: 'changeAddress',
@@ -202,9 +194,9 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
         },
       };
       await this.#customer.updateSingleCustomerData(customerData);
-      this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
-      this.setSavedMode();
     }
+    this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
+    this.setSavedMode();
   };
 
   setSavedMode = () => {
