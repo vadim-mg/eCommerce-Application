@@ -3,6 +3,7 @@ import {
   Address,
   MyCustomerAddAddressAction,
   MyCustomerChangeAddressAction,
+  MyCustomerRemoveAddressAction,
 } from '@commercetools/platform-sdk';
 import InputText from '@Src/components/ui/input-text';
 import CheckBox from '@Src/components/ui/checkbox';
@@ -121,7 +122,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       (this.#deleteAddressButton = new Button(
         { text: 'Delete', class: classes.button },
         ButtonClasses.NORMAL,
-        () => console.log('delete'),
+        this.setDeletedMode,
       )),
     );
     this.#saveAddressButton.node.classList.add(classes.hidden);
@@ -132,6 +133,14 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.#cancelAddressButton.node.classList.add(classes.btnLineHeight);
     return this.#editDeleteBtnWrapper;
   };
+
+  setDeletedMode = async () => {
+    const customerData: MyCustomerRemoveAddressAction = {
+      action: 'removeAddress',
+      addressId: this.#addressId ?? '',
+    }
+    await this.#customer.updateSingleCustomerData(customerData);
+  }
 
   setUserAddressInputsState = (state: boolean) => {
     this.#countryInput.setDisabled(state);
