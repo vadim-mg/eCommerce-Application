@@ -172,8 +172,8 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       new Customer()
         .updateCustomerData(
           customerData,
-          () => console.log('Success'),
-          () => console.log('error'),
+          // () => console.log('Success'),
+          // () => console.log('error'),
         )
         .then((result) => {
           const match = result.addresses.find(
@@ -196,20 +196,12 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
           ];
 
           if (this.#addressType === 'billing') {
-            new Customer().updateCustomerData(
-              dataForBillingAddress,
-              () => console.log('Success'),
-              () => console.log('error'),
-            );
+            new Customer().updateCustomerData(dataForBillingAddress);
           } else {
-            new Customer().updateCustomerData(
-              dataForShippingAddress,
-              () => console.log('Success'),
-              () => console.log('error'),
-            );
+            new Customer().updateCustomerData(dataForShippingAddress);
           }
         });
-      
+
       this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
       this.setSavedMode();
     } else {
@@ -224,11 +216,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
         },
       };
       const customerEditAddressData: MyCustomerUpdateAction[] = [obj];
-      new Customer().updateCustomerData(
-        customerEditAddressData,
-        () => console.log('Success'),
-        () => console.log('error'),
-      );
+      new Customer().updateCustomerData(customerEditAddressData);
       this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
       this.setSavedMode();
     }

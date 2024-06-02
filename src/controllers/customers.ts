@@ -9,23 +9,19 @@ export default class Customer {
     console.log('Customer constructor');
   }
 
-  updateCustomerData = async (
-    updateActions: MyCustomerUpdateAction[],
-    showSuccessNotification: () => void,
-    showErrorNotification: () => void,
-  ) => {
+  updateCustomerData = async (updateActions: MyCustomerUpdateAction[]) => {
     try {
       const newVersion = State.getInstance().currentCustomerVersion;
       const result = await customerApi.updateCustomerData(newVersion, updateActions);
       this.#response = result.body;
       if (result.statusCode === 200) {
-        showSuccessNotification();
+        console.log('Success');
         State.getInstance().currentCustomerVersion = result.body.version;
         if (process.env.NODE_ENV === 'development') {
           console.log(result);
         }
       } else {
-        showErrorNotification();
+        console.log('error');
       }
     } catch (error) {
       console.error(error);
