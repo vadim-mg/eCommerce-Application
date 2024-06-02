@@ -39,6 +39,8 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
   #deleteAddressButton!: Button;
 
+  #checkBox!: CheckBox;
+
   #addressId: string | null;
 
   #addressType: string;
@@ -78,13 +80,15 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       (this.#streetInput = new InputText({ name: 'street' }, 'Street', () =>
         validateStreet(this.#streetInput.value),
       )),
-      new CheckBox(
+      this.#checkBox = new CheckBox(
         { class: classes.checkbox },
         `Use us default ${addressType} address`,
         isDefaultAddress,
       ),
       this.#createEditDeleteBtnComponent(),
     );
+    this.#checkBox.inputElement.node.addEventListener('change', this.setDefaultAddress);
+
     this.#countrySelect.node.classList.add(classes.selectCountry);
     this.#countrySelect.node.classList.add(classes.hidden);
 
@@ -134,13 +138,21 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     return this.#editDeleteBtnWrapper;
   };
 
+  setDefaultAddress = async () => {
+    const action = this.#addressType === 'billing' ? 'setDefaultBillingAddress' : 'setDefaultShippingAddress';
+    await this.#customer.updateSingleCustomerData({
+      action,
+      addressId: this.#addressId ?? '',
+    })
+  }
+
   setDeletedMode = async () => {
     const customerData: MyCustomerRemoveAddressAction = {
       action: 'removeAddress',
       addressId: this.#addressId ?? '',
-    }
+    };
     await this.#customer.updateSingleCustomerData(customerData);
-  }
+  };
 
   setUserAddressInputsState = (state: boolean) => {
     this.#countryInput.setDisabled(state);
