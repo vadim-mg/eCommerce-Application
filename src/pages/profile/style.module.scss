@@ -99,8 +99,9 @@ h2 {
 
 .notification-error-block-wrapper,
 .notification-success-block-wrapper {
-  position: absolute;
-  bottom: 3.313rem;
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
 
   border-radius: 1.5rem;
   padding: 1.5rem 1rem;

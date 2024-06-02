@@ -212,7 +212,6 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
     this.#saveAddressButton.node.classList.remove(classes.hidden);
     this.#editAddressButton.node.classList.add(classes.hidden);
-    
   };
 
   checkAndSendAddressData = async () => {
