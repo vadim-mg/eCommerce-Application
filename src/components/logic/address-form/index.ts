@@ -75,12 +75,15 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.#addressType = addressType;
     this.#address = address;
     this.#isDefaultAddress = isDefaultAddress;
-    
+
     this.#customerController = new CustomerController();
     this.#initializeAddresses = initializeAddresses;
 
     if (openInEditMode) {
       this.setEditMode();
+      this.#deleteAddressButton.node.classList.add(classes.hidden);
+    } else {
+      this.#deleteAddressButton.node.classList.remove(classes.hidden);
     }
   }
 
@@ -128,9 +131,17 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
   };
 
   methodForEditBtn = () => {
-    const newAddress = new AddressForm({}, this.#addressType, this.#address, this.#isDefaultAddress, this.#addressId, this.#initializeAddresses, true);
+    const newAddress = new AddressForm(
+      {},
+      this.#addressType,
+      this.#address,
+      this.#isDefaultAddress,
+      this.#addressId,
+      this.#initializeAddresses,
+      true,
+    );
     console.log(newAddress);
-  }
+  };
 
   #createEditDeleteBtnComponent = () => {
     this.#editDeleteBtnWrapper = new BaseElement<HTMLDivElement>(
@@ -138,7 +149,6 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       (this.#editAddressButton = new Button(
         { text: 'Edit', class: classes.button },
         ButtonClasses.NORMAL,
-        // this.setEditMode,
         this.methodForEditBtn,
       )),
       (this.#saveAddressButton = new Button(
@@ -180,7 +190,8 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       action: 'removeAddress',
       addressId: this.#addressId ?? '',
     };
-    await this.#customerController.updateSingleCustomerData(customerData);
+    const customer = await this.#customerController.updateSingleCustomerData(customerData);
+    this.#initializeAddresses(customer);
   };
 
   setUserAddressInputsState = (state: boolean) => {
@@ -201,6 +212,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
     this.#saveAddressButton.node.classList.remove(classes.hidden);
     this.#editAddressButton.node.classList.add(classes.hidden);
+    
   };
 
   checkAndSendAddressData = async () => {
