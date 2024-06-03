@@ -3,6 +3,7 @@ import FormPage from '@Src/components/common/form-page';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
 import auth from '@Src/controllers/auth';
+import { AppRoutes } from '@Src/router/routes';
 import { validateEmail, validatePassword } from '@Src/utils/helpers';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import classes from './style.module.scss';
@@ -28,7 +29,7 @@ export default class LoginPage extends FormPage {
   constructor() {
     super({ title: 'Login page' });
     this.addForm(this.renderForm());
-    this.addAdditionalLink("if you don't already have an account", 'signup', 'Sign up');
+    this.addAdditionalLink("if you don't already have an account", AppRoutes.SIGNUP, 'Sign up');
   }
 
   checkEmailValidation = (input: string): ValidationError => {
