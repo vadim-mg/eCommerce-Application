@@ -25,16 +25,20 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
 
   #onViewBtnClick: () => void;
 
+  #availableFilterAttributes: Promise<void>;
+
   constructor(products: Products, onViewBtnClick: () => void) {
     super({ tag: 'form', class: classes.filterForm });
     this.#onViewBtnClick = onViewBtnClick;
 
-    products.getFilterAttributes(SHOWED_FILTER).then((filterAttrs) => {
-      this.#filterOptions = filterAttrs;
+    this.#availableFilterAttributes = products
+      .getFilterAttributes(SHOWED_FILTER)
+      .then((filterAttrs) => {
+        this.#filterOptions = filterAttrs;
 
-      this.#createComponent();
-      this.#addEventListeners();
-    });
+        this.#createComponent();
+        this.#addEventListeners();
+      });
   }
 
   #createComponent = () => {
@@ -56,7 +60,7 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
               classes.brandAccordion,
               ...(this.#brandsCheckBoxes = this.#filterOptions[AttrName.BRAND]
                 .sort()
-                .map((brand) => new CheckBox({ class: classes.filterCheckbox }, brand, false))),
+                .map((brand) => new CheckBox({ class: classes.filterCheckbox }, brand, true))),
             )
           : tag({ tag: 'span' }),
 
@@ -86,7 +90,12 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
               ...(this.#ageCheckBoxes = this.#filterOptions[AttrName.AGE_FROM]
                 .sort((a, b) => Number(a) - Number(b))
                 .map(
-                  (age) => new CheckBox({ class: classes.filterCheckbox }, age.toString(), false),
+                  (age, index) =>
+                    new CheckBox(
+                      { class: classes.filterCheckbox },
+                      age.toString(),
+                      !index, // first checkbox is checked
+                    ),
                 )),
             )
           : tag({ tag: 'span' }),
@@ -130,16 +139,17 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
     this.#rangeSlider.maxValue = this.#filterOptions[AttrName.MAX_PLAYER_COUNT];
   };
 
-  getFilterSettings = (): FilterAttributes => ({
-    [AttrName.BRAND]: this.#brandsCheckBoxes
-      ?.filter((checkBox) => checkBox.checked)
-      .map((checkBox) => checkBox.labelElement.node.textContent ?? ''),
-    [AttrName.MIN_PLAYER_COUNT]: this.#rangeSlider?.minValue,
-    [AttrName.MAX_PLAYER_COUNT]: this.#rangeSlider?.maxValue,
-    [AttrName.AGE_FROM]: this.#ageCheckBoxes
-      ?.filter((checkBox) => checkBox.checked)
-      .map((checkBox) => Number(checkBox.labelElement.node.textContent) ?? Infinity),
-  });
+  getFilterSettings = (): Promise<FilterAttributes> =>
+    this.#availableFilterAttributes.then(() => ({
+      [AttrName.BRAND]: this.#brandsCheckBoxes
+        ?.filter((checkBox) => checkBox.checked)
+        .map((checkBox) => checkBox.labelElement.node.textContent ?? ''),
+      [AttrName.MIN_PLAYER_COUNT]: this.#rangeSlider?.minValue,
+      [AttrName.MAX_PLAYER_COUNT]: this.#rangeSlider?.maxValue,
+      [AttrName.AGE_FROM]: this.#ageCheckBoxes
+        ?.filter((checkBox) => checkBox.checked)
+        .map((checkBox) => Number(checkBox.labelElement.node.textContent) ?? Infinity),
+    }));
 
   #viewButtonHandler = () => {
     this.#onViewBtnClick();

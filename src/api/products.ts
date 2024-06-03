@@ -1,4 +1,4 @@
-import { FilterAttributes } from '@Src/controllers/products';
+import { AttrName, FilterAttributes } from '@Src/controllers/products';
 import apiRoot from './api-root';
 
 // docs.commercetools.com/api/projects/productProjections#get-productprojection-by-key
@@ -24,8 +24,8 @@ const getProductById = (id: string) =>
 
 const getProducts = (options: ProductGetOptions) => {
   const { categoryId, sortingType, search, filter } = options;
-  console.log('Filter: --------------');
-  console.log(filter); // todo: find how add filter parameters to request!!! important
+  const brandFilter = `${filter?.[AttrName.BRAND]?.length ? filter?.[AttrName.BRAND].map((val) => `"${val}"`).join(',') : '"undefined"'}`;
+
   return apiRoot.apiBuilder
     .productProjections()
     .search()
@@ -41,7 +41,7 @@ const getProducts = (options: ProductGetOptions) => {
         ...(categoryId ? { 'filter.query': `categories.id:"${categoryId}"` } : {}),
 
         sort: sortingType,
-        // filter: ['variants.attributes.brand:"Days of Wonder"'], // todo: filter by all brands and many params
+        ...(brandFilter.length ? { filter: [`variants.attributes.brand:${brandFilter}`] } : {}),
 
         offset: 0,
       },
