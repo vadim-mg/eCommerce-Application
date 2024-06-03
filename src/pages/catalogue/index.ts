@@ -121,7 +121,6 @@ export default class CataloguePage extends ContentPage {
   };
 
   #sort = (val: string) => {
-    console.log(val);
     this.#selectedSort = val as SortingType;
     this.#renderProductList();
   };

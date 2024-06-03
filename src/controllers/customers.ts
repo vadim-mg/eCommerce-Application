@@ -4,10 +4,6 @@ import customerApi from '@Src/api/customers';
 export default class Customer {
   #response!: CustomerType;
 
-  constructor() {
-    console.log('Customer constructor');
-  }
-
   updateCustomerData = async (
     currentVersion: number,
     updateActions: MyCustomerUpdateAction[],
