@@ -109,13 +109,13 @@ export const passwordCtpClient = (user: UserAuthOptions) => () =>
 export const existingTokenCtpClient = (token: string) => () =>
   new ClientBuilder()
     .withHttpMiddleware(httpMiddlewareOptions)
-    .withLoggerMiddleware()
+    // .withLoggerMiddleware()
     .withExistingTokenFlow(`Bearer ${token}`, { force: true })
     .build();
 
 export const existingRefreshTokenCtpClient = (tokenCache: TokenCache) => () =>
   new ClientBuilder()
     .withHttpMiddleware(httpMiddlewareOptions)
-    .withLoggerMiddleware()
+    // .withLoggerMiddleware()
     .withRefreshTokenFlow(refreshAuthMiddlewareOptions(tokenCache))
     .build();
