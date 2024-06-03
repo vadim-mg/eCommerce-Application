@@ -1,6 +1,7 @@
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 
 import { ProductGetOptions } from '@Src/api/products';
+import tag from '@Src/components/common/tag';
 import productCategories from '@Src/controllers/categories';
 import Products from '@Src/controllers/products';
 import ProductCard from '../product-card';
@@ -30,11 +31,13 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
         : productCategories.CATEGORY_ALL.key;
 
       this.node.innerHTML = '';
-      console.log(respBody);
-      respBody.results.forEach((product) => {
-        console.log(product);
-        this.node.append(new ProductCard({}, product, selectedCategoryKey).node);
-      });
+      if (respBody.results.length) {
+        respBody.results.forEach((product) => {
+          this.node.append(new ProductCard({}, product, selectedCategoryKey).node);
+        });
+      } else {
+        this.node.append(tag({ tag: 'p', text: 'No product found with same parameters' }).node);
+      }
     } catch (error) {
       console.log(error);
     }
