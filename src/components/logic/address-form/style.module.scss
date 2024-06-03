@@ -1,7 +1,9 @@
 @import '@Src/styles/variables.scss';
 
-.address-wrapper {
+.address-wrapper,
+.base-form {
   max-width: 360px;
+  width: 100%;
 }
 
 .checkbox {
@@ -53,4 +55,13 @@
 
 .success {
   background-color: rgba(55, 211, 134, 0.9);
+}
+
+.modal-form {
+  padding: 2rem;
+}
+
+.modal > div:first-child {
+  padding: 2rem 1.5rem;
+  width: auto;
 }
