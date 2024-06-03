@@ -286,6 +286,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
 
   setCanceledMode = () => {
     this.node.remove();
+    this.#formModal.node.remove();
     this.setUserAddressInputsState(true);
 
     this.#saveAddressButton.node.classList.add(classes.hidden);
