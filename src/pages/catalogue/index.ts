@@ -3,10 +3,12 @@ import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import CategoryList from '@Src/components/logic/category-list';
+import FilterForm from '@Src/components/logic/filter-form';
 import ProductList from '@Src/components/logic/product-list';
 import SearchInput from '@Src/components/ui/search-input';
 import SelectWithKey from '@Src/components/ui/selectWithKeys';
 import productCategories from '@Src/controllers/categories';
+import Products from '@Src/controllers/products';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
 import classes from './style.module.scss';
@@ -30,9 +32,11 @@ const SORT_SETTINGS = [
 export default class CataloguePage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
+  #products: Products;
+
   #productList!: ProductList;
 
-  #filters!: BaseElement<HTMLDivElement>;
+  #filters!: FilterForm;
 
   #categorySection!: CategoryList;
 
@@ -45,6 +49,7 @@ export default class CataloguePage extends ContentPage {
   constructor(categoryPathPart: string[]) {
     super({ containerTag: 'div', title: 'catalogue page', showBreadCrumbs: true });
     this.#selectedSort = SORT_SETTINGS.find((value) => value.default)?.key ?? SORT_SETTINGS[0].key;
+    this.#products = new Products();
     productCategories.getCategories().then(() => {
       const currentCategoryId = productCategories.routeExist(categoryPathPart[0]) ?? '';
       if (categoryPathPart.length && !currentCategoryId) {
@@ -65,6 +70,7 @@ export default class CataloguePage extends ContentPage {
       categoryId: this.#categorySection.currentCategoryId,
       sortingType: this.#selectedSort,
       search: this.#searchField.value,
+      filter: this.#filters.getFilterSettings(),
     });
   };
 
@@ -107,13 +113,9 @@ export default class CataloguePage extends ContentPage {
       tag(
         { tag: 'main', class: classes.contentSection },
         // filters
-        (this.#filters = tag<HTMLDivElement>({
-          tag: 'div',
-          text: 'filters',
-          class: classes.filters,
-        })),
+        (this.#filters = new FilterForm(this.#products, this.#renderProductList)),
         // products
-        (this.#productList = new ProductList({ class: classes.products })),
+        (this.#productList = new ProductList({ class: classes.products }, this.#products)),
       ),
     );
   };

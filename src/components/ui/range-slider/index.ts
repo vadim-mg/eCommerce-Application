@@ -37,8 +37,18 @@ export default class RangeSlider extends BaseElement<HTMLElement> {
     return parseInt(this.#minInput.node.value, 10);
   }
 
+  set minValue(value: number) {
+    this.#minInput.node.value = value.toString();
+    this.#setStartValue();
+  }
+
   get maxValue(): number {
     return parseInt(this.#maxInput.node.value, 10);
+  }
+
+  set maxValue(value: number) {
+    this.#maxInput.node.value = value.toString();
+    this.#setEndValue();
   }
 
   #create = () => {
