@@ -45,7 +45,14 @@ h2 {
 .password-btn-container {
   display: flex;
   justify-content: space-between;
-  gap: 1.1rem;
+  align-items: center;
+  width: 100%;
+}
+
+.personal-data-btn-block {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .user-data-details-wrapper,
@@ -148,5 +155,5 @@ h2 {
 
 .modal > div:first-child {
   padding: 2rem 1.5rem;
-  width: auto;
+  width: 360px;
 }

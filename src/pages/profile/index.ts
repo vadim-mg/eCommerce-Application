@@ -11,7 +11,12 @@ import CustomerController from '@Src/controllers/customers';
 import crossSvg from '@Assets/icons/cross-white.svg';
 import checkMarkSvg from '@Assets/icons/checkmark-white.svg';
 import { Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
-import { validateDateOfBirth, validateEmail, validatePassword, validateUserData } from '@Src/utils/helpers';
+import {
+  validateDateOfBirth,
+  validateEmail,
+  validatePassword,
+  validateUserData,
+} from '@Src/utils/helpers';
 import State from '@Src/state';
 import ModalWindow from '@Src/components/ui/modal';
 import classes from './style.module.scss';
@@ -43,6 +48,8 @@ export default class ProfilePage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
   #userDataWrapper!: BaseElement<HTMLDivElement>;
+
+  #cancelDetailsBtn!: Button;
 
   #userDataDetailsWrapper!: BaseElement<HTMLDivElement>;
 
@@ -96,12 +103,13 @@ export default class ProfilePage extends ContentPage {
 
   #customerController: CustomerController;
 
+  #personalDataBtnBlock!: BaseElement<HTMLDivElement>;
+
   constructor() {
     super({ containerTag: 'main', title: 'profile page' });
     this.#createContent();
     this.#showContent();
     this.#customerController = new CustomerController();
-
     this.#me();
   }
 
@@ -224,26 +232,11 @@ export default class ProfilePage extends ContentPage {
     return this.#userDataWrapper;
   };
 
-  togglePasswordInputsState = (state: boolean) => {
-    this.#currentUserPasswordInput.setDisabled(state);
-    this.#passwordInput.setDisabled(state);
-    this.#passwordInputRepeat.setDisabled(state);
-  };
-
   toggleUserDetailsInputsState = (state: boolean) => {
     this.#emailInput.setDisabled(state);
     this.#firstNameInput.setDisabled(state);
     this.#lastNameInput.setDisabled(state);
     this.#birthDateInput.setDisabled(state);
-  };
-
-  setEditMode = () => {
-    this.toggleUserDetailsInputsState(false);
-
-    this.#birthDateInput.addDateInputType();
-
-    this.#editDetailsBtn.node.classList.add(classes.hidden);
-    this.#saveDetailsBtn.node.classList.remove(classes.hidden);
   };
 
   static isEmailFree = (
@@ -261,6 +254,115 @@ export default class ProfilePage extends ContentPage {
         }
       })
       .catch(onErrorCb);
+
+  setSavedMode = async () => {
+    const customerUpdatedPersonalData: MyCustomerUpdateAction[] = [
+      {
+        action: 'changeEmail',
+        email: this.#emailInput.value,
+      },
+      {
+        action: 'setFirstName',
+        firstName: this.#firstNameInput.value,
+      },
+      {
+        action: 'setLastName',
+        lastName: this.#lastNameInput.value,
+      },
+      {
+        action: 'setDateOfBirth',
+        dateOfBirth: this.#birthDateInput.value,
+      },
+    ];
+    const customer = await this.#customerController.updateCustomerData(
+      customerUpdatedPersonalData,
+    );
+    console.log(customer);
+    this.toggleUserDetailsInputsState(true);
+    this.#birthDateInput.addTextInputType();
+    this.setDefaultStateForPersonalBlock();
+  };
+
+  setDefaultStateForPersonalBlock = () => {
+    this.#editDetailsBtn.node.classList.remove(classes.hidden);
+    this.#saveDetailsBtn.node.classList.add(classes.hidden);
+    this.#cancelDetailsBtn.node.classList.add(classes.hidden);
+
+    this.#modalForData.node.remove();
+  }
+
+  createUserDataDetailsComponent = () => {
+    this.#userDataDetailsWrapper = new BaseElement<HTMLDivElement>(
+      { tag: 'div', class: classes.userDataDetailsWrapper },
+      new BaseElement<HTMLHeadingElement>({
+        tag: 'h2',
+        text: 'Personal details',
+      }),
+      (this.#emailInput = new InputText({ name: 'email', type: 'email' }, 'E-mail', () =>
+        validateEmail(this.#emailInput.value),
+      )),
+      (this.#firstNameInput = new InputText({ name: 'firstName' }, 'Fist name', () =>
+        validateUserData(this.#firstNameInput.value),
+      )),
+      (this.#lastNameInput = new InputText({ name: 'lastName' }, 'Last name', () =>
+        validateUserData(this.#lastNameInput.value),
+      )),
+      (this.#birthDateInput = new InputText({ name: 'date-of-birth' }, 'Birth date', () =>
+        validateDateOfBirth(this.#birthDateInput.value),
+      )),
+      this.createPersonalDataBtnBlock(),
+    );
+    this.#cancelDetailsBtn.node.classList.add(classes.hidden);
+    this.#birthDateInput.node.classList.add(classes.birthDateInput);
+    this.toggleUserDetailsInputsState(true);
+    this.#saveDetailsBtn.node.classList.add(classes.hidden);
+
+    return this.#userDataDetailsWrapper;
+  };
+
+  handlerOnClickBtnEditDetails = () => {
+    const userDataComponent = this.createUserDataDetailsComponent();
+    this.#userDataWrapper.node.append(userDataComponent.node);
+    this.setEditMode();
+  }
+
+  createPersonalDataBtnBlock = () => {
+    this.#personalDataBtnBlock = new BaseElement<HTMLDivElement>(
+      { tag: 'div', class: classes.personalDataBtnBlock },
+      (this.#editDetailsBtn = new Button(
+        { text: 'Edit details', class: classes.btnLineHeight },
+        ButtonClasses.NORMAL,
+        // this.setEditMode,
+        this.handlerOnClickBtnEditDetails,
+      )),
+      (this.#saveDetailsBtn = new Button(
+        { text: 'Save', class: classes.btnLineHeight },
+        ButtonClasses.NORMAL,
+        this.handlerOnClickBtnUserDetails,
+      )),
+      (this.#cancelDetailsBtn = new Button(
+        { text: 'Cancel', class: classes.btnLineHeight },
+        ButtonClasses.NORMAL,
+        this.handlerOnClickBtnCancelDetails,
+      )),
+    );
+    return this.#personalDataBtnBlock;
+  };
+
+  handlerOnClickBtnCancelDetails = () => {
+    this.setDefaultStateForPersonalBlock();
+  }
+
+  setEditMode = () => {
+    this.#modalForData = new ModalWindow(classes.modal, this.#userDataDetailsWrapper);
+    this.#modalForData.show();
+
+    this.toggleUserDetailsInputsState(false);
+    this.#birthDateInput.addDateInputType();
+    this.#editDetailsBtn.node.classList.add(classes.hidden);
+    this.#saveDetailsBtn.node.classList.remove(classes.hidden);
+    this.#cancelDetailsBtn.node.classList.remove(classes.hidden);
+  };
 
   handlerOnClickBtnUserDetails = () => {
     this.#emailInput.validate();
@@ -285,80 +387,6 @@ export default class ProfilePage extends ContentPage {
     } else {
       console.log('invalid');
     }
-  };
-
-  setSavedMode = async () => {
-    const customerUpdatedPersonalData: MyCustomerUpdateAction[] = [
-      {
-        action: 'changeEmail',
-        email: this.#emailInput.value,
-      },
-      {
-        action: 'setFirstName',
-        firstName: this.#firstNameInput.value,
-      },
-      {
-        action: 'setLastName',
-        lastName: this.#lastNameInput.value,
-      },
-      {
-        action: 'setDateOfBirth',
-        dateOfBirth: this.#birthDateInput.value,
-      },
-    ];
-    const customer = await this.#customerController.updateCustomerData(
-      customerUpdatedPersonalData,
-    );
-
-    console.log(customer);
-    this.toggleUserDetailsInputsState(true);
-    this.#birthDateInput.addTextInputType();
-
-    this.#editDetailsBtn.node.classList.remove(classes.hidden);
-    this.#saveDetailsBtn.node.classList.add(classes.hidden);
-  };
-
-  createUserDataDetailsComponent = () => {
-    this.#userDataDetailsWrapper = new BaseElement<HTMLDivElement>(
-      { tag: 'div', class: classes.userDataDetailsWrapper },
-      new BaseElement<HTMLHeadingElement>({
-        tag: 'h2',
-        text: 'Personal details',
-      }),
-      (this.#emailInput = new InputText({ name: 'email', type: 'email' }, 'E-mail', () =>
-        validateEmail(this.#emailInput.value),
-      )),
-      (this.#firstNameInput = new InputText({ name: 'firstName' }, 'Fist name', () =>
-        validateUserData(this.#firstNameInput.value),
-      )),
-      (this.#lastNameInput = new InputText({ name: 'lastName' }, 'Last name', () =>
-        validateUserData(this.#lastNameInput.value),
-      )),
-      (this.#birthDateInput = new InputText({ name: 'date-of-birth' }, 'Birth date', () =>
-        validateDateOfBirth(this.#birthDateInput.value),
-      )),
-      this.createSuccessNotification(),
-      this.createErrorNotification(),
-      (this.#editDetailsBtn = new Button(
-        { text: 'Edit details', class: classes.btnLineHeight },
-        ButtonClasses.NORMAL,
-        this.setEditMode,
-      )),
-      (this.#saveDetailsBtn = new Button(
-        { text: 'Save', class: classes.btnLineHeight },
-        ButtonClasses.NORMAL,
-        this.handlerOnClickBtnUserDetails,
-      )),
-    );
-    this.#notificationErrorBlockWrapper.node.hidden = true;
-    this.#notificationSuccessBlockWrapper.node.hidden = true;
-
-    this.#birthDateInput.node.classList.add(classes.birthDateInput);
-
-    this.toggleUserDetailsInputsState(true);
-    this.#saveDetailsBtn.node.classList.add(classes.hidden);
-
-    return this.#userDataDetailsWrapper;
   };
 
   createUserPasswordComponent = () => {
@@ -397,6 +425,12 @@ export default class ProfilePage extends ContentPage {
     this.#cancelPasswordButton.node.classList.add(classes.hidden);
     this.addLineHeightStyles();
     return this.#userPasswordWrapper;
+  };
+
+  togglePasswordInputsState = (state: boolean) => {
+    this.#currentUserPasswordInput.setDisabled(state);
+    this.#passwordInput.setDisabled(state);
+    this.#passwordInputRepeat.setDisabled(state);
   };
 
   hidePasswordElements = () => {
@@ -447,8 +481,9 @@ export default class ProfilePage extends ContentPage {
     this.#savePasswordButton.node.classList.add(classes.hidden);
     this.#changePasswordButton.node.classList.remove(classes.hidden);
     this.hidePasswordElements();
-    this.#userPasswordWrapper = this.createUserPasswordComponent();
-    this.#userDataWrapper.node.append(this.#userPasswordWrapper.node);
+
+    // const passwordComponent = this.createUserPasswordComponent();
+    // this.#userDataWrapper.node.append(passwordComponent.node);
     this.#modalForData.node.remove();
   };
 
@@ -462,7 +497,10 @@ export default class ProfilePage extends ContentPage {
       this.#passwordInputRepeat.isValid &&
       this.#passwordInput.value === this.#passwordInputRepeat.value
     ) {
-      const response = this.#customerController.updatePassword(this.#currentUserPasswordInput.value, this.#passwordInput.value);
+      const response = this.#customerController.updatePassword(
+        this.#currentUserPasswordInput.value,
+        this.#passwordInput.value,
+      );
       console.log(response);
     } else {
       console.log('invalid password');
@@ -470,6 +508,8 @@ export default class ProfilePage extends ContentPage {
   };
 
   addChangePasswordClickHandler = () => {
+    const passwordComponent = this.createUserPasswordComponent();
+    this.#userDataWrapper.node.append(passwordComponent.node);
     this.#modalForData = new ModalWindow(classes.modal, this.#userPasswordWrapper);
     this.#modalForData.show();
 

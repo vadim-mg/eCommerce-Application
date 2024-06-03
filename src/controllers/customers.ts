@@ -11,10 +11,6 @@ export default class CustomerController {
 
   #notificationBlockWrapper!: BaseElement<HTMLDivElement>;
 
-  constructor() {
-    console.log('Customer constructor');
-  }
-
   createNotificationComponent = (isSuccessfull: boolean) => {
     const notificationTextElement = new BaseElement<HTMLParagraphElement>({
       tag: 'p',
@@ -24,9 +20,7 @@ export default class CustomerController {
       tag: 'div',
       class: classes.notificationTextWrapper,
     });
-    this.#notificationBlockWrapper = new BaseElement<HTMLDivElement>(
-      { tag: 'div' },
-    );
+    this.#notificationBlockWrapper = new BaseElement<HTMLDivElement>({ tag: 'div' });
     if (!isSuccessfull) {
       notificationTextWrapper.node.innerHTML = crossSvg;
       notificationTextElement.node.textContent = 'Sorry, failed to update the data.';
@@ -72,7 +66,11 @@ export default class CustomerController {
   updatePassword = async (currentPassword: string, newPassword: string) => {
     try {
       const newVersion = State.getInstance().currentCustomerVersion;
-      const result = await customerApi.updateCustomerPassword(newVersion, currentPassword, newPassword);
+      const result = await customerApi.updateCustomerPassword(
+        newVersion,
+        currentPassword,
+        newPassword,
+      );
       this.#response = result.body;
       if (result.statusCode === 200) {
         State.getInstance().currentCustomerVersion = result.body.version;
@@ -87,5 +85,5 @@ export default class CustomerController {
       console.error(error);
     }
     return this.#response;
-  }
+  };
 }
