@@ -289,7 +289,7 @@ export default class ProfilePage extends ContentPage {
     this.#cancelDetailsBtn.node.classList.add(classes.hidden);
 
     this.#modalForData.node.remove();
-  }
+  };
 
   createUserDataDetailsComponent = () => {
     this.#userDataDetailsWrapper = new BaseElement<HTMLDivElement>(
@@ -324,7 +324,7 @@ export default class ProfilePage extends ContentPage {
     const userDataComponent = this.createUserDataDetailsComponent();
     this.#userDataWrapper.node.append(userDataComponent.node);
     this.setEditMode();
-  }
+  };
 
   createPersonalDataBtnBlock = () => {
     this.#personalDataBtnBlock = new BaseElement<HTMLDivElement>(
@@ -351,7 +351,7 @@ export default class ProfilePage extends ContentPage {
 
   handlerOnClickBtnCancelDetails = () => {
     this.setDefaultStateForPersonalBlock();
-  }
+  };
 
   setEditMode = () => {
     this.#modalForData = new ModalWindow(classes.modal, this.#userDataDetailsWrapper);
@@ -482,8 +482,6 @@ export default class ProfilePage extends ContentPage {
     this.#changePasswordButton.node.classList.remove(classes.hidden);
     this.hidePasswordElements();
 
-    // const passwordComponent = this.createUserPasswordComponent();
-    // this.#userDataWrapper.node.append(passwordComponent.node);
     this.#modalForData.node.remove();
   };
 
@@ -491,6 +489,7 @@ export default class ProfilePage extends ContentPage {
     this.#currentUserPasswordInput.validate();
     this.#passwordInput.validate();
     this.#passwordInputRepeat.validate();
+    
     if (
       this.#currentUserPasswordInput.isValid &&
       this.#passwordInput.isValid &&
