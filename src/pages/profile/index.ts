@@ -105,6 +105,8 @@ export default class ProfilePage extends ContentPage {
 
   #personalDataBtnBlock!: BaseElement<HTMLDivElement>;
 
+  #errorText!: BaseElement<HTMLDivElement>;
+
   constructor() {
     super({ containerTag: 'main', title: 'profile page', showBreadCrumbs: true });
     this.#createContent();
@@ -416,10 +418,15 @@ export default class ProfilePage extends ContentPage {
         class: classes.passwordRule,
         text: '! The password must be at least 8 characters long. It must contain at least one digit, at least one capital letter and at least one special character (!@#$%^&*).',
       })),
+      (this.#errorText = new BaseElement<HTMLDivElement>({
+        tag: 'div',
+        text: 'Invalid password',
+        class: classes.invalidPassword,
+      })),
       this.createPasswordBtnContainer(),
     );
     this.hidePasswordElements();
-
+    this.#errorText.node.classList.add(classes.hidden);
     this.togglePasswordInputsState(true);
     this.#savePasswordButton.node.classList.add(classes.hidden);
     this.#cancelPasswordButton.node.classList.add(classes.hidden);
@@ -489,7 +496,7 @@ export default class ProfilePage extends ContentPage {
     this.#currentUserPasswordInput.validate();
     this.#passwordInput.validate();
     this.#passwordInputRepeat.validate();
-    
+
     if (
       this.#currentUserPasswordInput.isValid &&
       this.#passwordInput.isValid &&
@@ -500,9 +507,11 @@ export default class ProfilePage extends ContentPage {
         this.#currentUserPasswordInput.value,
         this.#passwordInput.value,
       );
+      this.setToDefaultMode();
       console.log(response);
     } else {
       console.log('invalid password');
+      this.#errorText.node.classList.remove(classes.hidden);
     }
   };
 
@@ -525,7 +534,6 @@ export default class ProfilePage extends ContentPage {
 
   addSavePasswordClickHandler = () => {
     this.updatePassword();
-    this.setToDefaultMode();
   };
 
   createDeliveryAddressBasicStructure = () => {

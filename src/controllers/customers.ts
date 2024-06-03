@@ -35,7 +35,8 @@ export default class CustomerController {
     document.body.append(this.#notificationBlockWrapper.node);
 
     setTimeout(() => {
-      this.#notificationBlockWrapper.node.classList.add(classes.hidden);
+      // this.#notificationBlockWrapper.node.classList.add(classes.hidden);
+      this.#notificationBlockWrapper.node.remove();
     }, 3000);
   };
 
