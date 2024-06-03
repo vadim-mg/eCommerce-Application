@@ -8,8 +8,6 @@ import InputText from '@Src/components/ui/input-text';
 import auth from '@Src/controllers/auth';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import CustomerController from '@Src/controllers/customers';
-import crossSvg from '@Assets/icons/cross-white.svg';
-import checkMarkSvg from '@Assets/icons/checkmark-white.svg';
 import { Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
 import {
   validateDateOfBirth,
@@ -93,10 +91,6 @@ export default class ProfilePage extends ContentPage {
 
   #currentEmail!: string;
 
-  #notificationSuccessBlockWrapper!: BaseElement<HTMLDivElement>;
-
-  #notificationErrorBlockWrapper!: BaseElement<HTMLDivElement>;
-
   #modalForData!: ModalWindow;
 
   #passwordRules!: BaseElement<HTMLDivElement>;
@@ -163,50 +157,11 @@ export default class ProfilePage extends ContentPage {
 
         this.initializeAddresses(customer);
         console.log(info.body);
-
         this.#currentEmail = customer.email;
       })
       .catch((error: HttpErrorType) => {
         console.log(error.message);
       });
-  };
-
-  createSuccessNotification = () => {
-    const notificationTextElement = new BaseElement<HTMLParagraphElement>({
-      tag: 'p',
-      class: classes.notificationTextElement,
-      text: 'Data successfully updated.',
-    });
-    const notificationTextWrapper = new BaseElement<HTMLDivElement>({
-      tag: 'div',
-      class: classes.notificationTextWrapper,
-      innerHTML: checkMarkSvg,
-    });
-    notificationTextWrapper.node.append(notificationTextElement.node);
-    this.#notificationSuccessBlockWrapper = new BaseElement<HTMLDivElement>(
-      { tag: 'div', class: classes.notificationSuccessBlockWrapper },
-      notificationTextWrapper,
-    );
-    return this.#notificationSuccessBlockWrapper;
-  };
-
-  createErrorNotification = () => {
-    const notificationTextElement = new BaseElement<HTMLParagraphElement>({
-      tag: 'p',
-      class: classes.notificationTextElement,
-      text: 'Sorry, failed to update the data.',
-    });
-    const notificationTextWrapper = new BaseElement<HTMLDivElement>({
-      tag: 'div',
-      class: classes.notificationTextWrapper,
-      innerHTML: crossSvg,
-    });
-    notificationTextWrapper.node.append(notificationTextElement.node);
-    this.#notificationErrorBlockWrapper = new BaseElement<HTMLDivElement>(
-      { tag: 'div', class: classes.notificationErrorBlockWrapper },
-      notificationTextWrapper,
-    );
-    return this.#notificationErrorBlockWrapper;
   };
 
   #createContent = () => {
@@ -289,8 +244,6 @@ export default class ProfilePage extends ContentPage {
     this.#editDetailsBtn.node.classList.remove(classes.hidden);
     this.#saveDetailsBtn.node.classList.add(classes.hidden);
     this.#cancelDetailsBtn.node.classList.add(classes.hidden);
-
-    this.#modalForData.node.remove();
   };
 
   createUserDataDetailsComponent = () => {
@@ -322,20 +275,13 @@ export default class ProfilePage extends ContentPage {
     return this.#userDataDetailsWrapper;
   };
 
-  handlerOnClickBtnEditDetails = () => {
-    const userDataComponent = this.createUserDataDetailsComponent();
-    this.#userDataWrapper.node.append(userDataComponent.node);
-    this.setEditMode();
-  };
-
   createPersonalDataBtnBlock = () => {
     this.#personalDataBtnBlock = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.personalDataBtnBlock },
       (this.#editDetailsBtn = new Button(
         { text: 'Edit details', class: classes.btnLineHeight },
         ButtonClasses.NORMAL,
-        // this.setEditMode,
-        this.handlerOnClickBtnEditDetails,
+        this.setEditMode,
       )),
       (this.#saveDetailsBtn = new Button(
         { text: 'Save', class: classes.btnLineHeight },
@@ -356,9 +302,6 @@ export default class ProfilePage extends ContentPage {
   };
 
   setEditMode = () => {
-    this.#modalForData = new ModalWindow(classes.modal, this.#userDataDetailsWrapper);
-    this.#modalForData.show();
-
     this.toggleUserDetailsInputsState(false);
     this.#birthDateInput.addDateInputType();
     this.#editDetailsBtn.node.classList.add(classes.hidden);
