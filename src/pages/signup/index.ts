@@ -17,6 +17,7 @@ import {
 } from '@Src/utils/helpers';
 
 import auth from '@Src/controllers/auth';
+import { AppRoutes } from '@Src/router/routes';
 import { BaseAddress, CustomerDraft, MyCustomerDraft } from '@commercetools/platform-sdk';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import classes from './style.module.scss';
@@ -133,7 +134,7 @@ export default class SignupPage extends FormPage {
       billingEqualDelivery: true,
     } as UserData;
     this.addEventListeners();
-    this.addAdditionalLink('if you already have an account', 'login', 'Log in');
+    this.addAdditionalLink('if you already have an account', AppRoutes.LOGIN, 'Log in');
     // this.#changeForm(this.#createFormAddresses(), FormTitle.ADDRESS); // todo : clear it after debug
   }
 
