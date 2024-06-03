@@ -22,6 +22,7 @@
 
 .user-data-wrapper {
   display: flex;
+  flex-wrap: wrap;
   gap: 3rem;
 }
 
@@ -47,6 +48,13 @@ h2 {
   width: 100%;
 
   position: relative;
+}
+
+.deliveryAddressesContainer,
+.billingAddressesContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3rem;
 }
 
 .user-password-wrapper {
@@ -91,8 +99,9 @@ h2 {
 
 .notification-error-block-wrapper,
 .notification-success-block-wrapper {
-  position: absolute;
-  bottom: 3.313rem;
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
 
   border-radius: 1.5rem;
   padding: 1.5rem 1rem;

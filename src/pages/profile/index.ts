@@ -7,11 +7,13 @@ import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
 import auth from '@Src/controllers/auth';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
-import Customer from '@Src/controllers/customers';
+import CustomerController from '@Src/controllers/customers';
 import crossSvg from '@Assets/icons/cross-white.svg';
 import checkMarkSvg from '@Assets/icons/checkmark-white.svg';
-import { MyCustomerUpdateAction } from '@commercetools/platform-sdk';
+import { Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
 import { validateDateOfBirth, validateEmail, validateUserData } from '@Src/utils/helpers';
+import State from '@Src/state';
+import ModalWindow from '@Src/components/ui/modal';
 import classes from './style.module.scss';
 
 const createTitleComponent = () => {
@@ -28,6 +30,13 @@ const createTitleComponent = () => {
     }),
   );
   return titleWrapper;
+};
+
+const emptyAddress = {
+  country: '',
+  city: '',
+  postalCode: '',
+  streetName: '',
 };
 
 export default class ProfilePage extends ContentPage {
@@ -55,19 +64,23 @@ export default class ProfilePage extends ContentPage {
 
   #saveDetailsBtn!: Button;
 
+  #deliveryWrapper!: BaseElement<HTMLDivElement>;
+
+  #billingWrapper!: BaseElement<HTMLDivElement>;
+
   #deliveryAddressesContainer!: BaseElement<HTMLDivElement>;
 
   #billingAddressesContainer!: BaseElement<HTMLDivElement>;
 
   #addAddressBtn!: Button;
 
-  #currentVersion!: number;
-
   #currentEmail!: string;
 
   #notificationSuccessBlockWrapper!: BaseElement<HTMLDivElement>;
 
   #notificationErrorBlockWrapper!: BaseElement<HTMLDivElement>;
+
+  #formModal!: ModalWindow;
 
   constructor() {
     super({ containerTag: 'main', title: 'profile page' });
@@ -77,42 +90,53 @@ export default class ProfilePage extends ContentPage {
     this.#me();
   }
 
+  initializeAddresses = (customer: Customer) => {
+    this.#deliveryAddressesContainer.node.innerHTML = '';
+    this.#billingAddressesContainer.node.innerHTML = '';
+    customer.shippingAddressIds?.forEach((addressId: string) => {
+      const shippingAddress = customer.addresses.find((value) => value.id === addressId);
+      if (shippingAddress) {
+        const addressForm = new AddressForm(
+          {},
+          'shipping',
+          shippingAddress,
+          customer.defaultShippingAddressId === addressId,
+          addressId,
+          this.initializeAddresses,
+        );
+        this.#deliveryAddressesContainer.node.append(addressForm.node);
+      }
+    });
+
+    customer.billingAddressIds?.forEach((addressId: string) => {
+      const billingAddress = customer.addresses.find((value) => value.id === addressId);
+      if (billingAddress) {
+        const addressForm = new AddressForm(
+          {},
+          'billing',
+          billingAddress,
+          customer.defaultBillingAddressId === addressId,
+          addressId,
+          this.initializeAddresses,
+        );
+        this.#billingAddressesContainer.node.append(addressForm.node);
+      }
+    });
+  };
+
   #me = () => {
     auth
       .me()
       .then((info) => {
         const customer = info.body;
-        this.#currentVersion = customer.version;
+
+        State.getInstance().currentCustomerVersion = customer.version;
         this.#emailInput.value = customer.email ?? '';
         this.#firstNameInput.value = customer.firstName ?? '';
         this.#lastNameInput.value = customer.lastName ?? '';
         this.#birthDateInput.value = customer.dateOfBirth ?? '';
 
-        customer.shippingAddressIds?.forEach((addressId: string) => {
-          const shippingAddress = customer.addresses.find((value) => value.id === addressId);
-          if (shippingAddress) {
-            const addressForm = new AddressForm(
-              {},
-              'shipping',
-              shippingAddress,
-              customer.defaultShippingAddressId === addressId,
-            );
-            this.#deliveryAddressesContainer.node.append(addressForm.node);
-          }
-        });
-
-        customer.billingAddressIds?.forEach((addressId: string) => {
-          const billingAddress = customer.addresses.find((value) => value.id === addressId);
-          if (billingAddress) {
-            const addressForm = new AddressForm(
-              {},
-              'shipping',
-              billingAddress,
-              customer.defaultBillingAddressId === addressId,
-            );
-            this.#billingAddressesContainer.node.append(addressForm.node);
-          }
-        });
+        this.initializeAddresses(customer);
         console.log(info.body);
 
         this.#currentEmail = customer.email;
@@ -261,16 +285,7 @@ export default class ProfilePage extends ContentPage {
         dateOfBirth: this.#birthDateInput.value,
       },
     ];
-    const response = new Customer()
-      .updateCustomerData(
-        this.#currentVersion,
-        customerUpdatedPersonalData,
-        this.showSuccessNotification,
-        this.showErrorNotification,
-      )
-      .then((result) => {
-        this.#currentVersion = result.version;
-      });
+    const response = new CustomerController().updateCustomerData(customerUpdatedPersonalData);
 
     console.log(response);
     this.toggleUserDetailsInputsState(true);
@@ -374,11 +389,16 @@ export default class ProfilePage extends ContentPage {
       tag: 'h2',
       text: 'Delivery address',
     });
-    this.#addAddressBtn = this.createAddAddressBtn();
-    this.#deliveryAddressesContainer = new BaseElement<HTMLDivElement>({ tag: 'div' });
-    this.#deliveryAddressesContainer.node.append(deliveryAddressTitle.node);
-    this.#deliveryAddressesContainer.node.append(this.#addAddressBtn.node);
-    return this.#deliveryAddressesContainer;
+    this.#addAddressBtn = this.createAddAddressBtn('shipping');
+    this.#deliveryWrapper = new BaseElement<HTMLDivElement>({ tag: 'div' });
+    this.#deliveryAddressesContainer = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.deliveryAddressesContainer,
+    });
+    this.#deliveryWrapper.node.append(deliveryAddressTitle.node);
+    this.#deliveryWrapper.node.append(this.#addAddressBtn.node);
+    this.#deliveryWrapper.node.append(this.#deliveryAddressesContainer.node);
+    return this.#deliveryWrapper;
   };
 
   createBillingAddressBasicStructure = () => {
@@ -386,18 +406,41 @@ export default class ProfilePage extends ContentPage {
       tag: 'h2',
       text: 'Billing address',
     });
-    this.#addAddressBtn = this.createAddAddressBtn();
-    this.#billingAddressesContainer = new BaseElement<HTMLDivElement>({ tag: 'div' });
-    this.#billingAddressesContainer.node.append(billingAddressTitle.node);
-    this.#billingAddressesContainer.node.append(this.#addAddressBtn.node);
-    return this.#billingAddressesContainer;
+    this.#addAddressBtn = this.createAddAddressBtn('billing');
+    this.#billingWrapper = new BaseElement<HTMLDivElement>({ tag: 'div' });
+    this.#billingAddressesContainer = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.billingAddressesContainer,
+    });
+    this.#billingWrapper.node.append(billingAddressTitle.node);
+    this.#billingWrapper.node.append(this.#addAddressBtn.node);
+    this.#billingWrapper.node.append(this.#billingAddressesContainer.node);
+    return this.#billingWrapper;
   };
 
-  createAddAddressBtn = () => {
+  addNewAddress = (addressType: string) => {
+    const newAddressForm = new AddressForm(
+      {},
+      addressType,
+      emptyAddress,
+      false,
+      null,
+      this.initializeAddresses,
+      true,
+    );
+    newAddressForm.setAddedNewAddressMode();
+    if (addressType === 'billing') {
+      this.#billingAddressesContainer.node.append(newAddressForm.node);
+    } else {
+      this.#deliveryAddressesContainer.node.append(newAddressForm.node);
+    }
+  };
+
+  createAddAddressBtn = (addressType: string) => {
     this.#addAddressBtn = new Button(
       { text: '+Add address', class: classes.button },
       ButtonClasses.NORMAL,
-      () => console.log('Add address'),
+      () => this.addNewAddress(addressType),
     );
     this.#addAddressBtn.node.classList.add(classes.addAddressBtn);
     return this.#addAddressBtn;
