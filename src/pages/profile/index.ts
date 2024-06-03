@@ -13,7 +13,6 @@ import checkMarkSvg from '@Assets/icons/checkmark-white.svg';
 import { Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
 import { validateDateOfBirth, validateEmail, validateUserData } from '@Src/utils/helpers';
 import State from '@Src/state';
-import ModalWindow from '@Src/components/ui/modal';
 import classes from './style.module.scss';
 
 const createTitleComponent = () => {
@@ -48,9 +47,17 @@ export default class ProfilePage extends ContentPage {
 
   #passwordInput!: InputText;
 
+  #currentUserPasswordInput!: InputText;
+
   #passwordInputRepeat!: InputText;
 
+  #changePasswordButton!: Button;
+
   #savePasswordButton!: Button;
+
+  #passwordBtnContainer!: BaseElement<HTMLDivElement>;
+
+  #cancelPasswordButton!: Button;
 
   #emailInput!: InputText;
 
@@ -79,8 +86,6 @@ export default class ProfilePage extends ContentPage {
   #notificationSuccessBlockWrapper!: BaseElement<HTMLDivElement>;
 
   #notificationErrorBlockWrapper!: BaseElement<HTMLDivElement>;
-
-  #formModal!: ModalWindow;
 
   constructor() {
     super({ containerTag: 'main', title: 'profile page' });
@@ -209,6 +214,12 @@ export default class ProfilePage extends ContentPage {
     return this.#userDataWrapper;
   };
 
+  togglePasswordInputsState = (state: boolean) => {
+    this.#currentUserPasswordInput.setDisabled(state);
+    this.#passwordInput.setDisabled(state);
+    this.#passwordInputRepeat.setDisabled(state);
+  };
+
   toggleUserDetailsInputsState = (state: boolean) => {
     this.#emailInput.setDisabled(state);
     this.#firstNameInput.setDisabled(state);
@@ -295,20 +306,6 @@ export default class ProfilePage extends ContentPage {
     this.#saveDetailsBtn.node.classList.add(classes.hidden);
   };
 
-  showSuccessNotification = () => {
-    this.#notificationSuccessBlockWrapper.node.hidden = false;
-    setTimeout(() => {
-      this.#notificationSuccessBlockWrapper.node.hidden = true;
-    }, 3000);
-  };
-
-  showErrorNotification = () => {
-    this.#notificationErrorBlockWrapper.node.hidden = false;
-    setTimeout(() => {
-      this.#notificationErrorBlockWrapper.node.hidden = true;
-    }, 3000);
-  };
-
   createUserDataDetailsComponent = () => {
     this.#userDataDetailsWrapper = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.userDataDetailsWrapper },
@@ -359,6 +356,10 @@ export default class ProfilePage extends ContentPage {
         class: classes.userPasswordWrapper,
       },
       new BaseElement<HTMLHeadingElement>({ tag: 'h2', text: 'Change password' }),
+      (this.#currentUserPasswordInput = new InputText(
+        { name: 'password', maxLength: 20, minLength: 8, type: 'password' },
+        'Current password',
+      )),
       (this.#passwordInput = new InputText(
         { name: 'password', maxLength: 20, minLength: 8, type: 'password' },
         'New password',
@@ -370,18 +371,62 @@ export default class ProfilePage extends ContentPage {
       new BaseElement<HTMLDivElement>({
         tag: 'div',
         class: classes.passwordRule,
-        text: '! The password must be at least 8 characters long. It must contain Latin letters, at least one digit and at least one capital letter.',
+        text: '! The password must be at least 8 characters long. It must contain at least one digit, at least one capital letter and at least one special character (!@#$%^&*).',
       }),
+      this.createPasswordBtnContainer(),
+    );
+
+    this.togglePasswordInputsState(true);
+    this.#savePasswordButton.node.classList.add(classes.hidden);
+    this.#cancelPasswordButton.node.classList.add(classes.hidden);
+    this.#changePasswordButton.node.classList.add(classes.btnLineHeight);
+    this.#savePasswordButton.node.classList.add(classes.btnLineHeight);
+    this.#cancelPasswordButton.node.classList.add(classes.btnLineHeight);
+    return userPasswordWrapper;
+  };
+
+  createPasswordBtnContainer = () => {
+    this.#passwordBtnContainer = new BaseElement<HTMLDivElement>(
+      { tag: 'div', class: classes.passwordBtnContainer },
+      (this.#changePasswordButton = new Button(
+        { text: 'Change password', class: classes.button },
+        ButtonClasses.NORMAL,
+        this.addChangePasswordClickHandler,
+      )),
       (this.#savePasswordButton = new Button(
         { text: 'Save password', class: classes.button },
         ButtonClasses.NORMAL,
-        () => console.log('Save password'),
+        this.addSavePasswordClickHandler,
+      )),
+      (this.#cancelPasswordButton = new Button(
+        { text: 'Cancel', class: classes.button },
+        ButtonClasses.NORMAL,
+        this.addCancelPasswordClickHandler,
       )),
     );
-    this.#passwordInput.node.classList.add(classes.inputMargin);
-    this.#passwordInputRepeat.node.classList.add(classes.inputMargin);
-    this.#savePasswordButton.node.classList.add(classes.btnLineHeight);
-    return userPasswordWrapper;
+    return this.#passwordBtnContainer;
+  };
+
+  setToDefaultMode = () => {
+    this.togglePasswordInputsState(true);
+    this.#cancelPasswordButton.node.classList.add(classes.hidden);
+    this.#savePasswordButton.node.classList.add(classes.hidden);
+    this.#changePasswordButton.node.classList.remove(classes.hidden);
+  };
+
+  addChangePasswordClickHandler = () => {
+    this.togglePasswordInputsState(false);
+    this.#cancelPasswordButton.node.classList.remove(classes.hidden);
+    this.#savePasswordButton.node.classList.remove(classes.hidden);
+    this.#changePasswordButton.node.classList.add(classes.hidden);
+  };
+
+  addCancelPasswordClickHandler = () => {
+    this.setToDefaultMode();
+  };
+
+  addSavePasswordClickHandler = () => {
+    this.setToDefaultMode();
   };
 
   createDeliveryAddressBasicStructure = () => {

@@ -42,6 +42,12 @@ h2 {
   }
 }
 
+.password-btn-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.1rem;
+}
+
 .user-data-details-wrapper,
 .user-password-wrapper {
   max-width: 360px;
