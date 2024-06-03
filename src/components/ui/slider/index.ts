@@ -112,7 +112,6 @@ export default class Slider extends BaseElement<HTMLElement> {
 
     this.#arrowLeft = this.#createArrow(Direction.LEFT, arrowLeftSVG);
     this.#arrowRight = this.#createArrow(Direction.RIGHT, arrowRightSVG);
-    this.#changeArrowAvailability();
 
     const indicatorsWrapper = new BaseElement<HTMLElement>({
       tag: 'div',
@@ -142,36 +141,24 @@ export default class Slider extends BaseElement<HTMLElement> {
     return arrow;
   };
 
-  #changeArrowAvailability = () => {
-    if (this.#index === 0) {
-      this.#arrowLeft.node.classList.add(classes.arrowDisabled);
-    }
-    if (this.#index === this.#imageList.length - 1) {
-      this.#arrowRight.node.classList.add(classes.arrowDisabled);
-    }
-    if (this.#index > 0 && this.#arrowLeft.node.classList.contains(classes.arrowDisabled)) {
-      this.#arrowLeft.node.classList.remove(classes.arrowDisabled);
-    }
-    if (
-      this.#index < this.#imageList.length - 1 &&
-      this.#arrowRight.node.classList.contains(classes.arrowDisabled)
-    ) {
-      this.#arrowRight.node.classList.remove(classes.arrowDisabled);
-    }
-  };
-
   #rotation = (direction: Direction) => {
     if (direction === Direction.LEFT && this.#index > 0) {
       this.#hideItem();
       this.#index -= 1;
       this.#showItem();
-      this.#changeArrowAvailability();
+    } else if (direction === Direction.LEFT && this.#index === 0) {
+      this.#hideItem();
+      this.#index = this.#imageList.length - 1;
+      this.#showItem();
     }
-    if (direction === Direction.RIGHT && this.#index < this.#indicators.length - 1) {
+    if (direction === Direction.RIGHT && this.#index < this.#imageList.length - 1) {
       this.#hideItem();
       this.#index += 1;
       this.#showItem();
-      this.#changeArrowAvailability();
+    } else if (direction === Direction.RIGHT && this.#index === this.#imageList.length - 1) {
+      this.#hideItem();
+      this.#index = 0;
+      this.#showItem();
     }
 
     this.#changeIndicators();

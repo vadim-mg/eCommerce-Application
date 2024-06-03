@@ -206,7 +206,7 @@ describe('helpers module', () => {
 
   describe('validateDateOfBirth', () => {
     test('check correct date of birth', () => {
-      const result = validateDateOfBirth('01/01/2000');
+      const result = validateDateOfBirth('2000-01-01');
       expect(result).toEqual({ status: true, errorText: '' });
     });
 
@@ -216,7 +216,7 @@ describe('helpers module', () => {
     });
 
     test('check date of birth under 13 years old', () => {
-      const result = validateDateOfBirth('05/25/2011');
+      const result = validateDateOfBirth('2019-05-25');
       expect(result).toEqual({ status: false, errorText: 'The user must be over 13 years old' });
     });
   });
