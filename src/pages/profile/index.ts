@@ -492,7 +492,18 @@ export default class ProfilePage extends ContentPage {
     this.#modalForData.node.remove();
   };
 
-  updatePassword = () => {
+  #signIn = () => {
+    auth
+      .signIn({
+        email: this.#emailInput.value,
+        password: this.#passwordInputRepeat.value,
+      })
+      .catch((error: HttpErrorType) => {
+        console.log(error);
+      });
+  };
+
+  updatePassword = async () => {
     this.#currentUserPasswordInput.validate();
     this.#passwordInput.validate();
     this.#passwordInputRepeat.validate();
@@ -503,11 +514,12 @@ export default class ProfilePage extends ContentPage {
       this.#passwordInputRepeat.isValid &&
       this.#passwordInput.value === this.#passwordInputRepeat.value
     ) {
-      const response = this.#customerController.updatePassword(
+      const response = await this.#customerController.updatePassword(
         this.#currentUserPasswordInput.value,
         this.#passwordInput.value,
       );
       this.setToDefaultMode();
+      await this.#signIn();
       console.log(response);
     } else {
       console.log('invalid password');
