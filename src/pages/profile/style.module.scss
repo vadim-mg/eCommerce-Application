@@ -145,3 +145,8 @@ h2 {
 .notification-text-element {
   margin: 0;
 }
+
+.modal > div:first-child {
+  padding: 2rem 1.5rem;
+  width: auto;
+}

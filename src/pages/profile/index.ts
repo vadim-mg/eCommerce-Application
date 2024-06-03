@@ -13,6 +13,7 @@ import checkMarkSvg from '@Assets/icons/checkmark-white.svg';
 import { Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
 import { validateDateOfBirth, validateEmail, validateUserData } from '@Src/utils/helpers';
 import State from '@Src/state';
+import ModalWindow from '@Src/components/ui/modal';
 import classes from './style.module.scss';
 
 const createTitleComponent = () => {
@@ -55,6 +56,8 @@ export default class ProfilePage extends ContentPage {
 
   #savePasswordButton!: Button;
 
+  #userPasswordWrapper!: BaseElement<HTMLDivElement>;
+
   #passwordBtnContainer!: BaseElement<HTMLDivElement>;
 
   #cancelPasswordButton!: Button;
@@ -86,6 +89,10 @@ export default class ProfilePage extends ContentPage {
   #notificationSuccessBlockWrapper!: BaseElement<HTMLDivElement>;
 
   #notificationErrorBlockWrapper!: BaseElement<HTMLDivElement>;
+
+  #modalForData!: ModalWindow;
+
+  #passwordRules!: BaseElement<HTMLDivElement>;
 
   constructor() {
     super({ containerTag: 'main', title: 'profile page' });
@@ -350,7 +357,7 @@ export default class ProfilePage extends ContentPage {
   };
 
   createUserPasswordComponent = () => {
-    const userPasswordWrapper = new BaseElement<HTMLDivElement>(
+    this.#userPasswordWrapper = new BaseElement<HTMLDivElement>(
       {
         tag: 'div',
         class: classes.userPasswordWrapper,
@@ -368,22 +375,41 @@ export default class ProfilePage extends ContentPage {
         { name: 'password', maxLength: 20, minLength: 8, type: 'password' },
         'Repeat password',
       )),
-      new BaseElement<HTMLDivElement>({
+      this.#passwordRules = new BaseElement<HTMLDivElement>({
         tag: 'div',
         class: classes.passwordRule,
         text: '! The password must be at least 8 characters long. It must contain at least one digit, at least one capital letter and at least one special character (!@#$%^&*).',
       }),
       this.createPasswordBtnContainer(),
     );
+    this.hidePasswordElements();
 
     this.togglePasswordInputsState(true);
     this.#savePasswordButton.node.classList.add(classes.hidden);
     this.#cancelPasswordButton.node.classList.add(classes.hidden);
+    this.addLineHeightStyles();
+    return this.#userPasswordWrapper;
+  };
+
+  hidePasswordElements = () => {
+    this.#currentUserPasswordInput.node.classList.add(classes.hidden);
+    this.#passwordInput.node.classList.add(classes.hidden);
+    this.#passwordInputRepeat.node.classList.add(classes.hidden);
+    this.#passwordRules.node.classList.add(classes.hidden);
+  }
+
+  showPasswordElements = () => {
+    this.#currentUserPasswordInput.node.classList.remove(classes.hidden);
+    this.#passwordInput.node.classList.remove(classes.hidden);
+    this.#passwordInputRepeat.node.classList.remove(classes.hidden);
+    this.#passwordRules.node.classList.remove(classes.hidden);
+  }
+
+  addLineHeightStyles = () => {
     this.#changePasswordButton.node.classList.add(classes.btnLineHeight);
     this.#savePasswordButton.node.classList.add(classes.btnLineHeight);
     this.#cancelPasswordButton.node.classList.add(classes.btnLineHeight);
-    return userPasswordWrapper;
-  };
+  }
 
   createPasswordBtnContainer = () => {
     this.#passwordBtnContainer = new BaseElement<HTMLDivElement>(
@@ -412,9 +438,17 @@ export default class ProfilePage extends ContentPage {
     this.#cancelPasswordButton.node.classList.add(classes.hidden);
     this.#savePasswordButton.node.classList.add(classes.hidden);
     this.#changePasswordButton.node.classList.remove(classes.hidden);
+    this.hidePasswordElements();
+    this.#userPasswordWrapper = this.createUserPasswordComponent();
+    this.#userDataWrapper.node.append(this.#userPasswordWrapper.node);
+    this.#modalForData.node.remove();
   };
 
   addChangePasswordClickHandler = () => {
+    this.#modalForData = new ModalWindow(classes.modal, this.#userPasswordWrapper);
+    this.#modalForData.show();
+
+    this.showPasswordElements();
     this.togglePasswordInputsState(false);
     this.#cancelPasswordButton.node.classList.remove(classes.hidden);
     this.#savePasswordButton.node.classList.remove(classes.hidden);
