@@ -80,6 +80,19 @@ export default class ProductCard extends BaseElement<HTMLElement> {
           }),
         ),
 
+        // todo remove this debug code
+        // ...(masterVariant.attributes ?? []).map((attr) =>
+        //   attr.name === AttrName.AGE_FROM ||
+        //   attr.name === AttrName.MAX_PLAYER_COUNT ||
+        //   attr.name === AttrName.MIN_PLAYER_COUNT ||
+        //   attr.name === AttrName.BRAND
+        //     ? tag<HTMLParagraphElement>({
+        //         tag: 'p',
+        //         text: `${attr.name}: ${attr.value}`,
+        //       })
+        //     : tag({ tag: 'span' }),
+        // ),
+
         // button cart
         new Button(
           { text: 'Add to Cart', class: classes.cardButton },
@@ -92,12 +105,5 @@ export default class ProductCard extends BaseElement<HTMLElement> {
         ),
       ),
     );
-    // todo filters with attributes
-    // ...(masterVariant.attributes ?? []).map((attr) =>
-    //   tag<HTMLParagraphElement>({
-    //     tag: 'p',
-    //     text: `${attr.name}: ${attr.value}`,
-    //   }),
-    // ),
   };
 }
