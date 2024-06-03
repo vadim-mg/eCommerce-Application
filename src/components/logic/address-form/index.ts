@@ -82,8 +82,10 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     if (openInEditMode) {
       this.setEditMode();
       this.#deleteAddressButton.node.classList.add(classes.hidden);
+      this.#checkBox.disabled = false;
     } else {
       this.#deleteAddressButton.node.classList.remove(classes.hidden);
+      this.#checkBox.disabled = true;
     }
   }
 
