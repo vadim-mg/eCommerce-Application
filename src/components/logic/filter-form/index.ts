@@ -37,6 +37,7 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
         this.#filterOptions = filterAttrs;
 
         this.#createComponent();
+        this.#setDefaultFilters();
         this.#addEventListeners();
       });
   }
@@ -90,12 +91,7 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
               ...(this.#ageCheckBoxes = this.#filterOptions[AttrName.AGE_FROM]
                 .sort((a, b) => Number(a) - Number(b))
                 .map(
-                  (age, index) =>
-                    new CheckBox(
-                      { class: classes.filterCheckbox },
-                      age.toString(),
-                      !index, // first checkbox is checked
-                    ),
+                  (age) => new CheckBox({ class: classes.filterCheckbox }, age.toString(), false),
                 )),
             )
           : tag({ tag: 'span' }),
@@ -103,7 +99,10 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
         // buttons
         tag<HTMLDivElement>(
           { tag: 'div', class: classes.buttons },
-          new Button({ text: 'Reset' }, ButtonClasses.CATEGORY, this.#resetButtonHandler),
+          new Button({ text: 'Reset' }, ButtonClasses.CATEGORY, () => {
+            this.#setDefaultFilters();
+            this.#onViewBtnClick();
+          }),
           new Button({ text: 'View products' }, ButtonClasses.CATEGORY, this.#viewButtonHandler),
         ),
       ).node,
@@ -126,17 +125,17 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
     );
   };
 
-  #resetButtonHandler = () => {
-    this.#ageCheckBoxes.forEach((cb: CheckBox) => {
-      const cbCopy = cb;
-      cbCopy.checked = false;
-    });
+  #setDefaultFilters = () => {
     this.#brandsCheckBoxes.forEach((cb: CheckBox) => {
       const cbCopy = cb;
-      cbCopy.checked = false;
+      cbCopy.checked = true;
     });
     this.#rangeSlider.minValue = this.#filterOptions[AttrName.MIN_PLAYER_COUNT];
     this.#rangeSlider.maxValue = this.#filterOptions[AttrName.MAX_PLAYER_COUNT];
+    this.#ageCheckBoxes.forEach((cb: CheckBox, index) => {
+      const cbCopy = cb;
+      cbCopy.checked = !index; // first must be selected
+    });
   };
 
   getFilterSettings = (): Promise<FilterAttributes> =>
