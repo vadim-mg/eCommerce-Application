@@ -54,10 +54,28 @@ const updateCustomerData = (currentVersion: number, updateActions: MyCustomerUpd
     })
     .execute();
 
+const updateCustomerPassword = (
+  currentVersion: number,
+  currentPassword: string,
+  newPassword: string,
+) =>
+  apiRoot.apiBuilder
+    .me()
+    .password()
+    .post({
+      body: {
+        version: currentVersion,
+        currentPassword,
+        newPassword,
+      },
+    })
+    .execute();
+
 export default {
   signIn,
   signUp,
   returnCustomerByEmail,
   me,
   updateCustomerData,
+  updateCustomerPassword,
 };

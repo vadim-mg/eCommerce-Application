@@ -11,7 +11,7 @@ import CustomerController from '@Src/controllers/customers';
 import crossSvg from '@Assets/icons/cross-white.svg';
 import checkMarkSvg from '@Assets/icons/checkmark-white.svg';
 import { Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
-import { validateDateOfBirth, validateEmail, validateUserData } from '@Src/utils/helpers';
+import { validateDateOfBirth, validateEmail, validatePassword, validateUserData } from '@Src/utils/helpers';
 import State from '@Src/state';
 import ModalWindow from '@Src/components/ui/modal';
 import classes from './style.module.scss';
@@ -94,10 +94,13 @@ export default class ProfilePage extends ContentPage {
 
   #passwordRules!: BaseElement<HTMLDivElement>;
 
+  #customerController: CustomerController;
+
   constructor() {
     super({ containerTag: 'main', title: 'profile page' });
     this.#createContent();
     this.#showContent();
+    this.#customerController = new CustomerController();
 
     this.#me();
   }
@@ -284,7 +287,7 @@ export default class ProfilePage extends ContentPage {
     }
   };
 
-  setSavedMode = () => {
+  setSavedMode = async () => {
     const customerUpdatedPersonalData: MyCustomerUpdateAction[] = [
       {
         action: 'changeEmail',
@@ -303,9 +306,11 @@ export default class ProfilePage extends ContentPage {
         dateOfBirth: this.#birthDateInput.value,
       },
     ];
-    const response = new CustomerController().updateCustomerData(customerUpdatedPersonalData);
+    const customer = await this.#customerController.updateCustomerData(
+      customerUpdatedPersonalData,
+    );
 
-    console.log(response);
+    console.log(customer);
     this.toggleUserDetailsInputsState(true);
     this.#birthDateInput.addTextInputType();
 
@@ -366,20 +371,23 @@ export default class ProfilePage extends ContentPage {
       (this.#currentUserPasswordInput = new InputText(
         { name: 'password', maxLength: 20, minLength: 8, type: 'password' },
         'Current password',
+        () => validatePassword(this.#currentUserPasswordInput.value),
       )),
       (this.#passwordInput = new InputText(
         { name: 'password', maxLength: 20, minLength: 8, type: 'password' },
         'New password',
+        () => validatePassword(this.#passwordInput.value),
       )),
       (this.#passwordInputRepeat = new InputText(
         { name: 'password', maxLength: 20, minLength: 8, type: 'password' },
         'Repeat password',
+        () => validatePassword(this.#passwordInputRepeat.value),
       )),
-      this.#passwordRules = new BaseElement<HTMLDivElement>({
+      (this.#passwordRules = new BaseElement<HTMLDivElement>({
         tag: 'div',
         class: classes.passwordRule,
         text: '! The password must be at least 8 characters long. It must contain at least one digit, at least one capital letter and at least one special character (!@#$%^&*).',
-      }),
+      })),
       this.createPasswordBtnContainer(),
     );
     this.hidePasswordElements();
@@ -396,20 +404,20 @@ export default class ProfilePage extends ContentPage {
     this.#passwordInput.node.classList.add(classes.hidden);
     this.#passwordInputRepeat.node.classList.add(classes.hidden);
     this.#passwordRules.node.classList.add(classes.hidden);
-  }
+  };
 
   showPasswordElements = () => {
     this.#currentUserPasswordInput.node.classList.remove(classes.hidden);
     this.#passwordInput.node.classList.remove(classes.hidden);
     this.#passwordInputRepeat.node.classList.remove(classes.hidden);
     this.#passwordRules.node.classList.remove(classes.hidden);
-  }
+  };
 
   addLineHeightStyles = () => {
     this.#changePasswordButton.node.classList.add(classes.btnLineHeight);
     this.#savePasswordButton.node.classList.add(classes.btnLineHeight);
     this.#cancelPasswordButton.node.classList.add(classes.btnLineHeight);
-  }
+  };
 
   createPasswordBtnContainer = () => {
     this.#passwordBtnContainer = new BaseElement<HTMLDivElement>(
@@ -444,6 +452,23 @@ export default class ProfilePage extends ContentPage {
     this.#modalForData.node.remove();
   };
 
+  updatePassword = () => {
+    this.#currentUserPasswordInput.validate();
+    this.#passwordInput.validate();
+    this.#passwordInputRepeat.validate();
+    if (
+      this.#currentUserPasswordInput.isValid &&
+      this.#passwordInput.isValid &&
+      this.#passwordInputRepeat.isValid &&
+      this.#passwordInput.value === this.#passwordInputRepeat.value
+    ) {
+      const response = this.#customerController.updatePassword(this.#currentUserPasswordInput.value, this.#passwordInput.value);
+      console.log(response);
+    } else {
+      console.log('invalid password');
+    }
+  };
+
   addChangePasswordClickHandler = () => {
     this.#modalForData = new ModalWindow(classes.modal, this.#userPasswordWrapper);
     this.#modalForData.show();
@@ -460,6 +485,7 @@ export default class ProfilePage extends ContentPage {
   };
 
   addSavePasswordClickHandler = () => {
+    this.updatePassword();
     this.setToDefaultMode();
   };
 

@@ -19,23 +19,25 @@ export default class CustomerController {
     const notificationTextElement = new BaseElement<HTMLParagraphElement>({
       tag: 'p',
       class: classes.notificationTextElement,
-      text: 'Data successfully updated.',
     });
     const notificationTextWrapper = new BaseElement<HTMLDivElement>({
       tag: 'div',
       class: classes.notificationTextWrapper,
-      innerHTML: checkMarkSvg,
     });
+    this.#notificationBlockWrapper = new BaseElement<HTMLDivElement>(
+      { tag: 'div' },
+    );
     if (!isSuccessfull) {
       notificationTextWrapper.node.innerHTML = crossSvg;
       notificationTextElement.node.textContent = 'Sorry, failed to update the data.';
       this.#notificationBlockWrapper.node.classList.add(classes.notificationErrorBlockWrapper);
+    } else {
+      notificationTextWrapper.node.innerHTML = checkMarkSvg;
+      notificationTextElement.node.textContent = 'Data successfully updated.';
+      this.#notificationBlockWrapper.node.classList.add(classes.notificationSuccessBlockWrapper);
     }
     notificationTextWrapper.node.append(notificationTextElement.node);
-    this.#notificationBlockWrapper = new BaseElement<HTMLDivElement>(
-      { tag: 'div', class: classes.notificationSuccessBlockWrapper },
-      notificationTextWrapper,
-    );
+    this.#notificationBlockWrapper.node.append(notificationTextWrapper.node);
     document.body.append(this.#notificationBlockWrapper.node);
 
     setTimeout(() => {
@@ -56,7 +58,6 @@ export default class CustomerController {
         }
         this.createNotificationComponent(true);
       } else {
-        console.log('error');
         this.createNotificationComponent(false);
       }
     } catch (error) {
@@ -67,4 +68,24 @@ export default class CustomerController {
 
   updateSingleCustomerData = async (updateActions: MyCustomerUpdateAction) =>
     this.updateCustomerData([updateActions]);
+
+  updatePassword = async (currentPassword: string, newPassword: string) => {
+    try {
+      const newVersion = State.getInstance().currentCustomerVersion;
+      const result = await customerApi.updateCustomerPassword(newVersion, currentPassword, newPassword);
+      this.#response = result.body;
+      if (result.statusCode === 200) {
+        State.getInstance().currentCustomerVersion = result.body.version;
+        if (process.env.NODE_ENV === 'development') {
+          console.log(result);
+        }
+        this.createNotificationComponent(true);
+      } else {
+        this.createNotificationComponent(false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    return this.#response;
+  }
 }
