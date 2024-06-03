@@ -106,7 +106,7 @@ export default class ProfilePage extends ContentPage {
   #personalDataBtnBlock!: BaseElement<HTMLDivElement>;
 
   constructor() {
-    super({ containerTag: 'main', title: 'profile page' });
+    super({ containerTag: 'main', title: 'profile page', showBreadCrumbs: true });
     this.#createContent();
     this.#showContent();
     this.#customerController = new CustomerController();
