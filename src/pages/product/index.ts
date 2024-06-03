@@ -119,7 +119,6 @@ export default class ProductPage extends ContentPage {
     attributes.reduce((acc: ProductAttributes, item: Attribute) => {
       if (item.name) {
         const key = item.name.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-        console.log(`${key}: ${item.value}`);
         acc[key as keyof ProductAttributes] = item.value;
       }
       return acc;

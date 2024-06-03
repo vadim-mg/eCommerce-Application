@@ -65,12 +65,12 @@ export default class CataloguePage extends ContentPage {
     });
   }
 
-  #renderProductList = () => {
+  #renderProductList = async () => {
     this.#productList.showProducts({
       categoryId: this.#categorySection.currentCategoryId,
       sortingType: this.#selectedSort,
       search: this.#searchField.value,
-      filter: this.#filters.getFilterSettings(),
+      filter: await this.#filters.getFilterSettings(),
     });
   };
 
@@ -121,7 +121,6 @@ export default class CataloguePage extends ContentPage {
   };
 
   #sort = (val: string) => {
-    console.log(val);
     this.#selectedSort = val as SortingType;
     this.#renderProductList();
   };

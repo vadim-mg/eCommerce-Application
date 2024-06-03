@@ -25,16 +25,21 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
 
   #onViewBtnClick: () => void;
 
+  #availableFilterAttributes: Promise<void>;
+
   constructor(products: Products, onViewBtnClick: () => void) {
     super({ tag: 'form', class: classes.filterForm });
     this.#onViewBtnClick = onViewBtnClick;
 
-    products.getFilterAttributes(SHOWED_FILTER).then((filterAttrs) => {
-      this.#filterOptions = filterAttrs;
+    this.#availableFilterAttributes = products
+      .getFilterAttributes(SHOWED_FILTER)
+      .then((filterAttrs) => {
+        this.#filterOptions = filterAttrs;
 
-      this.#createComponent();
-      this.#addEventListeners();
-    });
+        this.#createComponent();
+        this.#setDefaultFilters();
+        this.#addEventListeners();
+      });
   }
 
   #createComponent = () => {
@@ -56,7 +61,7 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
               classes.brandAccordion,
               ...(this.#brandsCheckBoxes = this.#filterOptions[AttrName.BRAND]
                 .sort()
-                .map((brand) => new CheckBox({ class: classes.filterCheckbox }, brand, false))),
+                .map((brand) => new CheckBox({ class: classes.filterCheckbox }, brand, true))),
             )
           : tag({ tag: 'span' }),
 
@@ -94,7 +99,10 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
         // buttons
         tag<HTMLDivElement>(
           { tag: 'div', class: classes.buttons },
-          new Button({ text: 'Reset' }, ButtonClasses.CATEGORY, this.#resetButtonHandler),
+          new Button({ text: 'Reset' }, ButtonClasses.CATEGORY, () => {
+            this.#setDefaultFilters();
+            this.#onViewBtnClick();
+          }),
           new Button({ text: 'View products' }, ButtonClasses.CATEGORY, this.#viewButtonHandler),
         ),
       ).node,
@@ -117,29 +125,30 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
     );
   };
 
-  #resetButtonHandler = () => {
-    this.#ageCheckBoxes.forEach((cb: CheckBox) => {
-      const cbCopy = cb;
-      cbCopy.checked = false;
-    });
+  #setDefaultFilters = () => {
     this.#brandsCheckBoxes.forEach((cb: CheckBox) => {
       const cbCopy = cb;
-      cbCopy.checked = false;
+      cbCopy.checked = true;
     });
     this.#rangeSlider.minValue = this.#filterOptions[AttrName.MIN_PLAYER_COUNT];
     this.#rangeSlider.maxValue = this.#filterOptions[AttrName.MAX_PLAYER_COUNT];
+    this.#ageCheckBoxes.forEach((cb: CheckBox, index) => {
+      const cbCopy = cb;
+      cbCopy.checked = !index; // first must be selected
+    });
   };
 
-  getFilterSettings = (): FilterAttributes => ({
-    [AttrName.BRAND]: this.#brandsCheckBoxes
-      ?.filter((checkBox) => checkBox.checked)
-      .map((checkBox) => checkBox.labelElement.node.textContent ?? ''),
-    [AttrName.MIN_PLAYER_COUNT]: this.#rangeSlider?.minValue,
-    [AttrName.MAX_PLAYER_COUNT]: this.#rangeSlider?.maxValue,
-    [AttrName.AGE_FROM]: this.#ageCheckBoxes
-      ?.filter((checkBox) => checkBox.checked)
-      .map((checkBox) => Number(checkBox.labelElement.node.textContent) ?? Infinity),
-  });
+  getFilterSettings = (): Promise<FilterAttributes> =>
+    this.#availableFilterAttributes.then(() => ({
+      [AttrName.BRAND]: this.#brandsCheckBoxes
+        ?.filter((checkBox) => checkBox.checked)
+        .map((checkBox) => checkBox.labelElement.node.textContent ?? ''),
+      [AttrName.MIN_PLAYER_COUNT]: this.#rangeSlider?.minValue,
+      [AttrName.MAX_PLAYER_COUNT]: this.#rangeSlider?.maxValue,
+      [AttrName.AGE_FROM]: this.#ageCheckBoxes
+        ?.filter((checkBox) => checkBox.checked)
+        .map((checkBox) => Number(checkBox.labelElement.node.textContent) ?? Infinity),
+    }));
 
   #viewButtonHandler = () => {
     this.#onViewBtnClick();
