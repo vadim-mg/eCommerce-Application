@@ -5,6 +5,7 @@
 .content-section {
   display: grid;
   justify-content: center;
+  align-items: flex-start;
   gap: 2.25rem;
   grid-template-columns: 340px minmax(300px, 1fr);
   @media screen and (max-width: 1448px) {
