@@ -61,7 +61,7 @@ export default class ProfilePage extends ContentPage {
 
   #savePasswordButton!: Button;
 
-  #userPasswordWrapper!: BaseElement<HTMLDivElement>;
+  #userPasswordWrapper!: BaseElement<HTMLFormElement>;
 
   #passwordBtnContainer!: BaseElement<HTMLDivElement>;
 
@@ -156,7 +156,6 @@ export default class ProfilePage extends ContentPage {
         this.#birthDateInput.value = customer.dateOfBirth ?? '';
 
         this.initializeAddresses(customer);
-        console.log(info.body);
         this.#currentEmail = customer.email;
       })
       .catch((error: HttpErrorType) => {
@@ -231,10 +230,7 @@ export default class ProfilePage extends ContentPage {
         dateOfBirth: this.#birthDateInput.value,
       },
     ];
-    const customer = await this.#customerController.updateCustomerData(
-      customerUpdatedPersonalData,
-    );
-    console.log(customer);
+    await this.#customerController.updateCustomerData(customerUpdatedPersonalData);
     this.toggleUserDetailsInputsState(true);
     this.#birthDateInput.addTextInputType();
     this.setDefaultStateForPersonalBlock();
@@ -329,29 +325,47 @@ export default class ProfilePage extends ContentPage {
       } else {
         this.setSavedMode();
       }
-    } else {
-      console.log('invalid');
     }
   };
 
   createUserPasswordComponent = () => {
-    this.#userPasswordWrapper = new BaseElement<HTMLDivElement>(
+    this.#userPasswordWrapper = new BaseElement<HTMLFormElement>(
       {
-        tag: 'div',
+        tag: 'form',
         class: classes.userPasswordWrapper,
       },
       new BaseElement<HTMLHeadingElement>({ tag: 'h2', text: 'Change password' }),
+      tag<HTMLInputElement>({
+        tag: 'input',
+        name: 'username',
+        type: 'text',
+        autocomplete: 'username',
+        value: this.#currentEmail,
+        hidden: true,
+      }),
       (this.#currentUserPasswordInput = new InputText(
-        { name: 'password', type: 'password' },
+        { name: 'password', type: 'password', autocomplete: 'current-password' },
         'Current password',
       )),
       (this.#passwordInput = new InputText(
-        { name: 'password', maxLength: 20, minLength: 8, type: 'password' },
+        {
+          name: 'password',
+          maxLength: 20,
+          minLength: 8,
+          type: 'password',
+          autocomplete: 'new-password',
+        },
         'New password',
         () => validatePassword(this.#passwordInput.value),
       )),
       (this.#passwordInputRepeat = new InputText(
-        { name: 'password', maxLength: 20, minLength: 8, type: 'password' },
+        {
+          name: 'password',
+          maxLength: 20,
+          minLength: 8,
+          type: 'password',
+          autocomplete: 'new-password',
+        },
         'Repeat password',
         () => validatePassword(this.#passwordInputRepeat.value),
       )),
