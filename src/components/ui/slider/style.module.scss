@@ -107,15 +107,20 @@
     &.next {
       display: block;
     }
-    .image {
-      display: block;
-      height: auto;
-      width: calc(100% - 4px);
-      object-fit: cover;
-      box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
-      border-radius: 2rem;
-    }
   }
+}
+.image {
+  display: block;
+  border-radius: 1.5rem;
+
+  height: auto;
+  width: 100%;
+  object-fit: cover;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+}
+
+.modal .image {
+  border-radius: 0;
 }
 
 .controls-panel {

@@ -13,7 +13,6 @@
 .modal {
   border: 6px solid var(--color-black);
   border-radius: 2rem;
-  padding: 0.5rem;
   overflow: hidden;
   background-color: var(--color-grey-extra-light);
   width: fit-content;
@@ -23,7 +22,7 @@
 .cross {
   position: absolute;
   border: none;
-  background-color: var(--color-grey-extra-light);
+  background-color: transparent;
   top: 1rem;
   right: 1rem;
   width: 2rem;
