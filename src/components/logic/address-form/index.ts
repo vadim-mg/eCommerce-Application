@@ -220,7 +220,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     this.#streetInput.validate();
     this.#postalCodeInput.validate();
 
-    if (!this.#cityInput.isValid && !this.#streetInput.isValid && !this.#postalCodeInput.isValid) {
+    if (!this.#cityInput.isValid || !this.#streetInput.isValid || !this.#postalCodeInput.isValid) {
       return;
     }
     const countryValue = COUNTRY_CODES[countriesList.indexOf(this.#countrySelect.selectedValue)];

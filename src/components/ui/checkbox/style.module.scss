@@ -50,6 +50,10 @@
   }
 }
 
+.checkbox-input:disabled + .checkbox-label {
+  cursor: default;
+}
+
 .checkbox-input:checked + .checkbox-label::before {
   border: 0.5px solid var(--color-blue);
 }

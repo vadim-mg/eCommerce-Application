@@ -42,6 +42,19 @@ h2 {
   }
 }
 
+.password-btn-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.personal-data-btn-block {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
 .user-data-details-wrapper,
 .user-password-wrapper {
   max-width: 360px;
@@ -138,4 +151,16 @@ h2 {
 
 .notification-text-element {
   margin: 0;
+}
+
+.modal > div:first-child {
+  padding: 2rem 1.5rem;
+  width: 360px;
+}
+
+.invalid-password {
+  color: var(--main-alarm-color);
+  font-size: 1.1rem;
+  margin-bottom: 0.9rem;
+  text-align: center;
 }
