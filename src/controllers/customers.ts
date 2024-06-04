@@ -64,7 +64,7 @@ export default class CustomerController {
       // this.#notificationBlockWrapper.node.classList.add(classes.hidden);
       this.#notificationBlockWrapper.node.remove();
     }, 3000);
-  }
+  };
 
   updateCustomerData = async (updateActions: MyCustomerUpdateAction[]) => {
     try {

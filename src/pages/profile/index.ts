@@ -1,22 +1,22 @@
 import userProfileLogo from '@Assets/icons/profile-icon-dark.svg';
+import { Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
+import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import AddressForm from '@Src/components/logic/address-form';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
+import ModalWindow from '@Src/components/ui/modal';
 import auth from '@Src/controllers/auth';
-import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import CustomerController from '@Src/controllers/customers';
-import { Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
+import State from '@Src/state';
 import {
   validateDateOfBirth,
   validateEmail,
   validatePassword,
   validateUserData,
 } from '@Src/utils/helpers';
-import State from '@Src/state';
-import ModalWindow from '@Src/components/ui/modal';
 import classes from './style.module.scss';
 
 const createTitleComponent = () => {
