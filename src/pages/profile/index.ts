@@ -342,9 +342,8 @@ export default class ProfilePage extends ContentPage {
       },
       new BaseElement<HTMLHeadingElement>({ tag: 'h2', text: 'Change password' }),
       (this.#currentUserPasswordInput = new InputText(
-        { name: 'password', maxLength: 20, minLength: 8, type: 'password' },
+        { name: 'password', type: 'password' },
         'Current password',
-        () => validatePassword(this.#currentUserPasswordInput.value),
       )),
       (this.#passwordInput = new InputText(
         { name: 'password', maxLength: 20, minLength: 8, type: 'password' },
@@ -363,7 +362,7 @@ export default class ProfilePage extends ContentPage {
       })),
       (this.#errorText = new BaseElement<HTMLDivElement>({
         tag: 'div',
-        text: 'Invalid password',
+        text: 'Something was wrong!',
         class: classes.invalidPassword,
       })),
       this.createPasswordBtnContainer(),
@@ -452,22 +451,32 @@ export default class ProfilePage extends ContentPage {
     this.#passwordInputRepeat.validate();
 
     if (
-      this.#currentUserPasswordInput.isValid &&
-      this.#passwordInput.isValid &&
-      this.#passwordInputRepeat.isValid &&
-      this.#passwordInput.value === this.#passwordInputRepeat.value
+      !this.#currentUserPasswordInput.isValid ||
+      !this.#passwordInput.isValid ||
+      !this.#passwordInputRepeat.isValid
     ) {
-      const response = await this.#customerController.updatePassword(
-        this.#currentUserPasswordInput.value,
-        this.#passwordInput.value,
-      );
-      this.setToDefaultMode();
-      await this.#signIn();
-      console.log(response);
-    } else {
-      console.log('invalid password');
+      this.#errorText.node.textContent = 'There are no valid fields';
       this.#errorText.node.classList.remove(classes.hidden);
+      return;
     }
+
+    if (this.#passwordInput.value !== this.#passwordInputRepeat.value) {
+      this.#errorText.node.textContent = 'New and repeat passwords are mismatch!';
+      this.#errorText.node.classList.remove(classes.hidden);
+      return;
+    }
+
+    await this.#customerController.updatePassword(
+      this.#currentUserPasswordInput.value,
+      this.#passwordInput.value,
+      () => {
+        this.setToDefaultMode();
+      },
+      (errorMsg) => {
+        this.#errorText.node.textContent = errorMsg;
+        this.#errorText.node.classList.remove(classes.hidden);
+      },
+    );
   };
 
   addChangePasswordClickHandler = () => {

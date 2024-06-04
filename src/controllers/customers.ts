@@ -1,11 +1,17 @@
-import { Customer as CustomerType, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
-import customerApi from '@Src/api/customers';
-import BaseElement from '@Src/components/common/base-element';
-import State from '@Src/state';
 import checkMarkSvg from '@Assets/icons/checkmark-white.svg';
 import crossSvg from '@Assets/icons/cross-white.svg';
-import classes from '@Src/pages/profile/style.module.scss';
+import {
+  AuthErrorResponse,
+  Customer,
+  Customer as CustomerType,
+  MyCustomerUpdateAction,
+} from '@commercetools/platform-sdk';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
+import apiRoot from '@Src/api/api-root';
+import customerApi from '@Src/api/customers';
+import BaseElement from '@Src/components/common/base-element';
+import classes from '@Src/pages/profile/style.module.scss';
+import State from '@Src/state';
 import auth from './auth';
 
 export default class CustomerController {
@@ -91,7 +97,12 @@ export default class CustomerController {
   updateSingleCustomerData = async (updateActions: MyCustomerUpdateAction) =>
     this.updateCustomerData([updateActions]);
 
-  updatePassword = async (currentPassword: string, newPassword: string) => {
+  updatePassword = async (
+    currentPassword: string,
+    newPassword: string,
+    onSuccessfulCb: (customer: Customer) => void,
+    onErrorCb: (error: string) => void,
+  ) => {
     try {
       const newVersion = State.getInstance().currentCustomerVersion;
       const result = await customerApi.updateCustomerPassword(
@@ -102,17 +113,19 @@ export default class CustomerController {
       this.#response = result.body;
       if (result.statusCode === 200) {
         State.getInstance().currentCustomerVersion = result.body.version;
-        if (process.env.NODE_ENV === 'development') {
-          console.log(result);
-        }
-        // CustomerController.signIn(result.body.email, newPassword);
+
+        // Re-authentication: Trigger re-authentication if needed, according to the authentication/authentication flow requirements for commercetools applications.
+        apiRoot.logoutUser();
+        apiRoot.loginUser({ username: result.body.email, password: newPassword });
+
         this.createNotificationComponent(true);
-      } else {
-        console.log('error with password updating');
+        onSuccessfulCb(this.#response);
+      } else if (process.env.NODE_ENV === 'development') {
+        console.log(result);
+        console.log('Debug error with password updating');
       }
     } catch (error) {
-      console.log('error in the password error block');
-      console.error(error);
+      onErrorCb((error as AuthErrorResponse).message);
     }
     return this.#response;
   };
