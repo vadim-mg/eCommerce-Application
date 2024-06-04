@@ -78,14 +78,9 @@ export default class CustomerController {
       const result = await customerApi.updateCustomerData(newVersion, updateActions);
       this.#response = result.body;
       if (result.statusCode === 200) {
-        console.log('Success');
         State.getInstance().currentCustomerVersion = result.body.version;
-        if (process.env.NODE_ENV === 'development') {
-          console.log(result);
-        }
         this.createNotificationComponent(true);
       } else {
-        console.log('error');
         this.createNotificationComponent(false);
       }
     } catch (error) {

@@ -97,7 +97,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
   ) => {
     this.#addressComponent = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.addressWrapper },
-      (this.#countrySelect = new Select('Country', countriesList, () => console.log('country'))),
+      (this.#countrySelect = new Select('Country', countriesList, () => {})),
       (this.#countryInput = new InputText({ name: 'country' }, 'Country')),
       (this.#cityInput = new InputText({ name: 'city' }, 'City', () =>
         validateCity(this.#cityInput.value),
@@ -132,8 +132,8 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     return this.#addressComponent;
   };
 
-  methodForEditBtn = () => {
-    const newAddress = new AddressForm(
+  methodForEditBtn = () =>
+    new AddressForm(
       {},
       this.#addressType,
       this.#address,
@@ -142,8 +142,6 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       this.#initializeAddresses,
       true,
     );
-    console.log(newAddress);
-  };
 
   #createEditDeleteBtnComponent = () => {
     this.#editDeleteBtnWrapper = new BaseElement<HTMLDivElement>(
