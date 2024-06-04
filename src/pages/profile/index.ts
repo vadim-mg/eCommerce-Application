@@ -473,7 +473,7 @@ export default class ProfilePage extends ContentPage {
   addChangePasswordClickHandler = () => {
     const passwordComponent = this.createUserPasswordComponent();
     this.#userDataWrapper.node.append(passwordComponent.node);
-    this.#modalForData = new ModalWindow(classes.modal, this.#userPasswordWrapper);
+    this.#modalForData = new ModalWindow(classes.modal, false, this.#userPasswordWrapper);
     this.#modalForData.show();
 
     this.showPasswordElements();

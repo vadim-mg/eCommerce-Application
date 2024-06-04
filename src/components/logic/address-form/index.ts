@@ -195,7 +195,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
   };
 
   setEditMode = () => {
-    this.#formModal = new ModalWindow([classes.modal], this.#addressComponent);
+    this.#formModal = new ModalWindow([classes.modal], false, this.#addressComponent);
     this.#formModal.show();
 
     this.setUserAddressInputsState(false);

@@ -94,7 +94,7 @@ export default class Slider extends BaseElement<HTMLElement> {
             index,
           );
 
-          const modal = new ModalWindow(classes.modal, slider);
+          const modal = new ModalWindow(classes.modal, true, slider);
           modal.show();
         });
       }
