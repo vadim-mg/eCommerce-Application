@@ -82,7 +82,8 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     if (openInEditMode) {
       this.setEditMode();
       this.#deleteAddressButton.node.classList.add(classes.hidden);
-      this.#checkBox.disabled = false;
+      // we cant unset default address, we can only "set as default"
+      this.#checkBox.disabled = this.#isDefaultAddress;
     } else {
       this.#deleteAddressButton.node.classList.remove(classes.hidden);
       this.#checkBox.disabled = true;
@@ -96,7 +97,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
   ) => {
     this.#addressComponent = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.addressWrapper },
-      (this.#countrySelect = new Select('Country', countriesList, () => console.log('country'))),
+      (this.#countrySelect = new Select('Country', countriesList, () => {})),
       (this.#countryInput = new InputText({ name: 'country' }, 'Country')),
       (this.#cityInput = new InputText({ name: 'city' }, 'City', () =>
         validateCity(this.#cityInput.value),
@@ -109,12 +110,11 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       )),
       (this.#checkBox = new CheckBox(
         { class: classes.checkbox },
-        `Use us default ${addressType} address`,
+        `Use as default ${addressType} address`,
         isDefaultAddress,
       )),
       this.#createEditDeleteBtnComponent(),
     );
-    this.#checkBox.inputElement.node.addEventListener('change', this.setDefaultAddress);
 
     this.#countrySelect.node.classList.add(classes.selectCountry);
     this.#countrySelect.node.classList.add(classes.hidden);
@@ -132,8 +132,8 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     return this.#addressComponent;
   };
 
-  methodForEditBtn = () => {
-    const newAddress = new AddressForm(
+  methodForEditBtn = () =>
+    new AddressForm(
       {},
       this.#addressType,
       this.#address,
@@ -142,8 +142,6 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
       this.#initializeAddresses,
       true,
     );
-    console.log(newAddress);
-  };
 
   #createEditDeleteBtnComponent = () => {
     this.#editDeleteBtnWrapper = new BaseElement<HTMLDivElement>(
@@ -178,15 +176,6 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     return this.#editDeleteBtnWrapper;
   };
 
-  setDefaultAddress = async () => {
-    const action =
-      this.#addressType === 'billing' ? 'setDefaultBillingAddress' : 'setDefaultShippingAddress';
-    await this.#customerController.updateSingleCustomerData({
-      action,
-      addressId: this.#addressId ?? '',
-    });
-  };
-
   setDeletedMode = async () => {
     const customerData: MyCustomerRemoveAddressAction = {
       action: 'removeAddress',
@@ -204,7 +193,7 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
   };
 
   setEditMode = () => {
-    this.#formModal = new ModalWindow([classes.modal], this.#addressComponent);
+    this.#formModal = new ModalWindow([classes.modal], false, this.#addressComponent);
     this.#formModal.show();
 
     this.setUserAddressInputsState(false);
@@ -225,44 +214,43 @@ export default class AddressForm extends BaseElement<HTMLFormElement> {
     }
     const countryValue = COUNTRY_CODES[countriesList.indexOf(this.#countrySelect.selectedValue)];
 
+    const action = this.#addressId === null ? 'addAddress' : 'changeAddress';
+    let addressId = this.#addressId === null ? undefined : this.#addressId;
+    const isBillingAddress = this.#addressType === 'billing';
+
+    const customerData: MyCustomerAddAddressAction | MyCustomerChangeAddressAction = {
+      action,
+      ...(addressId ? { addressId } : {}),
+      address: {
+        city: this.#cityInput.value,
+        country: countryValue,
+        postalCode: this.#postalCodeInput.value,
+        streetName: this.#streetInput.value,
+      },
+    };
+
+    // 1. update user data
+    let customer = await this.#customerController.updateSingleCustomerData(customerData);
+
+    addressId = addressId ?? customer.addresses[customer.addresses.length - 1].id;
+
+    // 2. add addressId in array of BillingAddress
     if (this.#addressId === null) {
-      const customerData: MyCustomerAddAddressAction = {
-        action: 'addAddress',
-        address: {
-          city: this.#cityInput.value,
-          country: countryValue,
-          postalCode: this.#postalCodeInput.value,
-          streetName: this.#streetInput.value,
-        },
-      };
-      const result = await this.#customerController.updateSingleCustomerData(customerData);
-      const match = result.addresses.find(
-        (address) =>
-          address.city === this.#cityInput.value &&
-          address.postalCode === this.#postalCodeInput.value &&
-          address.streetName === this.#streetInput.value,
-      );
-      const action =
-        this.#addressType === 'billing' ? 'addBillingAddressId' : 'addShippingAddressId';
-      const customer = await this.#customerController.updateSingleCustomerData({
-        action,
-        addressId: match?.id,
+      customer = await this.#customerController.updateSingleCustomerData({
+        action: isBillingAddress ? 'addBillingAddressId' : 'addShippingAddressId',
+        addressId,
       });
-      this.closeModal(customer);
-    } else {
-      const customerData: MyCustomerChangeAddressAction = {
-        action: 'changeAddress',
-        addressId: this.#addressId,
-        address: {
-          city: this.#cityInput.value,
-          country: countryValue,
-          postalCode: this.#postalCodeInput.value,
-          streetName: this.#streetInput.value,
-        },
-      };
-      const customer = await this.#customerController.updateSingleCustomerData(customerData);
-      this.closeModal(customer);
     }
+
+    // 3. if checkbox was checked, set it by default
+    if (this.#checkBox.checked) {
+      customer = await this.#customerController.updateSingleCustomerData({
+        action: isBillingAddress ? 'setDefaultBillingAddress' : 'setDefaultShippingAddress',
+        addressId,
+      });
+    }
+
+    this.closeModal(customer);
     this.#countryInput.value = countriesList[COUNTRY_CODES.indexOf(countryValue)];
     this.setSavedMode();
   };

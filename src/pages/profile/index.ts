@@ -1,22 +1,22 @@
 import userProfileLogo from '@Assets/icons/profile-icon-dark.svg';
+import { Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
+import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import AddressForm from '@Src/components/logic/address-form';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
+import ModalWindow from '@Src/components/ui/modal';
 import auth from '@Src/controllers/auth';
-import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import CustomerController from '@Src/controllers/customers';
-import { Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
+import State from '@Src/state';
 import {
   validateDateOfBirth,
   validateEmail,
   validatePassword,
   validateUserData,
 } from '@Src/utils/helpers';
-import State from '@Src/state';
-import ModalWindow from '@Src/components/ui/modal';
 import classes from './style.module.scss';
 
 const createTitleComponent = () => {
@@ -61,7 +61,7 @@ export default class ProfilePage extends ContentPage {
 
   #savePasswordButton!: Button;
 
-  #userPasswordWrapper!: BaseElement<HTMLDivElement>;
+  #userPasswordWrapper!: BaseElement<HTMLFormElement>;
 
   #passwordBtnContainer!: BaseElement<HTMLDivElement>;
 
@@ -156,7 +156,6 @@ export default class ProfilePage extends ContentPage {
         this.#birthDateInput.value = customer.dateOfBirth ?? '';
 
         this.initializeAddresses(customer);
-        console.log(info.body);
         this.#currentEmail = customer.email;
       })
       .catch((error: HttpErrorType) => {
@@ -231,10 +230,7 @@ export default class ProfilePage extends ContentPage {
         dateOfBirth: this.#birthDateInput.value,
       },
     ];
-    const customer = await this.#customerController.updateCustomerData(
-      customerUpdatedPersonalData,
-    );
-    console.log(customer);
+    await this.#customerController.updateCustomerData(customerUpdatedPersonalData);
     this.toggleUserDetailsInputsState(true);
     this.#birthDateInput.addTextInputType();
     this.setDefaultStateForPersonalBlock();
@@ -329,30 +325,47 @@ export default class ProfilePage extends ContentPage {
       } else {
         this.setSavedMode();
       }
-    } else {
-      console.log('invalid');
     }
   };
 
   createUserPasswordComponent = () => {
-    this.#userPasswordWrapper = new BaseElement<HTMLDivElement>(
+    this.#userPasswordWrapper = new BaseElement<HTMLFormElement>(
       {
-        tag: 'div',
+        tag: 'form',
         class: classes.userPasswordWrapper,
       },
       new BaseElement<HTMLHeadingElement>({ tag: 'h2', text: 'Change password' }),
+      tag<HTMLInputElement>({
+        tag: 'input',
+        name: 'username',
+        type: 'text',
+        autocomplete: 'username',
+        value: this.#currentEmail,
+        hidden: true,
+      }),
       (this.#currentUserPasswordInput = new InputText(
-        { name: 'password', maxLength: 20, minLength: 8, type: 'password' },
+        { name: 'password', type: 'password', autocomplete: 'current-password' },
         'Current password',
-        () => validatePassword(this.#currentUserPasswordInput.value),
       )),
       (this.#passwordInput = new InputText(
-        { name: 'password', maxLength: 20, minLength: 8, type: 'password' },
+        {
+          name: 'password',
+          maxLength: 20,
+          minLength: 8,
+          type: 'password',
+          autocomplete: 'new-password',
+        },
         'New password',
         () => validatePassword(this.#passwordInput.value),
       )),
       (this.#passwordInputRepeat = new InputText(
-        { name: 'password', maxLength: 20, minLength: 8, type: 'password' },
+        {
+          name: 'password',
+          maxLength: 20,
+          minLength: 8,
+          type: 'password',
+          autocomplete: 'new-password',
+        },
         'Repeat password',
         () => validatePassword(this.#passwordInputRepeat.value),
       )),
@@ -363,7 +376,7 @@ export default class ProfilePage extends ContentPage {
       })),
       (this.#errorText = new BaseElement<HTMLDivElement>({
         tag: 'div',
-        text: 'Invalid password',
+        text: 'Something was wrong!',
         class: classes.invalidPassword,
       })),
       this.createPasswordBtnContainer(),
@@ -452,28 +465,38 @@ export default class ProfilePage extends ContentPage {
     this.#passwordInputRepeat.validate();
 
     if (
-      this.#currentUserPasswordInput.isValid &&
-      this.#passwordInput.isValid &&
-      this.#passwordInputRepeat.isValid &&
-      this.#passwordInput.value === this.#passwordInputRepeat.value
+      !this.#currentUserPasswordInput.isValid ||
+      !this.#passwordInput.isValid ||
+      !this.#passwordInputRepeat.isValid
     ) {
-      const response = await this.#customerController.updatePassword(
-        this.#currentUserPasswordInput.value,
-        this.#passwordInput.value,
-      );
-      this.setToDefaultMode();
-      await this.#signIn();
-      console.log(response);
-    } else {
-      console.log('invalid password');
+      this.#errorText.node.textContent = 'There are no valid fields';
       this.#errorText.node.classList.remove(classes.hidden);
+      return;
     }
+
+    if (this.#passwordInput.value !== this.#passwordInputRepeat.value) {
+      this.#errorText.node.textContent = 'New and repeat passwords are mismatch!';
+      this.#errorText.node.classList.remove(classes.hidden);
+      return;
+    }
+
+    await this.#customerController.updatePassword(
+      this.#currentUserPasswordInput.value,
+      this.#passwordInput.value,
+      () => {
+        this.setToDefaultMode();
+      },
+      (errorMsg) => {
+        this.#errorText.node.textContent = errorMsg;
+        this.#errorText.node.classList.remove(classes.hidden);
+      },
+    );
   };
 
   addChangePasswordClickHandler = () => {
     const passwordComponent = this.createUserPasswordComponent();
     this.#userDataWrapper.node.append(passwordComponent.node);
-    this.#modalForData = new ModalWindow(classes.modal, this.#userPasswordWrapper);
+    this.#modalForData = new ModalWindow(classes.modal, false, this.#userPasswordWrapper);
     this.#modalForData.show();
 
     this.showPasswordElements();

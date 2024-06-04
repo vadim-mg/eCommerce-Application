@@ -13,7 +13,6 @@
 .modal {
   border: 6px solid var(--color-black);
   border-radius: 2rem;
-  padding: 0.5rem;
   overflow: hidden;
   background-color: var(--color-grey-extra-light);
   width: fit-content;
@@ -22,10 +21,13 @@
 }
 .cross {
   position: absolute;
-  top: 0.75rem;
-  right: 0.25rem;
-  width: 1.5rem;
-  height: 1.5rem;
+  border: none;
+  background-color: transparent;
+  top: 1rem;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
+  transition: transform ease-in-out 0.3s;
   cursor: pointer;
   svg {
     width: 1rem;
@@ -33,5 +35,8 @@
     path {
       fill: var(--color-black);
     }
+  }
+  &:hover {
+    transform: rotateY(180deg);
   }
 }

@@ -392,7 +392,7 @@ export default class SignupPage extends FormPage {
       ),
       checkboxDefault: new CheckBox(
         { class: [classes.checkboxAccordion] },
-        `Use us default billing address`,
+        `Use as default billing address`,
         false,
       ),
     };
@@ -440,7 +440,7 @@ export default class SignupPage extends FormPage {
       ),
       checkboxDefault: new CheckBox(
         { class: [classes.checkboxAccordion] },
-        `Use us default delivery address`,
+        `Use as default delivery address`,
         false,
       ),
     };

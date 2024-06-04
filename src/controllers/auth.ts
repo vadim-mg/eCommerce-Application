@@ -24,7 +24,7 @@ const signIn = (customer: CustomerSignin) =>
     })
     .catch((error: HttpErrorType) => {
       errorHandler(error as HttpErrorType);
-      return error;
+      throw new Error(error.message);
     });
 
 const signUp = (customer: MyCustomerDraft) =>
