@@ -19,7 +19,11 @@ export enum AttrName {
   TYPE = 'type-of-game',
   DESCRIPTION = 'description',
   MIN_PLAYER_COUNT = 'min-number-of-players',
+  MIN_PLAYER_COUNT_START = 'min-number-of-players-start',
+  MIN_PLAYER_COUNT_END = 'min-number-of-players-end',
   MAX_PLAYER_COUNT = 'max-number-of-players',
+  MAX_PLAYER_COUNT_START = 'max-number-of-players-start',
+  MAX_PLAYER_COUNT_END = 'max-number-of-players-end',
   AGE_FROM = 'age-from',
   BRAND = 'brand',
 }
@@ -40,14 +44,20 @@ type AvailableAttributesSets = {
   [AttrName.BRAND]: Set<string>;
   [AttrName.AGE_FROM]: Set<number>;
   [AttrName.MAX_PLAYER_COUNT]: Set<number>;
+  [AttrName.MAX_PLAYER_COUNT_START]: Set<number>;
+  [AttrName.MAX_PLAYER_COUNT_END]: Set<number>;
   [AttrName.MIN_PLAYER_COUNT]: Set<number>;
+  [AttrName.MIN_PLAYER_COUNT_START]: Set<number>;
+  [AttrName.MIN_PLAYER_COUNT_END]: Set<number>;
 };
 
 // for store unique filter attributes
 export type FilterAttributes = {
   [AttrName.BRAND]: string[];
-  [AttrName.MIN_PLAYER_COUNT]: number;
-  [AttrName.MAX_PLAYER_COUNT]: number;
+  [AttrName.MIN_PLAYER_COUNT_START]: number;
+  [AttrName.MIN_PLAYER_COUNT_END]: number;
+  [AttrName.MAX_PLAYER_COUNT_START]: number;
+  [AttrName.MAX_PLAYER_COUNT_END]: number;
   [AttrName.AGE_FROM]: number[];
 };
 
@@ -99,8 +109,12 @@ export default class Products {
         [AttrName.BRAND]: new Set(),
         [AttrName.DESCRIPTION]: new Set(),
         [AttrName.AGE_FROM]: new Set(),
-        [AttrName.MAX_PLAYER_COUNT]: new Set(),
         [AttrName.MIN_PLAYER_COUNT]: new Set(),
+        [AttrName.MIN_PLAYER_COUNT_START]: new Set(),
+        [AttrName.MIN_PLAYER_COUNT_END]: new Set(),
+        [AttrName.MAX_PLAYER_COUNT]: new Set(),
+        [AttrName.MAX_PLAYER_COUNT_START]: new Set(),
+        [AttrName.MAX_PLAYER_COUNT_END]: new Set(),
       };
 
       const products = (await productsApi.getAllProducts()).body;
@@ -118,10 +132,15 @@ export default class Products {
       const maxPlayersCountSet = availableAttributesSets[AttrName.MAX_PLAYER_COUNT].values();
       const ageSet = availableAttributesSets[AttrName.AGE_FROM].values();
 
+      const arrayOfMin = Array.from(minPlayersCountSet);
+      const arrayOfMax = Array.from(maxPlayersCountSet);
+
       this.#availableAttributes = {
         [AttrName.BRAND]: Array.from(brandsSet),
-        [AttrName.MIN_PLAYER_COUNT]: Math.min(...Array.from(minPlayersCountSet)),
-        [AttrName.MAX_PLAYER_COUNT]: Math.max(...Array.from(maxPlayersCountSet)),
+        [AttrName.MIN_PLAYER_COUNT_START]: Math.min(...arrayOfMin),
+        [AttrName.MIN_PLAYER_COUNT_END]: Math.max(...arrayOfMin),
+        [AttrName.MAX_PLAYER_COUNT_START]: Math.min(...arrayOfMax),
+        [AttrName.MAX_PLAYER_COUNT_END]: Math.max(...arrayOfMax),
         [AttrName.AGE_FROM]: Array.from(ageSet).filter((val) => val % 2 === 0),
       };
 

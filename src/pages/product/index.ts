@@ -4,6 +4,7 @@ import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Slider, { SliderIsZoom } from '@Src/components/ui/slider';
+import productCategories from '@Src/controllers/categories';
 import Products, { ImageSize } from '@Src/controllers/products';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
@@ -30,6 +31,7 @@ interface ProductFromPage {
   ageFrom?: number;
   brand?: string;
   images?: Image[];
+  categories?: string;
 }
 function createAttributeRow(title: string, attribute: string): BaseElement<HTMLDivElement> {
   const row = new BaseElement<HTMLDivElement>(
@@ -94,8 +96,13 @@ export default class ProductPage extends ContentPage {
         this.#createPrice(product.masterVariant.prices as Price[]);
         this.#createAttributes(product.masterVariant.attributes as Attribute[]);
         this.#product.images = product.masterVariant.images as Image[];
-        this.#createContent();
-        this.#showContent();
+        productCategories.getCategories().then(() => {
+          this.#product.categories = product.categories
+            .map((val) => productCategories.getById(val.id)?.name?.[process.env.LOCALE])
+            .join(', ');
+          this.#createContent();
+          this.#showContent();
+        });
       })
       .catch((error) => {
         if (error.code === 404) {
@@ -179,7 +186,8 @@ export default class ProductPage extends ContentPage {
     priceRow.node.append(button.node);
 
     const brandRow = createAttributeRow('Brand:', this.#product.brand!);
-    const typeRow = createAttributeRow('Type of game:', this.#product.typeOfGame!);
+    const categoryRow = createAttributeRow('Categories:', this.#product.categories!);
+    // const typeRow = createAttributeRow('Type of game:', this.#product.typeOfGame!);
     const numberRow = createAttributeRow(
       'Number of players:',
       `${this.#product.minNumberOfPlayers} - ${this.#product.maxNumberOfPlayers} `,
@@ -189,7 +197,8 @@ export default class ProductPage extends ContentPage {
     const attributesList = new BaseElement<HTMLOListElement>(
       { tag: 'ul', class: classes.attributeList },
       brandRow,
-      typeRow,
+      categoryRow,
+      // typeRow,
       numberRow,
       ageRow,
     );

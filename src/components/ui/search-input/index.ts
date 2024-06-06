@@ -27,6 +27,7 @@ export default class SearchInput extends BaseElement<HTMLElement> {
 
   #clearInputField = () => {
     this.#inputField.node.value = '';
+    this.#onChangeCb();
   };
 
   get value() {

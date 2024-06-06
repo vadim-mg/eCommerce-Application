@@ -61,8 +61,10 @@ export default class Slider extends BaseElement<HTMLElement> {
     this.#images = images;
     this.#index = start;
     this.#createSlider(withZoom, selectImageSize(size));
-    this.#createControlsPanel();
-    this.#addSwipeSupport();
+    if (images.length > 1) {
+      this.#createControlsPanel();
+      this.#addSwipeSupport();
+    }
   }
 
   #createSlider = (isZoom: SliderIsZoom, size: ImageSize) => {
