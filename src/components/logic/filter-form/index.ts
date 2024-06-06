@@ -130,8 +130,8 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
       const cbCopy = cb;
       cbCopy.checked = true;
     });
-    this.#rangeSlider.minValue = this.#filterOptions[AttrName.MIN_PLAYER_COUNT];
-    this.#rangeSlider.maxValue = this.#filterOptions[AttrName.MAX_PLAYER_COUNT];
+    this.#rangeSlider.minValue = 4;
+    this.#rangeSlider.maxValue = 6;
     this.#ageCheckBoxes.forEach((cb: CheckBox, index) => {
       const cbCopy = cb;
       cbCopy.checked = !index; // first must be selected
