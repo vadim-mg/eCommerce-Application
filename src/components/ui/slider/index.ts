@@ -146,7 +146,6 @@ export default class Slider extends BaseElement<HTMLElement> {
   };
 
   #rotation = (direction: Direction) => {
-    // console.log(direction);
     if (direction === Direction.LEFT && this.#index > 0) {
       this.#hideItem();
       this.#index -= 1;
@@ -197,18 +196,18 @@ export default class Slider extends BaseElement<HTMLElement> {
     this.#touchEndX = event.touches[0].clientX;
   };
 
-  #handleTouchEnd = () => {
-    // console.log(this.#touchStartX);
-    // console.log(this.#touchEndX);
-    const difference = this.#touchStartX - this.#touchEndX;
-    // console.log('touch');
-    // console.log(difference);
-    if (difference > 30) {
-      this.#rotation(Direction.RIGHT);
-    } else if (difference < -30) {
-      this.#rotation(Direction.LEFT);
+  #handleTouchEnd = (event: TouchEvent) => {
+    const target = event.target as HTMLElement;
+    if (!this.#arrowLeft.node.contains(target) && !this.#arrowRight.node.contains(target)) {
+      const difference = this.#touchStartX - this.#touchEndX;
+
+      if (difference > 30) {
+        this.#rotation(Direction.RIGHT);
+      } else if (difference < -30) {
+        this.#rotation(Direction.LEFT);
+      }
+      this.#touchStartX = 0;
+      this.#touchEndX = 0;
     }
-    this.#touchStartX = 0;
-    this.#touchEndX = 0;
   };
 }
