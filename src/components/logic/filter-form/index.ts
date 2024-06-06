@@ -61,7 +61,7 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
               classes.brandAccordion,
               ...(this.#brandsCheckBoxes = this.#filterOptions[AttrName.BRAND]
                 .sort()
-                .map((brand) => new CheckBox({ class: classes.filterCheckbox }, brand, true))),
+                .map((brand) => new CheckBox({ class: classes.filterCheckbox }, brand, false))),
             )
           : tag({ tag: 'span' }),
 
@@ -126,16 +126,8 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
   };
 
   #setDefaultFilters = () => {
-    this.#brandsCheckBoxes.forEach((cb: CheckBox) => {
-      const cbCopy = cb;
-      cbCopy.checked = true;
-    });
     this.#rangeSlider.minValue = 4;
     this.#rangeSlider.maxValue = 6;
-    this.#ageCheckBoxes.forEach((cb: CheckBox, index) => {
-      const cbCopy = cb;
-      cbCopy.checked = !index; // first must be selected
-    });
   };
 
   getFilterSettings = (): Promise<FilterAttributes> =>

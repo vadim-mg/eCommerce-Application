@@ -25,12 +25,14 @@ const getProductById = (id: string) =>
 const getProducts = (options: ProductGetOptions) => {
   const { categoryId, sortingType, search, filter } = options;
 
-  const filteredBrans = filter?.[AttrName.BRAND]?.length
-    ? filter?.[AttrName.BRAND]
-    : ["Won't be found any product, because no brand selected"];
+  const filteredBrans = filter?.[AttrName.BRAND]?.length ? filter?.[AttrName.BRAND] : [];
 
   const filters = [
-    `variants.attributes.${AttrName.BRAND}:${filteredBrans.map((val) => `"${val}"`).join(',')}`,
+    ...(filteredBrans.length
+      ? [
+          `variants.attributes.${AttrName.BRAND}:${filteredBrans.map((val) => `"${val}"`).join(',')}`,
+        ]
+      : []),
     `variants.attributes.${AttrName.MIN_PLAYER_COUNT}: range(1 to ${filter?.[AttrName.MIN_PLAYER_COUNT]})`,
     `variants.attributes.${AttrName.MAX_PLAYER_COUNT}: range(${filter?.[AttrName.MAX_PLAYER_COUNT]} to 100)`,
     `variants.attributes.age-from: range(${filter?.[AttrName.AGE_FROM]?.[0] ?? '0'} to 130)`,
