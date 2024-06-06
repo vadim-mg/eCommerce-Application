@@ -17,3 +17,7 @@ body {
 .red {
   color: var(--color-red-main);
 }
+
+.disabled-scroll {
+  overflow: hidden;
+}
