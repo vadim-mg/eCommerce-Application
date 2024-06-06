@@ -198,7 +198,7 @@ export default class Slider extends BaseElement<HTMLElement> {
 
   #handleTouchEnd = (event: TouchEvent) => {
     const target = event.target as HTMLElement;
-    if (this.#arrowLeft.node.contains(target) && this.#arrowRight.node.contains(target)) {
+    if (!this.#arrowLeft.node.contains(target) && !this.#arrowRight.node.contains(target)) {
       const difference = this.#touchStartX - this.#touchEndX;
 
       if (difference > 30) {
@@ -208,8 +208,6 @@ export default class Slider extends BaseElement<HTMLElement> {
       }
       this.#touchStartX = 0;
       this.#touchEndX = 0;
-
     }
-
   };
 }
