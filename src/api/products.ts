@@ -41,7 +41,7 @@ const getProducts = (options: ProductGetOptions) => {
     .search()
     .get({
       queryArgs: {
-        limit: 9,
+        limit: 20,
 
         ...(search ? { 'text.en-GB': `"${search}"` } : {}),
         fuzzy: true,
