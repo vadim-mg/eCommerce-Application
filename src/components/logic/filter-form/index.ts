@@ -209,7 +209,7 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
 
   #getFilterSettings = (): FilterSettings => ({
     brandsChecked: this.#brandsCheckBoxes.map((cb: CheckBox) => cb.checked),
-    ageChecked: this.#brandsCheckBoxes.map((cb: CheckBox) => cb.checked),
+    ageChecked: this.#ageCheckBoxes.map((cb: CheckBox) => cb.checked),
     minNumberOfPlayerStart: this.#rangeSliderMin.minValue,
     minNumberOfPlayerEnd: this.#rangeSliderMin.maxValue,
     maxNumberOfPlayerStart: this.#rangeSliderMax.minValue,
@@ -218,7 +218,6 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
 
   #viewButtonHandler = () => {
     this.#onViewBtnClick();
-
     State.getInstance().setItem(FILTERS_STATE_KEY, JSON.stringify(this.#getFilterSettings()));
   };
 }
