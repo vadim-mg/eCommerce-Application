@@ -52,9 +52,9 @@ export default class Header extends BaseElement<HTMLElement> {
     new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.logoNavigationWrapper },
       new BaseElement<HTMLImageElement>({
-        tag: 'img',
+        tag: 'div',
         class: classes.logoIcon,
-        src: logoSvg,
+        innerHTML: logoSvg,
       }),
       new BaseElement<HTMLElement>(
         {
@@ -110,10 +110,10 @@ export default class Header extends BaseElement<HTMLElement> {
             tag: 'div',
             class: classes.basket,
           },
-          new BaseElement<HTMLImageElement>({
-            tag: 'img',
+          new BaseElement<HTMLElement>({
+            tag: 'div',
             class: classes.basketIcon,
-            src: basketSvg,
+            innerHTML: basketSvg,
           }),
         ),
       ),
@@ -128,12 +128,12 @@ export default class Header extends BaseElement<HTMLElement> {
       },
 
       new Button(
-        { text: 'Log in', hidden: State.getInstance().isLoggedIn },
+        { text: 'Log in', class: State.getInstance().isLoggedIn ? classes.hidden : '' },
         ButtonClasses.NORMAL,
         routeToLogin,
       ),
       new Button(
-        { text: 'Sign up', hidden: State.getInstance().isLoggedIn },
+        { text: 'Sign up', class: State.getInstance().isLoggedIn ? classes.hidden : '' },
         ButtonClasses.NORMAL,
         routeToSignup,
       ),
@@ -142,16 +142,16 @@ export default class Header extends BaseElement<HTMLElement> {
           href: AppRoutes.PROFILE,
           class: classes.linkUserIcon,
         },
-        new BaseElement<HTMLImageElement>({
-          tag: 'img',
+        new BaseElement<HTMLElement>({
+          tag: 'div',
           class: classes.userIcon,
-          src: userSvg,
+          innerHTML: userSvg,
           hidden: !State.getInstance().isLoggedIn,
         }),
       ),
 
       new Button(
-        { text: 'Log out', hidden: !State.getInstance().isLoggedIn },
+        { text: 'Log out', class: [...(!State.getInstance().isLoggedIn ? [classes.hidden] : [])] },
         ButtonClasses.NORMAL,
         auth.signOut,
       ),

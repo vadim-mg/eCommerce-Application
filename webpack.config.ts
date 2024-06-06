@@ -48,8 +48,35 @@ const baseConfig = (isProd: boolean) => ({
   module: {
     rules: [
       {
-        test: /\.(jpg|png|svg|jpeg|gif|webp)$/,
+        test: /\.(jpg|png|jpeg|gif|webp)$/,
         type: 'asset/resource',
+      },
+      // Правило для импорта SVG в JavaScript
+      {
+        test: /\.svg$/,
+        use: [
+          {
+            loader: 'svg-inline-loader',
+            options: {
+              removeSVGTagAttrs: false,
+            },
+          },
+        ],
+        issuer: /\.[jt]sx?$/,
+      },
+      // Правило для обработки SVG в CSS
+      {
+        test: /\.svg$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[hash].[ext]',
+              outputPath: 'assets/icons/',
+            },
+          },
+        ],
+        issuer: /\.s?css$/,
       },
       {
         test: /\.module\.s?css$/i,

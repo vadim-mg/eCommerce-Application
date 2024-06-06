@@ -11,17 +11,17 @@ import imageSvg from '@Assets/icons/favicon.svg';
 import imageBoard from '@Img/board-game-example-image.webp';
 
 // import api for example
-import categoriesApi from '@Src/api/categories';
 
 import ContentPage from '@Src/components/common/content-page';
 import Link from '@Src/components/ui/link';
+import RangeSlider from '@Src/components/ui/range-slider';
 import Select from '@Src/components/ui/select';
 import { AppRoutes } from '@Src/router/routes';
 import {
   validateDateOfBirth,
-  validatePostalCode,
   validateEmail,
   validatePassword,
+  validatePostalCode,
 } from '@Src/utils/helpers';
 import classes from './style.module.scss';
 
@@ -36,7 +36,6 @@ export default class HiddenExamplePage extends ContentPage {
     super({ containerTag: 'div', title: 'Hidden Example page' });
     this.#createContent();
     this.#showContent();
-    this.#showCategories();
   }
 
   checkPostalCodeValidation = (inputValue: string) => {
@@ -59,7 +58,7 @@ export default class HiddenExamplePage extends ContentPage {
         },
         tag<HTMLHeadingElement>({ tag: 'h1', text: 'Exapmle page' }),
         new Link({ text: 'error404', href: AppRoutes.NOT_FOUND, class: classes.listItem }),
-        new Link({ text: 'product', href: AppRoutes.PRODUCT, class: classes.listItem }),
+        new Link({ text: 'product', href: AppRoutes.CATALOGUE, class: classes.listItem }),
         new Link({
           text: 'rs.school',
           href: 'https://rs.school',
@@ -80,6 +79,7 @@ export default class HiddenExamplePage extends ContentPage {
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'two' }),
         new BaseElement<HTMLLIElement>({ tag: 'li', text: 'three', title: 'dfdfd' }),
       ),
+      new RangeSlider(1, 8, classes.rangeSlider),
       new BaseElement<HTMLElement>(
         { tag: 'div', class: classes.elements },
         new Button({ text: 'Buy' }, ButtonClasses.NORMAL, () => console.log('Click!'), basketSvg),
@@ -174,40 +174,6 @@ export default class HiddenExamplePage extends ContentPage {
       tag<HTMLImageElement>({ tag: 'img', src: imageSvg, class: classes.imageExample }),
       new CheckBox({}, 'example', true),
     );
-  };
-
-  // exapmle of using SDK for get categories by API
-  #showCategories = () => {
-    categoriesApi
-      .getCategories()
-      .then((resp) => {
-        const categoryList = resp.body.results.map((category) => category.name['en-GB']);
-
-        const selectCategory1 = new Select('Select category', categoryList, (selectedValue) => {
-          console.log(`selected value: ${selectedValue}`);
-        });
-        this.#content.node.append(selectCategory1.node);
-        const category1 = categoryList[0];
-        console.log(category1);
-        selectCategory1.selectedValue = category1;
-
-        const selectCategory2 = new Select('', categoryList, (selectedValue) => {
-          console.log(`selected value: ${selectedValue}`);
-        });
-        this.#content.node.append(selectCategory2.node);
-        const category2 = categoryList[2];
-        selectCategory2.selectedValue = category2;
-
-        console.log('resp.body.results');
-        console.log(resp.body.results);
-        this.#content.node.append(
-          tag({ tag: 'ul', text: `categories` }).node,
-          ...categoryList.map(
-            (categoryName: string) => tag({ tag: 'li', text: `${categoryName}` }).node,
-          ),
-        );
-      })
-      .catch(console.error);
   };
 
   #showContent = () => {

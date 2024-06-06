@@ -1,4 +1,7 @@
+@import '@Src/styles/variables.scss';
+
 .content-page {
+  background: var(--color-grey-extra-light);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -6,16 +9,15 @@
 }
 
 .header {
-  background-color: red;
   padding: 2rem;
 }
 
 .content {
   width: 100%;
   flex-grow: 1;
+  justify-content: start;
 }
 
 .footer {
-  background-color: greenyellow;
   padding: 2rem;
 }

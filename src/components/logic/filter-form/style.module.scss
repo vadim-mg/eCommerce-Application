@@ -1,0 +1,75 @@
+.filter-form {
+  background: var(--color-white);
+  border-radius: 1rem;
+  padding: 0px 0px 2rem 0px;
+  max-width: 100%;
+  height: max-content;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.container {
+  padding: 0 1rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.form-header {
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 117%;
+  color: var(--color-white);
+  background: var(--color-orange-extra-light);
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  &::before {
+    content: '';
+    width: 2rem;
+    height: 2rem;
+    display: block;
+    background: url('@Assets/icons/filters.svg');
+  }
+}
+
+.filter-checkbox {
+  padding: 0.5rem;
+}
+
+.brand-accordion {
+  width: 335px;
+}
+
+.range-slider {
+  margin-bottom: 2rem;
+  padding: 0 1rem 1rem;
+  width: 310px;
+  margin-right: 1rem;
+}
+
+.range-slider-caption {
+  margin: 0;
+}
+
+.range-slider-container {
+  max-width: 90%;
+  @media screen and (max-width: 1090px) {
+    order: 1;
+  }
+  @media screen and (max-width: 720px) {
+    order: 0;
+  }
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  gap: 1rem;
+  order: 5;
+}

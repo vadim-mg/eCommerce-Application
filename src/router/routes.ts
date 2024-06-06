@@ -12,34 +12,46 @@ import ProfilePage from '@Src/pages/profile';
 import SignupPage from '@Src/pages/signup';
 
 export enum AppRoutes {
-  LOGIN = 'login',
-  LOGOUT = 'logout',
-  SIGNUP = 'signup',
-  MAIN = 'main',
-  CATALOGUE = 'catalogue',
-  ABOUT = 'about',
-  PROFILE = 'profile',
-  CART = 'cart',
-  PRODUCT = 'product',
-  NOT_FOUND = '404',
+  LOGIN = '/login',
+  LOGOUT = '/logout',
+  SIGNUP = '/signup',
+  MAIN = '/main',
+  CATALOGUE = '/catalogue',
+  ABOUT = '/about',
+  PROFILE = '/profile',
+  CART = '/cart',
+  NOT_FOUND = '/404',
 
   // hidden routes
-  HIDDEN_EXAMPLE = 'hiddenExample',
-  HIDDEN_API = 'hiddenApi',
+  HIDDEN_EXAMPLE = '/hiddenExample',
+  HIDDEN_API = '/hiddenApi',
 }
 
-// todo: i think about it :)
+type AvailablePage =
+  | BasePage
+  | AboutPage
+  | CartPage
+  | CataloguePage
+  | HiddenApiPage
+  | HiddenExamplePage
+  | LoginPage
+  | MainPage
+  | NotFound
+  | ProductPage
+  | ProfilePage
+  | SignupPage
+  | null;
 
-// type Route = {
-//   name: string,
-//   pageConstructor?: LoginPage | RegistrationPage | null,
-//   redirect?: AppRoutes,
-//   protected: boolean,
-// };
+type Route = {
+  name: string;
+  page?: (args?: string[]) => AvailablePage | (() => AvailablePage);
+  redirect?: AppRoutes;
+  visibility: RouteVisibility;
+};
 
-// type Routes = {
-//   [key in AppRoutes]: Route;
-// };;
+type Routes = {
+  [key in AppRoutes]: Route;
+};
 
 export enum RouteVisibility {
   everyOne,
@@ -47,58 +59,56 @@ export enum RouteVisibility {
   onlyNotAuth,
 }
 
-const ROUTES = {
+const ROUTES: Routes = {
   [AppRoutes.LOGIN]: {
     name: 'Login',
-    pageConstructor: LoginPage,
+    page: () => new LoginPage(),
     visibility: RouteVisibility.onlyNotAuth,
   },
   [AppRoutes.LOGOUT]: {
     name: 'Logout',
-    pageConstructor: null,
+    page: () => null,
     redirect: AppRoutes.MAIN,
     visibility: RouteVisibility.onlyAuth,
   },
   [AppRoutes.SIGNUP]: {
     name: 'Sign Up',
-    pageConstructor: SignupPage,
+    page: () => new SignupPage(),
     visibility: RouteVisibility.onlyNotAuth,
   },
   [AppRoutes.MAIN]: {
-    name: 'Main',
-    pageConstructor: MainPage,
+    name: 'Home',
+    page: () => new MainPage(),
     visibility: RouteVisibility.everyOne,
   },
 
-  [AppRoutes.CATALOGUE]: {
-    name: 'Catalogue',
-    pageConstructor: CataloguePage,
-    visibility: RouteVisibility.everyOne,
-  },
   [AppRoutes.ABOUT]: {
     name: 'About',
-    pageConstructor: AboutPage,
+    page: () => new AboutPage(),
     visibility: RouteVisibility.everyOne,
   },
   [AppRoutes.PROFILE]: {
     name: 'Profile',
-    pageConstructor: ProfilePage,
+    page: () => new ProfilePage(),
     visibility: RouteVisibility.onlyAuth,
   },
   [AppRoutes.CART]: {
     name: 'Cart',
-    pageConstructor: CartPage,
+    page: () => new CartPage(),
     visibility: RouteVisibility.everyOne,
   },
-  [AppRoutes.PRODUCT]: {
-    name: 'product',
-    pageConstructor: ProductPage,
+  [AppRoutes.CATALOGUE]: {
+    name: 'Catalogue',
+    page: (args?: string[]) =>
+      (args?.length ?? 0) > 1
+        ? new ProductPage(args ?? []) // for paths: catalogue/category-name/product-name
+        : new CataloguePage(args ?? []), // for paths: catalogue/category-name
     visibility: RouteVisibility.everyOne,
   },
 
   [AppRoutes.NOT_FOUND]: {
     name: '404',
-    pageConstructor: NotFound,
+    page: () => new NotFound(),
     visibility: RouteVisibility.everyOne,
   },
 
@@ -106,25 +116,25 @@ const ROUTES = {
   // todo: remove it in prod
   [AppRoutes.HIDDEN_EXAMPLE]: {
     name: 'HiddenExample',
-    pageConstructor: BasePage,
+    page: () => new BasePage(),
     visibility: RouteVisibility.everyOne,
   },
   [AppRoutes.HIDDEN_API]: {
     name: 'HiddenApi',
-    pageConstructor: BasePage,
+    page: () => new BasePage(),
     visibility: RouteVisibility.everyOne,
   },
 };
 
 if (process.env.NODE_ENV === 'development') {
-  ROUTES.hiddenExample = {
+  ROUTES['/hiddenExample'] = {
     name: 'HiddenExample',
-    pageConstructor: HiddenExamplePage,
+    page: () => new HiddenExamplePage(),
     visibility: RouteVisibility.everyOne,
   };
-  ROUTES.hiddenApi = {
+  ROUTES['/hiddenApi'] = {
     name: 'HiddenApi',
-    pageConstructor: HiddenApiPage,
+    page: () => new HiddenApiPage(),
     visibility: RouteVisibility.everyOne,
   };
 }

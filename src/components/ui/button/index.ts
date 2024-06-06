@@ -18,14 +18,14 @@ export default class Button extends BaseElement<HTMLButtonElement> {
     props: ButtonProps,
     buttonClass: ButtonClasses | ButtonClasses[],
     onClickCb: (event: Event) => void,
-    iconPath?: string,
+    iconSVG?: string,
   ) {
     super({ tag: 'button', ...props });
     this.#onClickCb = onClickCb;
     this.node.addEventListener('click', this.onClickHandler);
     this.#addClasses(buttonClass);
-    if (iconPath) {
-      this.#addIcon(iconPath);
+    if (iconSVG) {
+      this.#addIcon(iconSVG);
     }
   }
 
@@ -37,10 +37,10 @@ export default class Button extends BaseElement<HTMLButtonElement> {
     }
   };
 
-  #addIcon = (iconPath: string) => {
+  #addIcon = (iconSVG: string) => {
     const icon = new BaseElement<HTMLImageElement>({
-      tag: 'img',
-      src: iconPath,
+      tag: 'div',
+      innerHTML: iconSVG,
     });
     icon.node.classList.add(classes.icon);
     this.node.prepend(icon.node);
@@ -52,11 +52,11 @@ export default class Button extends BaseElement<HTMLButtonElement> {
   };
 
   show = () => {
-    this.node.hidden = false;
+    this.node.classList.remove(classes.hidden);
   };
 
   hide = () => {
-    this.node.hidden = true;
+    this.node.classList.add(classes.hidden);
   };
 
   disable = () => {
@@ -66,4 +66,10 @@ export default class Button extends BaseElement<HTMLButtonElement> {
   enable = () => {
     this.node.disabled = false;
   };
+
+  set currentStatus(isCurrentCategory: boolean) {
+    this.node.classList[isCurrentCategory ? 'add' : 'remove'](
+      classes[ButtonClasses.CURRENT_CATEGORY],
+    );
+  }
 }

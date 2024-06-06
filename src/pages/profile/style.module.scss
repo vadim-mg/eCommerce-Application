@@ -1,2 +1,167 @@
+@import '@Src/styles/variables.scss';
+
 .profile {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  border-radius: 1.5rem;
+  padding: 1.5rem 2rem;
+  background: var(--color-white);
+}
+
+.title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.title {
+  font-weight: 400;
+  margin: 0;
+}
+
+.user-data-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin: 0;
+  line-height: 117%;
+  color: var(--color-black);
+
+  &:has(+ button) {
+    margin-bottom: 2rem;
+  }
+
+  &:has(+ div) {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.password-btn-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.personal-data-btn-block {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.user-data-details-wrapper,
+.user-password-wrapper {
+  max-width: 360px;
+  width: 100%;
+
+  position: relative;
+}
+
+.deliveryAddressesContainer,
+.billingAddressesContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3rem;
+}
+
+.user-password-wrapper {
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+  align-items: flex-start;
+
+  font-size: 12px;
+  line-height: 150%;
+  letter-spacing: 0.02em;
+  color: var(--color-grey-dark);
+}
+
+.password-rule {
+  margin-bottom: 3rem;
+}
+
+.input-margin {
+  margin-bottom: 1.5rem;
+}
+
+.btn-line-height {
+  line-height: 100%;
+}
+
+.add-address-btn {
+  margin-bottom: 3rem;
+  line-height: 100%;
+}
+
+.birth-date-input {
+  margin-bottom: 1rem;
+}
+
+.address-wrapper {
+  max-width: 360px;
+}
+
+.hidden {
+  display: none;
+}
+
+.notification-error-block-wrapper,
+.notification-success-block-wrapper {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+
+  border-radius: 1.5rem;
+  padding: 1.5rem 1rem;
+  max-width: 360px;
+  box-sizing: border-box;
+  width: 100%;
+  opacity: 0.9;
+  transition: opacity 0.5s;
+}
+
+.notification-error-block-wrapper {
+  background-color: rgba(247, 57, 57);
+}
+
+.notification-success-block-wrapper {
+  background-color: rgba(55, 211, 134);
+}
+
+.notification-success-block-wrapper.hidden,
+.notification-error-block-wrapper.hidden {
+  opacity: 0;
+}
+
+.notification-text-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  line-height: 156%;
+  font-weight: 500;
+  font-size: 1.125rem;
+  color: var(--color-white);
+}
+
+.notification-text-element {
+  margin: 0;
+}
+
+.modal > div:first-child {
+  padding: 2rem 1.5rem;
+  width: 360px;
+}
+
+.invalid-password {
+  color: var(--main-alarm-color);
+  font-size: 1.1rem;
+  margin-bottom: 0.9rem;
+  text-align: center;
 }

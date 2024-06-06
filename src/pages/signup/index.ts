@@ -17,6 +17,7 @@ import {
 } from '@Src/utils/helpers';
 
 import auth from '@Src/controllers/auth';
+import { AppRoutes } from '@Src/router/routes';
 import { BaseAddress, CustomerDraft, MyCustomerDraft } from '@commercetools/platform-sdk';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import classes from './style.module.scss';
@@ -75,7 +76,7 @@ interface InputsUserDetail {
   dateOfBirth: InputText;
 }
 
-function validateForm(form: InputsUserDetail | InputsAddress | InputsAddress[]): boolean {
+export function validateForm(form: InputsUserDetail | InputsAddress | InputsAddress[]): boolean {
   const validatedForms = Array.isArray(form) ? form : [form];
 
   const inputs = validatedForms.reduce(
@@ -133,7 +134,7 @@ export default class SignupPage extends FormPage {
       billingEqualDelivery: true,
     } as UserData;
     this.addEventListeners();
-    this.addAdditionalLink('if you already have an account', 'login', 'Log in');
+    this.addAdditionalLink('if you already have an account', AppRoutes.LOGIN, 'Log in');
     // this.#changeForm(this.#createFormAddresses(), FormTitle.ADDRESS); // todo : clear it after debug
   }
 
@@ -391,7 +392,7 @@ export default class SignupPage extends FormPage {
       ),
       checkboxDefault: new CheckBox(
         { class: [classes.checkboxAccordion] },
-        `Use us default billing address`,
+        `Use as default billing address`,
         false,
       ),
     };
@@ -439,7 +440,7 @@ export default class SignupPage extends FormPage {
       ),
       checkboxDefault: new CheckBox(
         { class: [classes.checkboxAccordion] },
-        `Use us default delivery address`,
+        `Use as default delivery address`,
         false,
       ),
     };
@@ -451,7 +452,10 @@ export default class SignupPage extends FormPage {
       title,
       state,
       [classes.accordion, classes.accordionHidden],
-      this.#inputsBillingAddress.country,
+      new BaseElement<HTMLDivElement>(
+        { tag: 'div', class: classes.selectField },
+        this.#inputsBillingAddress.country,
+      ),
       this.#inputsBillingAddress.city,
       this.#inputsBillingAddress.postalCode,
       this.#inputsBillingAddress.street,
@@ -466,7 +470,10 @@ export default class SignupPage extends FormPage {
       title,
       state,
       classes.accordion,
-      this.#inputsDeliveryAddress.country,
+      new BaseElement<HTMLDivElement>(
+        { tag: 'div', class: classes.selectField },
+        this.#inputsDeliveryAddress.country,
+      ),
       this.#inputsDeliveryAddress.city,
       this.#inputsDeliveryAddress.postalCode,
       this.#inputsDeliveryAddress.street,

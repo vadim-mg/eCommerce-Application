@@ -25,7 +25,7 @@ export default class InputText extends BaseElement<HTMLInputElement> {
 
   isValid!: boolean;
 
-  callbackValidation!: CallbackValidation;
+  #callbackValidation!: CallbackValidation;
 
   constructor(
     propsInput: InputProps,
@@ -35,7 +35,7 @@ export default class InputText extends BaseElement<HTMLInputElement> {
     super({ tag: 'div', class: classes.wrapper });
     this.#createContent(propsInput, labelText);
     if (callbackValidation) {
-      this.callbackValidation = callbackValidation;
+      this.#callbackValidation = callbackValidation;
       this.inputElement.node.addEventListener('input', this.validate.bind(this));
     }
   }
@@ -107,8 +107,8 @@ export default class InputText extends BaseElement<HTMLInputElement> {
   }
 
   validate = () => {
-    const error = this.callbackValidation(this.value);
-    if (!error.status) {
+    const error = this.#callbackValidation?.(this.value) ?? null;
+    if (error && !error.status) {
       this.showError(error.errorText);
     } else {
       this.hiddenError();
@@ -149,6 +149,17 @@ export default class InputText extends BaseElement<HTMLInputElement> {
 
   setDisabled = (state: boolean) => {
     this.inputElement.node.disabled = state;
+  };
+
+  // I added this methods to change birth date input type (from text to date)
+  addDateInputType = () => {
+    this.inputElement.node.type = 'date';
+    this.clearButtonElement.node.hidden = true;
+  };
+
+  addTextInputType = () => {
+    this.inputElement.node.type = 'text';
+    this.clearButtonElement.node.hidden = false;
   };
 
   get value() {

@@ -2,6 +2,8 @@ import {
   AnonymousAuthMiddlewareOptions,
   ClientBuilder,
   PasswordAuthMiddlewareOptions,
+  RefreshAuthMiddlewareOptions,
+  TokenCache,
   UserAuthOptions,
   type HttpMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
@@ -32,6 +34,8 @@ const anonymousAuthMiddlewareOptions: AnonymousAuthMiddlewareOptions = {
     `manage_my_profile:${projectKey}`,
     `create_anonymous_token:${projectKey}`,
     `view_customers:${projectKey}`,
+    `view_published_products:${projectKey}`,
+    `view_categories:${projectKey}`,
   ],
   tokenCache: anonymousTokenCache,
 };
@@ -68,16 +72,16 @@ const getPasswordAuthMiddlewareOptions = (
 
 // todo: in next sprint working with refresh tokens
 
-// const refreshAnonymousAuthMiddlewareOptions = (refreshToken: string): RefreshAuthMiddlewareOptions => ({
-//   host: hostAuth,
-//   projectKey,
-//   credentials: {
-//     clientId: process.env.CTP_CLIENT_ID,
-//     clientSecret: process.env.CTP_CLIENT_SECRET,
-//   },
-//   tokenCache: anonymousTokenCache,
-//   refreshToken,
-// });
+const refreshAuthMiddlewareOptions = (tokenCache: TokenCache): RefreshAuthMiddlewareOptions => ({
+  host: hostAuth,
+  projectKey,
+  credentials: {
+    clientId: process.env.CTP_CLIENT_ID,
+    clientSecret: process.env.CTP_CLIENT_SECRET,
+  },
+  tokenCache,
+  refreshToken: tokenCache.get().refreshToken ?? '',
+});
 
 // todo: in next sprints : not create anonymous token while user doesn't do something (put in cart for example)
 
@@ -107,4 +111,11 @@ export const existingTokenCtpClient = (token: string) => () =>
     .withHttpMiddleware(httpMiddlewareOptions)
     // .withLoggerMiddleware()
     .withExistingTokenFlow(`Bearer ${token}`, { force: true })
+    .build();
+
+export const existingRefreshTokenCtpClient = (tokenCache: TokenCache) => () =>
+  new ClientBuilder()
+    .withHttpMiddleware(httpMiddlewareOptions)
+    // .withLoggerMiddleware()
+    .withRefreshTokenFlow(refreshAuthMiddlewareOptions(tokenCache))
     .build();

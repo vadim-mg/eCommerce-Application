@@ -21,5 +21,6 @@ declare namespace NodeJS {
     CTP_AUTH_URL: string;
     CTP_API_URL: string;
     CTP_SCOPES: string;
+    LOCALE: string;
   }
 }

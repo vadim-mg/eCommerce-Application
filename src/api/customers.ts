@@ -1,4 +1,8 @@
-import { CustomerSignin, MyCustomerDraft } from '@commercetools/platform-sdk';
+import {
+  CustomerSignin,
+  MyCustomerDraft,
+  MyCustomerUpdateAction,
+} from '@commercetools/platform-sdk';
 import apiRoot from './api-root';
 
 // https://docs.commercetools.com/sdk/sdk-example-code
@@ -14,7 +18,11 @@ const signUp = (customer: MyCustomerDraft) =>
     .execute();
 
 const signIn = (customer: CustomerSignin) =>
-  apiRoot.apiBuilder
+  apiRoot
+    .apiBuilderForLogin({
+      username: customer.email,
+      password: customer.password,
+    })
     .me()
     .login()
     .post({
@@ -35,12 +43,39 @@ const returnCustomerByEmail = (email: string) =>
 
 const me = () => apiRoot.apiBuilder.me().get().execute();
 
-// const customRequest = () =>
-//   apiRoot.apiBuilder.get({
-//     headers: {
-//       Authorization: 'Bearer xxx',
-//     },
-//   })
-//     .execute();
+const updateCustomerData = (currentVersion: number, updateActions: MyCustomerUpdateAction[]) =>
+  apiRoot.apiBuilder
+    .me()
+    .post({
+      body: {
+        version: currentVersion,
+        actions: updateActions,
+      },
+    })
+    .execute();
 
-export default { signIn, signUp, returnCustomerByEmail, me };
+const updateCustomerPassword = (
+  currentVersion: number,
+  currentPassword: string,
+  newPassword: string,
+) =>
+  apiRoot.apiBuilder
+    .me()
+    .password()
+    .post({
+      body: {
+        version: currentVersion,
+        currentPassword,
+        newPassword,
+      },
+    })
+    .execute();
+
+export default {
+  signIn,
+  signUp,
+  returnCustomerByEmail,
+  me,
+  updateCustomerData,
+  updateCustomerPassword,
+};

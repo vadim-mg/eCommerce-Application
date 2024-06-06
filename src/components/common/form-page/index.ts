@@ -18,7 +18,7 @@ export default class FormPage extends BasePage {
 
   modalContainer!: BaseElement<HTMLDivElement>;
 
-  logoComponent!: BaseElement<HTMLImageElement>;
+  logoComponent!: BaseElement<HTMLElement>;
 
   logoComponentLink!: Link;
 
@@ -71,9 +71,9 @@ export default class FormPage extends BasePage {
   };
 
   createLogoComponent = () => {
-    this.logoComponent = new BaseElement<HTMLImageElement>({
-      tag: 'img',
-      src: logoSvgLight,
+    this.logoComponent = new BaseElement<HTMLElement>({
+      tag: 'div',
+      innerHTML: logoSvgLight,
       class: classes.logoImg,
     });
     this.logoComponentLink = new Link({ href: AppRoutes.MAIN, class: classes.logoLink });
@@ -81,10 +81,10 @@ export default class FormPage extends BasePage {
   };
 
   createErrorComponent = () => {
-    const errorIcon = new BaseElement<HTMLImageElement>({
-      tag: 'img',
+    const errorIcon = new BaseElement<HTMLElement>({
+      tag: 'div',
       class: classes.errorIcon,
-      src: errorSvg,
+      innerHTML: errorSvg,
     });
     this.errorTextElement = new BaseElement<HTMLParagraphElement>({ tag: 'p' });
     this.errMessageWrapper = new BaseElement<HTMLDivElement>({
