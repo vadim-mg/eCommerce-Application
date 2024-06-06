@@ -9,12 +9,15 @@ export default class State {
 
   #currentCustomerVersion: number | null;
 
+  #storage: Map<string, string>;
+
   static #instance: State | null;
 
   private constructor() {
     this.#isLoggedIn = !!passwordTokenCache.get().token;
     this.#currentUser = null;
     this.#currentCustomerVersion = null;
+    this.#storage = new Map();
   }
 
   // State can be used in any part of App as a singleton
@@ -56,4 +59,10 @@ export default class State {
     }
     return this.#currentCustomerVersion;
   }
+
+  setItem = (key: string, value: string) => {
+    this.#storage.set(key, value);
+  };
+
+  getItem = (key: string) => this.#storage.get(key);
 }

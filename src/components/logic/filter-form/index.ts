@@ -5,6 +5,7 @@ import Button, { ButtonClasses } from '@Src/components/ui/button';
 import CheckBox from '@Src/components/ui/checkbox';
 import RangeSlider from '@Src/components/ui/range-slider';
 import Products, { AttrName, FilterAttributes } from '@Src/controllers/products';
+import State from '@Src/state';
 import classes from './style.module.scss';
 
 const SHOWED_FILTER = [
@@ -14,10 +15,22 @@ const SHOWED_FILTER = [
   AttrName.MAX_PLAYER_COUNT,
 ];
 
+type FilterSettings = {
+  brandsChecked: boolean[];
+  ageChecked: boolean[];
+  minNumberOfPlayerStart: number;
+  minNumberOfPlayerEnd: number;
+  maxNumberOfPlayerStart: number;
+  maxNumberOfPlayerEnd: number;
+};
+
+const FILTERS_STATE_KEY = 'catalogue-filtres';
 export default class FilterForm extends BaseElement<HTMLFormElement> {
   #brandsCheckBoxes!: CheckBox[];
 
-  #rangeSlider!: RangeSlider;
+  #rangeSliderMin!: RangeSlider;
+
+  #rangeSliderMax!: RangeSlider;
 
   #ageCheckBoxes!: CheckBox[];
 
@@ -37,7 +50,14 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
         this.#filterOptions = filterAttrs;
 
         this.#createComponent();
-        this.#setDefaultFilters();
+        const filterState = JSON.parse(
+          State.getInstance().getItem(FILTERS_STATE_KEY) ?? '{}',
+        ) as FilterSettings;
+        if (filterState.ageChecked) {
+          this.#restoreDefaultFilters(filterState);
+        } else {
+          this.#resetDefaultFilters();
+        }
         this.#addEventListeners();
       });
   }
@@ -65,18 +85,35 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
             )
           : tag({ tag: 'span' }),
 
-        // Number of players
-        this.#filterOptions[AttrName.MIN_PLAYER_COUNT]
+        // Min number of players
+        this.#filterOptions[AttrName.MIN_PLAYER_COUNT_START]
           ? tag(
               { tag: 'div', class: classes.rangeSliderContainer },
               tag<HTMLParagraphElement>({
                 tag: 'p',
                 class: classes.rangeSliderCatption,
-                text: 'Number of players',
+                text: 'Min number of players',
               }),
-              (this.#rangeSlider = new RangeSlider(
-                this.#filterOptions[AttrName.MIN_PLAYER_COUNT],
-                this.#filterOptions[AttrName.MAX_PLAYER_COUNT],
+              (this.#rangeSliderMin = new RangeSlider(
+                this.#filterOptions[AttrName.MIN_PLAYER_COUNT_START],
+                this.#filterOptions[AttrName.MIN_PLAYER_COUNT_END],
+                classes.rangeSlider,
+              )),
+            )
+          : tag({ tag: 'span' }),
+
+        // Max number of players
+        this.#filterOptions[AttrName.MIN_PLAYER_COUNT_START]
+          ? tag(
+              { tag: 'div', class: classes.rangeSliderContainer },
+              tag<HTMLParagraphElement>({
+                tag: 'p',
+                class: classes.rangeSliderCatption,
+                text: 'Max number of players',
+              }),
+              (this.#rangeSliderMax = new RangeSlider(
+                this.#filterOptions[AttrName.MAX_PLAYER_COUNT_START],
+                this.#filterOptions[AttrName.MAX_PLAYER_COUNT_END],
                 classes.rangeSlider,
               )),
             )
@@ -100,7 +137,7 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
         tag<HTMLDivElement>(
           { tag: 'div', class: classes.buttons },
           new Button({ text: 'Reset' }, ButtonClasses.CATEGORY, () => {
-            this.#setDefaultFilters();
+            this.#resetDefaultFilters();
             this.#onViewBtnClick();
           }),
           new Button({ text: 'View products' }, ButtonClasses.CATEGORY, this.#viewButtonHandler),
@@ -125,24 +162,63 @@ export default class FilterForm extends BaseElement<HTMLFormElement> {
     );
   };
 
-  #setDefaultFilters = () => {
-    this.#rangeSlider.minValue = 4;
-    this.#rangeSlider.maxValue = 6;
+  #resetDefaultFilters = () => {
+    this.#brandsCheckBoxes.forEach((cb: CheckBox) => {
+      const cbCopy = cb;
+      cbCopy.checked = false;
+    });
+    this.#rangeSliderMin.minValue = this.#filterOptions[AttrName.MIN_PLAYER_COUNT_START];
+    this.#rangeSliderMin.maxValue = this.#filterOptions[AttrName.MIN_PLAYER_COUNT_END];
+    this.#rangeSliderMax.minValue = this.#filterOptions[AttrName.MAX_PLAYER_COUNT_START];
+    this.#rangeSliderMax.maxValue = this.#filterOptions[AttrName.MAX_PLAYER_COUNT_END];
+    this.#ageCheckBoxes.forEach((cb: CheckBox) => {
+      const cbCopy = cb;
+      cbCopy.checked = false;
+    });
+    State.getInstance().setItem(FILTERS_STATE_KEY, JSON.stringify(this.#getFilterSettings()));
   };
 
-  getFilterSettings = (): Promise<FilterAttributes> =>
+  #restoreDefaultFilters = (filterState: FilterSettings) => {
+    this.#brandsCheckBoxes.forEach((cb: CheckBox, i) => {
+      const cbCopy = cb;
+      cbCopy.checked = filterState.brandsChecked[i];
+    });
+    this.#rangeSliderMin.minValue = filterState.minNumberOfPlayerStart;
+    this.#rangeSliderMin.maxValue = filterState.minNumberOfPlayerEnd;
+    this.#rangeSliderMax.minValue = filterState.maxNumberOfPlayerStart;
+    this.#rangeSliderMax.maxValue = filterState.maxNumberOfPlayerEnd;
+    this.#ageCheckBoxes.forEach((cb: CheckBox, i) => {
+      const cbCopy = cb;
+      cbCopy.checked = filterState.ageChecked[i];
+    });
+  };
+
+  getFilterValues = (): Promise<FilterAttributes> =>
     this.#availableFilterAttributes.then(() => ({
       [AttrName.BRAND]: this.#brandsCheckBoxes
         ?.filter((checkBox) => checkBox.checked)
         .map((checkBox) => checkBox.labelElement.node.textContent ?? ''),
-      [AttrName.MIN_PLAYER_COUNT]: this.#rangeSlider?.minValue,
-      [AttrName.MAX_PLAYER_COUNT]: this.#rangeSlider?.maxValue,
+      [AttrName.MIN_PLAYER_COUNT_START]: this.#rangeSliderMin?.minValue,
+      [AttrName.MIN_PLAYER_COUNT_END]: this.#rangeSliderMin?.maxValue,
+      [AttrName.MAX_PLAYER_COUNT_START]: this.#rangeSliderMax?.minValue,
+      [AttrName.MAX_PLAYER_COUNT_END]: this.#rangeSliderMax?.maxValue,
       [AttrName.AGE_FROM]: this.#ageCheckBoxes
         ?.filter((checkBox) => checkBox.checked)
         .map((checkBox) => Number(checkBox.labelElement.node.textContent) ?? Infinity),
     }));
 
+  #getFilterSettings = (): FilterSettings => ({
+    brandsChecked: this.#brandsCheckBoxes.map((cb: CheckBox) => cb.checked),
+    ageChecked: this.#brandsCheckBoxes.map((cb: CheckBox) => cb.checked),
+    minNumberOfPlayerStart: this.#rangeSliderMin.minValue,
+    minNumberOfPlayerEnd: this.#rangeSliderMin.maxValue,
+    maxNumberOfPlayerStart: this.#rangeSliderMax.minValue,
+    maxNumberOfPlayerEnd: this.#rangeSliderMax.maxValue,
+  });
+
   #viewButtonHandler = () => {
     this.#onViewBtnClick();
+
+    State.getInstance().setItem(FILTERS_STATE_KEY, JSON.stringify(this.#getFilterSettings()));
   };
 }

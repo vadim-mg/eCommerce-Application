@@ -38,7 +38,7 @@ export default class RangeSlider extends BaseElement<HTMLElement> {
   }
 
   set minValue(value: number) {
-    this.#minInput.node.value = value.toString();
+    this.#minInput.node.value = value?.toString();
     this.#setStartValue();
   }
 
@@ -47,7 +47,7 @@ export default class RangeSlider extends BaseElement<HTMLElement> {
   }
 
   set maxValue(value: number) {
-    this.#maxInput.node.value = value.toString();
+    this.#maxInput.node.value = value?.toString();
     this.#setEndValue();
   }
 

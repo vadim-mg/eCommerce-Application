@@ -33,8 +33,8 @@ const getProducts = (options: ProductGetOptions) => {
           `variants.attributes.${AttrName.BRAND}:${filteredBrans.map((val) => `"${val}"`).join(',')}`,
         ]
       : []),
-    `variants.attributes.${AttrName.MIN_PLAYER_COUNT}: range(1 to ${filter?.[AttrName.MIN_PLAYER_COUNT]})`,
-    `variants.attributes.${AttrName.MAX_PLAYER_COUNT}: range(${filter?.[AttrName.MAX_PLAYER_COUNT]} to 100)`,
+    `variants.attributes.${AttrName.MIN_PLAYER_COUNT}: range(${filter?.[AttrName.MIN_PLAYER_COUNT_START]} to ${filter?.[AttrName.MIN_PLAYER_COUNT_END]})`,
+    `variants.attributes.${AttrName.MAX_PLAYER_COUNT}: range(${filter?.[AttrName.MAX_PLAYER_COUNT_START]} to ${filter?.[AttrName.MAX_PLAYER_COUNT_END]})`,
     `variants.attributes.age-from: range(${filter?.[AttrName.AGE_FROM]?.[0] ?? '0'} to 130)`,
   ];
 
