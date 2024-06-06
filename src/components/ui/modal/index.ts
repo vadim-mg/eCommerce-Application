@@ -1,5 +1,6 @@
 import crossSVG from '@Assets/icons/cross.svg';
 import BaseElement from '@Src/components/common/base-element';
+import bodyClasses from '@Src/styles/style.module.scss';
 import classes from './style.module.scss';
 
 export default class ModalWindow extends BaseElement<HTMLElement> {
@@ -41,10 +42,12 @@ export default class ModalWindow extends BaseElement<HTMLElement> {
     if (!this.#modal.node.contains(target) || isCrossClicked) {
       this.node.remove();
       this.node.removeEventListener('click', this.#close);
+      document.body.classList.remove(bodyClasses.disabledScroll);
     }
   };
 
   show = () => {
     this.node.append(this.#modal.node);
+    document.body.classList.add(bodyClasses.disabledScroll);
   };
 }

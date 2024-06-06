@@ -112,6 +112,7 @@
 .image {
   display: block;
   border-radius: 1.5rem;
+  max-height: calc(100vh - 4rem);
 
   height: auto;
   width: 100%;
