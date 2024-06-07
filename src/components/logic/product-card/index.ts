@@ -3,6 +3,7 @@ import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 import tag from '@Src/components/common/tag';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Link from '@Src/components/ui/link';
+import cartController from '@Src/controllers/cart';
 import Products, { ImageSize } from '@Src/controllers/products';
 import { AppRoutes } from '@Src/router/routes';
 import { getPrice } from '@Src/utils/helpers';
@@ -21,7 +22,7 @@ export default class ProductCard extends BaseElement<HTMLElement> {
   }
 
   #createElement = (selectedCategory?: string) => {
-    const { key, name, description, masterVariant } = this.#product;
+    const { key, name, description, masterVariant, id } = this.#product;
     const categoryPath = selectedCategory?.length ? `${selectedCategory}/` : '';
 
     const image = masterVariant.images?.[0];
@@ -80,26 +81,15 @@ export default class ProductCard extends BaseElement<HTMLElement> {
           }),
         ),
 
-        // todo remove this debug code
-        // ...(masterVariant.attributes ?? []).map((attr) =>
-        //   attr.name === AttrName.AGE_FROM ||
-        //   attr.name === AttrName.MAX_PLAYER_COUNT ||
-        //   attr.name === AttrName.MIN_PLAYER_COUNT ||
-        //   attr.name === AttrName.BRAND
-        //     ? tag<HTMLParagraphElement>({
-        //         tag: 'p',
-        //         text: `${attr.name}: ${attr.value}`,
-        //       })
-        //     : tag({ tag: 'span' }),
-        // ),
-
         // button cart
         new Button(
           { text: 'Add to Cart', class: classes.cardButton },
           ButtonClasses.NORMAL,
-          (event: Event) => {
+          async (event: Event) => {
             event.stopPropagation();
-            console.log(`Product ${this.#product.key} will added to cart in next sprint!`);
+            console.log(`Product ${this.#product.key} will added to cart!`);
+            console.log(`Product id: ${id}`);
+            await cartController.addItemToCart(id);
           },
           basketIconPath,
         ),
