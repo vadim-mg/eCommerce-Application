@@ -5,10 +5,17 @@ import cartController from '@Src/controllers/cart';
 import Products from '@Src/controllers/products';
 import classes from './style.module.scss';
 
+interface ProductInCart {
+  id: string,
+  el: BaseElement<HTMLElement>;
+}
+
 export default class CartPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
   #cartDataDebugElement!: BaseElement<HTMLDivElement>;
+
+  #productsInCart!: ProductInCart[];
 
   constructor() {
     super({ containerTag: 'main', title: 'cart page' });
@@ -24,7 +31,7 @@ export default class CartPage extends ContentPage {
               tag<HTMLLIElement>({ tag: 'li', text: `quantity: ${item.quantity}` }),
               tag<HTMLLIElement>({
                 tag: 'li',
-                text: `price: ${JSON.stringify(item.price.value)}`,
+                text: `price: ${JSON.stringify(item.price.value.centAmount)}`,
               }),
             ).node,
         ),
@@ -33,6 +40,7 @@ export default class CartPage extends ContentPage {
   }
 
   #createContent = () => {
+    this.#createProductList();
     this.#content = tag<HTMLDivElement>(
       {
         tag: 'main',
@@ -45,5 +53,34 @@ export default class CartPage extends ContentPage {
 
   #showContent = () => {
     this.container.node.append(this.#content.node);
+  };
+
+  #createProductList = async () => {
+    const data = await cartController.getCartData();
+    if (data && data.lineItems && data.lineItems.length > 0) {
+      this.#productsInCart = data.lineItems.map((item) => {
+
+        console.log(item);
+
+        const firstImgUrl = item.variant.images ? item.variant.images[0].url : '';
+        const name = item.name[Products.locale];
+        const prodQuantity = item.quantity;
+        const price = item.price.value.centAmount / 100;
+        const totalPrice = item.totalPrice.centAmount / 100;
+        const priceDiscount = totalPrice / prodQuantity;
+        const buttonTrash = new BaseElement<HTMLElement>({ tag: 'button', class: classes.buttonTrash });
+
+        console.log(firstImgUrl, name, prodQuantity, price, priceDiscount, totalPrice,);
+
+        const product = {
+          id: item.id,
+          el: new BaseElement<HTMLElement>({ tag: 'div' }, buttonTrash),
+        };
+
+        return product;
+      });
+    }
+
+
   };
 }
