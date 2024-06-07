@@ -1,0 +1,39 @@
+@import '@Src/styles/variables.scss';
+
+.wrapper {
+  display: flex;
+  gap: 2rem;
+}
+
+.member-name {
+  font-weight: 500;
+  line-height: 133%;
+}
+
+.info-list {
+  padding-left: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  li {
+    font-weight: 600;
+    line-height: 150%;
+    
+    span,
+    a {
+      font-weight: 300;
+    }
+
+    a {
+      color: var(--color-black);
+    }
+  }
+}
+
+.member-info-wrapper {
+  padding: 36px 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

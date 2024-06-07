@@ -1,2 +1,29 @@
+@import '@Src/styles/variables.scss';
+
 .about {
+ background-color: var(--color-white);
+ border-radius: 24px;
+ padding: 24px 32px;
+ margin-top: 32px;
+}
+
+.main-title {
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 125%;
+    margin: 0;
+}
+
+.team-members-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+article {
+  display: flex;
+}
+
+.team-members-wrapper article:nth-child(even) {
+  flex-direction: row-reverse;
+  justify-content: space-between;
 }
