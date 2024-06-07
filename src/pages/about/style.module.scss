@@ -5,6 +5,10 @@
   border-radius: 24px;
   padding: 24px 32px;
   margin-top: 32px;
+  margin: 32px 0px 88px;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
 }
 
 .main-title {
@@ -23,15 +27,40 @@ article {
   display: flex;
 }
 
+.team-title {
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 129%;
+  margin: 0;
+}
+
 .team-members-wrapper article:nth-child(even) {
   flex-direction: row-reverse;
   justify-content: space-between;
 }
 
 .rss-link {
-    display: block;
-    background: url('/src/assets/icons/rs_school_logo-light.svg') no-repeat center;
-    background-size: contain;
-    width: 10.75rem;
+  display: block;
+  background: url('/src/assets/icons/rs_school_logo-light.svg') no-repeat center;
+  background-size: contain;
+  width: 10.75rem;
   height: 4rem;
+}
+
+.text-wrapper {
+  p {
+    margin: 0;
+    font-weight: 300;
+    line-height: 150%;
+  }
+
+  a {
+    color: var(--color-orange-main);
+    font-weight: 300;
+  }
+}
+
+.first-text-part,
+.last-text-part {
+  display: inline;
 }
