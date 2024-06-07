@@ -27,6 +27,11 @@
 
     a {
       color: var(--color-black);
+      transition: color var(--transition-time);
+
+      &:hover {
+        color: var(--color-orange-main);
+      }
     }
   }
 }
