@@ -6,7 +6,7 @@ import Products from '@Src/controllers/products';
 import classes from './style.module.scss';
 
 interface ProductInCart {
-  id: string,
+  id: string;
   el: BaseElement<HTMLElement>;
 }
 
@@ -59,7 +59,6 @@ export default class CartPage extends ContentPage {
     const data = await cartController.getCartData();
     if (data && data.lineItems && data.lineItems.length > 0) {
       this.#productsInCart = data.lineItems.map((item) => {
-
         console.log(item);
 
         const firstImgUrl = item.variant.images ? item.variant.images[0].url : '';
@@ -68,9 +67,12 @@ export default class CartPage extends ContentPage {
         const price = item.price.value.centAmount / 100;
         const totalPrice = item.totalPrice.centAmount / 100;
         const priceDiscount = totalPrice / prodQuantity;
-        const buttonTrash = new BaseElement<HTMLElement>({ tag: 'button', class: classes.buttonTrash });
+        const buttonTrash = new BaseElement<HTMLElement>({
+          tag: 'button',
+          class: classes.buttonTrash,
+        });
 
-        console.log(firstImgUrl, name, prodQuantity, price, priceDiscount, totalPrice,);
+        console.log(firstImgUrl, name, prodQuantity, price, priceDiscount, totalPrice);
 
         const product = {
           id: item.id,
@@ -80,7 +82,5 @@ export default class CartPage extends ContentPage {
         return product;
       });
     }
-
-
   };
 }
