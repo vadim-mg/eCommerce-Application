@@ -4,6 +4,7 @@ import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Slider, { SliderIsZoom } from '@Src/components/ui/slider';
+import cartController from '@Src/controllers/cart';
 import productCategories from '@Src/controllers/categories';
 import Products, { ImageSize } from '@Src/controllers/products';
 import Router from '@Src/router';
@@ -19,7 +20,8 @@ interface ProductAttributes {
   [key: string]: string | number;
 }
 
-interface ProductFromPage {
+interface Product {
+  id?: string;
   price?: number;
   discount?: number;
   name?: string;
@@ -53,7 +55,7 @@ function createAttributeRow(title: string, attribute: string): BaseElement<HTMLD
 export default class ProductPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
-  #product!: ProductFromPage;
+  #product!: Product;
 
   #productKey!: string | undefined;
 
@@ -92,6 +94,7 @@ export default class ProductPage extends ContentPage {
     Products.getProductByKey(productKey)
       .then((product) => {
         // You can use static properties and classes from here '@Src/controllers/products' for pictures for example
+        this.#product.id = product.id;
         this.#product.name = product.name['en-GB'];
         this.#createPrice(product.masterVariant.prices as Price[]);
         this.#createAttributes(product.masterVariant.attributes as Attribute[]);
@@ -162,8 +165,11 @@ export default class ProductPage extends ContentPage {
     const button = new Button(
       { text: 'Add to Cart', class: classes.button },
       ButtonClasses.NORMAL,
-      () => {
+      async () => {
         console.log('Product added to the cart');
+        if (this.#product.id) {
+          await cartController.addItemToCart(this.#product.id);
+        }
       },
       cartIcon,
     );
