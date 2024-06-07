@@ -2,10 +2,10 @@
 
 .about {
   background-color: var(--color-white);
-  border-radius: 24px;
-  padding: 24px 32px;
-  margin-top: 32px;
-  margin: 32px 0px 88px;
+  border-radius: 1.5rem;
+  padding: 1.5rem 2rem;
+  margin-top: 2rem;
+  margin: 2rem 0px 5.5rem;
   display: flex;
   flex-direction: column;
   gap: 3rem;
@@ -13,7 +13,7 @@
 
 .main-title {
   font-weight: 400;
-  font-size: 32px;
+  font-size: 2rem;
   line-height: 125%;
   margin: 0;
 }
@@ -25,11 +25,16 @@
 
 article {
   display: flex;
+
+  img {
+    width: 288px;
+    height: 344px;
+  }
 }
 
 .team-title {
   font-weight: 400;
-  font-size: 28px;
+  font-size: 1.75rem;
   line-height: 129%;
   margin: 0;
 }
@@ -37,6 +42,12 @@ article {
 .team-members-wrapper article:nth-child(even) {
   flex-direction: row-reverse;
   justify-content: space-between;
+}
+
+@media (max-width: 720px) {
+  .team-members-wrapper article:nth-child(even) {
+    flex-direction: column;
+  }
 }
 
 .rss-link {

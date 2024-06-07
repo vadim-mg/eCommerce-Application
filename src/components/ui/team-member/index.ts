@@ -39,7 +39,7 @@ export default class TeamMember extends BaseElement<HTMLElement> {
     githubPath: string,
     imgPath: string,
   ) => {
-    const memberImage = new BaseElement<HTMLImageElement>({ tag: 'img', src: imgPath });
+    const memberImage = new BaseElement<HTMLImageElement>({ tag: 'img', src: imgPath, alt: `Photo of ${name}` });
     const memberInfo = new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.memberInfoWrapper },
       new BaseElement<HTMLHeadingElement>({ tag: 'h2', class: classes.memberName, text: name }),
