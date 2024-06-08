@@ -1,7 +1,10 @@
 import cartIcon from '@Assets/icons/basket.svg';
+import checkIcon from '@Assets/icons/check_big.svg';
+import trashIcon from '@Assets/icons/trash.svg';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
+import ProductCard from '@Src/components/logic/product-card';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Slider, { SliderIsZoom } from '@Src/components/ui/slider';
 import cartController from '@Src/controllers/cart';
@@ -57,31 +60,11 @@ export default class ProductPage extends ContentPage {
 
   #product!: Product;
 
-  #productKey!: string | undefined;
+  #alreadyInCart!: number;
 
-  #productPrice!: number;
+  #addToCartButton!: Button;
 
-  #productDiscount!: number;
-
-  #productName!: string;
-
-  #productCurrency!: string;
-
-  #productDescription!: string;
-
-  #productMinPlayers!: number;
-
-  #productMaxPlayers!: number;
-
-  #productTypeOfGame!: string;
-
-  #productAgeFrom!: number;
-
-  #productBrand!: string;
-
-  #productImages!: Image[];
-
-  #productImagesSmall!: Image[];
+  #removeFromCartButton!: Button;
 
   /**
    *
@@ -99,10 +82,13 @@ export default class ProductPage extends ContentPage {
         this.#createPrice(product.masterVariant.prices as Price[]);
         this.#createAttributes(product.masterVariant.attributes as Attribute[]);
         this.#product.images = product.masterVariant.images as Image[];
-        productCategories.getCategories().then(() => {
+        this.#alreadyInCart = cartController.howManyAlreadyInCart(this.#product.id);
+
+        productCategories.getCategories().then(async () => {
           this.#product.categories = product.categories
             .map((val) => productCategories.getById(val.id)?.name?.[process.env.LOCALE])
             .join(', ');
+          await cartController.getCartData();
           this.#createContent();
           this.#showContent();
         });
@@ -187,18 +173,65 @@ export default class ProductPage extends ContentPage {
             : []),
         ),
 
-        // cart buttons
-        new Button(
-          { text: 'Add to Cart', class: classes.button },
+        // add cart button
+        (this.#addToCartButton = new Button(
+          {
+            text: ProductCard.inCartText(this.#alreadyInCart),
+            class: classes.button,
+            disabled: !!this.#alreadyInCart,
+          },
           ButtonClasses.NORMAL,
-          async () => {
-            console.log('Product added to the cart');
-            if (this.#product.id) {
-              await cartController.addItemToCart(this.#product.id);
+          async (event: Event) => {
+            event.stopPropagation();
+            if (!this.#alreadyInCart && this.#product.id) {
+              try {
+                await cartController.addItemToCart(this.#product.id);
+                this.#alreadyInCart += 1;
+                this.#addToCartButton.node.textContent = ProductCard.inCartText(
+                  this.#alreadyInCart,
+                );
+                this.header.refreshCountInCartElement();
+                this.#addToCartButton.disable();
+                this.#addToCartButton.addIcon(checkIcon);
+                this.#removeFromCartButton.node.hidden = false;
+              } catch (err) {
+                console.log(err);
+              }
             }
           },
-          cartIcon,
-        ),
+          !this.#alreadyInCart ? cartIcon : checkIcon,
+        )),
+        // remove cart button
+        (this.#removeFromCartButton = new Button(
+          {
+            text: 'Remove from cart',
+            class: [classes.button, classes.buttonRemove],
+            hidden: !this.#alreadyInCart,
+          },
+          ButtonClasses.NORMAL,
+          async (event: Event) => {
+            event.stopPropagation();
+            if (this.#alreadyInCart && this.#product.id) {
+              try {
+                await cartController.removeItemFromCart(this.#product.id);
+                this.#alreadyInCart -= 1;
+                this.#addToCartButton.node.textContent = ProductCard.inCartText(
+                  this.#alreadyInCart,
+                );
+                this.#addToCartButton.addIcon(checkIcon);
+                if (this.#alreadyInCart === 0) {
+                  this.#removeFromCartButton.node.hidden = true;
+                  this.#addToCartButton.enable();
+                  this.#addToCartButton.icon = cartIcon;
+                }
+                this.header.refreshCountInCartElement();
+              } catch (err) {
+                console.log(err);
+              }
+            }
+          },
+          trashIcon,
+        )),
       ),
 
       // attributes list
@@ -228,7 +261,6 @@ export default class ProductPage extends ContentPage {
         }),
       ),
     );
-
     return wrapper;
   };
 

@@ -49,6 +49,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
   @media (max-width: 1080px) {
     flex-direction: column;
     gap: 1.5rem;
@@ -73,7 +75,13 @@
   text-decoration: line-through;
 }
 .button {
+  margin-left: auto;
 }
+
+.button_remove {
+  margin-left: auto;
+}
+
 .attribute-list {
   margin: 0;
   padding-left: 0;
@@ -125,4 +133,8 @@
   @media (max-width: 1080px) {
     min-width: 100%;
   }
+}
+
+.hidden {
+  display: none;
 }
