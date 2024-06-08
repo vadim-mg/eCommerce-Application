@@ -52,7 +52,7 @@ class CartController {
     }
   };
 
-  addItemToCart = async (productId: string, quantity = 3) => {
+  addItemToCart = async (productId: string, quantity = 1) => {
     try {
       if (!this.#cartData) {
         this.#cartData = await this.#getActiveCart();
