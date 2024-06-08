@@ -48,6 +48,7 @@
 .product-price-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   @media (max-width: 1080px) {
     flex-direction: column;
     gap: 1.5rem;
