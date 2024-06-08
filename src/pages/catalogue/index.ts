@@ -40,7 +40,7 @@ export default class CataloguePage extends ContentPage {
 
   #categorySection!: CategoryList;
 
-  #header!: BaseElement<HTMLHeadingElement>;
+  #headerH1!: BaseElement<HTMLHeadingElement>;
 
   #selectedSort: SortingType;
 
@@ -77,7 +77,7 @@ export default class CataloguePage extends ContentPage {
   #onCategorySelectHandler = (id: string) => {
     Router.getInstance().changeCurrentRoute(productCategories.getById(id)?.key ?? '');
     this.#renderProductList();
-    this.#header.node.textContent =
+    this.#headerH1.node.textContent =
       productCategories.getById(id)?.name?.[process.env.LOCALE] ?? '';
   };
 
@@ -95,7 +95,7 @@ export default class CataloguePage extends ContentPage {
         currentCategoryId,
       )),
       // header
-      (this.#header = tag({
+      (this.#headerH1 = tag({
         tag: 'h1',
         text: productCategories.getById(currentCategoryId)?.name?.[process.env.LOCALE],
         class: classes.header,
@@ -115,7 +115,15 @@ export default class CataloguePage extends ContentPage {
         // filters
         (this.#filters = new FilterForm(this.#products, this.#renderProductList)),
         // products
-        (this.#productList = new ProductList({ class: classes.products }, this.#products)),
+        (this.#productList = new ProductList(
+          { class: classes.products },
+          {
+            products: this.#products,
+            onAddToCartCb: () => {
+              this.header.refreshCountInCartElement();
+            },
+          },
+        )),
       ),
     );
   };

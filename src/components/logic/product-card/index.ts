@@ -5,24 +5,38 @@ import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Link from '@Src/components/ui/link';
 import cartController from '@Src/controllers/cart';
 import Products, { ImageSize } from '@Src/controllers/products';
-import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
 import { getPrice } from '@Src/utils/helpers';
 import { ProductProjection } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
 
 type ProductCardProps = Omit<ElementProps<HTMLLinkElement>, 'tag'>;
+
+export type AddToCartCbFunction = () => void;
 export default class ProductCard extends BaseElement<HTMLElement> {
   #product: ProductProjection;
 
   #cartButton!: Button;
 
-  constructor(props: ProductCardProps, product: ProductProjection, selectedCategoryKey?: string) {
+  #onAddToCartCb;
+
+  constructor(
+    props: ProductCardProps,
+    logicProperties: {
+      product: ProductProjection;
+      selectedCategoryKey?: string;
+      onAddToCartCb: AddToCartCbFunction;
+    },
+  ) {
     super({ tag: 'div', ...props });
-    this.#product = product;
-    this.node.append(this.#createElement(selectedCategoryKey).node);
+    this.#product = logicProperties.product;
+    this.#onAddToCartCb = logicProperties.onAddToCartCb;
+    this.node.append(this.#createElement(logicProperties.selectedCategoryKey).node);
     this.node.classList.add(classes.productCard);
   }
+
+  static inCartText = (inCartCount: number) =>
+    inCartCount ? `In cart${inCartCount > 1 ? ` (${inCartCount})` : ''}` : 'Add to cart';
 
   #createElement = (selectedCategory?: string) => {
     const { key, name, description, masterVariant, id } = this.#product;
@@ -31,7 +45,6 @@ export default class ProductCard extends BaseElement<HTMLElement> {
     const image = masterVariant.images?.[0];
     const prices = (masterVariant.prices ?? [])[0];
     let alreadyInCart = cartController.howManyAlreadyInCart(this.#product.id);
-    const inCartText = (inCartCount: number) => `In cart: ${inCartCount}. Go to cart.`;
 
     const link = new Link(
       {
@@ -89,18 +102,25 @@ export default class ProductCard extends BaseElement<HTMLElement> {
         // button cart
         (this.#cartButton = new Button(
           {
-            text: alreadyInCart ? inCartText(alreadyInCart) : `Add to Cart`,
+            text: ProductCard.inCartText(alreadyInCart),
             class: classes.cardButton,
+            disabled: !!alreadyInCart,
           },
           ButtonClasses.NORMAL,
           async (event: Event) => {
             event.stopPropagation();
             if (!alreadyInCart) {
-              await cartController.addItemToCart(id);
-              alreadyInCart += 1;
-              this.#cartButton.node.textContent = inCartText(alreadyInCart);
+              try {
+                await cartController.addItemToCart(id);
+                alreadyInCart += 1;
+                this.#cartButton.node.textContent = ProductCard.inCartText(alreadyInCart);
+                this.#onAddToCartCb();
+                this.#cartButton.disable();
+              } catch (err) {
+                console.log(err);
+              }
             } else {
-              Router.getInstance().route(AppRoutes.CART);
+              // Router.getInstance().route(AppRoutes.CART);
             }
           },
           basketIconPath,

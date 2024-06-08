@@ -9,6 +9,7 @@ import ROUTES, { AppRoutes, RouteVisibility } from '@Src/router/routes';
 import State from '@Src/state';
 
 import auth from '@Src/controllers/auth';
+import cartController from '@Src/controllers/cart';
 import Router from '@Src/router';
 import classes from './style.module.scss';
 
@@ -27,12 +28,28 @@ export default class Header extends BaseElement<HTMLElement> {
 
   #hamburgerSidebar: HamburgerSidebar;
 
+  #countInCartElement!: BaseElement<HTMLDivElement>;
+
   constructor(props: HeaderProps) {
     super({ tag: 'header', class: classes.header, ...props });
     this.#burgerButton = Header.#createBurgerButton();
     this.#hamburgerSidebar = this.#createBurgerMenu();
     this.#appendContent();
     this.#addEventListeners();
+    // we should always give new data to show it in header and in other pages
+    cartController.getCartData().then(() => {
+      this.refreshCountInCartElement();
+    });
+  }
+
+  refreshCountInCartElement() {
+    const cartCountElement = this.#countInCartElement.node;
+    if (cartCountElement) {
+      cartCountElement.textContent = cartController.totalProductCount.toString();
+      cartCountElement.classList[cartController.totalProductCount === 0 ? 'add' : 'remove'](
+        classes.basketCountHidden,
+      );
+    }
   }
 
   #addEventListeners = () => {
@@ -43,7 +60,7 @@ export default class Header extends BaseElement<HTMLElement> {
     this.node.append(
       this.#hamburgerSidebar.node,
       this.#createLogoNavigationWrapper().node,
-      Header.#createUserActionsWrapper().node,
+      this.#createUserActionsWrapper().node,
       this.#burgerButton.node,
     );
   };
@@ -96,8 +113,8 @@ export default class Header extends BaseElement<HTMLElement> {
         ),
     );
 
-  static #createUserActionsWrapper = () =>
-    new BaseElement<HTMLDivElement>(
+  #createUserActionsWrapper = () => {
+    const userActionsWrapper = new BaseElement<HTMLDivElement>(
       {
         tag: 'div',
         class: classes.userActionsWrapper,
@@ -115,10 +132,16 @@ export default class Header extends BaseElement<HTMLElement> {
             class: classes.basketIcon,
             innerHTML: basketSvg,
           }),
+          (this.#countInCartElement = new BaseElement<HTMLDivElement>({
+            tag: 'div',
+            class: [classes.basketCount, classes.basketCountHidden],
+          })),
         ),
       ),
-      this.#createButtonContainer(),
+      Header.#createButtonContainer(),
     );
+    return userActionsWrapper;
+  };
 
   static #createButtonContainer = () =>
     new BaseElement<HTMLDivElement>(

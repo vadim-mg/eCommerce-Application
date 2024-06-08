@@ -15,7 +15,7 @@ type ContentPageProps = {
 export default class ContentPage extends BasePage {
   protected container: Container;
 
-  #header: Header;
+  header: Header;
 
   protected placeForBanner!: BaseElement<HTMLElement>;
 
@@ -25,7 +25,7 @@ export default class ContentPage extends BasePage {
 
   constructor(props: ContentPageProps) {
     super({ title: props.title });
-    this.#header = new Header({});
+    this.header = new Header({});
     this.#breadCrumbs = props.showBreadCrumbs ? new BreadCrumbs() : undefined;
     this.placeForBanner = new BaseElement<HTMLElement>({
       tag: 'div',
@@ -45,7 +45,7 @@ export default class ContentPage extends BasePage {
     super.render();
     document.body.classList.add(classes.contentPage);
     document.body.append(
-      this.#header.node,
+      this.header.node,
       this.placeForBanner.node,
       this.container.node,
       this.#footer.node,
