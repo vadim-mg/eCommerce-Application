@@ -146,87 +146,88 @@ export default class ProductPage extends ContentPage {
   };
 
   #createProductData = () => {
-    const wrapper = new BaseElement<HTMLElement>({ tag: 'div', class: classes.productInfo });
-    const h1 = new BaseElement<HTMLHeadingElement>({
-      tag: 'h1',
-      class: classes.productName,
-      text: this.#product.name,
-    });
+    const wrapper = new BaseElement<HTMLElement>(
+      { tag: 'div', class: classes.productInfo },
 
-    const priceRow = new BaseElement<HTMLDivElement>({
-      tag: 'div',
-      class: classes.productPriceRow,
-    });
-    const priceEl = new BaseElement<HTMLDivElement>({
-      tag: 'div',
-      class: classes.price,
-      text: `€${String((this.#product.price! / 100).toFixed(2))}`,
-    });
-    const button = new Button(
-      { text: 'Add to Cart', class: classes.button },
-      ButtonClasses.NORMAL,
-      async () => {
-        console.log('Product added to the cart');
-        if (this.#product.id) {
-          await cartController.addItemToCart(this.#product.id);
-        }
-      },
-      cartIcon,
-    );
-    const priceWrapper = new BaseElement<HTMLDivElement>(
-      { tag: 'div', class: classes.productPriceWrapper },
-      new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.priceTitle, text: 'Price:' }),
-      priceEl,
-    );
-    if (this.#product.discount) {
-      const discountPrice = new BaseElement<HTMLDivElement>({
-        tag: 'div',
-        class: classes.price,
-        text: `€${String((this.#product.discount / 100).toFixed(2))}`,
-      });
-      priceWrapper.node.append(discountPrice.node);
-      priceEl.node.classList.add(classes.priceOld);
-      h1.node.classList.add(classes.productNameSale);
-    }
-    priceRow.node.append(priceWrapper.node);
-    priceRow.node.append(button.node);
-
-    const brandRow = createAttributeRow('Brand:', this.#product.brand!);
-    const categoryRow = createAttributeRow('Categories:', this.#product.categories!);
-    // const typeRow = createAttributeRow('Type of game:', this.#product.typeOfGame!);
-    const numberRow = createAttributeRow(
-      'Number of players:',
-      `${this.#product.minNumberOfPlayers} - ${this.#product.maxNumberOfPlayers} `,
-    );
-    const ageRow = createAttributeRow('Recommended age from:', `${this.#product.ageFrom} years`);
-
-    const attributesList = new BaseElement<HTMLOListElement>(
-      { tag: 'ul', class: classes.attributeList },
-      brandRow,
-      categoryRow,
-      // typeRow,
-      numberRow,
-      ageRow,
-    );
-
-    const desc = new BaseElement<HTMLDivElement>(
-      { tag: 'div', class: classes.desc },
-      new BaseElement<HTMLDivElement>({
-        tag: 'div',
-        class: classes.descTitle,
-        text: 'Description:',
+      // header1
+      tag({
+        tag: 'h1',
+        class: [classes.productName, ...(this.#product.discount ? [classes.productNameSale] : [])],
+        text: this.#product.name,
       }),
-      new BaseElement<HTMLDivElement>({
-        tag: 'div',
-        class: classes.descText,
-        text: this.#product.description,
-      }),
-    );
 
-    wrapper.node.append(h1.node);
-    wrapper.node.append(priceRow.node);
-    wrapper.node.append(attributesList.node);
-    wrapper.node.append(desc.node);
+      // price row
+      tag(
+        {
+          tag: 'div',
+          class: classes.productPriceRow,
+        },
+
+        // prices
+        tag(
+          { tag: 'div', class: classes.productPriceWrapper },
+          tag({ tag: 'div', class: classes.priceTitle, text: 'Price:' }),
+
+          // first price
+          tag({
+            tag: 'div',
+            class: [classes.price, ...(this.#product.discount ? [classes.priceOld] : [])],
+            text: `€${String((this.#product.price! / 100).toFixed(2))}`,
+          }),
+
+          // second price
+          ...(this.#product.discount
+            ? [
+                tag({
+                  tag: 'div',
+                  class: classes.price,
+                  text: `€${String((this.#product.discount / 100).toFixed(2))}`,
+                }),
+              ]
+            : []),
+        ),
+
+        // cart buttons
+        new Button(
+          { text: 'Add to Cart', class: classes.button },
+          ButtonClasses.NORMAL,
+          async () => {
+            console.log('Product added to the cart');
+            if (this.#product.id) {
+              await cartController.addItemToCart(this.#product.id);
+            }
+          },
+          cartIcon,
+        ),
+      ),
+
+      // attributes list
+      tag(
+        { tag: 'ul', class: classes.attributeList },
+        createAttributeRow('Brand:', this.#product.brand!),
+        createAttributeRow('Categories:', this.#product.categories!),
+        createAttributeRow(
+          'Number of players:',
+          `${this.#product.minNumberOfPlayers} - ${this.#product.maxNumberOfPlayers} `,
+        ),
+        createAttributeRow('Recommended age from:', `${this.#product.ageFrom} years`),
+      ),
+
+      // description
+      tag(
+        { tag: 'div', class: classes.desc },
+        tag({
+          tag: 'div',
+          class: classes.descTitle,
+          text: 'Description:',
+        }),
+        tag({
+          tag: 'div',
+          class: classes.descText,
+          text: this.#product.description,
+        }),
+      ),
+    );
 
     return wrapper;
   };
