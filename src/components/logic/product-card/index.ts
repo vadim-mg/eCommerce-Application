@@ -5,6 +5,7 @@ import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Link from '@Src/components/ui/link';
 import cartController from '@Src/controllers/cart';
 import Products, { ImageSize } from '@Src/controllers/products';
+import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
 import { getPrice } from '@Src/utils/helpers';
 import { ProductProjection } from '@commercetools/platform-sdk';
@@ -13,6 +14,8 @@ import classes from './style.module.scss';
 type ProductCardProps = Omit<ElementProps<HTMLLinkElement>, 'tag'>;
 export default class ProductCard extends BaseElement<HTMLElement> {
   #product: ProductProjection;
+
+  #cartButton!: Button;
 
   constructor(props: ProductCardProps, product: ProductProjection, selectedCategoryKey?: string) {
     super({ tag: 'div', ...props });
@@ -27,8 +30,10 @@ export default class ProductCard extends BaseElement<HTMLElement> {
 
     const image = masterVariant.images?.[0];
     const prices = (masterVariant.prices ?? [])[0];
+    let alreadyInCart = cartController.howManyAlreadyInCart(this.#product.id);
+    const inCartText = (inCartCount: number) => `In cart: ${inCartCount}. Go to cart.`;
 
-    return new Link(
+    const link = new Link(
       {
         href: `${AppRoutes.CATALOGUE}/${categoryPath}${key}`,
         class: [classes.productLink],
@@ -82,18 +87,27 @@ export default class ProductCard extends BaseElement<HTMLElement> {
         ),
 
         // button cart
-        new Button(
-          { text: 'Add to Cart', class: classes.cardButton },
+        (this.#cartButton = new Button(
+          {
+            text: alreadyInCart ? inCartText(alreadyInCart) : `Add to Cart`,
+            class: classes.cardButton,
+          },
           ButtonClasses.NORMAL,
           async (event: Event) => {
             event.stopPropagation();
-            console.log(`Product ${this.#product.key} will added to cart!`);
-            console.log(`Product id: ${id}`);
-            await cartController.addItemToCart(id);
+            if (!alreadyInCart) {
+              await cartController.addItemToCart(id);
+              alreadyInCart += 1;
+              this.#cartButton.node.textContent = inCartText(alreadyInCart);
+            } else {
+              Router.getInstance().route(AppRoutes.CART);
+            }
           },
           basketIconPath,
-        ),
+        )),
       ),
     );
+
+    return link;
   };
 }

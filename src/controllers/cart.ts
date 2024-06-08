@@ -6,15 +6,20 @@ import errorHandler from './error-handler';
 class CartController {
   #cartData: Cart | null;
 
+  #productInCart: Map<string, number>;
+
   constructor() {
-    console.log('cart constructor');
     this.#cartData = null;
+    this.#productInCart = new Map();
   }
 
   #getActiveCart = async () => {
     try {
       this.#cartData = (await cartApi.getActiveCart()).body;
       console.log('#getActiveCart, this.#cartData = ', this.#cartData);
+      this.#productInCart = new Map(
+        this.#cartData.lineItems.map((item) => [item.productId, item.quantity]),
+      );
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);
@@ -59,6 +64,7 @@ class CartController {
           addLineItemToCartAction,
         ])
       ).body;
+      this.#productInCart.set(productId, (this.#productInCart.get(productId) ?? 0) + 1);
       console.log('#addItemToCart, this.#cartData = ', this.#cartData);
     } catch (e) {
       const error = e as HttpErrorType;
@@ -80,8 +86,12 @@ class CartController {
     }
     return this.#cartData;
   };
+
+  howManyAlreadyInCart = (productId: string) => this.#productInCart.get(productId) ?? 0;
 }
 
-const cart = new CartController();
+export const cartController = new CartController();
+// we should always give new data to show it in header and in other pages
+cartController.getCartData();
 
-export default cart;
+export default cartController;
