@@ -18,34 +18,38 @@ const createProductRow = (
   totalPrice: number,
   discount?: number,
 ): BaseElement<HTMLElement> => {
-  const leftPart = tag(
-    { tag: 'div', class: classes.prodRowLeft },
-    // image
-    tag({ tag: 'div', class: classes.prodRowImgWrapper },
-      tag<HTMLImageElement>({
-        tag: 'img',
-        class: classes.prodRowImg,
-        src: Products.getImageUrl(imgUrl ?? '', ImageSize.small),
-        alt: name,
-      }),
-    ),
-    // name
-    tag({ tag: 'div', class: classes.prodRowName, text: name }),
+  // image
+  const imgEl = tag(
+    { tag: 'div', class: classes.prodRowImgWrapper },
+    tag<HTMLImageElement>({
+      tag: 'img',
+      class: classes.prodRowImg,
+      src: Products.getImageUrl(imgUrl ?? '', ImageSize.small),
+      alt: name,
+    }),
   );
+  // name
+  const nameEl = tag({ tag: 'div', class: classes.prodRowName, text: name });
   const rightPart = tag(
     { tag: 'div', class: classes.prodRowRight },
     // block with price for one and quantity
     tag(
-      { tag: 'div', class: classes.prodRowPrices },
-      // normal price
-      tag({
-        tag: 'div',
-        class: discount ? classes.prodRowPriceOld : classes.prodRowPrice,
-        innerHTML: `€${price.toFixed(2)}`,
-      }),
-      // discount price
-      tag({ tag: 'div', class: classes.prodRowPrice, innerHTML: discount ? `€${discount.toFixed(2)}` : '' }),
-
+      { tag: 'div', class: classes.prodRowPricesAndCount },
+      tag(
+        { tag: 'div', class: classes.prodRowPrices },
+        // normal price
+        tag({
+          tag: 'div',
+          class: discount ? classes.prodRowPriceOld : classes.prodRowPrice,
+          innerHTML: `€${price.toFixed(2)}`,
+        }),
+        // discount price
+        tag({
+          tag: 'div',
+          class: classes.prodRowPrice,
+          innerHTML: discount ? `€${discount.toFixed(2)}` : '',
+        }),
+      ),
       // cross icon
       tag({ tag: 'div', class: classes.prodRowCross, innerHTML: crossSVG }),
 
@@ -64,8 +68,11 @@ const createProductRow = (
     }),
   );
 
-  const row = tag({ tag: 'div', class: discount ? [classes.prodRow, classes.prodRowDiscount] : classes.prodRow, });
-  row.node.append(leftPart.node, rightPart.node);
+  const row = tag({
+    tag: 'div',
+    class: discount ? [classes.prodRow, classes.prodRowDiscount] : classes.prodRow,
+  });
+  row.node.append(imgEl.node, nameEl.node, rightPart.node);
 
   return row;
 };
@@ -85,11 +92,11 @@ export default class CartPage extends ContentPage {
         tag: 'div',
         class: classes.cart,
       },
-      tag({ tag: 'div', class: classes.h1 },
+      tag(
+        { tag: 'div', class: classes.h1 },
         tag({ tag: 'div', class: classes.h1Svg, innerHTML: cardSVG }),
         tag<HTMLHeadingElement>({ tag: 'h1', class: classes.h1Text, text: this.title }),
       ),
-
     );
     this.#createProductList();
   };
