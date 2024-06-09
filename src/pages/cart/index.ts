@@ -1,54 +1,77 @@
+import crossSVG from '@Assets/icons/cross.svg';
+import trashSVG from '@Assets/icons/trash.svg';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
+import SpinerInput from '@Src/components/ui/spinner-input';
 import cartController from '@Src/controllers/cart';
-import Products from '@Src/controllers/products';
+import Products, { ImageSize } from '@Src/controllers/products';
 import classes from './style.module.scss';
 
-interface ProductInCart {
-  id: string;
-  el: BaseElement<HTMLElement>;
-}
+const createProductRow = (id: string,
+  imgUrl: string,
+  name: string,
+  quantity:
+    number,
+  price: number,
+  totalPrice: number,
+  discount?: number,): BaseElement<HTMLElement> => {
+  const leftPart = tag({ tag: 'div', class: classes.prodRowLeft },
+    // image
+    tag<HTMLImageElement>({
+      tag: 'img',
+      class: classes.prodRowImg,
+      src: Products.getImageUrl(imgUrl ?? '', ImageSize.small),
+      alt: name,
+    }),
+    // name
+    tag({ tag: 'div', class: classes.prodRowName, text: name })
+  );
+  const rightPart = tag({ tag: 'div', class: classes.prodRowRight },
+    // block with price for one and quantity
+    tag({ tag: 'div', class: classes.prodRowPrices },
+      // normal price
+      tag({ tag: 'div', class: discount ? classes.prodRowPriceOld : classes.prodRowPrice, innerHTML: `€${price}` }),
+      // discount price
+      tag({ tag: 'div', class: classes.prodRowPrice, innerHTML: discount ? `€${discount}` : '' }),
+
+      // cross icon
+      tag({ tag: 'div', class: classes.prodRowName, innerHTML: crossSVG }),
+
+      new SpinerInput(quantity, classes.spinnerInput, () => console.log(`отправляем данные о добавлении еще одного товара с ${id} и получаем !`)),
+    ),
+    // total price
+    tag({ tag: 'div', class: classes.prodRowTotalPrice, text: `€${totalPrice}` }),
+    // trash icon
+    tag({ tag: 'div', class: classes.prodRowTrash, innerHTML: trashSVG, onclick: () => console.log(`удаляю товар с ${id}`) })
+  );
+
+  const row = tag({ tag: 'div', class: classes.prodRow });
+  row.node.append(leftPart.node, rightPart.node);
+
+  return row;
+};
 
 export default class CartPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
-  #cartDataDebugElement!: BaseElement<HTMLDivElement>;
-
-  #productsInCart!: ProductInCart[];
+  // #cartDataDebugElement!: BaseElement<HTMLDivElement>;
 
   constructor() {
-    super({ containerTag: 'main', title: 'cart page' });
+    super({ containerTag: 'main', title: 'Cart' });
     this.#createContent();
     this.#showContent();
-    cartController.getCartData().then((cartData) =>
-      this.#cartDataDebugElement.node.append(
-        ...(cartData?.lineItems ?? []).map(
-          (item) =>
-            tag<HTMLUListElement>(
-              { tag: 'ul', text: `id: ${item.id}` },
-              tag<HTMLLIElement>({ tag: 'li', text: `name: ${item.name[Products.locale]}` }),
-              tag<HTMLLIElement>({ tag: 'li', text: `quantity: ${item.quantity}` }),
-              tag<HTMLLIElement>({
-                tag: 'li',
-                text: `price: ${JSON.stringify(item.price.value.centAmount)}`,
-              }),
-            ).node,
-        ),
-      ),
-    );
   }
 
   #createContent = () => {
-    this.#createProductList();
     this.#content = tag<HTMLDivElement>(
       {
         tag: 'main',
         class: classes.cart,
       },
-      tag<HTMLHeadingElement>({ tag: 'h1', text: this.title }),
-      (this.#cartDataDebugElement = tag<HTMLDivElement>({ tag: 'div', text: `loading card` })),
+      tag<HTMLHeadingElement>({ tag: 'h1', text: this.title })
     );
+    this.#createProductList();
   };
 
   #showContent = () => {
@@ -56,31 +79,28 @@ export default class CartPage extends ContentPage {
   };
 
   #createProductList = async () => {
+    const list = tag({ tag: 'div', class: classes.prodList });
     const data = await cartController.getCartData();
-    if (data && data.lineItems && data.lineItems.length > 0) {
-      this.#productsInCart = data.lineItems.map((item) => {
-        console.log(item);
-
+    console.log(data);
+    if (data?.lineItems ?? []) {
+      data?.lineItems.forEach((item) => {
         const firstImgUrl = item.variant.images ? item.variant.images[0].url : '';
-        const name = item.name[Products.locale];
-        const prodQuantity = item.quantity;
         const price = item.price.value.centAmount / 100;
         const totalPrice = item.totalPrice.centAmount / 100;
-        const priceDiscount = totalPrice / prodQuantity;
-        const buttonTrash = new BaseElement<HTMLElement>({
-          tag: 'button',
-          class: classes.buttonTrash,
-        });
-
-        console.log(firstImgUrl, name, prodQuantity, price, priceDiscount, totalPrice);
-
-        const product = {
-          id: item.id,
-          el: new BaseElement<HTMLElement>({ tag: 'div' }, buttonTrash),
-        };
-
-        return product;
+        const priceDiscount = totalPrice / item.quantity !== price ? totalPrice / item.quantity : undefined;
+        const row = createProductRow(item.id,
+          firstImgUrl,
+          item.name[Products.locale],
+          item.quantity,
+          price,
+          totalPrice,
+          priceDiscount
+        );
+        list.node.append(row.node);
       });
-    }
+    };
+    this.#content.node.append(list.node);
   };
+
+
 }

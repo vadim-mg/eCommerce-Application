@@ -1,0 +1,45 @@
+@import '@Src/styles/variables.scss';
+
+.wrapper{
+  display: flex;
+}
+.input{
+  width: 2.375rem;
+  height: 2.375rem;
+  outline: none;
+  border: none;
+  text-align: center;
+  background:var(--color-white);
+}
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.minus, .plus{
+  background: #F1F1F5;
+  width: 2.375rem;
+  height: 2.375rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius:0.5rem;
+  font-size: 1.5rem;
+  color: var(--color-grey);
+  transition: all var(--transition-time);
+  cursor: pointer;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--color-orange-light);
+      color: var(--color-black);
+    }
+  }
+  &:active {
+    background: var(--color-orange-light);
+    color: var(--color-black);
+  }
+  &.disable{
+    pointer-events: none;
+    color: var(--color-white);
+  }
+}

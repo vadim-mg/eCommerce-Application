@@ -1,5 +1,21 @@
+@import '@Src/styles/variables.scss';
+
 .cart {
 }
 .button-trash {
   display: block;
+}
+.prod-row-right{
+  display: flex;
+}
+.prod-row-left{
+  display: flex;
+}
+.prod-row-prices{
+  display: flex;
+}
+.prod-row{
+  background: var(--color-white);
+  display: flex;
+  justify-content: space-between;
 }
