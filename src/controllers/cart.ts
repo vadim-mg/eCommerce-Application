@@ -1,20 +1,19 @@
+import cartApi from '@Src/api/cart';
 import { Cart, MyCartDraft, MyCartUpdateAction } from '@commercetools/platform-sdk';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
-import cartApi from '@Src/api/cart';
 import errorHandler from './error-handler';
 
 class CartController {
   #cartData: Cart | null;
 
   constructor() {
-    console.log('cart constructor');
     this.#cartData = null;
   }
 
   #getActiveCart = async () => {
     try {
       this.#cartData = (await cartApi.getActiveCart()).body;
-      console.log('#getActiveCart, this.#cartData = ', this.#cartData);
+      // console.log('#getActiveCart, this.#cartData = ', this.#cartData);
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);
@@ -33,7 +32,7 @@ class CartController {
         currency: 'EUR',
       };
       this.#cartData = (await cartApi.createCart(myCartDraft)).body;
-      console.log('#createNewEmptyCart, this.#cartData = ', this.#cartData);
+      // ('#createNewEmptyCart, this.#cartData = ', this.#cartData);
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);
@@ -59,7 +58,7 @@ class CartController {
           addLineItemToCartAction,
         ])
       ).body;
-      console.log('#addItemToCart, this.#cartData = ', this.#cartData);
+      // console.log('#addItemToCart, this.#cartData = ', this.#cartData);
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);
@@ -72,7 +71,7 @@ class CartController {
       if (!this.#cartData) {
         this.#cartData = await this.#getActiveCart();
       }
-      console.log('getCartData, this.#cartData = ', this.#cartData);
+      // console.log('getCartData, this.#cartData = ', this.#cartData);
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);
