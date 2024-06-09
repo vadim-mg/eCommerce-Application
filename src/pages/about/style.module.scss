@@ -1,2 +1,77 @@
+@import '@Src/styles/variables.scss';
+
 .about {
+  background-color: var(--color-white);
+  border-radius: 1.5rem;
+  padding: 1.5rem 2rem;
+  margin-top: 2rem;
+  margin: 2rem 0px 5.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.main-title {
+  font-weight: 400;
+  font-size: 2rem;
+  line-height: 125%;
+  margin: 0;
+}
+
+.team-members-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+article {
+  display: flex;
+
+  img {
+    width: 288px;
+    height: 344px;
+  }
+}
+
+.team-title {
+  font-weight: 400;
+  font-size: 1.75rem;
+  line-height: 129%;
+  margin: 0;
+}
+
+.team-members-wrapper article:nth-child(even) {
+  flex-direction: row-reverse;
+  justify-content: space-between;
+}
+
+@media (max-width: 720px) {
+  .team-members-wrapper article:nth-child(even) {
+    flex-direction: column;
+  }
+}
+
+.rss-link {
+  display: block;
+  background: url('/src/assets/icons/rs_school_logo-light.svg') no-repeat center;
+  background-size: contain;
+  width: 10.75rem;
+  height: 4rem;
+}
+
+.text-wrapper {
+  p {
+    margin: 0;
+    font-weight: 300;
+    line-height: 150%;
+  }
+
+  a {
+    color: var(--color-orange-main);
+    font-weight: 300;
+  }
+}
+
+.first-text-part,
+.last-text-part {
+  display: inline;
 }
