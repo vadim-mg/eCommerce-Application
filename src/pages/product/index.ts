@@ -1,6 +1,6 @@
 import cartIcon from '@Assets/icons/basket.svg';
 import checkIcon from '@Assets/icons/check_big.svg';
-import trashIcon from '@Assets/icons/trash.svg';
+import trashIcon from '@Assets/icons/trash-icon.svg';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
