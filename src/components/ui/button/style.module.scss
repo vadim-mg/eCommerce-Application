@@ -8,17 +8,14 @@
   justify-content: center;
   align-items: center;
   transition: background-color var(--transition-time);
-  display: flex;
-  align-items: center;
   cursor: pointer;
   &:disabled {
     background-color: var(--color-grey-light);
     pointer-events: none;
   }
-}
-
-.hidden {
-  display: none;
+  &[hidden] {
+    display: none;
+  }
 }
 
 .normal {
@@ -27,7 +24,7 @@
   font-weight: 300;
   line-height: 71%;
   font-size: 1.25rem;
-  padding: 0.75rem 1.75rem;
+  padding: 1rem 1.75rem;
 
   &:active {
     background: var(--color-orange-light);
@@ -47,7 +44,7 @@
   }
 
   &:has(> .icon) {
-    padding: 0.57rem 2rem;
+    padding: 1rem 2rem;
   }
 }
 
@@ -100,4 +97,8 @@
     color: var(--color-white);
     pointer-events: none;
   }
+}
+
+.hidden {
+  display: none;
 }

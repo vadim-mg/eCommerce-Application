@@ -11,15 +11,32 @@ import { ProductProjection } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
 
 type ProductCardProps = Omit<ElementProps<HTMLLinkElement>, 'tag'>;
+
+export type AddToCartCbFunction = () => void;
 export default class ProductCard extends BaseElement<HTMLElement> {
   #product: ProductProjection;
 
-  constructor(props: ProductCardProps, product: ProductProjection, selectedCategoryKey?: string) {
+  #cartButton!: Button;
+
+  #onAddToCartCb;
+
+  constructor(
+    props: ProductCardProps,
+    logicProperties: {
+      product: ProductProjection;
+      selectedCategoryKey?: string;
+      onAddToCartCb: AddToCartCbFunction;
+    },
+  ) {
     super({ tag: 'div', ...props });
-    this.#product = product;
-    this.node.append(this.#createElement(selectedCategoryKey).node);
+    this.#product = logicProperties.product;
+    this.#onAddToCartCb = logicProperties.onAddToCartCb;
+    this.node.append(this.#createElement(logicProperties.selectedCategoryKey).node);
     this.node.classList.add(classes.productCard);
   }
+
+  static inCartText = (inCartCount: number) =>
+    inCartCount ? `In cart${inCartCount > 1 ? ` (${inCartCount})` : ''}` : 'Add to cart';
 
   #createElement = (selectedCategory?: string) => {
     const { key, name, description, masterVariant, id } = this.#product;
@@ -27,8 +44,9 @@ export default class ProductCard extends BaseElement<HTMLElement> {
 
     const image = masterVariant.images?.[0];
     const prices = (masterVariant.prices ?? [])[0];
+    let alreadyInCart = cartController.howManyAlreadyInCart(this.#product.id);
 
-    return new Link(
+    const link = new Link(
       {
         href: `${AppRoutes.CATALOGUE}/${categoryPath}${key}`,
         class: [classes.productLink],
@@ -82,18 +100,34 @@ export default class ProductCard extends BaseElement<HTMLElement> {
         ),
 
         // button cart
-        new Button(
-          { text: 'Add to Cart', class: classes.cardButton },
+        (this.#cartButton = new Button(
+          {
+            text: ProductCard.inCartText(alreadyInCart),
+            class: classes.cardButton,
+            disabled: !!alreadyInCart,
+          },
           ButtonClasses.NORMAL,
           async (event: Event) => {
             event.stopPropagation();
-            console.log(`Product ${this.#product.key} will added to cart!`);
-            console.log(`Product id: ${id}`);
-            await cartController.addItemToCart(id);
+            if (!alreadyInCart) {
+              try {
+                await cartController.addItemToCart(id);
+                alreadyInCart += 1;
+                this.#cartButton.node.textContent = ProductCard.inCartText(alreadyInCart);
+                this.#onAddToCartCb();
+                this.#cartButton.disable();
+              } catch (err) {
+                console.log(err);
+              }
+            } else {
+              // Router.getInstance().route(AppRoutes.CART);
+            }
           },
           basketIconPath,
-        ),
+        )),
       ),
     );
+
+    return link;
   };
 }

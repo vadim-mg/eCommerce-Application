@@ -4,7 +4,7 @@ import { ProductGetOptions } from '@Src/api/products';
 import tag from '@Src/components/common/tag';
 import productCategories from '@Src/controllers/categories';
 import Products from '@Src/controllers/products';
-import ProductCard from '../product-card';
+import ProductCard, { AddToCartCbFunction } from '../product-card';
 import classes from './style.module.scss';
 
 type ProductListProps = Omit<ElementProps<HTMLLinkElement>, 'tag'>;
@@ -12,9 +12,18 @@ type ProductListProps = Omit<ElementProps<HTMLLinkElement>, 'tag'>;
 export default class ProductList extends BaseElement<HTMLDivElement> {
   #products: Products;
 
-  constructor(props: ProductListProps, products: Products) {
+  #onAddToCartCb;
+
+  constructor(
+    props: ProductListProps,
+    logicProperties: {
+      products: Products;
+      onAddToCartCb: AddToCartCbFunction;
+    },
+  ) {
     super({ tag: 'div', ...props });
-    this.#products = products;
+    this.#products = logicProperties.products;
+    this.#onAddToCartCb = logicProperties.onAddToCartCb;
     this.node.classList.add(classes.productList);
   }
 
@@ -33,7 +42,16 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
       this.node.innerHTML = '';
       if (respBody.results.length) {
         respBody.results.forEach((product) => {
-          this.node.append(new ProductCard({}, product, selectedCategoryKey).node);
+          this.node.append(
+            new ProductCard(
+              {},
+              {
+                product,
+                selectedCategoryKey,
+                onAddToCartCb: this.#onAddToCartCb,
+              },
+            ).node,
+          );
         });
       } else {
         this.node.append(tag({ tag: 'p', text: 'No product found with same parameters' }).node);
