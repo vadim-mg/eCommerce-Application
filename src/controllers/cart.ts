@@ -16,7 +16,7 @@ class CartController {
   #getActiveCart = async () => {
     try {
       this.#cartData = (await cartApi.getActiveCart()).body;
-      console.log('#getActiveCart, this.#cartData = ', this.#cartData);
+      // console.log('#getActiveCart, this.#cartData = ', this.#cartData);
       this.#productInCart = new Map(
         this.#cartData.lineItems.map((item) => [
           item.productId,
@@ -26,6 +26,7 @@ class CartController {
           },
         ]),
       );
+
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);
@@ -44,7 +45,7 @@ class CartController {
         currency: 'EUR',
       };
       this.#cartData = (await cartApi.createCart(myCartDraft)).body;
-      console.log('#createNewEmptyCart, this.#cartData = ', this.#cartData);
+      // ('#createNewEmptyCart, this.#cartData = ', this.#cartData);
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);
@@ -84,7 +85,7 @@ class CartController {
       } else {
         console.log(`In added cart was not found added productId: ${productId}`);
       }
-      console.log('#addItemToCart, this.#cartData = ', this.#cartData);
+      // console.log('#addItemToCart, this.#cartData = ', this.#cartData);
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);
@@ -142,7 +143,7 @@ class CartController {
       if (!this.#cartData) {
         this.#cartData = await this.#getActiveCart();
       }
-      console.log('getCartData, this.#cartData = ', this.#cartData);
+      // console.log('getCartData, this.#cartData = ', this.#cartData);
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);

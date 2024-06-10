@@ -1,0 +1,64 @@
+@import '@Src/styles/variables.scss';
+
+.wrapper {
+  display: flex;
+  gap: 2rem;
+}
+
+.member-name {
+  font-weight: 500;
+  line-height: 133%;
+}
+
+.info-list {
+  padding-left: 1.56rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  li {
+    font-weight: 600;
+    line-height: 150%;
+
+    span,
+    a {
+      font-weight: 300;
+    }
+
+    a {
+      color: var(--color-black);
+      transition: color var(--transition-time);
+
+      &:hover {
+        color: var(--color-orange-main);
+      }
+    }
+  }
+}
+
+.member-info-wrapper {
+  padding: 2.25rem 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 978px) {
+  article {
+    margin: 0.625rem 0px;
+  }
+
+  .member-info-wrapper {
+    padding: 0;
+  }
+
+  .info-list {
+    gap: 0.4rem;
+  }
+}
+
+@media (max-width: 720px) {
+  article {
+    flex-direction: column;
+  }
+}
