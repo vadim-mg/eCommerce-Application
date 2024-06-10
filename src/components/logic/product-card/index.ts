@@ -12,7 +12,7 @@ import classes from './style.module.scss';
 
 type ProductCardProps = Omit<ElementProps<HTMLLinkElement>, 'tag'>;
 
-export type AddToCartCbFunction = () => void;
+export type AddToCartCbFunction = () => () => void;
 export default class ProductCard extends BaseElement<HTMLElement> {
   #product: ProductProjection;
 
@@ -110,14 +110,16 @@ export default class ProductCard extends BaseElement<HTMLElement> {
           async (event: Event) => {
             event.stopPropagation();
             if (!alreadyInCart) {
+              const makeAfterAdd = this.#onAddToCartCb();
               try {
                 await cartController.addItemToCart(id);
                 alreadyInCart += 1;
                 this.#cartButton.node.textContent = ProductCard.inCartText(alreadyInCart);
-                this.#onAddToCartCb();
                 this.#cartButton.disable();
               } catch (err) {
                 console.log(err);
+              } finally {
+                makeAfterAdd();
               }
             } else {
               // Router.getInstance().route(AppRoutes.CART);

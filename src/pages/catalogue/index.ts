@@ -5,6 +5,7 @@ import tag from '@Src/components/common/tag';
 import CategoryList from '@Src/components/logic/category-list';
 import FilterForm from '@Src/components/logic/filter-form';
 import ProductList from '@Src/components/logic/product-list';
+import Loader from '@Src/components/ui/loader';
 import SearchInput from '@Src/components/ui/search-input';
 import SelectWithKey from '@Src/components/ui/selectWithKeys';
 import productCategories from '@Src/controllers/categories';
@@ -45,6 +46,8 @@ export default class CataloguePage extends ContentPage {
   #selectedSort: SortingType;
 
   #searchField!: SearchInput;
+
+  #loader!: Loader;
 
   constructor(categoryPathPart: string[]) {
     super({ containerTag: 'div', title: 'catalogue page', showBreadCrumbs: true });
@@ -120,11 +123,17 @@ export default class CataloguePage extends ContentPage {
           {
             products: this.#products,
             onAddToCartCb: () => {
-              this.header.refreshCountInCartElement();
+              this.#loader.show();
+              return () => {
+                this.header.refreshCountInCartElement();
+                this.#loader.hide();
+              };
             },
           },
         )),
       ),
+      // loader
+      (this.#loader = new Loader({})),
     );
   };
 
