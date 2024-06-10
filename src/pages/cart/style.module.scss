@@ -5,6 +5,11 @@
   padding: 1rem 2rem;
   border-radius: 1.5rem;
   margin-top: 1.5rem;
+  margin-bottom: 2.5rem;
+  min-height: 50dvh;
+  @media (max-height: 896px) {
+    min-height: 40dvh;
+  }
 }
 .h1 {
   display: flex;
@@ -135,6 +140,21 @@
     }
   }
 }
+
+.empty-message{
+  background: url('@Assets/img/empty.svg') var(--color-white) no-repeat center;
+  background-size: contain;
+  padding: 8rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 1.25rem;
+  @media (max-height: 896px) {
+    padding: 3rem 0;
+  }
+}
+
 @media (max-width: 980px) {
   .cart {
     padding: 1rem;

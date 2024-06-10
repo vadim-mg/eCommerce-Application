@@ -4,9 +4,13 @@ import trashSVG from '@Assets/icons/trash.svg';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
+import Button, { ButtonClasses } from '@Src/components/ui/button';
 import SpinerInput from '@Src/components/ui/spinner-input';
 import cartController from '@Src/controllers/cart';
 import Products, { ImageSize } from '@Src/controllers/products';
+import Router from '@Src/router';
+import { AppRoutes } from '@Src/router/routes';
+import { Cart } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
 
 const createProductRow = (
@@ -86,7 +90,7 @@ export default class CartPage extends ContentPage {
     this.#showContent();
   }
 
-  #createContent = () => {
+  #createContent = async () => {
     this.#content = tag<HTMLDivElement>(
       {
         tag: 'div',
@@ -98,17 +102,25 @@ export default class CartPage extends ContentPage {
         tag<HTMLHeadingElement>({ tag: 'h1', class: classes.h1Text, text: this.title }),
       ),
     );
-    this.#createProductList();
+    try {
+      const data = await cartController.getCartData();
+      if (data && data.lineItems.length > 0) {
+        this.#createProductList(data);
+        this.#createRowAfterList(Number(data.totalPrice.centAmount) / 100);
+      } else {
+        this.#createEmptyMessage();
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   #showContent = () => {
     this.container.node.append(this.#content.node);
   };
 
-  #createProductList = async () => {
+  #createProductList = (data: Cart) => {
     const list = tag({ tag: 'div', class: classes.prodList });
-    const data = await cartController.getCartData();
-    console.log(data);
     if (data?.lineItems ?? []) {
       data?.lineItems.forEach((item) => {
         const firstImgUrl = item.variant.images ? item.variant.images[0].url : '';
@@ -130,4 +142,23 @@ export default class CartPage extends ContentPage {
     }
     this.#content.node.append(list.node);
   };
+
+  #createRowAfterList = (price: number) => {
+    // row with promo code input and total price
+    const row = tag({ tag: 'div', class: classes.rowAfterList },
+      // total price
+      tag({ tag: 'div', class: classes.totalPriceRow, text: 'Total price:' },
+        tag({ tag: 'span', class: classes.totalPrice, text: `€${price.toFixed(2)}` }))
+    );
+    this.#content.node.append(row.node);
+  };
+
+  #createEmptyMessage = () => {
+    const message = tag({ tag: 'div', class: classes.emptyMessage },
+      tag({ tag: 'p', text: 'Your cart is still empty.' }),
+      new Button({ text: `Let's go get the games!` }, ButtonClasses.NORMAL, () => Router.getInstance().route(AppRoutes.CATALOGUE))
+    );
+    this.#content.node.append(message.node);
+  };
+
 }
