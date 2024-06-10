@@ -1,17 +1,17 @@
 .loader {
   position: fixed;
-  left: calc(100dvw / 2 - 4rem);
-  top: calc(100dvh / 2 - 4rem);
-  width: 8rem;
-  height: 8rem;
-  border: 15px solid var(--color-grey-dark);
+  left: calc(100dvw / 2 - 2.5rem);
+  top: calc(100dvh / 2 - 2.5rem);
+  width: 5rem;
+  height: 5rem;
+  border: 10px solid var(--color-grey-dark);
   border-bottom-color: transparent;
   border-radius: 50%;
   display: inline-block;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
   background: var(--color-grey-light);
-  opacity: 75%;
+  opacity: 65%;
   z-index: 5;
 }
 
