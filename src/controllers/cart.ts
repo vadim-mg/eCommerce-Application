@@ -8,7 +8,10 @@ class CartController {
 
   #productInCart: Map<string, Pick<LineItem, 'id' | 'quantity'>>;
 
+  #requestForActiveCartSent: boolean; // if already sent request for active cart, nee to exclude concurrent same requests
+
   constructor() {
+    this.#requestForActiveCartSent = false;
     this.#cartData = null;
     this.#productInCart = new Map();
   }
@@ -140,7 +143,27 @@ class CartController {
   getCartData = async () => {
     try {
       if (!this.#cartData) {
-        this.#cartData = await this.#getActiveCart();
+        // If there isn't active request then make it
+        if (!this.#requestForActiveCartSent) {
+          this.#requestForActiveCartSent = true;
+          this.#cartData = await this.#getActiveCart();
+          this.#requestForActiveCartSent = false;
+        } else {
+          // else try read current request's result
+          await new Promise((resolve, reject) => {
+            const interval = setInterval(() => {
+              if (this.#cartData) {
+                clearTimeout(interval);
+                resolve(this.#cartData);
+              }
+            }, 100);
+            // If it won't be get, return reject wit error
+            setTimeout(() => {
+              clearTimeout(interval);
+              reject(new Error('Cart not exist'));
+            }, 5000);
+          });
+        }
       }
       // console.log('getCartData, this.#cartData = ', this.#cartData);
     } catch (e) {
