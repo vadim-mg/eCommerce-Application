@@ -53,6 +53,10 @@ export default class CataloguePage extends ContentPage {
 
   #showMoreBtn!: Button;
 
+  #limit: number = 9;
+
+  #offset: number = 0;
+
   constructor(categoryPathPart: string[]) {
     super({ containerTag: 'div', title: 'catalogue page', showBreadCrumbs: true });
     this.#selectedSort = SORT_SETTINGS.find((value) => value.default)?.key ?? SORT_SETTINGS[0].key;
@@ -78,6 +82,8 @@ export default class CataloguePage extends ContentPage {
       sortingType: this.#selectedSort,
       search: this.#searchField.value,
       filter: await this.#filters.getFilterValues(),
+      limit: this.#limit,
+      offset: this.#offset,
     });
   };
 
@@ -135,13 +141,24 @@ export default class CataloguePage extends ContentPage {
             },
           },
         )),
-        this.#showMoreBtn = new Button({ text: 'Show more' }, ButtonClasses.NORMAL, () => console.log('show more'), loadingSvg),
+        (this.#showMoreBtn = new Button(
+          { text: 'Show more' },
+          ButtonClasses.NORMAL,
+          this.renderMoreProducts,
+          loadingSvg,
+        )),
       ),
       // loader
       (this.#loader = new Loader({})),
     );
     this.#showMoreBtn.node.classList.add(classes.showMoreBtn);
   };
+
+  renderMoreProducts = () => {
+    // this.#offset = this.#limit;
+    this.#limit += 3;
+    this.#renderProductList();
+  }
 
   #sort = (val: string) => {
     this.#selectedSort = val as SortingType;
