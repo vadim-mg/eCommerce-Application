@@ -12,6 +12,8 @@ import productCategories from '@Src/controllers/categories';
 import Products from '@Src/controllers/products';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
+import Button, { ButtonClasses } from '@Src/components/ui/button';
+import loadingSvg from '@Assets/icons/loading.svg';
 import classes from './style.module.scss';
 
 const SORT_SETTINGS = [
@@ -48,6 +50,8 @@ export default class CataloguePage extends ContentPage {
   #searchField!: SearchInput;
 
   #loader!: Loader;
+
+  #showMoreBtn!: Button;
 
   constructor(categoryPathPart: string[]) {
     super({ containerTag: 'div', title: 'catalogue page', showBreadCrumbs: true });
@@ -131,10 +135,12 @@ export default class CataloguePage extends ContentPage {
             },
           },
         )),
+        this.#showMoreBtn = new Button({ text: 'Show more' }, ButtonClasses.NORMAL, () => console.log('show more'), loadingSvg),
       ),
       // loader
       (this.#loader = new Loader({})),
     );
+    this.#showMoreBtn.node.classList.add(classes.showMoreBtn);
   };
 
   #sort = (val: string) => {
