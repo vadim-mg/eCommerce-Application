@@ -26,7 +26,6 @@ class CartController {
           },
         ]),
       );
-
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);

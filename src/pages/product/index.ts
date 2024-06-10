@@ -6,6 +6,7 @@ import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import ProductCard from '@Src/components/logic/product-card';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
+import Loader from '@Src/components/ui/loader';
 import Slider, { SliderIsZoom } from '@Src/components/ui/slider';
 import cartController from '@Src/controllers/cart';
 import productCategories from '@Src/controllers/categories';
@@ -65,6 +66,8 @@ export default class ProductPage extends ContentPage {
   #addToCartButton!: Button;
 
   #removeFromCartButton!: Button;
+
+  #loader!: Loader;
 
   /**
    *
@@ -142,6 +145,8 @@ export default class ProductPage extends ContentPage {
         text: this.#product.name,
       }),
 
+      // loader
+      (this.#loader = new Loader({})),
       // price row
       tag(
         {
@@ -181,24 +186,7 @@ export default class ProductPage extends ContentPage {
             disabled: !!this.#alreadyInCart,
           },
           ButtonClasses.NORMAL,
-          async (event: Event) => {
-            event.stopPropagation();
-            if (!this.#alreadyInCart && this.#product.id) {
-              try {
-                await cartController.addItemToCart(this.#product.id);
-                this.#alreadyInCart += 1;
-                this.#addToCartButton.node.textContent = ProductCard.inCartText(
-                  this.#alreadyInCart,
-                );
-                this.header.refreshCountInCartElement();
-                this.#addToCartButton.disable();
-                this.#addToCartButton.addIcon(checkIcon);
-                this.#removeFromCartButton.node.hidden = false;
-              } catch (err) {
-                console.log(err);
-              }
-            }
-          },
+          this.#productCartButtonHandler(this.#addProductToCart),
           !this.#alreadyInCart ? cartIcon : checkIcon,
         )),
         // remove cart button
@@ -209,27 +197,7 @@ export default class ProductPage extends ContentPage {
             hidden: !this.#alreadyInCart,
           },
           ButtonClasses.NORMAL,
-          async (event: Event) => {
-            event.stopPropagation();
-            if (this.#alreadyInCart && this.#product.id) {
-              try {
-                await cartController.removeItemFromCart(this.#product.id);
-                this.#alreadyInCart -= 1;
-                this.#addToCartButton.node.textContent = ProductCard.inCartText(
-                  this.#alreadyInCart,
-                );
-                this.#addToCartButton.addIcon(checkIcon);
-                if (this.#alreadyInCart === 0) {
-                  this.#removeFromCartButton.node.hidden = true;
-                  this.#addToCartButton.enable();
-                  this.#addToCartButton.icon = cartIcon;
-                }
-                this.header.refreshCountInCartElement();
-              } catch (err) {
-                console.log(err);
-              }
-            }
-          },
+          this.#productCartButtonHandler(this.#removeProductFromCart),
           trashIcon,
         )),
       ),
@@ -266,5 +234,53 @@ export default class ProductPage extends ContentPage {
 
   #showContent = () => {
     this.container.node.append(this.#content.node);
+  };
+
+  // return event handler which show and then hides Loader
+  // use with #addProductToCart and#removeProductFromCart
+  #productCartButtonHandler =
+    (handler: (productId: string) => Promise<void>) => async (event: Event) => {
+      event.stopPropagation();
+      if (this.#product.id) {
+        const target = event.target as HTMLButtonElement;
+        target.disabled = true; // for exclude error by quick multi click
+
+        this.#loader.show();
+        try {
+          await handler(this.#product.id);
+          this.#addToCartButton.node.textContent = ProductCard.inCartText(this.#alreadyInCart);
+          this.#addToCartButton.addIcon(this.#alreadyInCart ? checkIcon : cartIcon);
+          this.header.refreshCountInCartElement();
+        } catch (err) {
+          console.log(err);
+        } finally {
+          this.#loader.hide();
+        }
+      }
+    };
+
+  // use only #productCartButtonHandler
+  #addProductToCart = async (productId: string) => {
+    if (!this.#alreadyInCart) {
+      await cartController.addItemToCart(productId);
+      this.#alreadyInCart += 1;
+      this.#removeFromCartButton.enable();
+      this.#removeFromCartButton.node.hidden = false;
+    }
+  };
+
+  // use only #productCartButtonHandler
+  #removeProductFromCart = async (productId: string) => {
+    if (this.#alreadyInCart) {
+      await cartController.removeItemFromCart(productId);
+      this.#alreadyInCart -= 1;
+      if (this.#alreadyInCart === 0) {
+        this.#removeFromCartButton.disable();
+        this.#removeFromCartButton.node.hidden = true;
+        this.#addToCartButton.enable();
+      } else {
+        this.#removeFromCartButton.enable();
+      }
+    }
   };
 }
