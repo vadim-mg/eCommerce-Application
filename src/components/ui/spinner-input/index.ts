@@ -2,7 +2,7 @@ import BaseElement from '@Src/components/common/base-element';
 import tag from '@Src/components/common/tag';
 import classes from './style.module.scss';
 
-export type CallbackSpiner = () => void;
+export type CallbackSpiner = () => Promise<void>;
 export default class SpinerInput extends BaseElement<HTMLElement> {
   #input: BaseElement<HTMLInputElement>;
 
@@ -41,18 +41,18 @@ export default class SpinerInput extends BaseElement<HTMLElement> {
     this.node.append(this.#minus.node, this.#input.node, this.#plus.node);
   }
 
-  #minusHandler = () => {
+  #minusHandler = async () => {
     this.#disableButtons();
     this.#input.node.value = String(parseInt(this.#input.node.value, 10) - 1);
-    this.#callbackMinus();
-    setTimeout(() => this.#setMinus(), 500);
+    await this.#callbackMinus();
+    this.#setMinus();
   };
 
-  #plusHandler = () => {
+  #plusHandler = async () => {
     this.#disableButtons();
     this.#input.node.value = String(parseInt(this.#input.node.value, 10) + 1);
-    this.#callbackPlus();
-    setTimeout(() => this.#setMinus(), 500);
+    await this.#callbackPlus();
+    this.#setMinus();
   };
 
   #setMinus = () => {
