@@ -1,14 +1,11 @@
 import cardSVG from '@Assets/icons/basket.svg';
-import crossSVG from '@Assets/icons/cross.svg';
-import trashSVG from '@Assets/icons/trash.svg';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import CartRow from '@Src/components/logic/cart-row';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
-import SpinerInput from '@Src/components/ui/spinner-input';
 import cartController from '@Src/controllers/cart';
-import Products, { ImageSize } from '@Src/controllers/products';
+import Products from '@Src/controllers/products';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
 import { Cart } from '@commercetools/platform-sdk';
@@ -51,77 +48,6 @@ export default class CartPage extends ContentPage {
 
   #showContent = () => {
     this.container.node.append(this.#content.node);
-  };
-
-  #createProductRow = (
-    prodId: string,
-    imgUrl: string,
-    name: string,
-    quantity: number,
-    price: number,
-    totalPrice: number,
-    discount?: number,
-  ): BaseElement<HTMLElement> => {
-    // image
-    const imgEl = tag(
-      { tag: 'div', class: classes.prodRowImgWrapper },
-      tag<HTMLImageElement>({
-        tag: 'img',
-        class: classes.prodRowImg,
-        src: Products.getImageUrl(imgUrl ?? '', ImageSize.small),
-        alt: name,
-      }),
-    );
-    // name
-    const nameEl = tag({ tag: 'div', class: classes.prodRowName, text: name });
-    const rightPart = tag(
-      { tag: 'div', class: classes.prodRowRight },
-      // block with price for one and quantity
-      tag(
-        { tag: 'div', class: classes.prodRowPricesAndCount },
-        tag(
-          { tag: 'div', class: classes.prodRowPrices },
-          // normal price
-          tag({
-            tag: 'div',
-            class: discount ? classes.prodRowPriceOld : classes.prodRowPrice,
-            innerHTML: `€${price.toFixed(2)}`,
-          }),
-          // discount price
-          tag({
-            tag: 'div',
-            class: classes.prodRowPrice,
-            innerHTML: discount ? `€${discount.toFixed(2)}` : '',
-          }),
-        ),
-        // cross icon
-        tag({ tag: 'div', class: classes.prodRowCross, innerHTML: crossSVG }),
-
-        new SpinerInput(
-          quantity,
-          classes.spinnerInput,
-          this.#addProdInCart.bind(this, String(prodId)),
-          this.#removeProdFromCart.bind(this, prodId, 1),
-        ),
-      ),
-      // total price
-      tag({ tag: 'div', class: classes.prodRowTotalPrice, text: `€${totalPrice.toFixed(2)}` }),
-      // trash icon
-      tag({
-        tag: 'div',
-        class: classes.prodRowTrash,
-        innerHTML: trashSVG,
-        onclick: () => this.#removeProdFromCart(prodId, quantity),
-      }),
-    );
-
-    const row = tag({
-      tag: 'div',
-      class: discount ? [classes.prodRow, classes.prodRowDiscount] : classes.prodRow,
-    });
-    row.node.append(imgEl.node, nameEl.node, rightPart.node);
-
-    return row;
   };
 
   #createProductList = (data: Cart) => {
@@ -171,21 +97,6 @@ export default class CartPage extends ContentPage {
       ),
     );
     this.#content.node.append(message.node);
-  };
-
-  #removeProdFromCart = async (id: string, quantity: number): Promise<void> => {
-    const promises = [];
-    for (let i = 0; i < quantity; i += 1) {
-      promises.push(cartController.removeItemFromCart(id));
-    }
-
-    await Promise.all(promises);
-    this.#refreshCart();
-  };
-
-  #addProdInCart = async (id: string): Promise<void> => {
-    await cartController.addItemToCart(id);
-    this.#refreshCart();
   };
 
   #refreshCart = () => {

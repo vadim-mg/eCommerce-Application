@@ -7,14 +7,6 @@ import cartController from '@Src/controllers/cart';
 import Products, { ImageSize } from '@Src/controllers/products';
 import classes from './style.module.scss';
 
-const removeProdFromCart = async (id: string, quantity: number): Promise<void> => {
-  await cartController.removeItemFromCart(id, quantity);
-};
-
-const addProdInCart = async (id: string): Promise<void> => {
-  await cartController.addItemToCart(id);
-};
-
 export default class CartRow extends BaseElement<HTMLElement> {
   constructor(
     onChangeProductStateInCart: () => void,
@@ -69,11 +61,11 @@ export default class CartRow extends BaseElement<HTMLElement> {
           quantity,
           classes.spinnerInput,
           async () => {
-            await addProdInCart(String(prodId));
+            await cartController.addItemToCart(String(prodId));
             onChangeProductStateInCart();
           },
           async () => {
-            await removeProdFromCart(prodId, 1);
+            await cartController.removeItemFromCart(String(prodId), 1);
             onChangeProductStateInCart();
           },
         ),
@@ -86,7 +78,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
         class: classes.prodRowTrash,
         innerHTML: trashSVG,
         onclick: async () => {
-          await removeProdFromCart(prodId, quantity);
+          await cartController.removeItemFromCart(String(prodId), quantity);
           onChangeProductStateInCart();
         },
       }),
