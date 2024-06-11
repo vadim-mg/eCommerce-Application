@@ -1,0 +1,195 @@
+@import '@Src/styles/variables.scss';
+
+.prod-row {
+  background: var(--color-white);
+  display: grid;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: 1fr;
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  gap: 2rem;
+  padding: 1rem 0;
+}
+
+.prod-row-right {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  grid-area: 1 / 5 / 2 / 13;
+}
+.prod-row-name {
+  grid-area: 1 / 2 / 2 / 5;
+  width: fit-content;
+  text-decoration: none;
+  color: var(--color-black);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--color-orange-main);
+    }
+  }
+  &:active {
+    color: var(--color-orange-main);
+  }
+}
+.prod-row-img-wrapper {
+  border-radius: 0.5rem;
+  width: 4rem;
+  height: 4rem;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  grid-area: 1 / 1 / 2 / 2;
+}
+
+.prod-row-img {
+  height: 100%;
+}
+
+.button-trash {
+  display: block;
+}
+
+.prod-row-right {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1.5rem;
+}
+
+.prod-row-prices-and-count {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  color: var(--color-grey);
+}
+.prod-row-prices {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.prod-row-discount {
+  .prod-row-name {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+
+    &::after {
+      content: 'SALE';
+      font-size: 1.5rem;
+      line-height: 2rem;
+      font-weight: 600;
+      padding: 0 1rem;
+      color: var(--color-white);
+      background-color: var(--color-blue);
+      pointer-events: none;
+      text-decoration: none;
+      @media (max-width: 480px) {
+        display: none;
+      }
+    }
+  }
+}
+
+.prod-row-price-old {
+  text-decoration: line-through;
+}
+.prod-row-trash {
+  cursor: pointer;
+  svg {
+    transition: all var(--transition-time);
+    path {
+      stroke: var(--color-grey);
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      svg {
+        path {
+          stroke: var(--color-orange-main);
+        }
+      }
+    }
+  }
+  &:active {
+    svg {
+      path {
+        stroke: var(--color-orange-main);
+      }
+    }
+  }
+}
+.prod-row-total-price {
+  width: 5rem;
+  text-align: center;
+}
+
+@media (max-width: 980px) {
+  .prod-row {
+    grid-template-columns: 7rem 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 1.5rem 1rem;
+    grid-template-areas:
+      'IMAGE NAME NAME'
+      'IMAGE PRICE PRICE';
+  }
+  .prod-row-img-wrapper {
+    width: auto;
+    height: auto;
+    grid-area: IMAGE;
+  }
+  .prod-row-name {
+    grid-area: NAME;
+  }
+  .prod-row-right {
+    grid-area: PRICE;
+  }
+  .prod-row-cross {
+    display: none;
+  }
+  .prod-row {
+    position: relative;
+  }
+  .prod-row-trash {
+    position: absolute;
+    top: 1.5rem;
+    right: 0;
+  }
+  .prod-row-name {
+    padding-right: 2rem;
+  }
+}
+@media (max-width: 580px) {
+  .prod-row {
+    grid-template-columns: 7rem 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 1.5rem 1.5rem;
+    grid-template-areas:
+      'IMAGE NAME NAME'
+      'IMAGE PRICE PRICE'
+      'IMAGE PRICE PRICE'
+      'IMAGE PRICE PRICE';
+  }
+  .prod-row-prices-and-count {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .prod-row-right {
+    grid-area: PRICE;
+    justify-content: flex-start;
+    align-items: flex-end;
+    gap: 1.5rem;
+  }
+  .prod-row-total-price {
+    width: max-content;
+    font-size: 1.25rem;
+    line-height: 2.5rem;
+  }
+}
+@media (max-width: 420px) {
+  .prod-row-total-price {
+    font-size: 1rem;
+    line-height: 2.5rem;
+  }
+}
