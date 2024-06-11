@@ -5,24 +5,20 @@ import tag from '@Src/components/common/tag';
 import SpinerInput from '@Src/components/ui/spinner-input';
 import cartController from '@Src/controllers/cart';
 import Products, { ImageSize } from '@Src/controllers/products';
+import { AppRoutes } from '@Src/router/routes';
+import { LineItem } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
 
 export default class CartRow extends BaseElement<HTMLElement> {
   #onChangeProductStateInCart: () => void;
 
-  constructor(
-    onChangeProductStateInCart: () => void,
-    prodId: string,
-    imgUrl: string,
-    name: string,
-    quantity: number,
-    price: number,
-    totalPrice: number,
-    discount?: number,
-  ) {
+  constructor(onChangeProductStateInCart: () => void, dataItem: LineItem) {
     super({
       tag: 'div',
-      class: discount ? [classes.prodRow, classes.prodRowDiscount] : classes.prodRow,
+      class:
+        dataItem.totalPrice.centAmount / dataItem.quantity !== dataItem.price.value.centAmount
+          ? [classes.prodRow, classes.prodRowDiscount]
+          : classes.prodRow,
     });
     this.#onChangeProductStateInCart = onChangeProductStateInCart;
     // image
@@ -31,12 +27,21 @@ export default class CartRow extends BaseElement<HTMLElement> {
       tag<HTMLImageElement>({
         tag: 'img',
         class: classes.prodRowImg,
-        src: Products.getImageUrl(imgUrl ?? '', ImageSize.small),
-        alt: name,
+        src: Products.getImageUrl(
+          dataItem.variant.images ? dataItem.variant.images[0].url : '' ?? '',
+          ImageSize.small,
+        ),
+        alt: dataItem.name[Products.locale],
       }),
     );
     // name
-    const nameEl = tag({ tag: 'div', class: classes.prodRowName, text: name });
+    console.log();
+    const nameEl = tag<HTMLLinkElement>({
+      tag: 'a',
+      class: classes.prodRowName,
+      text: dataItem.name[Products.locale],
+      href: `${AppRoutes.CATALOGUE}/all/${dataItem.productKey}`, // найти ключ в дате
+    });
     const rightPart = tag(
       { tag: 'div', class: classes.prodRowRight },
       // block with price for one and quantity
@@ -47,28 +52,40 @@ export default class CartRow extends BaseElement<HTMLElement> {
           // normal price
           tag({
             tag: 'div',
-            class: discount ? classes.prodRowPriceOld : classes.prodRowPrice,
-            innerHTML: `€${price.toFixed(2)}`,
+            class:
+              dataItem.totalPrice.centAmount / dataItem.quantity !==
+                dataItem.price.value.centAmount
+                ? classes.prodRowPriceOld
+                : classes.prodRowPrice,
+            innerHTML: `€${(dataItem.price.value.centAmount / 100).toFixed(2)}`,
           }),
           // discount price
           tag({
             tag: 'div',
             class: classes.prodRowPrice,
-            innerHTML: discount ? `€${discount.toFixed(2)}` : '',
+            innerHTML:
+              dataItem.totalPrice.centAmount / dataItem.quantity !==
+                dataItem.price.value.centAmount
+                ? `€${(dataItem.totalPrice.centAmount / 100 / dataItem.quantity).toFixed(2)}`
+                : '',
           }),
         ),
         // cross icon
         tag({ tag: 'div', class: classes.prodRowCross, innerHTML: crossSVG }),
 
         new SpinerInput(
-          quantity,
+          dataItem.quantity,
           classes.spinnerInput,
-          () => this.#onPlusHandler(String(prodId)),
-          () => this.#onMinusHandler(String(prodId)),
+          () => this.#onPlusHandler(String(dataItem.productId)),
+          () => this.#onMinusHandler(String(dataItem.productId)),
         ),
       ),
       // total price
-      tag({ tag: 'div', class: classes.prodRowTotalPrice, text: `€${totalPrice.toFixed(2)}` }),
+      tag({
+        tag: 'div',
+        class: classes.prodRowTotalPrice,
+        text: `€${(dataItem.totalPrice.centAmount / 100).toFixed(2)}`,
+      }),
       // trash icon
       tag({
         tag: 'div',
@@ -76,7 +93,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
         innerHTML: trashSVG,
         onclick: async () => {
           try {
-            await cartController.removeItemFromCart(String(prodId), quantity);
+            await cartController.removeItemFromCart(String(dataItem.productId), dataItem.quantity);
             onChangeProductStateInCart();
           } catch (e) {
             console.log(e);

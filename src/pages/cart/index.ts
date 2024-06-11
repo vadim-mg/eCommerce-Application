@@ -6,7 +6,6 @@ import CartRow from '@Src/components/logic/cart-row';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Loader from '@Src/components/ui/loader';
 import cartController from '@Src/controllers/cart';
-import Products from '@Src/controllers/products';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
 import { Cart } from '@commercetools/platform-sdk';
@@ -58,21 +57,7 @@ export default class CartPage extends ContentPage {
     const list = tag({ tag: 'div', class: classes.prodList });
     if (data?.lineItems ?? []) {
       data?.lineItems.forEach((item) => {
-        const firstImgUrl = item.variant.images ? item.variant.images[0].url : '';
-        const price = item.price.value.centAmount / 100;
-        const totalPrice = item.totalPrice.centAmount / 100;
-        const priceDiscount =
-          totalPrice / item.quantity !== price ? totalPrice / item.quantity : undefined;
-        const row = new CartRow(
-          this.#refreshCart,
-          item.productId,
-          firstImgUrl,
-          item.name[Products.locale],
-          item.quantity,
-          price,
-          totalPrice,
-          priceDiscount,
-        );
+        const row = new CartRow(this.#refreshCart, item);
         list.node.append(row.node);
       });
     }
