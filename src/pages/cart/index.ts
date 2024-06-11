@@ -4,6 +4,7 @@ import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import CartRow from '@Src/components/logic/cart-row';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
+import Loader from '@Src/components/ui/loader';
 import cartController from '@Src/controllers/cart';
 import Products from '@Src/controllers/products';
 import Router from '@Src/router';
@@ -14,10 +15,13 @@ import classes from './style.module.scss';
 export default class CartPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
+  #loader: Loader;
+
   constructor() {
     super({ containerTag: 'main', title: 'Cart', showBreadCrumbs: true });
     this.#createContent();
     this.#showContent();
+    this.#loader = new Loader({});
   }
 
   #createContent = async () => {

@@ -8,6 +8,8 @@ import Products, { ImageSize } from '@Src/controllers/products';
 import classes from './style.module.scss';
 
 export default class CartRow extends BaseElement<HTMLElement> {
+  #onChangeProductStateInCart: () => void;
+
   constructor(
     onChangeProductStateInCart: () => void,
     prodId: string,
@@ -22,6 +24,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
       tag: 'div',
       class: discount ? [classes.prodRow, classes.prodRowDiscount] : classes.prodRow,
     });
+    this.#onChangeProductStateInCart = onChangeProductStateInCart;
     // image
     const imgEl = tag(
       { tag: 'div', class: classes.prodRowImgWrapper },
@@ -60,14 +63,8 @@ export default class CartRow extends BaseElement<HTMLElement> {
         new SpinerInput(
           quantity,
           classes.spinnerInput,
-          async () => {
-            await cartController.addItemToCart(String(prodId));
-            onChangeProductStateInCart();
-          },
-          async () => {
-            await cartController.removeItemFromCart(String(prodId), 1);
-            onChangeProductStateInCart();
-          },
+          () => this.#onPlusHandler(String(prodId)),
+          () => this.#onMinusHandler(String(prodId))
         ),
       ),
       // total price
@@ -78,11 +75,34 @@ export default class CartRow extends BaseElement<HTMLElement> {
         class: classes.prodRowTrash,
         innerHTML: trashSVG,
         onclick: async () => {
-          await cartController.removeItemFromCart(String(prodId), quantity);
-          onChangeProductStateInCart();
+          try {
+            await cartController.removeItemFromCart(String(prodId), quantity);
+            onChangeProductStateInCart();
+          } catch (e) {
+            console.log(e);
+          }
         },
       }),
     );
     this.node.append(imgEl.node, nameEl.node, rightPart.node);
   }
+
+  #onMinusHandler = async (prodId: string) => {
+    try {
+      await cartController.removeItemFromCart(prodId, 1);
+      this.#onChangeProductStateInCart();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  #onPlusHandler = async (prodId: string) => {
+    try {
+      await cartController.addItemToCart(prodId);
+      this.#onChangeProductStateInCart();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
 }
