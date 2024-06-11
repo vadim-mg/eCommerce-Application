@@ -2,6 +2,7 @@ import crossSVG from '@Assets/icons/cross.svg';
 import trashSVG from '@Assets/icons/trash.svg';
 import BaseElement from '@Src/components/common/base-element';
 import tag from '@Src/components/common/tag';
+import Link from '@Src/components/ui/link';
 import SpinnerInput from '@Src/components/ui/spinner-input';
 import cartController from '@Src/controllers/cart';
 import Products, { ImageSize } from '@Src/controllers/products';
@@ -36,11 +37,10 @@ export default class CartRow extends BaseElement<HTMLElement> {
     );
     // name
     console.log();
-    const nameEl = tag<HTMLLinkElement>({
-      tag: 'a',
+    const nameEl = new Link({
       class: classes.prodRowName,
       text: dataItem.name[Products.locale],
-      href: `${AppRoutes.CATALOGUE}/all/${dataItem.productKey}`, // найти ключ в дате
+      href: `${AppRoutes.CATALOGUE}/all/${dataItem.productKey}`
     });
     const rightPart = tag(
       { tag: 'div', class: classes.prodRowRight },
@@ -54,7 +54,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
             tag: 'div',
             class:
               dataItem.totalPrice.centAmount / dataItem.quantity !==
-              dataItem.price.value.centAmount
+                dataItem.price.value.centAmount
                 ? classes.prodRowPriceOld
                 : classes.prodRowPrice,
             innerHTML: `€${(dataItem.price.value.centAmount / 100).toFixed(2)}`,
@@ -65,7 +65,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
             class: classes.prodRowPrice,
             innerHTML:
               dataItem.totalPrice.centAmount / dataItem.quantity !==
-              dataItem.price.value.centAmount
+                dataItem.price.value.centAmount
                 ? `€${(dataItem.totalPrice.centAmount / 100 / dataItem.quantity).toFixed(2)}`
                 : '',
           }),
