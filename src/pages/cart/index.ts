@@ -190,5 +190,6 @@ export default class CartPage extends ContentPage {
     this.#content.node.remove();
     this.#createContent();
     this.#showContent();
+    this.header.refreshCountInCartElement();
   };
 }
