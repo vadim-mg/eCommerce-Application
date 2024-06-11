@@ -12,8 +12,6 @@ import productCategories from '@Src/controllers/categories';
 import Products from '@Src/controllers/products';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
-import Button, { ButtonClasses } from '@Src/components/ui/button';
-import loadingSvg from '@Assets/icons/loading.svg';
 import classes from './style.module.scss';
 
 const SORT_SETTINGS = [
@@ -51,17 +49,8 @@ export default class CataloguePage extends ContentPage {
 
   #loader!: Loader;
 
-  #showMoreBtn!: Button;
-
-  #limit: number = 9;
-
-  #offset: number = 0;
-
-  #clear: boolean;
-
   constructor(categoryPathPart: string[]) {
     super({ containerTag: 'div', title: 'catalogue page', showBreadCrumbs: true });
-    this.#clear = true;
     this.#selectedSort = SORT_SETTINGS.find((value) => value.default)?.key ?? SORT_SETTINGS[0].key;
     this.#products = new Products();
     productCategories.getCategories().then(() => {
@@ -75,7 +64,6 @@ export default class CataloguePage extends ContentPage {
           : currentCategoryId;
       this.#createContent(backendCategoryId);
       this.container.node.append(this.#content.node);
-      this.setDefaultLimitOffset();
       this.#renderProductList();
     });
   }
@@ -86,22 +74,18 @@ export default class CataloguePage extends ContentPage {
       sortingType: this.#selectedSort,
       search: this.#searchField.value,
       filter: await this.#filters.getFilterValues(),
-      limit: this.#limit,
-      offset: this.#offset,
-      isClear: this.#clear,
+      isClear: true,
     });
   };
 
   #onCategorySelectHandler = (id: string) => {
     Router.getInstance().changeCurrentRoute(productCategories.getById(id)?.key ?? '');
-    this.setDefaultLimitOffset();
     this.#renderProductList();
     this.#headerH1.node.textContent =
       productCategories.getById(id)?.name?.[process.env.LOCALE] ?? '';
   };
 
   #createContent = (currentCategoryId: string) => {
-    this.setDefaultLimitOffset();
     this.#content = tag<HTMLDivElement>(
       {
         tag: 'div',
@@ -148,36 +132,14 @@ export default class CataloguePage extends ContentPage {
             },
           },
         )),
-        (this.#showMoreBtn = new Button(
-          { text: 'Show more' },
-          ButtonClasses.NORMAL,
-          this.renderMoreProducts,
-          loadingSvg,
-        )),
       ),
       // loader
       (this.#loader = new Loader({})),
     );
-    this.#showMoreBtn.node.classList.add(classes.showMoreBtn);
   };
-
-  renderMoreProducts = async () => {
-    this.#offset += this.#limit === 9 ? this.#limit : 0;
-    this.#limit = 3;
-    this.#clear = false;
-    await this.#renderProductList();
-    this.#offset += this.#limit;
-    this.#clear = true;
-  };
-
-  setDefaultLimitOffset = () => {
-    this.#limit = 9;
-    this.#offset = 0;
-  }
 
   #sort = (val: string) => {
     this.#selectedSort = val as SortingType;
-    this.setDefaultLimitOffset();
     this.#renderProductList();
   };
 }

@@ -26,7 +26,7 @@ const getProductById = (id: string) =>
   apiRoot.apiBuilder.productProjections().withId({ ID: id }).get().execute();
 
 const getProducts = (options: ProductGetOptions) => {
-  const { categoryId, sortingType, search, filter, limit, offset } = options;
+  const { categoryId, sortingType, search, filter, limit = 9, offset = 0 } = options;
 
   const filteredBrans = filter?.[AttrName.BRAND]?.length ? filter?.[AttrName.BRAND] : [];
 

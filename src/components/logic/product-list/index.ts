@@ -4,6 +4,8 @@ import { ProductGetOptions } from '@Src/api/products';
 import tag from '@Src/components/common/tag';
 import productCategories from '@Src/controllers/categories';
 import Products from '@Src/controllers/products';
+import Button, { ButtonClasses } from '@Src/components/ui/button';
+import loadingSvg from '@Assets/icons/loading.svg';
 import ProductCard, { AddToCartCbFunction } from '../product-card';
 import classes from './style.module.scss';
 
@@ -13,6 +15,12 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
   #products: Products;
 
   #onAddToCartCb;
+
+  #showMoreBtn!: Button;
+
+  #limit: number = 9;
+
+  #offset: number = 0;
 
   constructor(
     props: ProductListProps,
@@ -36,14 +44,12 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
       if (options.isClear){
         this.node.innerHTML = '';
       }
-
       const respBody = await this.#products.getProducts(options);
 
       const selectedCategoryKey = categoryId
         ? productCategories.getById(categoryId)?.key
         : productCategories.CATEGORY_ALL.key;
 
-      
       if (respBody.results.length) {
         respBody.results.forEach((product) => {
           this.node.append(
@@ -57,6 +63,30 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
             ).node,
           );
         });
+        const total = respBody.total ?? 0;
+        if (respBody.limit === 9 && total - 1 > respBody.count + respBody.offset) {
+          this.#showMoreBtn = new Button(
+            { text: 'Show more' },
+            ButtonClasses.NORMAL,
+            () => {
+              this.#offset += this.#limit === 9 ? this.#limit : 0;
+              this.#limit = 3;
+              this.showProducts({
+                filter: showOptions.filter,
+                limit: this.#limit,
+                offset: this.#offset,
+                isClear: false,
+              });
+              this.#offset += this.#limit;
+            },
+            loadingSvg,
+          );
+          this.#showMoreBtn.node.classList.add(classes.showMoreBtn);
+          this.node.append(this.#showMoreBtn.node);
+        }
+        if (total - 1 <= respBody.count + respBody.offset) {
+          this.#showMoreBtn.node.remove();
+        }
       } else {
         this.node.append(tag({ tag: 'p', text: 'No product found with same parameters' }).node);
       }
