@@ -64,7 +64,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
           quantity,
           classes.spinnerInput,
           () => this.#onPlusHandler(String(prodId)),
-          () => this.#onMinusHandler(String(prodId))
+          () => this.#onMinusHandler(String(prodId)),
         ),
       ),
       // total price
@@ -104,5 +104,4 @@ export default class CartRow extends BaseElement<HTMLElement> {
       console.log(e);
     }
   };
-
 }
