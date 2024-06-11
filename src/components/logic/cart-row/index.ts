@@ -2,7 +2,7 @@ import crossSVG from '@Assets/icons/cross.svg';
 import trashSVG from '@Assets/icons/trash.svg';
 import BaseElement from '@Src/components/common/base-element';
 import tag from '@Src/components/common/tag';
-import SpinerInput from '@Src/components/ui/spinner-input';
+import SpinnerInput from '@Src/components/ui/spinner-input';
 import cartController from '@Src/controllers/cart';
 import Products, { ImageSize } from '@Src/controllers/products';
 import { AppRoutes } from '@Src/router/routes';
@@ -54,7 +54,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
             tag: 'div',
             class:
               dataItem.totalPrice.centAmount / dataItem.quantity !==
-                dataItem.price.value.centAmount
+              dataItem.price.value.centAmount
                 ? classes.prodRowPriceOld
                 : classes.prodRowPrice,
             innerHTML: `€${(dataItem.price.value.centAmount / 100).toFixed(2)}`,
@@ -65,7 +65,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
             class: classes.prodRowPrice,
             innerHTML:
               dataItem.totalPrice.centAmount / dataItem.quantity !==
-                dataItem.price.value.centAmount
+              dataItem.price.value.centAmount
                 ? `€${(dataItem.totalPrice.centAmount / 100 / dataItem.quantity).toFixed(2)}`
                 : '',
           }),
@@ -73,7 +73,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
         // cross icon
         tag({ tag: 'div', class: classes.prodRowCross, innerHTML: crossSVG }),
 
-        new SpinerInput(
+        new SpinnerInput(
           dataItem.quantity,
           classes.spinnerInput,
           this.#onPlusHandler.bind(this, String(dataItem.productId)),

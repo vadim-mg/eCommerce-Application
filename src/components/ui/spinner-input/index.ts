@@ -2,23 +2,23 @@ import BaseElement from '@Src/components/common/base-element';
 import tag from '@Src/components/common/tag';
 import classes from './style.module.scss';
 
-export type CallbackSpiner = () => Promise<void>;
-export default class SpinerInput extends BaseElement<HTMLElement> {
+export type CallbackSpinner = () => Promise<void>;
+export default class SpinnerInput extends BaseElement<HTMLElement> {
   #input: BaseElement<HTMLInputElement>;
 
   #minus: BaseElement<HTMLElement>;
 
   #plus: BaseElement<HTMLElement>;
 
-  #callbackPlus: CallbackSpiner;
+  #callbackPlus: CallbackSpinner;
 
-  #callbackMinus: CallbackSpiner;
+  #callbackMinus: CallbackSpinner;
 
   constructor(
     quantity: number,
     className: string,
-    callbackPlus: CallbackSpiner,
-    callbackMinus: CallbackSpiner,
+    callbackPlus: CallbackSpinner,
+    callbackMinus: CallbackSpinner,
   ) {
     super({ tag: 'div', class: classes.wrapper });
     this.node.classList.add(className);
