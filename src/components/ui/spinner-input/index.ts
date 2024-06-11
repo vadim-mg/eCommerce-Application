@@ -2,6 +2,7 @@ import BaseElement from '@Src/components/common/base-element';
 import tag from '@Src/components/common/tag';
 import classes from './style.module.scss';
 
+export type CallbackSpiner = () => void;
 export default class SpinerInput extends BaseElement<HTMLElement> {
   #input: BaseElement<HTMLInputElement>;
 
@@ -9,7 +10,16 @@ export default class SpinerInput extends BaseElement<HTMLElement> {
 
   #plus: BaseElement<HTMLElement>;
 
-  constructor(quantity: number, className: string, callback: () => void) {
+  #callbackPlus: CallbackSpiner;
+
+  #callbackMinus: CallbackSpiner;
+
+  constructor(
+    quantity: number,
+    className: string,
+    callbackPlus: CallbackSpiner,
+    callbackMinus: CallbackSpiner,
+  ) {
     super({ tag: 'div', class: classes.wrapper });
     this.node.classList.add(className);
 
@@ -19,12 +29,13 @@ export default class SpinerInput extends BaseElement<HTMLElement> {
       type: 'number',
       value: String(quantity),
     });
+    this.#callbackPlus = callbackPlus;
+    this.#callbackMinus = callbackMinus;
     this.#minus = tag({ tag: 'div', class: classes.minus, text: '-' });
     this.#plus = tag({ tag: 'div', class: classes.plus, text: '+' });
 
     this.#minus.node.addEventListener('click', this.#minusHandler);
     this.#plus.node.addEventListener('click', this.#plusHandler);
-    this.#input.node.addEventListener('change', callback);
 
     this.#setMinus();
     this.node.append(this.#minus.node, this.#input.node, this.#plus.node);
@@ -33,11 +44,13 @@ export default class SpinerInput extends BaseElement<HTMLElement> {
   #minusHandler = () => {
     this.#input.node.value = String(parseInt(this.#input.node.value, 10) - 1);
     this.#setMinus();
+    this.#callbackMinus();
   };
 
   #plusHandler = () => {
     this.#input.node.value = String(parseInt(this.#input.node.value, 10) + 1);
     this.#setMinus();
+    this.#callbackPlus();
   };
 
   #setMinus = () => {

@@ -61,7 +61,6 @@ export default class CartPage extends ContentPage {
     totalPrice: number,
     discount?: number,
   ): BaseElement<HTMLElement> => {
-
     // image
     const imgEl = tag(
       { tag: 'div', class: classes.prodRowImgWrapper },
@@ -97,8 +96,11 @@ export default class CartPage extends ContentPage {
         // cross icon
         tag({ tag: 'div', class: classes.prodRowCross, innerHTML: crossSVG }),
 
-        new SpinerInput(quantity, classes.spinnerInput, () =>
-          console.log(`отправляем данные о добавлении еще одного товара с ${prodId} и получаем !`),
+        new SpinerInput(
+          quantity,
+          classes.spinnerInput,
+          this.#addProdInCart.bind(this, String(prodId)),
+          this.#removeProdFromCart.bind(this, prodId, 1),
         ),
       ),
       // total price
@@ -169,10 +171,7 @@ export default class CartPage extends ContentPage {
     this.#content.node.append(message.node);
   };
 
-  #removeProdFromCart = async (id: string, quantity: number) => {
-    console.log('!');
-    console.log(id);
-    console.log(quantity);
+  #removeProdFromCart = async (id: string, quantity: number): Promise<void> => {
     const promises = [];
     for (let i = 0; i < quantity; i += 1) {
       promises.push(cartController.removeItemFromCart(id));
@@ -182,10 +181,14 @@ export default class CartPage extends ContentPage {
     this.#refreshCart();
   };
 
+  #addProdInCart = async (id: string): Promise<void> => {
+    await cartController.addItemToCart(id);
+    this.#refreshCart();
+  };
+
   #refreshCart = () => {
     this.#content.node.remove();
     this.#createContent();
     this.#showContent();
   };
-
 }
