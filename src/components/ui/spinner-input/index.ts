@@ -42,15 +42,17 @@ export default class SpinerInput extends BaseElement<HTMLElement> {
   }
 
   #minusHandler = () => {
+    this.#disableButtons();
     this.#input.node.value = String(parseInt(this.#input.node.value, 10) - 1);
-    this.#setMinus();
     this.#callbackMinus();
+    setTimeout(() => this.#setMinus(), 500);
   };
 
   #plusHandler = () => {
+    this.#disableButtons();
     this.#input.node.value = String(parseInt(this.#input.node.value, 10) + 1);
-    this.#setMinus();
     this.#callbackPlus();
+    setTimeout(() => this.#setMinus(), 500);
   };
 
   #setMinus = () => {
@@ -59,5 +61,12 @@ export default class SpinerInput extends BaseElement<HTMLElement> {
     } else {
       this.#minus.node.classList.remove(classes.disable);
     }
+  };
+
+  #disableButtons = () => {
+    if (!this.#minus.node.classList.contains(classes.disable))
+      this.#minus.node.classList.add(classes.disable);
+    if (!this.#plus.node.classList.contains(classes.disable))
+      this.#plus.node.classList.add(classes.disable);
   };
 }
