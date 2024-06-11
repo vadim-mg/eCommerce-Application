@@ -16,6 +16,8 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
 
   #onAddToCartCb;
 
+  #productsContainer: BaseElement<HTMLDivElement>;
+
   #showMoreBtn!: Button;
 
   #limit: number = 9;
@@ -30,9 +32,10 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
     },
   ) {
     super({ tag: 'div', ...props });
+    this.#productsContainer = new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.productsContainer });
+    this.node.append(this.#productsContainer.node);
     this.#products = logicProperties.products;
     this.#onAddToCartCb = logicProperties.onAddToCartCb;
-    this.node.classList.add(classes.productList);
   }
 
   showProducts = async (options: ProductGetOptions) => {
@@ -41,8 +44,8 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
     try {
       showOptions.categoryId = categoryId === productCategories.CATEGORY_ALL.id ? '' : categoryId;
 
-      if (options.isClear){
-        this.node.innerHTML = '';
+      if (options.isClear) {
+        this.#productsContainer.node.innerHTML = '';
       }
       const respBody = await this.#products.getProducts(options);
 
@@ -52,7 +55,7 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
 
       if (respBody.results.length) {
         respBody.results.forEach((product) => {
-          this.node.append(
+          this.#productsContainer.node.append(
             new ProductCard(
               {},
               {
@@ -72,7 +75,10 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
               this.#offset += this.#limit === 9 ? this.#limit : 0;
               this.#limit = 3;
               this.showProducts({
-                filter: showOptions.filter,
+                categoryId: options.categoryId,
+                sortingType: options.sortingType,
+                search: options.search,
+                filter: options.filter,
                 limit: this.#limit,
                 offset: this.#offset,
                 isClear: false,
