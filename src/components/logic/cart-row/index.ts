@@ -40,7 +40,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
     const nameEl = new Link({
       class: classes.prodRowName,
       text: dataItem.name[Products.locale],
-      href: `${AppRoutes.CATALOGUE}/all/${dataItem.productKey}`
+      href: `${AppRoutes.CATALOGUE}/all/${dataItem.productKey}`,
     });
     const rightPart = tag(
       { tag: 'div', class: classes.prodRowRight },
@@ -54,7 +54,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
             tag: 'div',
             class:
               dataItem.totalPrice.centAmount / dataItem.quantity !==
-                dataItem.price.value.centAmount
+              dataItem.price.value.centAmount
                 ? classes.prodRowPriceOld
                 : classes.prodRowPrice,
             innerHTML: `€${(dataItem.price.value.centAmount / 100).toFixed(2)}`,
@@ -65,7 +65,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
             class: classes.prodRowPrice,
             innerHTML:
               dataItem.totalPrice.centAmount / dataItem.quantity !==
-                dataItem.price.value.centAmount
+              dataItem.price.value.centAmount
                 ? `€${(dataItem.totalPrice.centAmount / 100 / dataItem.quantity).toFixed(2)}`
                 : '',
           }),
