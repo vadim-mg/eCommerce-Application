@@ -22,7 +22,7 @@
   grid-area: 1 / 2 / 2 / 5;
   width: fit-content;
   text-decoration: none;
-  color:var(--color-black);
+  color: var(--color-black);
   @media (hover: hover) and (pointer: fine) {
     &:hover {
       color: var(--color-orange-main);
