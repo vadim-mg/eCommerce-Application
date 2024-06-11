@@ -33,13 +33,17 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
     try {
       showOptions.categoryId = categoryId === productCategories.CATEGORY_ALL.id ? '' : categoryId;
 
+      if (options.isClear){
+        this.node.innerHTML = '';
+      }
+
       const respBody = await this.#products.getProducts(options);
 
       const selectedCategoryKey = categoryId
         ? productCategories.getById(categoryId)?.key
         : productCategories.CATEGORY_ALL.key;
 
-      this.node.innerHTML = '';
+      
       if (respBody.results.length) {
         respBody.results.forEach((product) => {
           this.node.append(

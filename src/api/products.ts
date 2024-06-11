@@ -16,6 +16,7 @@ export type ProductGetOptions = {
   filter?: FilterAttributes;
   limit?: number;
   offset?: number;
+  isClear?: boolean;
 };
 
 const getProductByKey = (key: string) =>

@@ -57,8 +57,11 @@ export default class CataloguePage extends ContentPage {
 
   #offset: number = 0;
 
+  #clear: boolean;
+
   constructor(categoryPathPart: string[]) {
     super({ containerTag: 'div', title: 'catalogue page', showBreadCrumbs: true });
+    this.#clear = true;
     this.#selectedSort = SORT_SETTINGS.find((value) => value.default)?.key ?? SORT_SETTINGS[0].key;
     this.#products = new Products();
     productCategories.getCategories().then(() => {
@@ -72,6 +75,7 @@ export default class CataloguePage extends ContentPage {
           : currentCategoryId;
       this.#createContent(backendCategoryId);
       this.container.node.append(this.#content.node);
+      this.setDefaultLimitOffset();
       this.#renderProductList();
     });
   }
@@ -84,17 +88,20 @@ export default class CataloguePage extends ContentPage {
       filter: await this.#filters.getFilterValues(),
       limit: this.#limit,
       offset: this.#offset,
+      isClear: this.#clear,
     });
   };
 
   #onCategorySelectHandler = (id: string) => {
     Router.getInstance().changeCurrentRoute(productCategories.getById(id)?.key ?? '');
+    this.setDefaultLimitOffset();
     this.#renderProductList();
     this.#headerH1.node.textContent =
       productCategories.getById(id)?.name?.[process.env.LOCALE] ?? '';
   };
 
   #createContent = (currentCategoryId: string) => {
+    this.setDefaultLimitOffset();
     this.#content = tag<HTMLDivElement>(
       {
         tag: 'div',
@@ -154,14 +161,23 @@ export default class CataloguePage extends ContentPage {
     this.#showMoreBtn.node.classList.add(classes.showMoreBtn);
   };
 
-  renderMoreProducts = () => {
-    // this.#offset = this.#limit;
-    this.#limit += 3;
-    this.#renderProductList();
+  renderMoreProducts = async () => {
+    this.#offset += this.#limit === 9 ? this.#limit : 0;
+    this.#limit = 3;
+    this.#clear = false;
+    await this.#renderProductList();
+    this.#offset += this.#limit;
+    this.#clear = true;
+  };
+
+  setDefaultLimitOffset = () => {
+    this.#limit = 9;
+    this.#offset = 0;
   }
 
   #sort = (val: string) => {
     this.#selectedSort = val as SortingType;
+    this.setDefaultLimitOffset();
     this.#renderProductList();
   };
 }
