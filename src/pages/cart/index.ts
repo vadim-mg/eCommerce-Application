@@ -4,6 +4,7 @@ import trashSVG from '@Assets/icons/trash.svg';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
+import CartRow from '@Src/components/logic/cart-row';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import SpinerInput from '@Src/components/ui/spinner-input';
 import cartController from '@Src/controllers/cart';
@@ -132,7 +133,8 @@ export default class CartPage extends ContentPage {
         const totalPrice = item.totalPrice.centAmount / 100;
         const priceDiscount =
           totalPrice / item.quantity !== price ? totalPrice / item.quantity : undefined;
-        const row = this.#createProductRow(
+        const row = new CartRow(
+          this.#refreshCart,
           item.productId,
           firstImgUrl,
           item.name[Products.locale],
