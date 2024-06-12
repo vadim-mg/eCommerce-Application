@@ -1,5 +1,11 @@
 import cartApi from '@Src/api/cart';
-import { Cart, LineItem, MyCartAddDiscountCodeAction, MyCartDraft, MyCartUpdateAction } from '@commercetools/platform-sdk';
+import {
+  Cart,
+  LineItem,
+  MyCartAddDiscountCodeAction,
+  MyCartDraft,
+  MyCartUpdateAction,
+} from '@commercetools/platform-sdk';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import errorHandler from './error-handler';
 
@@ -234,7 +240,6 @@ class CartController {
         addLineItemToCartAction,
       ]);
       console.log(response);
-
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);

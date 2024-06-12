@@ -147,8 +147,11 @@ export default class CartPage extends ContentPage {
         },
         undefined,
       )),
-      this.#buttonPromoCode = new Button({ text: 'Apply', class: classes.formButton }, ButtonClasses.NORMAL, this.#handlerApplyPromoCode
-      ),
+      (this.#buttonPromoCode = new Button(
+        { text: 'Apply', class: classes.formButton },
+        ButtonClasses.NORMAL,
+        this.#handlerApplyPromoCode,
+      )),
     );
     return form;
   };
