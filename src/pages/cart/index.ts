@@ -1,4 +1,5 @@
 import cardSVG from '@Assets/icons/basket.svg';
+import trashSVG from '@Assets/icons/trash.svg';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
@@ -83,6 +84,7 @@ export default class CartPage extends ContentPage {
       { text: 'Clear cart', class: classes.buttonClear },
       ButtonClasses.NORMAL,
       this.#handlerClearButtonOnClick,
+      trashSVG
     );
     this.#content.node.append(button.node);
   };
