@@ -1,10 +1,13 @@
 import cardSVG from '@Assets/icons/basket.svg';
+import trashSVG from '@Assets/icons/trash.svg';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import CartRow from '@Src/components/logic/cart-row';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
+import Loader from '@Src/components/ui/loader';
+import ModalWindow from '@Src/components/ui/modal';
 import cartController from '@Src/controllers/cart';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
@@ -14,7 +17,7 @@ import classes from './style.module.scss';
 export default class CartPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
-  // #loader: Loader;
+  #loader: Loader;
 
   #formPromoCode!: InputText;
 
@@ -22,7 +25,7 @@ export default class CartPage extends ContentPage {
     super({ containerTag: 'main', title: 'Cart', showBreadCrumbs: true });
     this.#createContent();
     this.#showContent();
-    // this.#loader = new Loader({});
+    this.#loader = new Loader({});
   }
 
   #createContent = async () => {
@@ -43,6 +46,7 @@ export default class CartPage extends ContentPage {
       if (data && data.lineItems.length > 0) {
         this.#createProductList(data);
         this.#createRowAfterList(Number(data.totalPrice.centAmount) / 100);
+        this.#createButtonClearCart();
       } else {
         this.#createEmptyMessage();
       }
@@ -78,6 +82,43 @@ export default class CartPage extends ContentPage {
       ),
     );
     this.#content.node.append(row.node);
+  };
+
+  #createButtonClearCart = () => {
+    const button = new Button(
+      { text: 'Clear the Cart', class: classes.buttonClear },
+      ButtonClasses.NORMAL,
+      this.#showModalPrompt,
+      trashSVG,
+    );
+    this.#content.node.append(button.node);
+  };
+
+  #showModalPrompt = () => {
+    const modal = new ModalWindow(
+      classes.modal,
+      true,
+      tag(
+        { tag: 'div', class: classes.modalWrapper },
+        tag({ tag: 'h2', class: classes.modalTitle, text: 'Attention' }),
+        tag({ tag: 'p', text: 'Do you want to remove all items from your shopping cart?' }),
+        tag(
+          { tag: 'div', class: classes.modalButtonRow },
+          new Button(
+            { text: 'Yes', class: classes.modalButton },
+            ButtonClasses.NORMAL,
+            async () => {
+              await this.#clearCart();
+              modal.hide();
+            },
+          ),
+          new Button({ text: 'No', class: classes.modalButton }, ButtonClasses.NORMAL, () => {
+            modal.hide();
+          }),
+        ),
+      ),
+    );
+    modal.show();
   };
 
   #createEmptyMessage = () => {
@@ -116,5 +157,12 @@ export default class CartPage extends ContentPage {
     this.#createContent();
     this.#showContent();
     this.header.refreshCountInCartElement();
+  };
+
+  #clearCart = async () => {
+    this.#loader.show();
+    await cartController.removeAllItemFromCart();
+    this.#loader.hide();
+    this.#refreshCart();
   };
 }

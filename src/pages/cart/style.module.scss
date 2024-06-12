@@ -7,6 +7,11 @@
   margin-top: 1.5rem;
   margin-bottom: 2.5rem;
   min-height: 50dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem;
+
   @media (max-height: 896px) {
     min-height: 40dvh;
   }
@@ -32,9 +37,12 @@
 .prod-list {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+  width: 100%;
 }
 
 .empty-message {
+  width: 100%;
   background: url('@Assets/img/empty.svg') var(--color-white) no-repeat center;
   background-size: contain;
   padding: 8rem 0;
@@ -56,8 +64,19 @@
 
 .row-after-list {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-    align-items: flex-start;
+  width: 100%;
+  margin-top: 1rem;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 2rem;
+  }
+}
+.button-clear {
+  @media (max-width: 480px) {
+    width: 100%;
+  }
 }
 .total-price-row {
   display: flex;
@@ -69,11 +88,22 @@
 .total-price {
   color: var(--color-orange-main);
 }
-.form{
+.modal-wrapper {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+.modal-button-row {
+  display: flex;
+  gap: 2rem;
+}
+.form {
   display: flex;
   align-items: flex-start;
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
-.form-button{
+.formButton {
   padding: 0.7rem 1.75rem;
 }
