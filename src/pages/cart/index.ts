@@ -1,92 +1,31 @@
 import cardSVG from '@Assets/icons/basket.svg';
-import crossSVG from '@Assets/icons/cross.svg';
 import trashSVG from '@Assets/icons/trash.svg';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
-import SpinerInput from '@Src/components/ui/spinner-input';
+import CartRow from '@Src/components/logic/cart-row';
+import Button, { ButtonClasses } from '@Src/components/ui/button';
+import Loader from '@Src/components/ui/loader';
+import ModalWindow from '@Src/components/ui/modal';
 import cartController from '@Src/controllers/cart';
-import Products, { ImageSize } from '@Src/controllers/products';
+import Router from '@Src/router';
+import { AppRoutes } from '@Src/router/routes';
+import { Cart } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
-
-const createProductRow = (
-  id: string,
-  imgUrl: string,
-  name: string,
-  quantity: number,
-  price: number,
-  totalPrice: number,
-  discount?: number,
-): BaseElement<HTMLElement> => {
-  // image
-  const imgEl = tag(
-    { tag: 'div', class: classes.prodRowImgWrapper },
-    tag<HTMLImageElement>({
-      tag: 'img',
-      class: classes.prodRowImg,
-      src: Products.getImageUrl(imgUrl ?? '', ImageSize.small),
-      alt: name,
-    }),
-  );
-  // name
-  const nameEl = tag({ tag: 'div', class: classes.prodRowName, text: name });
-  const rightPart = tag(
-    { tag: 'div', class: classes.prodRowRight },
-    // block with price for one and quantity
-    tag(
-      { tag: 'div', class: classes.prodRowPricesAndCount },
-      tag(
-        { tag: 'div', class: classes.prodRowPrices },
-        // normal price
-        tag({
-          tag: 'div',
-          class: discount ? classes.prodRowPriceOld : classes.prodRowPrice,
-          innerHTML: `€${price.toFixed(2)}`,
-        }),
-        // discount price
-        tag({
-          tag: 'div',
-          class: classes.prodRowPrice,
-          innerHTML: discount ? `€${discount.toFixed(2)}` : '',
-        }),
-      ),
-      // cross icon
-      tag({ tag: 'div', class: classes.prodRowCross, innerHTML: crossSVG }),
-
-      new SpinerInput(quantity, classes.spinnerInput, () =>
-        console.log(`отправляем данные о добавлении еще одного товара с ${id} и получаем !`),
-      ),
-    ),
-    // total price
-    tag({ tag: 'div', class: classes.prodRowTotalPrice, text: `€${totalPrice.toFixed(2)}` }),
-    // trash icon
-    tag({
-      tag: 'div',
-      class: classes.prodRowTrash,
-      innerHTML: trashSVG,
-      onclick: () => console.log(`удаляю товар с ${id}`),
-    }),
-  );
-
-  const row = tag({
-    tag: 'div',
-    class: discount ? [classes.prodRow, classes.prodRowDiscount] : classes.prodRow,
-  });
-  row.node.append(imgEl.node, nameEl.node, rightPart.node);
-
-  return row;
-};
 
 export default class CartPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
+
+  #loader: Loader;
 
   constructor() {
     super({ containerTag: 'main', title: 'Cart', showBreadCrumbs: true });
     this.#createContent();
     this.#showContent();
+    this.#loader = new Loader({});
   }
 
-  #createContent = () => {
+  #createContent = async () => {
     this.#content = tag<HTMLDivElement>(
       {
         tag: 'div',
@@ -98,36 +37,108 @@ export default class CartPage extends ContentPage {
         tag<HTMLHeadingElement>({ tag: 'h1', class: classes.h1Text, text: this.title }),
       ),
     );
-    this.#createProductList();
+    try {
+      const data = await cartController.getCartData();
+      console.log(data);
+      if (data && data.lineItems.length > 0) {
+        this.#createProductList(data);
+        this.#createRowAfterList(Number(data.totalPrice.centAmount) / 100);
+        this.#createButtonClearCart();
+      } else {
+        this.#createEmptyMessage();
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   #showContent = () => {
     this.container.node.append(this.#content.node);
   };
 
-  #createProductList = async () => {
+  #createProductList = (data: Cart) => {
     const list = tag({ tag: 'div', class: classes.prodList });
-    const data = await cartController.getCartData();
-    console.log(data);
     if (data?.lineItems ?? []) {
       data?.lineItems.forEach((item) => {
-        const firstImgUrl = item.variant.images ? item.variant.images[0].url : '';
-        const price = item.price.value.centAmount / 100;
-        const totalPrice = item.totalPrice.centAmount / 100;
-        const priceDiscount =
-          totalPrice / item.quantity !== price ? totalPrice / item.quantity : undefined;
-        const row = createProductRow(
-          item.id,
-          firstImgUrl,
-          item.name[Products.locale],
-          item.quantity,
-          price,
-          totalPrice,
-          priceDiscount,
-        );
+        const row = new CartRow(this.#refreshCart, item);
         list.node.append(row.node);
       });
     }
     this.#content.node.append(list.node);
+  };
+
+  #createRowAfterList = (price: number) => {
+    // row with promo code input and total price
+    const row = tag(
+      { tag: 'div', class: classes.rowAfterList },
+      // total price
+      tag(
+        { tag: 'div', class: classes.totalPriceRow, text: 'Total price:' },
+        tag({ tag: 'span', class: classes.totalPrice, text: `€${price.toFixed(2)}` }),
+      ),
+    );
+    this.#content.node.append(row.node);
+  };
+
+  #createButtonClearCart = () => {
+    const button = new Button(
+      { text: 'Clear the Cart', class: classes.buttonClear },
+      ButtonClasses.NORMAL,
+      this.#showModalPrompt,
+      trashSVG,
+    );
+    this.#content.node.append(button.node);
+  };
+
+  #showModalPrompt = () => {
+    const modal = new ModalWindow(
+      classes.modal,
+      true,
+      tag(
+        { tag: 'div', class: classes.modalWrapper },
+        tag({ tag: 'h2', class: classes.modalTitle, text: 'Attention' }),
+        tag({ tag: 'p', text: 'Do you want to remove all items from your shopping cart?' }),
+        tag(
+          { tag: 'div', class: classes.modalButtonRow },
+          new Button(
+            { text: 'Remove', class: classes.modalButton },
+            ButtonClasses.NORMAL,
+            async () => {
+              await this.#clearCart();
+              modal.hide();
+            },
+          ),
+          new Button({ text: 'Cancel', class: classes.modalButton }, ButtonClasses.NORMAL, () => {
+            modal.hide();
+          }),
+        ),
+      ),
+    );
+    modal.show();
+  };
+
+  #createEmptyMessage = () => {
+    const message = tag(
+      { tag: 'div', class: classes.emptyMessage },
+      tag({ tag: 'p', text: 'Your cart is still empty.' }),
+      new Button({ text: `Let's go get the games!` }, ButtonClasses.NORMAL, () =>
+        Router.getInstance().route(AppRoutes.CATALOGUE),
+      ),
+    );
+    this.#content.node.append(message.node);
+  };
+
+  #refreshCart = () => {
+    this.#content.node.remove();
+    this.#createContent();
+    this.#showContent();
+    this.header.refreshCountInCartElement();
+  };
+
+  #clearCart = async () => {
+    this.#loader.show();
+    await cartController.removeAllItemFromCart();
+    this.#loader.hide();
+    this.#refreshCart();
   };
 }

@@ -50,4 +50,10 @@ export default class ModalWindow extends BaseElement<HTMLElement> {
     this.node.append(this.#modal.node);
     document.body.classList.add(bodyClasses.disabledScroll);
   };
+
+  hide = () => {
+    this.node.remove();
+    this.node.removeEventListener('click', this.#close);
+    document.body.classList.remove(bodyClasses.disabledScroll);
+  };
 }
