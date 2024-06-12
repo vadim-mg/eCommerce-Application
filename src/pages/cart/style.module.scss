@@ -56,15 +56,24 @@
 
 .row-after-list {
   display: flex;
+  justify-content: space-between;
+    align-items: flex-start;
 }
 .total-price-row {
   display: flex;
   justify-content: space-between;
-  margin-top: 2rem;
   font-size: 1.5rem;
   line-height: 2rem;
   gap: 1.5rem;
 }
 .total-price {
   color: var(--color-orange-main);
+}
+.form{
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+.form-button{
+  padding: 0.7rem 1.75rem;
 }
