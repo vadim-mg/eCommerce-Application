@@ -150,7 +150,10 @@ export default class CartPage extends ContentPage {
       (this.#buttonPromoCode = new Button(
         { text: 'Apply', class: classes.formButton },
         ButtonClasses.NORMAL,
-        this.#handlerApplyPromoCode,
+        () => {
+          console.log('отправляем промокод');
+        },
+        // this.#handlerApplyPromoCode,
       )),
     );
     return form;
@@ -158,8 +161,8 @@ export default class CartPage extends ContentPage {
 
   #handlerApplyPromoCode = async () => {
     try {
-      await cartController.applyCartDiscounts(this.#inputPromoCode.value);
-      // this.#refreshCart();
+      // await cartController.applyCartDiscounts(this.#inputPromoCode.value); - если промокод верный, ответ 200, но скидка не применяется.
+      this.#refreshCart();
       this.#inputPromoCode.setDisabled(true);
       this.#buttonPromoCode.disable();
     } catch (e) {
