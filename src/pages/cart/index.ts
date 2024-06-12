@@ -81,10 +81,10 @@ export default class CartPage extends ContentPage {
 
   #createButtonClearCart = () => {
     const button = new Button(
-      { text: 'Clear cart', class: classes.buttonClear },
+      { text: 'Clear the Cart', class: classes.buttonClear },
       ButtonClasses.NORMAL,
       this.#handlerClearButtonOnClick,
-      trashSVG
+      trashSVG,
     );
     this.#content.node.append(button.node);
   };
