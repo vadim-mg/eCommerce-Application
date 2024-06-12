@@ -117,6 +117,7 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
   };
 
   #onShowMoreBtn = (options: ProductGetOptions) => {
+    // offset - кол-во карточек отображенных ранее, limit - сколько нужно загрузить
     // здесь offset увеличивается на начальное кол-во карточек(9)
     this.#offset += this.#limit === this.#startLimitValue ? this.#limit : 0;
     this.#limit = this.#cardsCountToDisplay;
