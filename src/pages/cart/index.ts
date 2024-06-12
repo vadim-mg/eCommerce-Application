@@ -4,23 +4,21 @@ import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import CartRow from '@Src/components/logic/cart-row';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
-import Loader from '@Src/components/ui/loader';
 import cartController from '@Src/controllers/cart';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
 import { Cart } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
 
+
+
 export default class CartPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
-
-  #loader: Loader;
 
   constructor() {
     super({ containerTag: 'main', title: 'Cart', showBreadCrumbs: true });
     this.#createContent();
     this.#showContent();
-    this.#loader = new Loader({});
   }
 
   #createContent = async () => {
@@ -41,6 +39,7 @@ export default class CartPage extends ContentPage {
       if (data && data.lineItems.length > 0) {
         this.#createProductList(data);
         this.#createRowAfterList(Number(data.totalPrice.centAmount) / 100);
+        this.#createButtonClearCart();
       } else {
         this.#createEmptyMessage();
       }
@@ -77,6 +76,11 @@ export default class CartPage extends ContentPage {
     this.#content.node.append(row.node);
   };
 
+  #createButtonClearCart = () => {
+    const button = new Button({ text: 'Clear cart', class: classes.buttonClear }, ButtonClasses.NORMAL, this.#handlerClearButtonOnClick);
+    this.#content.node.append(button.node);
+  };
+
   #createEmptyMessage = () => {
     const message = tag(
       { tag: 'div', class: classes.emptyMessage },
@@ -93,5 +97,10 @@ export default class CartPage extends ContentPage {
     this.#createContent();
     this.#showContent();
     this.header.refreshCountInCartElement();
+  };
+
+  #handlerClearButtonOnClick = async () => {
+    await cartController.removeAllItemFromCart();
+    this.#refreshCart();
   };
 }

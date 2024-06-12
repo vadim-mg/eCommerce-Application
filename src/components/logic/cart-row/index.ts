@@ -13,6 +13,10 @@ import classes from './style.module.scss';
 export default class CartRow extends BaseElement<HTMLElement> {
   #onChangeProductStateInCart: () => void;
 
+  productId: string;
+
+  productQuantity: number;
+
   constructor(onChangeProductStateInCart: () => void, dataItem: LineItem) {
     super({
       tag: 'div',
@@ -21,7 +25,11 @@ export default class CartRow extends BaseElement<HTMLElement> {
           ? [classes.prodRow, classes.prodRowDiscount]
           : classes.prodRow,
     });
+
     this.#onChangeProductStateInCart = onChangeProductStateInCart;
+    this.productId = dataItem.productId;
+    this.productQuantity = dataItem.quantity;
+
     // image
     const imgEl = tag(
       { tag: 'div', class: classes.prodRowImgWrapper },
@@ -36,7 +44,6 @@ export default class CartRow extends BaseElement<HTMLElement> {
       }),
     );
     // name
-    console.log();
     const nameEl = new Link({
       class: classes.prodRowName,
       text: dataItem.name[Products.locale],
@@ -54,7 +61,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
             tag: 'div',
             class:
               dataItem.totalPrice.centAmount / dataItem.quantity !==
-              dataItem.price.value.centAmount
+                dataItem.price.value.centAmount
                 ? classes.prodRowPriceOld
                 : classes.prodRowPrice,
             innerHTML: `€${(dataItem.price.value.centAmount / 100).toFixed(2)}`,
@@ -65,7 +72,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
             class: classes.prodRowPrice,
             innerHTML:
               dataItem.totalPrice.centAmount / dataItem.quantity !==
-              dataItem.price.value.centAmount
+                dataItem.price.value.centAmount
                 ? `€${(dataItem.totalPrice.centAmount / 100 / dataItem.quantity).toFixed(2)}`
                 : '',
           }),

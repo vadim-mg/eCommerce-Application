@@ -1,6 +1,6 @@
+import cartApi from '@Src/api/cart';
 import { Cart, LineItem, MyCartDraft, MyCartUpdateAction } from '@commercetools/platform-sdk';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
-import cartApi from '@Src/api/cart';
 import errorHandler from './error-handler';
 
 class CartController {
@@ -179,6 +179,42 @@ class CartController {
   get totalProductCount() {
     return Array.from(this.#productInCart).reduce((acc, val) => acc + val[1].quantity, 0);
   }
+
+  removeAllItemFromCart = async () => {
+    try {
+      if (!this.#cartData) {
+        this.#cartData = await this.#getActiveCart();
+      }
+      if (!this.#cartData) {
+        return;
+      }
+      const arrayRemoveLineItemAction: MyCartUpdateAction[] = [];
+
+      this.#productInCart.forEach((product) => {
+        const lineItemId = product.id;
+        const lineItemQuantity = product.quantity;
+        const removeLineItemAction: MyCartUpdateAction = {
+          action: 'removeLineItem',
+          lineItemId,
+          quantity: lineItemQuantity,
+        };
+        arrayRemoveLineItemAction.push(removeLineItemAction);
+      });
+
+
+      this.#cartData = (
+        await cartApi.updateCart(this.#cartData?.id, this.#cartData?.version, arrayRemoveLineItemAction)
+      ).body;
+
+      this.#productInCart = new Map();
+
+    } catch (e) {
+      const error = e as HttpErrorType;
+      errorHandler(error);
+      console.log(error);
+      throw new Error(error.message);
+    }
+  };
 }
 
 export const cartController = new CartController();
