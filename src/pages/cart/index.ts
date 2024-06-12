@@ -91,18 +91,28 @@ export default class CartPage extends ContentPage {
   };
 
   #showModalPrompt = () => {
-    const modal = new ModalWindow(classes.modal, true,
-      tag({ tag: 'div', class: classes.modalWrapper },
+    const modal = new ModalWindow(
+      classes.modal,
+      true,
+      tag(
+        { tag: 'div', class: classes.modalWrapper },
         tag({ tag: 'h2', class: classes.modalTitle, text: 'Attention' }),
         tag({ tag: 'p', text: 'Do you want to remove all items from your shopping cart?' }),
-        tag({ tag: 'div', class: classes.modalButtonRow },
-          new Button({ text: 'Remove', class: classes.modalButton }, ButtonClasses.NORMAL, async () => {
-            await this.#clearCart();
+        tag(
+          { tag: 'div', class: classes.modalButtonRow },
+          new Button(
+            { text: 'Remove', class: classes.modalButton },
+            ButtonClasses.NORMAL,
+            async () => {
+              await this.#clearCart();
+              modal.hide();
+            },
+          ),
+          new Button({ text: 'Cancel', class: classes.modalButton }, ButtonClasses.NORMAL, () => {
             modal.hide();
           }),
-          new Button({ text: 'Cancel', class: classes.modalButton }, ButtonClasses.NORMAL, () => { modal.hide(); }),
-        )
-      )
+        ),
+      ),
     );
     modal.show();
   };

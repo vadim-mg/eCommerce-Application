@@ -61,7 +61,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
             tag: 'div',
             class:
               dataItem.totalPrice.centAmount / dataItem.quantity !==
-              dataItem.price.value.centAmount
+                dataItem.price.value.centAmount
                 ? classes.prodRowPriceOld
                 : classes.prodRowPrice,
             innerHTML: `€${(dataItem.price.value.centAmount / 100).toFixed(2)}`,
@@ -72,7 +72,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
             class: classes.prodRowPrice,
             innerHTML:
               dataItem.totalPrice.centAmount / dataItem.quantity !==
-              dataItem.price.value.centAmount
+                dataItem.price.value.centAmount
                 ? `€${(dataItem.totalPrice.centAmount / 100 / dataItem.quantity).toFixed(2)}`
                 : '',
           }),
@@ -98,6 +98,7 @@ export default class CartRow extends BaseElement<HTMLElement> {
         tag: 'div',
         class: classes.prodRowTrash,
         innerHTML: trashSVG,
+        title: 'Remove product from shopping cart',
         onclick: async () => {
           try {
             await cartController.removeItemFromCart(String(dataItem.productId), dataItem.quantity);
