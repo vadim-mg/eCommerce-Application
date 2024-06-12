@@ -75,3 +75,16 @@
 .total-price {
   color: var(--color-orange-main);
 }
+.modal-wrapper{
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+
+}
+.modal-button-row{
+  display: flex;
+  gap: 2rem;
+
+}

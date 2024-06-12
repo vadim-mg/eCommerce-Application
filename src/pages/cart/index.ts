@@ -6,6 +6,7 @@ import tag from '@Src/components/common/tag';
 import CartRow from '@Src/components/logic/cart-row';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Loader from '@Src/components/ui/loader';
+import ModalWindow from '@Src/components/ui/modal';
 import cartController from '@Src/controllers/cart';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
@@ -83,10 +84,27 @@ export default class CartPage extends ContentPage {
     const button = new Button(
       { text: 'Clear the Cart', class: classes.buttonClear },
       ButtonClasses.NORMAL,
-      this.#handlerClearButtonOnClick,
+      this.#showModalPrompt,
       trashSVG,
     );
     this.#content.node.append(button.node);
+  };
+
+  #showModalPrompt = () => {
+    const modal = new ModalWindow(classes.modal, true,
+      tag({ tag: 'div', class: classes.modalWrapper },
+        tag({ tag: 'h2', class: classes.modalTitle, text: 'Attention' }),
+        tag({ tag: 'p', text: 'Do you want to remove all items from your shopping cart?' }),
+        tag({ tag: 'div', class: classes.modalButtonRow },
+          new Button({ text: 'Remove', class: classes.modalButton }, ButtonClasses.NORMAL, async () => {
+            await this.#clearCart();
+            modal.hide();
+          }),
+          new Button({ text: 'Cancel', class: classes.modalButton }, ButtonClasses.NORMAL, () => { modal.hide(); }),
+        )
+      )
+    );
+    modal.show();
   };
 
   #createEmptyMessage = () => {
@@ -107,7 +125,7 @@ export default class CartPage extends ContentPage {
     this.header.refreshCountInCartElement();
   };
 
-  #handlerClearButtonOnClick = async () => {
+  #clearCart = async () => {
     this.#loader.show();
     await cartController.removeAllItemFromCart();
     this.#loader.hide();
