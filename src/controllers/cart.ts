@@ -201,13 +201,15 @@ class CartController {
         arrayRemoveLineItemAction.push(removeLineItemAction);
       });
 
-
       this.#cartData = (
-        await cartApi.updateCart(this.#cartData?.id, this.#cartData?.version, arrayRemoveLineItemAction)
+        await cartApi.updateCart(
+          this.#cartData?.id,
+          this.#cartData?.version,
+          arrayRemoveLineItemAction,
+        )
       ).body;
 
       this.#productInCart = new Map();
-
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);

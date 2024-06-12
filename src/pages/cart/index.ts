@@ -10,8 +10,6 @@ import { AppRoutes } from '@Src/router/routes';
 import { Cart } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
 
-
-
 export default class CartPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
@@ -77,7 +75,11 @@ export default class CartPage extends ContentPage {
   };
 
   #createButtonClearCart = () => {
-    const button = new Button({ text: 'Clear cart', class: classes.buttonClear }, ButtonClasses.NORMAL, this.#handlerClearButtonOnClick);
+    const button = new Button(
+      { text: 'Clear cart', class: classes.buttonClear },
+      ButtonClasses.NORMAL,
+      this.#handlerClearButtonOnClick,
+    );
     this.#content.node.append(button.node);
   };
 
