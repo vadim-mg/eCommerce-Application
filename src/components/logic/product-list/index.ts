@@ -52,6 +52,7 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
   }
 
   showProducts = async (options: ProductGetOptions) => {
+    this.getCardCountByScreenWidth();
     const { categoryId } = options;
     const showOptions: ProductGetOptions = options;
     try {
@@ -122,4 +123,14 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
     });
     this.#offset += this.#limit;
   };
+
+  getCardCountByScreenWidth = () => {
+    if (window.screen.width >= 1449) {
+      this.#cardsCountToDisplay = 3;
+    } else if (window.screen.width < 1449 && window.screen.width > 720) {
+      this.#cardsCountToDisplay = 2;
+    } else {
+      this.#cardsCountToDisplay = 1;
+    }
+  }
 }
