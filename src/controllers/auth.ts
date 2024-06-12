@@ -1,7 +1,12 @@
-import { CustomerSignin, MyCustomerDraft } from '@commercetools/platform-sdk';
+import {
+  CartResourceIdentifier,
+  CustomerSignin,
+  MyCustomerDraft,
+} from '@commercetools/platform-sdk';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import apiRoot from '@Src/api/api-root';
 import customerApi from '@Src/api/customers';
+import cartController from '@Src/controllers/cart';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
 import State from '@Src/state';
@@ -12,11 +17,24 @@ import errorHandler from './error-handler';
 
 // All catches must be in functions that call this functions
 
-const signIn = (customer: CustomerSignin) =>
-  customerApi
-    .signIn(customer)
-    .then((response) => {
+const signIn = async (customer: CustomerSignin) => {
+  const customerWithCart = customer;
+  const anonymousCart: CartResourceIdentifier = {
+    typeId: 'cart',
+    id: (await cartController.getCartData())?.id,
+  };
+  const anonymousCartSignInMode = 'MergeWithExistingCustomerCart';
+  return customerApi
+    .signIn({
+      ...customerWithCart,
+      anonymousCart,
+      anonymousCartSignInMode,
+      updateProductData: true,
+      anonymousId: (await cartController.getCartData())?.anonymousId,
+    })
+    .then(async (response) => {
       if (response.statusCode === 200) {
+        cartController.setCartData(response.body.cart ?? null);
         State.getInstance().isLoggedIn = true;
         State.getInstance().currentUser = response.body.customer;
         Router.getInstance().route(AppRoutes.MAIN);
@@ -26,16 +44,20 @@ const signIn = (customer: CustomerSignin) =>
       errorHandler(error as HttpErrorType);
       throw new Error(error.message);
     });
+};
 
 const signUp = (customer: MyCustomerDraft) =>
   customerApi
     .signUp(customer)
-    .then((response) => {
+    .then(async (response) => {
       if (response.statusCode === 201) {
         const { email, password } = customer;
-        apiRoot.loginUser({ username: email, password });
+        const customerSignInResult = (await apiRoot.loginUser({ username: email, password })).body;
+        cartController.setCartData(customerSignInResult.cart ?? null);
         State.getInstance().isLoggedIn = true;
         State.getInstance().currentUser = response.body.customer;
+        // await cartController.getCartData(true);
+        await cartController.setShippingAddressForCustomer(customerSignInResult);
         Router.getInstance().route(AppRoutes.MAIN);
       }
     })
@@ -44,10 +66,12 @@ const signUp = (customer: MyCustomerDraft) =>
       throw error;
     });
 
-const signOut = () => {
+const signOut = async () => {
   apiRoot.logoutUser();
   State.getInstance().isLoggedIn = false;
   State.getInstance().currentUser = null;
+  cartController.setCartData(null);
+  cartController.getCartData();
   Router.getInstance().route(AppRoutes.LOGOUT);
 };
 

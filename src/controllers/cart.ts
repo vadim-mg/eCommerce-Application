@@ -1,40 +1,59 @@
-import cartApi from '@Src/api/cart';
-import { Cart, LineItem, MyCartDraft, MyCartUpdateAction } from '@commercetools/platform-sdk';
+import {
+  _BaseAddress,
+  Cart,
+  CustomerSignInResult,
+  LineItem,
+  MyCartDraft,
+  MyCartUpdateAction,
+} from '@commercetools/platform-sdk';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
+import cartApi from '@Src/api/cart';
 import errorHandler from './error-handler';
 
 class CartController {
-  #cartData: Cart | null;
+  #cartData!: Cart | null;
 
-  #productInCart: Map<string, Pick<LineItem, 'id' | 'quantity'>>;
+  #productInCart!: Map<string, Pick<LineItem, 'id' | 'quantity'>>;
 
-  #requestForActiveCartSent: boolean; // if already sent request for active cart, nee to exclude concurrent same requests
+  #requestForActiveCartSent!: boolean; // if already sent request for active cart, nee to exclude concurrent same requests
 
   constructor() {
+    this.#init();
+  }
+
+  #init = () => {
     this.#requestForActiveCartSent = false;
     this.#cartData = null;
-    this.#productInCart = new Map();
-  }
+    this.#fillProductInCartMap();
+  };
+
+  #fillProductInCartMap = () => {
+    this.#productInCart = new Map(
+      this.#cartData?.lineItems.map((item) => [
+        item.productId,
+        {
+          id: item.id,
+          quantity: item.quantity,
+        },
+      ]),
+    );
+  };
 
   #getActiveCart = async () => {
     try {
-      this.#cartData = (await cartApi.getActiveCart()).body;
-      // console.log('#getActiveCart, this.#cartData = ', this.#cartData);
-      this.#productInCart = new Map(
-        this.#cartData.lineItems.map((item) => [
-          item.productId,
-          {
-            id: item.id,
-            quantity: item.quantity,
-          },
-        ]),
-      );
+      const carts = (await cartApi.getCarts()).body;
+      this.#cartData = carts.results.find((val) => val.cartState === 'Active') ?? null;
+
+      if (!this.#cartData) {
+        await this.#createNewEmptyCart();
+      }
+      this.#fillProductInCartMap();
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);
       console.log(error);
       if (error.code === 404) {
-        console.log('Will create cart');
+        console.log('Will create cart, because it is not found!');
         await this.#createNewEmptyCart();
       }
     }
@@ -47,7 +66,6 @@ class CartController {
         currency: 'EUR',
       };
       this.#cartData = (await cartApi.createCart(myCartDraft)).body;
-      // ('#createNewEmptyCart, this.#cartData = ', this.#cartData);
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);
@@ -174,6 +192,11 @@ class CartController {
     return this.#cartData;
   };
 
+  setCartData = (cartData: Cart | null) => {
+    this.#cartData = cartData;
+    this.#fillProductInCartMap();
+  };
+
   howManyAlreadyInCart = (productId: string) => this.#productInCart.get(productId)?.quantity ?? 0;
 
   get totalProductCount() {
@@ -215,6 +238,45 @@ class CartController {
       errorHandler(error);
       console.log(error);
       throw new Error(error.message);
+    }
+  };
+
+  deleteCart = async () => {
+    if (this.#cartData) {
+      try {
+        await cartApi.deleteCart(this.#cartData.id, this.#cartData.version);
+        this.#init();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  setShippingAddress = async (address: _BaseAddress) => {
+    if (this.#cartData) {
+      const setShippingAddressAction: MyCartUpdateAction = {
+        action: 'setShippingAddress',
+        address,
+      };
+      try {
+        await cartApi.updateCart(this.#cartData?.id, this.#cartData?.version, [
+          setShippingAddressAction,
+        ]);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  setShippingAddressForCustomer = async (customerSignInResult: CustomerSignInResult) => {
+    const shippingAddressId = customerSignInResult.customer.shippingAddressIds?.[0];
+    if (shippingAddressId) {
+      const shippingAddress = customerSignInResult.customer.addresses.find(
+        (val) => val.id === shippingAddressId,
+      );
+      if (shippingAddress) {
+        await this.setShippingAddress(shippingAddress);
+      }
     }
   };
 }

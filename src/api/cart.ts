@@ -26,4 +26,16 @@ const updateCart = (ID: string, version: number, actions: MyCartUpdateAction[]) 
     })
     .execute();
 
-export default { getActiveCart, createCart, updateCart, getCarts };
+const deleteCart = (ID: string, version: number) =>
+  apiRoot.apiBuilder
+    .me()
+    .carts()
+    .withId({ ID })
+    .delete({
+      queryArgs: {
+        version,
+      },
+    })
+    .execute();
+
+export default { getActiveCart, createCart, updateCart, getCarts, deleteCart };
