@@ -13,4 +13,8 @@
   margin: auto;
   margin-top: 1.25rem;
   margin-bottom: 1.81rem;
+
+  &:hover {
+    background-color: var(--color-orange-extra-light);
+  }
 }
