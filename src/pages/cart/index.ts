@@ -19,7 +19,9 @@ export default class CartPage extends ContentPage {
 
   #loader: Loader;
 
-  #formPromoCode!: InputText;
+  #inputPromoCode!: InputText;
+
+  #buttonPromoCode!: Button;
 
   constructor() {
     super({ containerTag: 'main', title: 'Cart', showBreadCrumbs: true });
@@ -135,7 +137,7 @@ export default class CartPage extends ContentPage {
   #createPromoCodeForm = (): BaseElement<HTMLElement> => {
     const form = tag(
       { tag: 'div', class: classes.form },
-      (this.#formPromoCode = new InputText(
+      (this.#inputPromoCode = new InputText(
         {
           placeholder: 'PROMOCODE',
           type: 'text',
@@ -145,11 +147,21 @@ export default class CartPage extends ContentPage {
         },
         undefined,
       )),
-      new Button({ text: 'Apply', class: classes.formButton }, ButtonClasses.NORMAL, () =>
-        console.log('отправляем'),
+      this.#buttonPromoCode = new Button({ text: 'Apply', class: classes.formButton }, ButtonClasses.NORMAL, this.#handlerApplyPromoCode
       ),
     );
     return form;
+  };
+
+  #handlerApplyPromoCode = async () => {
+    try {
+      await cartController.applyCartDiscounts(this.#inputPromoCode.value);
+      // this.#refreshCart();
+      this.#inputPromoCode.setDisabled(true);
+      this.#buttonPromoCode.disable();
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   #refreshCart = () => {
