@@ -2,6 +2,7 @@ import { MyCartDraft, MyCartUpdateAction } from '@commercetools/platform-sdk';
 import apiRoot from './api-root';
 
 const getActiveCart = () => apiRoot.apiBuilder.me().activeCart().get().execute();
+const getCarts = () => apiRoot.apiBuilder.me().carts().get().execute();
 
 const createCart = (myCartDraft: MyCartDraft) =>
   apiRoot.apiBuilder
@@ -25,4 +26,4 @@ const updateCart = (ID: string, version: number, actions: MyCartUpdateAction[]) 
     })
     .execute();
 
-export default { getActiveCart, createCart, updateCart };
+export default { getActiveCart, createCart, updateCart, getCarts };
