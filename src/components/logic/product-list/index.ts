@@ -54,6 +54,7 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
       if (options.isClear) {
         this.#productsContainer.node.innerHTML = '';
         this.#offset = 0;
+        this.#limit = 9;
       }
       const respBody = await this.#products.getProducts(options);
 
@@ -103,6 +104,7 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
 
   #onShowMoreBtn = (options: ProductGetOptions) => {
     this.#offset += this.#limit === this.#startLimitValue ? this.#limit : 0;
+    console.log(this.#limit);
     this.#limit = this.#cardsCountToDisplay;
     this.showProducts({
       categoryId: options.categoryId,
