@@ -18,6 +18,8 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
 
   #productsContainer: BaseElement<HTMLDivElement>;
 
+  #buttonContainer: BaseElement<HTMLDivElement>;
+
   #showMoreBtn!: Button;
 
   #limit: number = 9;
@@ -40,7 +42,11 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
       tag: 'div',
       class: classes.productsContainer,
     });
+    this.#buttonContainer = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+    });
     this.node.append(this.#productsContainer.node);
+    this.node.append(this.#buttonContainer.node);
     this.#products = logicProperties.products;
     this.#onAddToCartCb = logicProperties.onAddToCartCb;
   }
@@ -53,6 +59,7 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
 
       if (options.isClear) {
         this.#productsContainer.node.innerHTML = '';
+        this.#buttonContainer.node.innerHTML = '';
         this.#offset = 0;
         this.#limit = 9;
       }
@@ -76,7 +83,6 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
           );
         });
         const total = respBody.total ?? 0;
-        // изменить условие, чтобы кнопка заново не создавалась
         if (total > respBody.count + respBody.offset && respBody.limit === this.#startLimitValue) {
           this.#addShowMoreBtn(options);
         }
@@ -99,12 +105,11 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
       loadingSvg,
     );
     this.#showMoreBtn.node.classList.add(classes.showMoreBtn);
-    this.node.append(this.#showMoreBtn.node);
+    this.#buttonContainer.node.append(this.#showMoreBtn.node);
   };
 
   #onShowMoreBtn = (options: ProductGetOptions) => {
     this.#offset += this.#limit === this.#startLimitValue ? this.#limit : 0;
-    console.log(this.#limit);
     this.#limit = this.#cardsCountToDisplay;
     this.showProducts({
       categoryId: options.categoryId,
