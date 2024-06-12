@@ -6,6 +6,7 @@ import tag from '@Src/components/common/tag';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import productCategories from '@Src/controllers/categories';
 import Products from '@Src/controllers/products';
+import { ProductProjectionPagedQueryResponse } from '@commercetools/platform-sdk';
 import ProductCard, { AddToCartCbFunction } from '../product-card';
 import classes from './style.module.scss';
 
@@ -22,9 +23,9 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
 
   #showMoreBtn!: Button;
 
-  #limit: number = 9;
+  #limit!: number;
 
-  #offset: number = 0;
+  #offset!: number;
 
   #startLimitValue: number = 9;
 
@@ -49,20 +50,18 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
     this.node.append(this.#buttonContainer.node);
     this.#products = logicProperties.products;
     this.#onAddToCartCb = logicProperties.onAddToCartCb;
+    this.#resetToInitialState();
   }
 
   showProducts = async (options: ProductGetOptions) => {
-    this.getCardCountByScreenWidth();
+    this.setCardCountByScreenWidth();
     const { categoryId } = options;
     const showOptions: ProductGetOptions = options;
     try {
       showOptions.categoryId = categoryId === productCategories.CATEGORY_ALL.id ? '' : categoryId;
 
       if (options.isClear) {
-        this.#productsContainer.node.innerHTML = '';
-        this.#buttonContainer.node.innerHTML = '';
-        this.#offset = 0;
-        this.#limit = 9;
+        this.#resetToInitialState();
       }
       const respBody = await this.#products.getProducts(options);
 
@@ -83,11 +82,10 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
             ).node,
           );
         });
-        const total = respBody.total ?? 0;
-        if (total > respBody.count + respBody.offset && respBody.limit === this.#startLimitValue) {
+        if (this.isWithinTotalLimit(respBody)) {
           this.#addShowMoreBtn(options);
         }
-        if (total <= respBody.count + respBody.offset) {
+        if (ProductList.isTotalUnderOffset(respBody)) {
           this.#showMoreBtn.node.remove();
         }
       } else {
@@ -98,18 +96,28 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
     }
   };
 
+  isWithinTotalLimit = (response: ProductProjectionPagedQueryResponse) => {
+    const total = response.total ?? 0;
+    return total > response.count + response.offset && response.limit === this.#startLimitValue;
+  };
+
+  static isTotalUnderOffset = (response: ProductProjectionPagedQueryResponse) => {
+    const total = response.total ?? 0;
+    return total <= response.count + response.offset;
+  };
+
   #addShowMoreBtn = (options: ProductGetOptions) => {
     this.#showMoreBtn = new Button(
-      { text: 'Show more' },
+      { text: 'Show more', class: classes.showMoreBtn },
       ButtonClasses.NORMAL,
       () => this.#onShowMoreBtn(options),
       loadingSvg,
     );
-    this.#showMoreBtn.node.classList.add(classes.showMoreBtn);
     this.#buttonContainer.node.append(this.#showMoreBtn.node);
   };
 
   #onShowMoreBtn = (options: ProductGetOptions) => {
+    // здесь offset увеличивается на начальное кол-во карточек(9)
     this.#offset += this.#limit === this.#startLimitValue ? this.#limit : 0;
     this.#limit = this.#cardsCountToDisplay;
     this.showProducts({
@@ -124,13 +132,25 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
     this.#offset += this.#limit;
   };
 
-  getCardCountByScreenWidth = () => {
-    if (window.screen.width >= 1449) {
-      this.#cardsCountToDisplay = 3;
-    } else if (window.screen.width < 1449 && window.screen.width > 720) {
-      this.#cardsCountToDisplay = 2;
-    } else {
-      this.#cardsCountToDisplay = 1;
+  setCardCountByScreenWidth = () => {
+    this.#cardsCountToDisplay = ProductList.getCardCountByScreenWidth(window.screen.width);
+  };
+
+  static getCardCountByScreenWidth = (screenWidth: number): number => {
+    switch (true) {
+      case screenWidth >= 1449:
+        return 3;
+      case screenWidth > 720:
+        return 2;
+      default:
+        return 1;
     }
-  }
+  };
+
+  #resetToInitialState = () => {
+    this.#productsContainer.node.innerHTML = '';
+    this.#buttonContainer.node.innerHTML = '';
+    this.#offset = 0;
+    this.#limit = 9;
+  };
 }
