@@ -7,6 +7,11 @@
   margin-top: 1.5rem;
   margin-bottom: 2.5rem;
   min-height: 50dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem;
+
   @media (max-height: 896px) {
     min-height: 40dvh;
   }
@@ -32,9 +37,12 @@
 .prod-list {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+  width: 100%;
 }
 
 .empty-message {
+  width: 100%;
   background: url('@Assets/img/empty.svg') var(--color-white) no-repeat center;
   background-size: contain;
   padding: 8rem 0;
@@ -60,11 +68,21 @@
 .total-price-row {
   display: flex;
   justify-content: space-between;
-  margin-top: 2rem;
   font-size: 1.5rem;
   line-height: 2rem;
   gap: 1.5rem;
 }
 .total-price {
   color: var(--color-orange-main);
+}
+.modal-wrapper {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+.modal-button-row {
+  display: flex;
+  gap: 2rem;
 }
