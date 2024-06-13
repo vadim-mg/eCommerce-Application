@@ -4,6 +4,9 @@ import tag from '@Src/components/common/tag';
 import Banner from '@Src/components/ui/banner';
 import Link from '@Src/components/ui/link';
 import { AppRoutes } from '@Src/router/routes';
+import ProductList from '@Src/components/logic/product-list';
+import Products from '@Src/controllers/products';
+import { SortingType } from '@Src/api/products';
 import classes from './style.module.scss';
 
 export default class MainPage extends ContentPage {
@@ -11,11 +14,22 @@ export default class MainPage extends ContentPage {
 
   #banner: Banner;
 
+  #homePageContent!: BaseElement<HTMLDivElement>;
+
+  #products: Products;
+
+  #productList!: ProductList;
+
   constructor() {
     super({ containerTag: 'div', title: 'Main page' });
     this.#banner = new Banner({});
     this.#createContent();
     this.placeForBanner.node.append(this.#content.node, this.#banner.node);
+    this.#products = new Products();
+    this.#createHomePageContent();
+    this.container.node.append(this.#homePageContent.node);
+    this.#renderProductList();
+
     // this.#showContent();
   }
 
@@ -68,6 +82,45 @@ export default class MainPage extends ContentPage {
       ),
       secretLinks,
     );
+  };
+
+  #createHomePageContent = () => {
+    this.#homePageContent = new BaseElement<HTMLDivElement>(
+      { tag: 'div' },
+      new BaseElement<HTMLHeadingElement>({
+        tag: 'h2',
+        text: 'New games',
+        class: classes.cardsTitle,
+      }),
+      new BaseElement<HTMLDivElement>(
+        { tag: 'div' },
+        this.#productList = new ProductList(
+          { class: classes.products },
+          {
+            products: this.#products,
+            onAddToCartCb: () => this.header.refreshCountInCartElement,
+          },
+        ),
+      ),
+    );
+  };
+
+  #renderProductList = async () => {
+    this.#productList.showProducts({
+      categoryId: 'all-categories-id',
+      search: '',
+      filter: {
+        'age-from': [],
+        brand: [],
+        'min-number-of-players-start': 1,
+        'min-number-of-players-end': 3,
+        'max-number-of-players-start': 4,
+        'max-number-of-players-end': 10,
+      },
+      sortingType: SortingType['name-asc'],
+      limit: 8,
+      isClear: false,
+    });
   };
 
   #showContent = () => {
