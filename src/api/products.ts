@@ -27,7 +27,14 @@ const getProductById = (id: string) =>
 
 const getProducts = (options: ProductGetOptions) => {
   const DEFAULT_COUNT_PRODUCTS_IN_CATALOG = 9;
-  const { categoryId, sortingType, search, filter, limit = DEFAULT_COUNT_PRODUCTS_IN_CATALOG, offset } = options;
+  const {
+    categoryId,
+    sortingType,
+    search,
+    filter,
+    limit = DEFAULT_COUNT_PRODUCTS_IN_CATALOG,
+    offset,
+  } = options;
 
   const filteredBrans = filter?.[AttrName.BRAND]?.length ? filter?.[AttrName.BRAND] : [];
 
