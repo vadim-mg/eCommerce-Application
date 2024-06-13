@@ -133,12 +133,15 @@ export default class MainPage extends ContentPage {
       tag<HTMLHeadingElement>({ tag: 'h2', text: 'About us', class: classes.aboutTitle }),
       tag<HTMLDivElement>(
         { tag: 'div', class: classes.aboutContentWrapper },
-        tag<HTMLImageElement>({ tag: 'img', src: gamesImg, alt: 'Games image' }),
+        tag<HTMLDivElement>({ tag: 'div', class: classes.imageWrapper },
+          tag<HTMLImageElement>({ tag: 'img', src: gamesImg, alt: 'Games image' })
+        ),
         tag<HTMLDivElement>(
           { tag: 'div', class: classes.textWrapper },
           tag<HTMLParagraphElement>({
             tag: 'p',
             text: 'Welcome to our cosy corner of board adventures!',
+            class: classes.firstSentence,
           }),
           tag<HTMLParagraphElement>({
             tag: 'p',
