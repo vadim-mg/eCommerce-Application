@@ -93,14 +93,14 @@ export default class MainPage extends ContentPage {
         class: classes.cardsTitle,
       }),
       new BaseElement<HTMLDivElement>(
-        { tag: 'div' },
-        this.#productList = new ProductList(
+        { tag: 'div', class: classes.cardsContainer },
+        (this.#productList = new ProductList(
           { class: classes.products },
           {
             products: this.#products,
             onAddToCartCb: () => this.header.refreshCountInCartElement,
           },
-        ),
+        )),
       ),
     );
   };
