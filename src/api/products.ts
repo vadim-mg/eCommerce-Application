@@ -3,6 +3,8 @@ import apiRoot from './api-root';
 
 // docs.commercetools.com/api/projects/productProjections#get-productprojection-by-key
 
+const DEFAULT_COUNT_PRODUCTS_IN_CATALOG = 9;
+
 export enum SortingType {
   'name-asc' = `name.en-GB asc`,
   'price asc' = 'price asc',
@@ -26,7 +28,6 @@ const getProductById = (id: string) =>
   apiRoot.apiBuilder.productProjections().withId({ ID: id }).get().execute();
 
 const getProducts = (options: ProductGetOptions) => {
-  const DEFAULT_COUNT_PRODUCTS_IN_CATALOG = 9;
   const {
     categoryId,
     sortingType,
