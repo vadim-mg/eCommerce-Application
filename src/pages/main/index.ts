@@ -23,6 +23,8 @@ export default class MainPage extends ContentPage {
 
   #aboutInfo!: BaseElement<HTMLDivElement>;
 
+  #cardsCountToDisplay!: number;
+
   constructor() {
     super({ containerTag: 'div', title: 'Main page' });
     this.#banner = new Banner({});
@@ -110,6 +112,7 @@ export default class MainPage extends ContentPage {
   };
 
   #renderProductList = async () => {
+    this.setCardCountByScreenWidth();
     this.#productList.showProducts({
       categoryId: 'all-categories-id',
       search: '',
@@ -122,7 +125,7 @@ export default class MainPage extends ContentPage {
         'max-number-of-players-end': 10,
       },
       sortingType: SortingType['name-asc'],
-      limit: 8,
+      limit: this.#cardsCountToDisplay,
       isClear: false,
     });
   };
@@ -133,8 +136,9 @@ export default class MainPage extends ContentPage {
       tag<HTMLHeadingElement>({ tag: 'h2', text: 'About us', class: classes.aboutTitle }),
       tag<HTMLDivElement>(
         { tag: 'div', class: classes.aboutContentWrapper },
-        tag<HTMLDivElement>({ tag: 'div', class: classes.imageWrapper },
-          tag<HTMLImageElement>({ tag: 'img', src: gamesImg, alt: 'Games image' })
+        tag<HTMLDivElement>(
+          { tag: 'div', class: classes.imageWrapper },
+          tag<HTMLImageElement>({ tag: 'img', src: gamesImg, alt: 'Games image' }),
         ),
         tag<HTMLDivElement>(
           { tag: 'div', class: classes.textWrapper },
@@ -163,6 +167,21 @@ export default class MainPage extends ContentPage {
         ),
       ),
     );
+  };
+
+  setCardCountByScreenWidth = () => {
+    this.#cardsCountToDisplay = MainPage.getCardCountByScreenWidth(window.screen.width);
+  };
+
+  static getCardCountByScreenWidth = (screenWidth: number): number => {
+    switch (true) {
+      case screenWidth >= 1416:
+        return 8;
+      case screenWidth > 712:
+        return 6;
+      default:
+        return 5;
+    }
   };
 
   #showContent = () => {
