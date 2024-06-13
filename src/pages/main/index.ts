@@ -7,6 +7,7 @@ import { AppRoutes } from '@Src/router/routes';
 import ProductList from '@Src/components/logic/product-list';
 import Products from '@Src/controllers/products';
 import { SortingType } from '@Src/api/products';
+import gamesImg from '@Assets/img/home-games.jpg';
 import classes from './style.module.scss';
 
 export default class MainPage extends ContentPage {
@@ -20,6 +21,8 @@ export default class MainPage extends ContentPage {
 
   #productList!: ProductList;
 
+  #aboutInfo!: BaseElement<HTMLDivElement>;
+
   constructor() {
     super({ containerTag: 'div', title: 'Main page' });
     this.#banner = new Banner({});
@@ -29,7 +32,8 @@ export default class MainPage extends ContentPage {
     this.#createHomePageContent();
     this.container.node.append(this.#homePageContent.node);
     this.#renderProductList();
-
+    this.#createAboutInfoContent();
+    this.placeForAboutInfo.node.append(this.#aboutInfo.node);
     // this.#showContent();
   }
 
@@ -121,6 +125,41 @@ export default class MainPage extends ContentPage {
       limit: 8,
       isClear: false,
     });
+  };
+
+  #createAboutInfoContent = () => {
+    this.#aboutInfo = tag<HTMLDivElement>(
+      { tag: 'div', class: classes.aboutInfo },
+      tag<HTMLHeadingElement>({ tag: 'h2', text: 'About us', class: classes.aboutTitle }),
+      tag<HTMLDivElement>(
+        { tag: 'div', class: classes.aboutContentWrapper },
+        tag<HTMLImageElement>({ tag: 'img', src: gamesImg, alt: 'Games image' }),
+        tag<HTMLDivElement>(
+          { tag: 'div', class: classes.textWrapper },
+          tag<HTMLParagraphElement>({
+            tag: 'p',
+            text: 'Welcome to our cosy corner of board adventures!',
+          }),
+          tag<HTMLParagraphElement>({
+            tag: 'p',
+            text: 'We are your new favourite board game shop, where every move is a step towards new experiences and fun. Together we explore endless worlds of fantasy, uncover strategies and win the hearts of friends and family.',
+          }),
+          tag<HTMLParagraphElement>({
+            tag: 'p',
+            text: 'Immerse yourself in the world of board games with us, where every purchase is an invitation to exciting adventures. From classic board games to the newest releases, we have everything you need for unforgettable evenings with loved ones.',
+          }),
+          tag<HTMLParagraphElement>({
+            tag: 'p',
+            text: 'Join us today and discover the joy of play, inspiration and the opportunity to create memories that will live long in your heart. Welcome to our world of board games!',
+          }),
+          tag<HTMLParagraphElement>({
+            tag: 'p',
+            text: 'With love from the team, Dice and Meeple',
+            class: classes.teamMessage,
+          }),
+        ),
+      ),
+    );
   };
 
   #showContent = () => {

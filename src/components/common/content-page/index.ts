@@ -19,6 +19,8 @@ export default class ContentPage extends BasePage {
 
   protected placeForBanner!: BaseElement<HTMLElement>;
 
+  protected placeForAboutInfo!: BaseElement<HTMLElement>;
+
   #footer: Footer;
 
   #breadCrumbs?: BreadCrumbs;
@@ -38,6 +40,9 @@ export default class ContentPage extends BasePage {
       },
       ...(this.#breadCrumbs ? [this.#breadCrumbs as BaseElement<HTMLElement>] : []),
     );
+    this.placeForAboutInfo = new BaseElement<HTMLElement>({
+      tag: 'div',
+    });
     this.#footer = new Footer();
   }
 
@@ -48,6 +53,7 @@ export default class ContentPage extends BasePage {
       this.header.node,
       this.placeForBanner.node,
       this.container.node,
+      this.placeForAboutInfo.node,
       this.#footer.node,
     );
   };
