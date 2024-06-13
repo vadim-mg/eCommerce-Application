@@ -3,6 +3,8 @@ import apiRoot from './api-root';
 
 // docs.commercetools.com/api/projects/productProjections#get-productprojection-by-key
 
+const DEFAULT_COUNT_PRODUCTS_IN_CATALOG = 9;
+
 export enum SortingType {
   'name-asc' = `name.en-GB asc`,
   'price asc' = 'price asc',
@@ -14,6 +16,9 @@ export type ProductGetOptions = {
   sortingType?: SortingType;
   search?: string;
   filter?: FilterAttributes;
+  limit?: number;
+  offset?: number;
+  isClear?: boolean;
 };
 
 const getProductByKey = (key: string) =>
@@ -23,7 +28,14 @@ const getProductById = (id: string) =>
   apiRoot.apiBuilder.productProjections().withId({ ID: id }).get().execute();
 
 const getProducts = (options: ProductGetOptions) => {
-  const { categoryId, sortingType, search, filter } = options;
+  const {
+    categoryId,
+    sortingType,
+    search,
+    filter,
+    limit = DEFAULT_COUNT_PRODUCTS_IN_CATALOG,
+    offset,
+  } = options;
 
   const filteredBrans = filter?.[AttrName.BRAND]?.length ? filter?.[AttrName.BRAND] : [];
 
@@ -43,7 +55,7 @@ const getProducts = (options: ProductGetOptions) => {
     .search()
     .get({
       queryArgs: {
-        limit: 20,
+        limit,
 
         ...(search ? { 'text.en-GB': `"${search}"` } : {}),
         fuzzy: true,
@@ -60,7 +72,7 @@ const getProducts = (options: ProductGetOptions) => {
 
         ...{ filter: filters },
 
-        offset: 0,
+        offset,
       },
     })
     .execute();

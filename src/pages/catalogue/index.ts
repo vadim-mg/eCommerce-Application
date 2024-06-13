@@ -74,6 +74,7 @@ export default class CataloguePage extends ContentPage {
       sortingType: this.#selectedSort,
       search: this.#searchField.value,
       filter: await this.#filters.getFilterValues(),
+      isClear: true,
     });
   };
 
