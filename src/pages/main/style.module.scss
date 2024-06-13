@@ -30,8 +30,8 @@
 }
 
 .about-info {
-  border-radius: 24px;
-  padding: 32px 145px 64px;
+  border-radius: 1.5rem;
+  padding: 2rem 9.06rem 4rem;
   background: var(--color-white);
   margin: 1.5rem;
 }
@@ -42,12 +42,12 @@ p {
 }
 
 .first-sentence {
-  margin-top: 16px;
+  margin-top: 1rem;
 }
 
 @media (max-width: 1616px) {
   .about-info {
-    padding: 32px 100px 64px;
+    padding: 2rem 6.25rem 4rem;
   }
   .first-sentence {
     margin-top: 0;
@@ -55,7 +55,7 @@ p {
 }
 @media (max-width: 1400px) {
   .about-info {
-    padding: 32px 50px 64px;
+    padding: 2rem 3.125rem 4rem;
   }
 }
 
@@ -75,28 +75,28 @@ p {
 @media (max-width: 760px) {
   .cards-title,
   .about-title {
-    font-size: 38px;
+    font-size: 2.375rem;
   }
 }
 
 @media (max-width: 560px) {
   .about-info {
-    padding: 32px 17.5px 48px;
-    margin: 24px 16px;
+    padding: 2rem 1.09rem 48px;
+    margin: 1.5rem 1rem;
   }
 
   .cards-title {
-    font-size: 32px;
+    font-size: 2rem;
     line-height: 169%;
   }
   .about-title {
     margin: 0;
-    font-size: 28px;
+    font-size: 1.75rem;
     line-height: 193%;
   }
   .cards-title,
   .about-title {
-    margin-bottom: 32px;
+    margin-bottom: 2rem;
   }
 }
 
