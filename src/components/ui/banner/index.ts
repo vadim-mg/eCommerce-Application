@@ -1,6 +1,6 @@
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
-import classes from './style.module.scss';
 import Button, { ButtonClasses } from '../button';
+import classes from './style.module.scss';
 
 type BannerProps = Omit<ElementProps<HTMLElement>, 'tag'>;
 
@@ -83,7 +83,7 @@ export default class Banner extends BaseElement<HTMLElement> {
     });
     this.bigBtnText = new BaseElement<HTMLSpanElement>({
       tag: 'span',
-      text: 'PLAYMORE',
+      text: 'RSSCHOOL',
       class: classes.bigBtnText,
     });
     this.bannerButton = new Button(

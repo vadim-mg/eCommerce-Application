@@ -3,6 +3,7 @@ import {
   Cart,
   CustomerSignInResult,
   LineItem,
+  MyCartAddDiscountCodeAction,
   MyCartDraft,
   MyCartUpdateAction,
 } from '@commercetools/platform-sdk';
@@ -277,6 +278,30 @@ class CartController {
       if (shippingAddress) {
         await this.setShippingAddress(shippingAddress);
       }
+    };
+  };
+
+  applyCartDiscounts = async (code: string) => {
+    try {
+      if (!this.#cartData) {
+        this.#cartData = await this.#getActiveCart();
+      }
+      if (!this.#cartData) {
+        return;
+      }
+      const addLineItemToCartAction: MyCartAddDiscountCodeAction = {
+        action: 'addDiscountCode',
+        code,
+      };
+      const response = await cartApi.updateCart(this.#cartData?.id, this.#cartData?.version, [
+        addLineItemToCartAction,
+      ]);
+      console.log(response);
+    } catch (e) {
+      const error = e as HttpErrorType;
+      errorHandler(error);
+      console.log(error);
+      throw new Error(error.message);
     }
   };
 }
