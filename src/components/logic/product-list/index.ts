@@ -121,6 +121,7 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
     // здесь offset увеличивается на начальное кол-во карточек(9)
     this.#offset += this.#limit === this.#startLimitValue ? this.#limit : 0;
     this.#limit = this.#cardsCountToDisplay;
+    this.#showMoreBtn.disable();
     this.showProducts({
       categoryId: options.categoryId,
       sortingType: options.sortingType,
@@ -129,6 +130,8 @@ export default class ProductList extends BaseElement<HTMLDivElement> {
       limit: this.#limit,
       offset: this.#offset,
       isClear: false,
+    }).then(() => {
+      this.#showMoreBtn.enable();
     });
     this.#offset += this.#limit;
   };
