@@ -5,6 +5,7 @@ import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
 import CartRow from '@Src/components/logic/cart-row';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
+import InputText from '@Src/components/ui/input-text';
 import Loader from '@Src/components/ui/loader';
 import ModalWindow from '@Src/components/ui/modal';
 import cartController from '@Src/controllers/cart';
@@ -17,6 +18,10 @@ export default class CartPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
   #loader: Loader;
+
+  #inputPromoCode!: InputText;
+
+  #buttonPromoCode!: Button;
 
   constructor() {
     super({ containerTag: 'main', title: 'Cart', showBreadCrumbs: true });
@@ -71,6 +76,7 @@ export default class CartPage extends ContentPage {
     // row with promo code input and total price
     const row = tag(
       { tag: 'div', class: classes.rowAfterList },
+      this.#createPromoCodeForm(),
       // total price
       tag(
         { tag: 'div', class: classes.totalPriceRow, text: 'Total price:' },
@@ -101,14 +107,14 @@ export default class CartPage extends ContentPage {
         tag(
           { tag: 'div', class: classes.modalButtonRow },
           new Button(
-            { text: 'Remove', class: classes.modalButton },
+            { text: 'Yes', class: classes.modalButton },
             ButtonClasses.NORMAL,
             async () => {
               await this.#clearCart();
               modal.hide();
             },
           ),
-          new Button({ text: 'Cancel', class: classes.modalButton }, ButtonClasses.NORMAL, () => {
+          new Button({ text: 'No', class: classes.modalButton }, ButtonClasses.NORMAL, () => {
             modal.hide();
           }),
         ),
@@ -126,6 +132,42 @@ export default class CartPage extends ContentPage {
       ),
     );
     this.#content.node.append(message.node);
+  };
+
+  #createPromoCodeForm = (): BaseElement<HTMLElement> => {
+    const form = tag(
+      { tag: 'div', class: classes.form },
+      (this.#inputPromoCode = new InputText(
+        {
+          placeholder: 'PROMOCODE',
+          type: 'text',
+          name: 'promocode',
+          maxLength: 20,
+          minLength: 2,
+        },
+        undefined,
+      )),
+      (this.#buttonPromoCode = new Button(
+        { text: 'Apply', class: classes.formButton },
+        ButtonClasses.NORMAL,
+        () => {
+          console.log('отправляем промокод');
+        },
+        // this.#handlerApplyPromoCode,
+      )),
+    );
+    return form;
+  };
+
+  #handlerApplyPromoCode = async () => {
+    try {
+      // await cartController.applyCartDiscounts(this.#inputPromoCode.value); - если промокод верный, ответ 200, но скидка не применяется.
+      this.#refreshCart();
+      this.#inputPromoCode.setDisabled(true);
+      this.#buttonPromoCode.disable();
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   #refreshCart = () => {

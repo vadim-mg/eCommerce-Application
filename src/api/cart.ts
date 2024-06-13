@@ -25,4 +25,6 @@ const updateCart = (ID: string, version: number, actions: MyCartUpdateAction[]) 
     })
     .execute();
 
+// const getQueryCartDiscounts = () => apiRoot.apiBuilder.cartDiscounts().get().execute();
+
 export default { getActiveCart, createCart, updateCart };

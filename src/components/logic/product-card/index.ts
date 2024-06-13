@@ -1,4 +1,5 @@
 import basketIconPath from '@Assets/icons/basket.svg';
+import checkIconPath from '@Assets/icons/check_big.svg';
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 import tag from '@Src/components/common/tag';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
@@ -125,7 +126,7 @@ export default class ProductCard extends BaseElement<HTMLElement> {
               // Router.getInstance().route(AppRoutes.CART);
             }
           },
-          basketIconPath,
+          alreadyInCart ? checkIconPath : basketIconPath,
         )),
       ),
     );
