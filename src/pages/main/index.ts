@@ -8,6 +8,7 @@ import ProductList from '@Src/components/logic/product-list';
 import Products from '@Src/controllers/products';
 import { SortingType } from '@Src/api/products';
 import gamesImg from '@Assets/img/home-games.jpg';
+import Loader from '@Src/components/ui/loader';
 import classes from './style.module.scss';
 
 export default class MainPage extends ContentPage {
@@ -24,6 +25,8 @@ export default class MainPage extends ContentPage {
   #aboutInfo!: BaseElement<HTMLDivElement>;
 
   #cardsCountToDisplay!: number;
+
+  #loader!: Loader;
 
   constructor() {
     super({ containerTag: 'div', title: 'Main page' });
@@ -104,10 +107,17 @@ export default class MainPage extends ContentPage {
           { class: classes.products },
           {
             products: this.#products,
-            onAddToCartCb: () => this.header.refreshCountInCartElement,
+            onAddToCartCb: () => {
+              this.#loader.show();
+              return () => {
+                this.header.refreshCountInCartElement();
+                this.#loader.hide();
+              };
+            },
           },
         )),
       ),
+      (this.#loader = new Loader({})),
     );
   };
 
