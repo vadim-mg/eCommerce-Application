@@ -49,7 +49,6 @@ export default class CartPage extends ContentPage {
     );
     try {
       const data = await cartController.getCartData();
-      console.log(data);
       if (data && data.lineItems.length > 0) {
         this.#cartData = data;
         this.#createProductList(data);
