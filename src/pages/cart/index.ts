@@ -8,10 +8,11 @@ import Button, { ButtonClasses } from '@Src/components/ui/button';
 import InputText from '@Src/components/ui/input-text';
 import Loader from '@Src/components/ui/loader';
 import ModalWindow from '@Src/components/ui/modal';
-import cartController from '@Src/controllers/cart';
+import cartController, { getCartDiscountCode } from '@Src/controllers/cart';
 import Router from '@Src/router';
 import { AppRoutes } from '@Src/router/routes';
 import { Cart } from '@commercetools/platform-sdk';
+import { HttpErrorType } from '@commercetools/sdk-client-v2';
 import classes from './style.module.scss';
 
 export default class CartPage extends ContentPage {
@@ -22,6 +23,10 @@ export default class CartPage extends ContentPage {
   #inputPromoCode!: InputText;
 
   #buttonPromoCode!: Button;
+
+  #appliedPromoCodes!: BaseElement<HTMLDivElement>;
+
+  #cartData!: Cart;
 
   constructor() {
     super({ containerTag: 'main', title: 'Cart', showBreadCrumbs: true });
@@ -46,6 +51,7 @@ export default class CartPage extends ContentPage {
       const data = await cartController.getCartData();
       console.log(data);
       if (data && data.lineItems.length > 0) {
+        this.#cartData = data;
         this.#createProductList(data);
         this.#createRowAfterList(Number(data.totalPrice.centAmount) / 100);
         this.#createButtonClearCart();
@@ -150,23 +156,47 @@ export default class CartPage extends ContentPage {
       (this.#buttonPromoCode = new Button(
         { text: 'Apply', class: classes.formButton },
         ButtonClasses.NORMAL,
-        () => {
-          console.log('отправляем промокод');
-        },
-        // this.#handlerApplyPromoCode,
+        this.#handlerApplyPromoCode,
       )),
+      (this.#appliedPromoCodes = tag({
+        tag: 'div',
+        text: '',
+      })),
     );
+
+    Promise.all(
+      this.#cartData.discountCodes.map(
+        async (cartDiscountCode) =>
+          (await getCartDiscountCode(cartDiscountCode.discountCode.id))?.code,
+      ),
+    ).then((codes) => {
+      this.#appliedPromoCodes.node.textContent = `appliedPromoCodes: ${codes.join(';')}`;
+    });
+
     return form;
   };
 
   #handlerApplyPromoCode = async () => {
     try {
-      // await cartController.applyCartDiscounts(this.#inputPromoCode.value); - если промокод верный, ответ 200, но скидка не применяется.
-      this.#refreshCart();
       this.#inputPromoCode.setDisabled(true);
       this.#buttonPromoCode.disable();
+      const cart = await cartController.applyCartDiscounts(this.#inputPromoCode.value); // - если промокод верный, ответ 200, но скидка не применяется.
+      if (cart) {
+        this.#appliedPromoCodes.node.textContent = await Promise.all(
+          cart.discountCodes.map(
+            async (cartDiscountCode) =>
+              (await getCartDiscountCode(cartDiscountCode.discountCode.id))?.code,
+          ),
+        ).then((codes) => codes.join(';'));
+        this.#refreshCart();
+      }
     } catch (e) {
+      const error = e as HttpErrorType;
       console.log(e);
+      this.#appliedPromoCodes.node.textContent = error.message;
+    } finally {
+      this.#inputPromoCode.setDisabled(false);
+      this.#buttonPromoCode.enable();
     }
   };
 
