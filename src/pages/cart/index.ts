@@ -163,9 +163,10 @@ export default class CartPage extends ContentPage {
         this.#handlerApplyPromoCode,
       )),
     );
-    const formWrapper = tag({ tag: 'div', class: classes.formWrapper },
+    const formWrapper = tag(
+      { tag: 'div', class: classes.formWrapper },
       form,
-      this.#appliedPromoCodes
+      this.#appliedPromoCodes,
     );
 
     Promise.all(
@@ -174,10 +175,11 @@ export default class CartPage extends ContentPage {
           (await getCartDiscountCode(cartDiscountCode.discountCode.id))?.code,
       ),
     ).then((codes) => {
-      if (codes.length > 0) this.#appliedPromoCodes.node.textContent = `Applied promo code: ${codes.join(';')}`;
-      if (this.#appliedPromoCodes.node.classList.contains(classes.error)) this.#appliedPromoCodes.node.classList.remove(classes.error);
+      if (codes.length > 0)
+        this.#appliedPromoCodes.node.textContent = `Applied promo code: ${codes.join(';')}`;
+      if (this.#appliedPromoCodes.node.classList.contains(classes.error))
+        this.#appliedPromoCodes.node.classList.remove(classes.error);
     });
-
 
     return formWrapper;
   };
@@ -194,7 +196,8 @@ export default class CartPage extends ContentPage {
               (await getCartDiscountCode(cartDiscountCode.discountCode.id))?.code,
           ),
         ).then((codes) => codes.join(';'));
-        if (this.#appliedPromoCodes.node.classList.contains(classes.error)) this.#appliedPromoCodes.node.classList.remove(classes.error);
+        if (this.#appliedPromoCodes.node.classList.contains(classes.error))
+          this.#appliedPromoCodes.node.classList.remove(classes.error);
         this.#refreshCart();
       }
     } catch (e) {
