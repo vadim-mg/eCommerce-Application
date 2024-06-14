@@ -38,4 +38,46 @@ const deleteCart = (ID: string, version: number) =>
     })
     .execute();
 
-export default { getActiveCart, createCart, updateCart, getCarts, deleteCart };
+const getCartDiscounts = () => apiRoot.apiBuilder.cartDiscounts().get().execute();
+
+const getDiscountCodes = () => apiRoot.apiBuilder.discountCodes().get().execute();
+
+const checkCartDiscount = (key: string) =>
+  apiRoot.apiBuilder
+    .cartDiscounts()
+    .withKey({
+      key,
+    })
+    .get()
+    .execute();
+
+const checkDiscountCode = (key: string) =>
+  apiRoot.apiBuilder
+    .discountCodes()
+    .withKey({
+      key,
+    })
+    .get()
+    .execute();
+
+const getDiscountCode = (ID: string) =>
+  apiRoot.apiBuilder
+    .discountCodes()
+    .withId({
+      ID,
+    })
+    .get()
+    .execute();
+
+export default {
+  getActiveCart,
+  createCart,
+  updateCart,
+  getCarts,
+  deleteCart,
+  getCartDiscounts,
+  checkCartDiscount,
+  getDiscountCode,
+  getDiscountCodes,
+  checkDiscountCode,
+};

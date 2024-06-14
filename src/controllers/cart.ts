@@ -5,6 +5,7 @@ import {
   LineItem,
   MyCartAddDiscountCodeAction,
   MyCartDraft,
+  MyCartRemoveDiscountCodeAction,
   MyCartUpdateAction,
 } from '@commercetools/platform-sdk';
 import { HttpErrorType } from '@commercetools/sdk-client-v2';
@@ -281,25 +282,48 @@ class CartController {
     }
   };
 
+  // if code contain first character "-", code will be removed
   applyCartDiscounts = async (code: string) => {
     try {
       if (!this.#cartData) {
         this.#cartData = await this.#getActiveCart();
       }
       if (!this.#cartData) {
-        return;
+        return undefined;
       }
-      const addLineItemToCartAction: MyCartAddDiscountCodeAction = {
-        action: 'addDiscountCode',
-        code,
-      };
-      const response = await cartApi.updateCart(this.#cartData?.id, this.#cartData?.version, [
-        addLineItemToCartAction,
-      ]);
-      console.log(response);
+
+      // for testing: we can remove code adding character "-" before it
+      const needRemoveCode = code[0] === '-';
+      const realCode = code.slice(Number(needRemoveCode));
+
+      const checkedCode = (await cartApi.checkDiscountCode(realCode)).body;
+
+      const action: MyCartAddDiscountCodeAction | MyCartRemoveDiscountCodeAction = needRemoveCode
+        ? {
+            action: 'removeDiscountCode',
+            discountCode: {
+              id: checkedCode.id,
+              typeId: 'discount-code',
+            },
+          }
+        : {
+            action: 'addDiscountCode',
+            code,
+          };
+
+      const updatedCart = (
+        await cartApi.updateCart(this.#cartData?.id, this.#cartData?.version, [action])
+      ).body;
+      this.setCartData(updatedCart); // for save version
+
+      return updatedCart;
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);
+
+      if (error.statusCode === 404) {
+        throw new Error('This promo code not found');
+      }
       console.log(error);
       throw new Error(error.message);
     }
@@ -307,5 +331,17 @@ class CartController {
 }
 
 export const cartController = new CartController();
+
+export const getCartDiscountCode = async (id: string) => (await cartApi.getDiscountCode(id)).body;
+
+export const getDiscountCodes = () => {
+  try {
+    return cartApi.getDiscountCodes();
+  } catch (e) {
+    const error = e as HttpErrorType;
+    console.log(error);
+    throw new Error(error.message);
+  }
+};
 
 export default cartController;
