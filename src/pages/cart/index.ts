@@ -140,6 +140,11 @@ export default class CartPage extends ContentPage {
   };
 
   #createPromoCodeForm = (): BaseElement<HTMLElement> => {
+    this.#appliedPromoCodes = tag({
+      tag: 'div',
+      class: classes.promoCodeMessage,
+      text: '',
+    });
     const form = tag(
       { tag: 'div', class: classes.form },
       (this.#inputPromoCode = new InputText(
@@ -157,10 +162,10 @@ export default class CartPage extends ContentPage {
         ButtonClasses.NORMAL,
         this.#handlerApplyPromoCode,
       )),
-      (this.#appliedPromoCodes = tag({
-        tag: 'div',
-        text: '',
-      })),
+    );
+    const formWrapper = tag({ tag: 'div', class: classes.formWrapper },
+      form,
+      this.#appliedPromoCodes
     );
 
     Promise.all(
@@ -169,10 +174,12 @@ export default class CartPage extends ContentPage {
           (await getCartDiscountCode(cartDiscountCode.discountCode.id))?.code,
       ),
     ).then((codes) => {
-      this.#appliedPromoCodes.node.textContent = `appliedPromoCodes: ${codes.join(';')}`;
+      if (codes.length > 0) this.#appliedPromoCodes.node.textContent = `Applied promo code: ${codes.join(';')}`;
+      if (this.#appliedPromoCodes.node.classList.contains(classes.error)) this.#appliedPromoCodes.node.classList.remove(classes.error);
     });
 
-    return form;
+
+    return formWrapper;
   };
 
   #handlerApplyPromoCode = async () => {
@@ -187,12 +194,14 @@ export default class CartPage extends ContentPage {
               (await getCartDiscountCode(cartDiscountCode.discountCode.id))?.code,
           ),
         ).then((codes) => codes.join(';'));
+        if (this.#appliedPromoCodes.node.classList.contains(classes.error)) this.#appliedPromoCodes.node.classList.remove(classes.error);
         this.#refreshCart();
       }
     } catch (e) {
       const error = e as HttpErrorType;
       console.log(e);
       this.#appliedPromoCodes.node.textContent = error.message;
+      this.#appliedPromoCodes.node.classList.add(classes.error);
     } finally {
       this.#inputPromoCode.setDisabled(false);
       this.#buttonPromoCode.enable();
