@@ -107,13 +107,13 @@ export default class MainPage extends ContentPage {
           { class: classes.products },
           {
             products: this.#products,
-            onAddToCartCb: () => { 
-              this.#loader.show(); 
-              return () => { 
-                this.header.refreshCountInCartElement(); 
-                this.#loader.hide(); 
-              }; 
-            }
+            onAddToCartCb: () => {
+              this.#loader.show();
+              return () => {
+                this.header.refreshCountInCartElement();
+                this.#loader.hide();
+              };
+            },
           },
         )),
       ),
