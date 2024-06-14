@@ -39,4 +39,3 @@ const deleteCart = (ID: string, version: number) =>
     .execute();
 
 export default { getActiveCart, createCart, updateCart, getCarts, deleteCart };
-

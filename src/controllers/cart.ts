@@ -278,7 +278,7 @@ class CartController {
       if (shippingAddress) {
         await this.setShippingAddress(shippingAddress);
       }
-    };
+    }
   };
 
   applyCartDiscounts = async (code: string) => {
