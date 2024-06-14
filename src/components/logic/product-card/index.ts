@@ -49,7 +49,7 @@ export default class ProductCard extends BaseElement<HTMLElement> {
 
     const link = new Link(
       {
-        href: `${AppRoutes.CATALOGUE}/${categoryPath}${key}`,
+        href: categoryPath ? `${AppRoutes.CATALOGUE}/${categoryPath}${key}` : `${AppRoutes.CATALOGUE}/all/${key}`,
         class: [classes.productLink],
       },
       // sale label
