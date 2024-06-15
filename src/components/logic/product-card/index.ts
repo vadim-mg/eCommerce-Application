@@ -116,6 +116,7 @@ export default class ProductCard extends BaseElement<HTMLElement> {
                 await cartController.addItemToCart(id);
                 alreadyInCart += 1;
                 this.#cartButton.node.textContent = ProductCard.inCartText(alreadyInCart);
+                this.#cartButton.addIcon(alreadyInCart ? checkIconPath : basketIconPath);
                 this.#cartButton.disable();
               } catch (err) {
                 console.log(err);
