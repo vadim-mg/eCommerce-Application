@@ -49,7 +49,9 @@ export default class ProductCard extends BaseElement<HTMLElement> {
 
     const link = new Link(
       {
-        href: categoryPath ? `${AppRoutes.CATALOGUE}/${categoryPath}${key}` : `${AppRoutes.CATALOGUE}/all/${key}`,
+        href: categoryPath
+          ? `${AppRoutes.CATALOGUE}/${categoryPath}${key}`
+          : `${AppRoutes.CATALOGUE}/all/${key}`,
         class: [classes.productLink],
       },
       // sale label
@@ -116,7 +118,7 @@ export default class ProductCard extends BaseElement<HTMLElement> {
                 await cartController.addItemToCart(id);
                 alreadyInCart += 1;
                 this.#cartButton.node.textContent = ProductCard.inCartText(alreadyInCart);
-                this.#cartButton.addIcon(alreadyInCart ? checkIconPath : basketIconPath);
+                this.#cartButton.addIcon(checkIconPath);
                 this.#cartButton.disable();
               } catch (err) {
                 console.log(err);
