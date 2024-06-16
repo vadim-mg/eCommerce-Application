@@ -84,6 +84,10 @@
   font-size: 1.5rem;
   line-height: 2rem;
   gap: 1.5rem;
+  align-items: center;
+  @media (max-width: 480px) {
+    gap: 1rem;
+  }
 }
 .total-price {
   color: var(--color-orange-main);
@@ -120,4 +124,9 @@
 }
 .error {
   color: var(--color-red-main);
+}
+.total-price-old {
+  color: var(--color-orange-light);
+  font-weight: 300;
+  text-decoration: line-through;
 }

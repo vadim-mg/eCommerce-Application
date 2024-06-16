@@ -315,6 +315,7 @@ class CartController {
         await cartApi.updateCart(this.#cartData?.id, this.#cartData?.version, [action])
       ).body;
       this.setCartData(updatedCart); // for save version
+      console.log(updatedCart);
 
       return updatedCart;
     } catch (e) {

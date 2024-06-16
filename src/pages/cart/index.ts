@@ -28,6 +28,10 @@ export default class CartPage extends ContentPage {
 
   #cartData!: Cart;
 
+  #totalPrice!: number;
+
+  #totalPriceOld!: number;
+
   constructor() {
     super({ containerTag: 'main', title: 'Cart', showBreadCrumbs: true });
     this.#createContent();
@@ -51,8 +55,15 @@ export default class CartPage extends ContentPage {
       const data = await cartController.getCartData();
       if (data && data.lineItems.length > 0) {
         this.#cartData = data;
+        this.#totalPrice = data.totalPrice.centAmount / 100;
+        this.#totalPriceOld = data.discountOnTotalPrice
+          ? (this.#totalPriceOld =
+              (data.totalPrice.centAmount +
+                data.discountOnTotalPrice.discountedAmount.centAmount) /
+              100)
+          : 0;
         this.#createProductList(data);
-        this.#createRowAfterList(Number(data.totalPrice.centAmount) / 100);
+        this.#createRowAfterList(this.#totalPrice);
         this.#createButtonClearCart();
       } else {
         this.#createEmptyMessage();
@@ -79,12 +90,18 @@ export default class CartPage extends ContentPage {
 
   #createRowAfterList = (price: number) => {
     // row with promo code input and total price
+    console.log(this.#totalPriceOld);
     const row = tag(
       { tag: 'div', class: classes.rowAfterList },
       this.#createPromoCodeForm(),
       // total price
       tag(
         { tag: 'div', class: classes.totalPriceRow, text: 'Total price:' },
+        tag({
+          tag: 'span',
+          class: classes.totalPriceOld,
+          text: this.#totalPriceOld > 0 ? `€${this.#totalPriceOld.toFixed(2)}` : '',
+        }),
         tag({ tag: 'span', class: classes.totalPrice, text: `€${price.toFixed(2)}` }),
       ),
     );
@@ -188,7 +205,8 @@ export default class CartPage extends ContentPage {
     try {
       this.#inputPromoCode.setDisabled(true);
       this.#buttonPromoCode.disable();
-      const cart = await cartController.applyCartDiscounts(this.#inputPromoCode.value); // - если промокод верный, ответ 200, но скидка не применяется.
+      const cart = await cartController.applyCartDiscounts(this.#inputPromoCode.value); // - если промокод верный, ответ 200, но скидка применяется ко всей корзине.
+      this.#totalPriceOld = this.#totalPrice;
       if (cart) {
         this.#appliedPromoCodes.node.textContent = await Promise.all(
           cart.discountCodes.map(
