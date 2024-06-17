@@ -107,7 +107,6 @@ class CartController {
       } else {
         console.log(`In added cart was not found added productId: ${productId}`);
       }
-      // console.log('#addItemToCart, this.#cartData = ', this.#cartData);
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);
@@ -151,7 +150,6 @@ class CartController {
           quantity: storedQuantity - quantity,
         });
       }
-      console.log('#removeItemFromCart, this.#cartData = ', this.#cartData);
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);
@@ -185,7 +183,6 @@ class CartController {
           });
         }
       }
-      // console.log('getCartData, this.#cartData = ', this.#cartData);
     } catch (e) {
       const error = e as HttpErrorType;
       errorHandler(error);
@@ -315,8 +312,6 @@ class CartController {
         await cartApi.updateCart(this.#cartData?.id, this.#cartData?.version, [action])
       ).body;
       this.setCartData(updatedCart); // for save version
-      console.log(updatedCart);
-
       return updatedCart;
     } catch (e) {
       const error = e as HttpErrorType;

@@ -90,7 +90,6 @@ export default class CartPage extends ContentPage {
 
   #createRowAfterList = (price: number) => {
     // row with promo code input and total price
-    console.log(this.#totalPriceOld);
     const row = tag(
       { tag: 'div', class: classes.rowAfterList },
       this.#createPromoCodeForm(),
