@@ -62,7 +62,7 @@ export default class Router {
     const appRoute = this.#list[this.#currentRoutePath];
 
     // logout can be used only one time for logged user
-    if (routePath === AppRoutes.LOGOUT && State.getInstance().isLoggedIn) {
+    if (this.#currentRoutePath === AppRoutes.LOGOUT && State.getInstance().isLoggedIn) {
       auth.signOut();
       return;
     }
