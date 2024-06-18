@@ -68,10 +68,10 @@ export default class Header extends BaseElement<HTMLElement> {
   #createLogoNavigationWrapper = () =>
     new BaseElement<HTMLDivElement>(
       { tag: 'div', class: classes.logoNavigationWrapper },
-      new BaseElement<HTMLImageElement>({
-        tag: 'div',
+      new Link({
         class: classes.logoIcon,
         innerHTML: logoSvg,
+        href: AppRoutes.MAIN,
       }),
       new BaseElement<HTMLElement>(
         {
