@@ -62,7 +62,7 @@ export type FilterAttributes = {
 };
 
 const FILTER_ATTRIBUTES_CACHE_NAME = 'Product_filters';
-const CACHE_TIME = 600; // sec
+const CACHE_TIME = 6000; // sec
 
 export default class Products {
   #products!: ProductProjectionPagedQueryResponse;

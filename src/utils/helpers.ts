@@ -186,5 +186,3 @@ export const validatePostalCode = (inputValue: string, country: string) => {
     errorText: '',
   };
 };
-
-// I didn't add validation for countries as they are selected from the drop-down list

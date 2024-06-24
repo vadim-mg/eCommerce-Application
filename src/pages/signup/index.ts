@@ -39,8 +39,8 @@ enum FormTitle {
   PASSWORD = 'Create password',
 }
 
-const country = ['Belarus', 'Poland', 'Russia'];
-const COUNTRY_CODES = ['BE', 'PL', 'RU'];
+export const country = ['Belarus', 'Poland', 'Russia'];
+export const COUNTRY_CODES = ['BY', 'PL', 'RU'];
 
 interface UserData {
   mail?: string;

@@ -5,6 +5,7 @@ import InputText from '@Src/components/ui/input-text';
 import ModalWindow from '@Src/components/ui/modal';
 import Select from '@Src/components/ui/select';
 import CustomerController from '@Src/controllers/customers';
+import { country as COUNTRY, COUNTRY_CODES } from '@Src/pages/signup';
 import { validateCity, validatePostalCode, validateStreet } from '@Src/utils/helpers';
 import {
   Address,
@@ -17,8 +18,7 @@ import classes from './style.module.scss';
 
 type FormProps = Omit<ElementProps<HTMLButtonElement>, 'tag'>;
 
-const countriesList = ['Belarus', 'Poland', 'Russia'];
-const COUNTRY_CODES = ['BE', 'PL', 'RU'];
+const countriesList = COUNTRY;
 
 export default class AddressForm extends BaseElement<HTMLFormElement> {
   #addressComponent!: BaseElement<HTMLDivElement>;

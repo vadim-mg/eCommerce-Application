@@ -60,7 +60,7 @@ class ApiRoot {
   loginUser = (user: UserAuthOptions) => {
     anonymousTokenCache.remove();
     this.#currentCtpClient = passwordCtpClient(user);
-    this.apiBuilderForLogin(user)
+    return this.apiBuilderForLogin(user)
       .me()
       .login()
       .post({

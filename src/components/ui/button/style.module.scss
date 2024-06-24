@@ -8,24 +8,21 @@
   justify-content: center;
   align-items: center;
   transition: background-color var(--transition-time);
-  display: flex;
-  align-items: center;
   cursor: pointer;
   &:disabled {
     background-color: var(--color-grey-light);
     pointer-events: none;
   }
-}
-
-.hidden {
-  display: none;
+  &[hidden] {
+    display: none;
+  }
 }
 
 .normal {
   @include button;
   background-color: var(--color-orange-main);
   font-weight: 300;
-  line-height: 71%;
+  line-height: 70%;
   font-size: 1.25rem;
   padding: 0.75rem 1.75rem;
 
@@ -47,7 +44,7 @@
   }
 
   &:has(> .icon) {
-    padding: 0.57rem 2rem;
+    padding: 1rem 2rem;
   }
 }
 
@@ -67,7 +64,7 @@
   }
 
   &:has(> .icon) {
-    padding: 0.872rem 2rem;
+    padding: 0.75rem 2rem;
   }
 
   &:active {
@@ -100,4 +97,8 @@
     color: var(--color-white);
     pointer-events: none;
   }
+}
+
+.hidden {
+  display: none;
 }

@@ -5,6 +5,7 @@ import tag from '@Src/components/common/tag';
 import CategoryList from '@Src/components/logic/category-list';
 import FilterForm from '@Src/components/logic/filter-form';
 import ProductList from '@Src/components/logic/product-list';
+import Loader from '@Src/components/ui/loader';
 import SearchInput from '@Src/components/ui/search-input';
 import SelectWithKey from '@Src/components/ui/selectWithKeys';
 import productCategories from '@Src/controllers/categories';
@@ -40,11 +41,13 @@ export default class CataloguePage extends ContentPage {
 
   #categorySection!: CategoryList;
 
-  #header!: BaseElement<HTMLHeadingElement>;
+  #headerH1!: BaseElement<HTMLHeadingElement>;
 
   #selectedSort: SortingType;
 
   #searchField!: SearchInput;
+
+  #loader!: Loader;
 
   constructor(categoryPathPart: string[]) {
     super({ containerTag: 'div', title: 'catalogue page', showBreadCrumbs: true });
@@ -71,13 +74,14 @@ export default class CataloguePage extends ContentPage {
       sortingType: this.#selectedSort,
       search: this.#searchField.value,
       filter: await this.#filters.getFilterValues(),
+      isClear: true,
     });
   };
 
   #onCategorySelectHandler = (id: string) => {
     Router.getInstance().changeCurrentRoute(productCategories.getById(id)?.key ?? '');
     this.#renderProductList();
-    this.#header.node.textContent =
+    this.#headerH1.node.textContent =
       productCategories.getById(id)?.name?.[process.env.LOCALE] ?? '';
   };
 
@@ -95,7 +99,7 @@ export default class CataloguePage extends ContentPage {
         currentCategoryId,
       )),
       // header
-      (this.#header = tag({
+      (this.#headerH1 = tag({
         tag: 'h1',
         text: productCategories.getById(currentCategoryId)?.name?.[process.env.LOCALE],
         class: classes.header,
@@ -115,8 +119,22 @@ export default class CataloguePage extends ContentPage {
         // filters
         (this.#filters = new FilterForm(this.#products, this.#renderProductList)),
         // products
-        (this.#productList = new ProductList({ class: classes.products }, this.#products)),
+        (this.#productList = new ProductList(
+          { class: classes.products },
+          {
+            products: this.#products,
+            onAddToCartCb: () => {
+              this.#loader.show();
+              return () => {
+                this.header.refreshCountInCartElement();
+                this.#loader.hide();
+              };
+            },
+          },
+        )),
       ),
+      // loader
+      (this.#loader = new Loader({})),
     );
   };
 

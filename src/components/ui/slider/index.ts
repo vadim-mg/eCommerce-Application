@@ -138,8 +138,10 @@ export default class Slider extends BaseElement<HTMLElement> {
 
   #createArrow = (direction: Direction, svg: string): BaseElement<HTMLElement> => {
     const arrow = new BaseElement<HTMLElement>({ tag: 'div', class: classes.arrow });
-    arrow.node.addEventListener('click', () => this.#rotation(direction));
     arrow.node.innerHTML = svg;
+    arrow.node.addEventListener('click', () => {
+      this.#rotation(direction);
+    });
     return arrow;
   };
 
@@ -194,12 +196,18 @@ export default class Slider extends BaseElement<HTMLElement> {
     this.#touchEndX = event.touches[0].clientX;
   };
 
-  #handleTouchEnd = () => {
-    const difference = this.#touchStartX - this.#touchEndX;
-    if (difference > 30) {
-      this.#rotation(Direction.RIGHT);
-    } else if (difference < -30) {
-      this.#rotation(Direction.LEFT);
+  #handleTouchEnd = (event: TouchEvent) => {
+    const target = event.target as HTMLElement;
+    if (!this.#arrowLeft.node.contains(target) && !this.#arrowRight.node.contains(target)) {
+      const difference = this.#touchStartX - this.#touchEndX;
+
+      if (difference > 30) {
+        this.#rotation(Direction.RIGHT);
+      } else if (difference < -30) {
+        this.#rotation(Direction.LEFT);
+      }
+      this.#touchStartX = 0;
+      this.#touchEndX = 0;
     }
   };
 }

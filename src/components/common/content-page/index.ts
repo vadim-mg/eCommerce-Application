@@ -15,9 +15,11 @@ type ContentPageProps = {
 export default class ContentPage extends BasePage {
   protected container: Container;
 
-  #header: Header;
+  header: Header;
 
   protected placeForBanner!: BaseElement<HTMLElement>;
+
+  protected placeForAboutInfo!: BaseElement<HTMLElement>;
 
   #footer: Footer;
 
@@ -25,7 +27,7 @@ export default class ContentPage extends BasePage {
 
   constructor(props: ContentPageProps) {
     super({ title: props.title });
-    this.#header = new Header({});
+    this.header = new Header({});
     this.#breadCrumbs = props.showBreadCrumbs ? new BreadCrumbs() : undefined;
     this.placeForBanner = new BaseElement<HTMLElement>({
       tag: 'div',
@@ -38,6 +40,9 @@ export default class ContentPage extends BasePage {
       },
       ...(this.#breadCrumbs ? [this.#breadCrumbs as BaseElement<HTMLElement>] : []),
     );
+    this.placeForAboutInfo = new BaseElement<HTMLElement>({
+      tag: 'div',
+    });
     this.#footer = new Footer();
   }
 
@@ -45,9 +50,10 @@ export default class ContentPage extends BasePage {
     super.render();
     document.body.classList.add(classes.contentPage);
     document.body.append(
-      this.#header.node,
+      this.header.node,
       this.placeForBanner.node,
       this.container.node,
+      this.placeForAboutInfo.node,
       this.#footer.node,
     );
   };

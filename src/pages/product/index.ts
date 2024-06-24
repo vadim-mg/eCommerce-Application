@@ -1,9 +1,14 @@
 import cartIcon from '@Assets/icons/basket.svg';
+import checkIcon from '@Assets/icons/check_big.svg';
+import trashIcon from '@Assets/icons/trash-icon.svg';
 import BaseElement from '@Src/components/common/base-element';
 import ContentPage from '@Src/components/common/content-page';
 import tag from '@Src/components/common/tag';
+import ProductCard from '@Src/components/logic/product-card';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
+import Loader from '@Src/components/ui/loader';
 import Slider, { SliderIsZoom } from '@Src/components/ui/slider';
+import cartController from '@Src/controllers/cart';
 import productCategories from '@Src/controllers/categories';
 import Products, { ImageSize } from '@Src/controllers/products';
 import Router from '@Src/router';
@@ -19,7 +24,8 @@ interface ProductAttributes {
   [key: string]: string | number;
 }
 
-interface ProductFromPage {
+interface Product {
+  id?: string;
   price?: number;
   discount?: number;
   name?: string;
@@ -53,33 +59,15 @@ function createAttributeRow(title: string, attribute: string): BaseElement<HTMLD
 export default class ProductPage extends ContentPage {
   #content!: BaseElement<HTMLDivElement>;
 
-  #product!: ProductFromPage;
+  #product!: Product;
 
-  #productKey!: string | undefined;
+  #alreadyInCart!: number;
 
-  #productPrice!: number;
+  #addToCartButton!: Button;
 
-  #productDiscount!: number;
+  #removeFromCartButton!: Button;
 
-  #productName!: string;
-
-  #productCurrency!: string;
-
-  #productDescription!: string;
-
-  #productMinPlayers!: number;
-
-  #productMaxPlayers!: number;
-
-  #productTypeOfGame!: string;
-
-  #productAgeFrom!: number;
-
-  #productBrand!: string;
-
-  #productImages!: Image[];
-
-  #productImagesSmall!: Image[];
+  #loader!: Loader;
 
   /**
    *
@@ -92,14 +80,18 @@ export default class ProductPage extends ContentPage {
     Products.getProductByKey(productKey)
       .then((product) => {
         // You can use static properties and classes from here '@Src/controllers/products' for pictures for example
+        this.#product.id = product.id;
         this.#product.name = product.name['en-GB'];
         this.#createPrice(product.masterVariant.prices as Price[]);
         this.#createAttributes(product.masterVariant.attributes as Attribute[]);
         this.#product.images = product.masterVariant.images as Image[];
-        productCategories.getCategories().then(() => {
+        this.#alreadyInCart = cartController.howManyAlreadyInCart(this.#product.id);
+
+        productCategories.getCategories().then(async () => {
           this.#product.categories = product.categories
             .map((val) => productCategories.getById(val.id)?.name?.[process.env.LOCALE])
             .join(', ');
+          await cartController.getCartData();
           this.#createContent();
           this.#showContent();
         });
@@ -143,89 +135,152 @@ export default class ProductPage extends ContentPage {
   };
 
   #createProductData = () => {
-    const wrapper = new BaseElement<HTMLElement>({ tag: 'div', class: classes.productInfo });
-    const h1 = new BaseElement<HTMLHeadingElement>({
-      tag: 'h1',
-      class: classes.productName,
-      text: this.#product.name,
-    });
+    const wrapper = new BaseElement<HTMLElement>(
+      { tag: 'div', class: classes.productInfo },
 
-    const priceRow = new BaseElement<HTMLDivElement>({
-      tag: 'div',
-      class: classes.productPriceRow,
-    });
-    const priceEl = new BaseElement<HTMLDivElement>({
-      tag: 'div',
-      class: classes.price,
-      text: `€${String((this.#product.price! / 100).toFixed(2))}`,
-    });
-    const button = new Button(
-      { text: 'Add to Cart', class: classes.button },
-      ButtonClasses.NORMAL,
-      () => {
-        console.log('Product added to the cart');
-      },
-      cartIcon,
-    );
-    const priceWrapper = new BaseElement<HTMLDivElement>(
-      { tag: 'div', class: classes.productPriceWrapper },
-      new BaseElement<HTMLDivElement>({ tag: 'div', class: classes.priceTitle, text: 'Price:' }),
-      priceEl,
-    );
-    if (this.#product.discount) {
-      const discountPrice = new BaseElement<HTMLDivElement>({
-        tag: 'div',
-        class: classes.price,
-        text: `€${String((this.#product.discount / 100).toFixed(2))}`,
-      });
-      priceWrapper.node.append(discountPrice.node);
-      priceEl.node.classList.add(classes.priceOld);
-      h1.node.classList.add(classes.productNameSale);
-    }
-    priceRow.node.append(priceWrapper.node);
-    priceRow.node.append(button.node);
-
-    const brandRow = createAttributeRow('Brand:', this.#product.brand!);
-    const categoryRow = createAttributeRow('Categories:', this.#product.categories!);
-    // const typeRow = createAttributeRow('Type of game:', this.#product.typeOfGame!);
-    const numberRow = createAttributeRow(
-      'Number of players:',
-      `${this.#product.minNumberOfPlayers} - ${this.#product.maxNumberOfPlayers} `,
-    );
-    const ageRow = createAttributeRow('Recommended age from:', `${this.#product.ageFrom} years`);
-
-    const attributesList = new BaseElement<HTMLOListElement>(
-      { tag: 'ul', class: classes.attributeList },
-      brandRow,
-      categoryRow,
-      // typeRow,
-      numberRow,
-      ageRow,
-    );
-
-    const desc = new BaseElement<HTMLDivElement>(
-      { tag: 'div', class: classes.desc },
-      new BaseElement<HTMLDivElement>({
-        tag: 'div',
-        class: classes.descTitle,
-        text: 'Description:',
+      // header1
+      tag({
+        tag: 'h1',
+        class: [classes.productName, ...(this.#product.discount ? [classes.productNameSale] : [])],
+        text: this.#product.name,
       }),
-      new BaseElement<HTMLDivElement>({
-        tag: 'div',
-        class: classes.descText,
-        text: this.#product.description,
-      }),
+
+      // loader
+      (this.#loader = new Loader({})),
+      // price row
+      tag(
+        {
+          tag: 'div',
+          class: classes.productPriceRow,
+        },
+
+        // prices
+        tag(
+          { tag: 'div', class: classes.productPriceWrapper },
+          tag({ tag: 'div', class: classes.priceTitle, text: 'Price:' }),
+
+          // first price
+          tag({
+            tag: 'div',
+            class: [classes.price, ...(this.#product.discount ? [classes.priceOld] : [])],
+            text: `€${String((this.#product.price! / 100).toFixed(2))}`,
+          }),
+
+          // second price
+          ...(this.#product.discount
+            ? [
+                tag({
+                  tag: 'div',
+                  class: classes.price,
+                  text: `€${String((this.#product.discount / 100).toFixed(2))}`,
+                }),
+              ]
+            : []),
+        ),
+
+        // add cart button
+        (this.#addToCartButton = new Button(
+          {
+            text: ProductCard.inCartText(this.#alreadyInCart),
+            class: classes.button,
+            disabled: !!this.#alreadyInCart,
+          },
+          ButtonClasses.NORMAL,
+          this.#productCartButtonHandler(this.#addProductToCart),
+          !this.#alreadyInCart ? cartIcon : checkIcon,
+        )),
+        // remove cart button
+        (this.#removeFromCartButton = new Button(
+          {
+            text: 'Remove from cart',
+            class: [classes.button, classes.buttonRemove],
+            hidden: !this.#alreadyInCart,
+          },
+          ButtonClasses.NORMAL,
+          this.#productCartButtonHandler(this.#removeProductFromCart),
+          trashIcon,
+        )),
+      ),
+
+      // attributes list
+      tag(
+        { tag: 'ul', class: classes.attributeList },
+        createAttributeRow('Brand:', this.#product.brand!),
+        createAttributeRow('Categories:', this.#product.categories!),
+        createAttributeRow(
+          'Number of players:',
+          `${this.#product.minNumberOfPlayers} - ${this.#product.maxNumberOfPlayers} `,
+        ),
+        createAttributeRow('Recommended age from:', `${this.#product.ageFrom} years`),
+      ),
+
+      // description
+      tag(
+        { tag: 'div', class: classes.desc },
+        tag({
+          tag: 'div',
+          class: classes.descTitle,
+          text: 'Description:',
+        }),
+        tag({
+          tag: 'div',
+          class: classes.descText,
+          text: this.#product.description,
+        }),
+      ),
     );
-
-    wrapper.node.append(h1.node);
-    wrapper.node.append(priceRow.node);
-    wrapper.node.append(attributesList.node);
-    wrapper.node.append(desc.node);
-
     return wrapper;
   };
 
   #showContent = () => {
     this.container.node.append(this.#content.node);
+  };
+
+  // return event handler which show and then hides Loader
+  // use with #addProductToCart and#removeProductFromCart
+  #productCartButtonHandler =
+    (handler: (productId: string) => Promise<void>) => async (event: Event) => {
+      event.stopPropagation();
+      if (this.#product.id) {
+        const target = event.target as HTMLButtonElement;
+        target.disabled = true; // for exclude error by quick multi click
+
+        this.#loader.show();
+        try {
+          await handler(this.#product.id);
+          this.#addToCartButton.node.textContent = ProductCard.inCartText(this.#alreadyInCart);
+          this.#addToCartButton.addIcon(this.#alreadyInCart ? checkIcon : cartIcon);
+          this.header.refreshCountInCartElement();
+        } catch (err) {
+          console.log(err);
+        } finally {
+          this.#loader.hide();
+        }
+      }
+    };
+
+  // use only #productCartButtonHandler
+  #addProductToCart = async (productId: string) => {
+    if (!this.#alreadyInCart) {
+      await cartController.addItemToCart(productId);
+      this.#alreadyInCart += 1;
+      this.#removeFromCartButton.enable();
+      this.#removeFromCartButton.node.hidden = false;
+    }
+  };
+
+  // use only #productCartButtonHandler
+  #removeProductFromCart = async (productId: string) => {
+    if (this.#alreadyInCart) {
+      await cartController.removeItemFromCart(productId);
+      this.#alreadyInCart -= 1;
+      if (this.#alreadyInCart === 0) {
+        this.#removeFromCartButton.disable();
+        this.#removeFromCartButton.node.hidden = true;
+        this.#addToCartButton.enable();
+      } else {
+        this.#removeFromCartButton.enable();
+      }
+    }
   };
 }

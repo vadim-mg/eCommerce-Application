@@ -1,8 +1,10 @@
 import basketIconPath from '@Assets/icons/basket.svg';
+import checkIconPath from '@Assets/icons/check_big.svg';
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
 import tag from '@Src/components/common/tag';
 import Button, { ButtonClasses } from '@Src/components/ui/button';
 import Link from '@Src/components/ui/link';
+import cartController from '@Src/controllers/cart';
 import Products, { ImageSize } from '@Src/controllers/products';
 import { AppRoutes } from '@Src/router/routes';
 import { getPrice } from '@Src/utils/helpers';
@@ -10,26 +12,46 @@ import { ProductProjection } from '@commercetools/platform-sdk';
 import classes from './style.module.scss';
 
 type ProductCardProps = Omit<ElementProps<HTMLLinkElement>, 'tag'>;
+
+export type AddToCartCbFunction = () => () => void;
 export default class ProductCard extends BaseElement<HTMLElement> {
   #product: ProductProjection;
 
-  constructor(props: ProductCardProps, product: ProductProjection, selectedCategoryKey?: string) {
+  #cartButton!: Button;
+
+  #onAddToCartCb;
+
+  constructor(
+    props: ProductCardProps,
+    logicProperties: {
+      product: ProductProjection;
+      selectedCategoryKey?: string;
+      onAddToCartCb: AddToCartCbFunction;
+    },
+  ) {
     super({ tag: 'div', ...props });
-    this.#product = product;
-    this.node.append(this.#createElement(selectedCategoryKey).node);
+    this.#product = logicProperties.product;
+    this.#onAddToCartCb = logicProperties.onAddToCartCb;
+    this.node.append(this.#createElement(logicProperties.selectedCategoryKey).node);
     this.node.classList.add(classes.productCard);
   }
 
+  static inCartText = (inCartCount: number) =>
+    inCartCount ? `In cart${inCartCount > 1 ? ` (${inCartCount})` : ''}` : 'Add to cart';
+
   #createElement = (selectedCategory?: string) => {
-    const { key, name, description, masterVariant } = this.#product;
+    const { key, name, description, masterVariant, id } = this.#product;
     const categoryPath = selectedCategory?.length ? `${selectedCategory}/` : '';
 
     const image = masterVariant.images?.[0];
     const prices = (masterVariant.prices ?? [])[0];
+    let alreadyInCart = cartController.howManyAlreadyInCart(this.#product.id);
 
-    return new Link(
+    const link = new Link(
       {
-        href: `${AppRoutes.CATALOGUE}/${categoryPath}${key}`,
+        href: categoryPath
+          ? `${AppRoutes.CATALOGUE}/${categoryPath}${key}`
+          : `${AppRoutes.CATALOGUE}/all/${key}`,
         class: [classes.productLink],
       },
       // sale label
@@ -80,30 +102,38 @@ export default class ProductCard extends BaseElement<HTMLElement> {
           }),
         ),
 
-        // todo remove this debug code
-        // ...(masterVariant.attributes ?? []).map((attr) =>
-        //   attr.name === AttrName.AGE_FROM ||
-        //   attr.name === AttrName.MAX_PLAYER_COUNT ||
-        //   attr.name === AttrName.MIN_PLAYER_COUNT ||
-        //   attr.name === AttrName.BRAND
-        //     ? tag<HTMLParagraphElement>({
-        //         tag: 'p',
-        //         text: `${attr.name}: ${attr.value}`,
-        //       })
-        //     : tag({ tag: 'span' }),
-        // ),
-
         // button cart
-        new Button(
-          { text: 'Add to Cart', class: classes.cardButton },
-          ButtonClasses.NORMAL,
-          (event: Event) => {
-            event.stopPropagation();
-            console.log(`Product ${this.#product.key} will added to cart in next sprint!`);
+        (this.#cartButton = new Button(
+          {
+            text: ProductCard.inCartText(alreadyInCart),
+            class: classes.cardButton,
+            disabled: !!alreadyInCart,
           },
-          basketIconPath,
-        ),
+          ButtonClasses.NORMAL,
+          async (event: Event) => {
+            event.stopPropagation();
+            if (!alreadyInCart) {
+              const makeAfterAdd = this.#onAddToCartCb();
+              try {
+                await cartController.addItemToCart(id);
+                alreadyInCart += 1;
+                this.#cartButton.node.textContent = ProductCard.inCartText(alreadyInCart);
+                this.#cartButton.addIcon(checkIconPath);
+                this.#cartButton.disable();
+              } catch (err) {
+                console.log(err);
+              } finally {
+                makeAfterAdd();
+              }
+            } else {
+              // Router.getInstance().route(AppRoutes.CART);
+            }
+          },
+          alreadyInCart ? checkIconPath : basketIconPath,
+        )),
       ),
     );
+
+    return link;
   };
 }

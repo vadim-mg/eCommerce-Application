@@ -14,6 +14,8 @@ type ButtonProps = Omit<ElementProps<HTMLButtonElement>, 'tag'>;
 export default class Button extends BaseElement<HTMLButtonElement> {
   #onClickCb: Callback;
 
+  #icon!: BaseElement<HTMLImageElement>;
+
   constructor(
     props: ButtonProps,
     buttonClass: ButtonClasses | ButtonClasses[],
@@ -25,7 +27,7 @@ export default class Button extends BaseElement<HTMLButtonElement> {
     this.node.addEventListener('click', this.onClickHandler);
     this.#addClasses(buttonClass);
     if (iconSVG) {
-      this.#addIcon(iconSVG);
+      this.addIcon(iconSVG);
     }
   }
 
@@ -37,14 +39,18 @@ export default class Button extends BaseElement<HTMLButtonElement> {
     }
   };
 
-  #addIcon = (iconSVG: string) => {
-    const icon = new BaseElement<HTMLImageElement>({
+  addIcon = (iconSVG: string) => {
+    this.#icon = new BaseElement<HTMLImageElement>({
       tag: 'div',
       innerHTML: iconSVG,
     });
-    icon.node.classList.add(classes.icon);
-    this.node.prepend(icon.node);
+    this.#icon.node.classList.add(classes.icon);
+    this.node.prepend(this.#icon.node);
   };
+
+  set icon(iconSVG: string) {
+    this.#icon.node.innerHTML = iconSVG;
+  }
 
   onClickHandler = (event: Event) => {
     event.preventDefault();

@@ -1,6 +1,7 @@
 import BaseElement, { ElementProps } from '@Src/components/common/base-element';
-import classes from './style.module.scss';
+import { getDiscountCodes } from '@Src/controllers/cart';
 import Button, { ButtonClasses } from '../button';
+import classes from './style.module.scss';
 
 type BannerProps = Omit<ElementProps<HTMLElement>, 'tag'>;
 
@@ -65,17 +66,26 @@ export default class Banner extends BaseElement<HTMLElement> {
   };
 
   createMainBannerSection = () => {
-    this.mainBannerSection = new BaseElement<HTMLDivElement>(
-      { tag: 'div', class: classes.mainBannerSection },
-      this.createBannerTitle(),
-      this.createMobileHighlightBadge(),
-      this.createBannerTextContent(),
-      this.createBannerButton(),
-    );
+    this.mainBannerSection = new BaseElement<HTMLDivElement>({
+      tag: 'div',
+      class: classes.mainBannerSection,
+    });
     this.bannerContentWrapper.node.append(this.mainBannerSection.node);
+    // get Promo from backend
+    getDiscountCodes().then((discount) => {
+      // todo: not in this sprint :) we can get all settings for banner in props, and from discount from api
+      // now all magic numbers are hardcoded, don't change discounts in
+      //  https://mc.us-central1.gcp.commercetools.com/board-game-shop/discounts it make broke banner actuality
+      this.mainBannerSection.node.append(
+        this.createBannerTitle().node,
+        this.createMobileHighlightBadge().node,
+        this.createBannerTextContent().node,
+        this.createBannerButton(discount.body.results[0].key ?? '').node,
+      );
+    });
   };
 
-  createBannerButton = () => {
+  createBannerButton = (promoCode: string) => {
     const smallBtnText = new BaseElement<HTMLSpanElement>({
       tag: 'span',
       text: 'Use promo code: ',
@@ -83,7 +93,7 @@ export default class Banner extends BaseElement<HTMLElement> {
     });
     this.bigBtnText = new BaseElement<HTMLSpanElement>({
       tag: 'span',
-      text: 'PLAYMORE',
+      text: promoCode,
       class: classes.bigBtnText,
     });
     this.bannerButton = new Button(
